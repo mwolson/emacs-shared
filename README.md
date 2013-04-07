@@ -106,7 +106,7 @@ Download the [OpenType file](http://www.levien.com/type/myfonts/Inconsolata.otf)
 apt-get install fonts-inconsolata
 ```
 
-### Download the `emacs-shared` code
+### Download the emacs-shared code
 
 ```sh
 cd ~/
