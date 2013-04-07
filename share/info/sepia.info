@@ -406,7 +406,7 @@ File: sepia.info,  Node: Interactive Perl,  Next: CPAN browsing,  Prev: Editing,
 Sepia's second main contribution is an interactive interface (REPL) to
 an inferior Perl process.  The interface is based on GUD mode, and
 inherits many of its bindings; this chapter discusses only the Sepia
-extensions.  To start or switch to the repl, type `M-x sepia-repl'.  As
+extensions.  To start or switch to the REPL, type `M-x sepia-repl'.  As
 in Sepia mode, <TAB> in the REPL performs partial-word completion with
 `sepia-complete-symbol'.
 
