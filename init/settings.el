@@ -172,6 +172,7 @@
  '(tooltip-use-echo-area t)
  '(tramp-auto-save-directory "~/.emacs.d/.autosave.d")
  '(tramp-backup-directory-alist (quote (("." . "~/.emacs.d/backup"))))
+ '(uniquify-buffer-name-style (quote forward) nil (uniquify))
  '(vc-handled-backends (quote (RCS CVS SVN)))
  '(visible-bell t)
  '(winner-mode t nil (winner))
