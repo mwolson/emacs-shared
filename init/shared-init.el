@@ -168,13 +168,11 @@
 (setq directory-free-space-args "-Pkl"
       grep-find-command (concat "find . -type f ! -regex \".*/" my-ignored-dir-regex "/.*\""
                                 " ! -regex \".*/" my-ignored-file-regex "\""
-                                " -print0 | xargs -0 -e egrep -nH -e "))
+                                " -print0 | xargs -0" (if (eq system-type 'darwin) "" " -e")
+                                " egrep -nH -e "))
 
-;; Customization overrides by OS
-(cond ((eq system-type 'darwin)
-       (setq grep-find-command "find . -type f ! -regex \".*/\\(CVS\\|\\.svn\\|\\.bzr\\|\\.hg\\|\\.git\\)/.*\" ! -regex \".*/\\(csanywhere\\.js\\|tiny_mce\\.js\\|.*\\.min\\..*\\)\" -print0 | xargs -0 egrep -nH -e "))
-      ((eq system-type 'windows-nt)
-       (setq directory-free-space-args nil)))
+(when (eq system-type 'windows-nt)
+  (setq directory-free-space-args nil))
 
 ;; Load customizations
 (setq custom-file (if my-settings-shared-p
