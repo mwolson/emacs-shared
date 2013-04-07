@@ -1,0 +1,51 @@
+[submodule "elisp/browse-kill-ring"]
+	path = elisp/browse-kill-ring
+	url = git://github.com/browse-kill-ring/browse-kill-ring.git
+[submodule "elisp/confluence"]
+	path = elisp/confluence
+	url = git://github.com/emacsmirror/confluence.git
+[submodule "elisp/emacs_chrome"]
+	path = elisp/emacs_chrome
+	url = git://github.com/stsquad/emacs_chrome.git
+[submodule "elisp/emacs-color-theme-solarized"]
+	path = elisp/emacs-color-theme-solarized
+	url = git://github.com/mwolson/emacs-color-theme-solarized.git
+[submodule "elisp/emms"]
+	path = elisp/emms
+	url = git://git.sv.gnu.org/emms.git
+[submodule "elisp/erc"]
+	path = elisp/erc
+	url = git://github.com/mwolson/erc.git
+[submodule "elisp/ido-ubiquitous"]
+	path = elisp/ido-ubiquitous
+	url = git://github.com/technomancy/ido-ubiquitous.git
+[submodule "elisp/js2-mode"]
+	path = elisp/js2-mode
+	url = git://github.com/mooz/js2-mode.git
+[submodule "elisp/magit"]
+	path = elisp/magit
+	url = git://github.com/mwolson/magit.git
+[submodule "elisp/markdown-mode"]
+	path = elisp/markdown-mode
+	url = git://github.com/znag/markdown-mode.git
+[submodule "elisp/maxframe-el"]
+	path = elisp/maxframe-el
+	url = git://github.com/rmm5t/maxframe.el.git
+[submodule "elisp/muse"]
+	path = elisp/muse
+	url = git://github.com/alexott/muse.git
+[submodule "elisp/php-mode"]
+	path = elisp/php-mode
+	url = git://github.com/ejmr/php-mode.git
+[submodule "elisp/sepia"]
+	path = elisp/sepia
+	url = git://repo.or.cz/sepia.git
+[submodule "elisp/smex"]
+	path = elisp/smex
+	url = git://github.com/nonsequitur/smex.git
+[submodule "elisp/tt-mode"]
+	path = elisp/tt-mode
+	url = git://github.com/davorg/tt-mode.git
+[submodule "elisp/slime"]
+	path = elisp/slime
+	url = git://github.com/antifuchs/slime.git
