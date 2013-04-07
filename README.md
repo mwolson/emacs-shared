@@ -127,6 +127,28 @@ If you are new to Emacs and very proficient with `vi`, then add this to the end 
 
 ### Start Emacs
 
+*Windows*
+
+Open `Start Menu -> Gnu Emacs -> Emacs`.  This should point to the file `C:/Program Files (x86)/Emacs/bin/runemacs.exe`.
+
+*Mac OS X*
+
+Open `Applications -> Emacs`.
+
+*Linux*
+
+GUI frame:
+
+```sh
+emacs -n -c
+```
+
+Curses frame:
+
+```sh
+emacs -nw
+```
+
 Updating
 --------
 
