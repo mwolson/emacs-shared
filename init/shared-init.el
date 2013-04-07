@@ -265,6 +265,9 @@
 ;; List directories first in dired
 (require 'ls-lisp)
 
+;; Don't slow down ls and don't make dired output too wide on w32 systems
+(setq w32-get-true-file-attributes nil)
+
 ;; Make shell commands run in unique buffer so we can have multiple at once, and run all shell
 ;; asynchronously.  Taken in part from EmacsWiki: ExecuteExternalCommand page.
 

@@ -132,6 +132,7 @@
  '(ls-lisp-ignore-case t)
  '(ls-lisp-support-shell-wildcards nil)
  '(ls-lisp-use-insert-directory-program nil)
+ '(ls-lisp-verbosity (quote (uid gid)))
  '(mail-interactive t)
  '(mail-user-agent (quote gnus-user-agent))
  '(mark-diary-entries-in-calendar t)
