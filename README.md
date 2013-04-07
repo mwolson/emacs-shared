@@ -48,7 +48,7 @@ The recommended version is Emacs 24.3.  The recommended installers for each OS a
 *Windows*
 
 - Download `emacs-24.3-bin-i386.zip` (or the latest version of the -bin package) from [ftp.gnu.org](http://ftp.gnu.org/gnu/emacs/windows/).
-- Unzip to `C:\Program Files (x86)\Emacs`.  When done, you should see a file named `C:\Program Files (x86)\Emacs\bin\runemacs.exe`.
+- Unzip to `C:\Program Files (x86)` and then rename `emacs-24.3` to `Emacs`.  When done, you should verify that a file named `C:\Program Files (x86)\Emacs\bin\runemacs.exe` exists.
 - If you change the location, you may want to update the `my-system-paths` option later.
 - Adjust some environment variables so that the Bootstrap and Start Emacs steps work.
   - Open `Control Panel -> System -> Advanced System Settings (on left) -> Environment Variables`.
