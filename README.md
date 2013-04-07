@@ -22,11 +22,10 @@ Installing
 ----------
 
 ### Install git
-  On Windows, the best way to do this is with [Git Extensions](https://code.google.com/p/gitextensions/).  When
-  prompted about SSH during installation, choosing PuTTY is recommended.
 
-  On Mac OS X, the best way to do this is to install Xcode from App Store, and then install the Command Line Tools for
-  Xcode using the Downloads preferences pane within Xcode 4.6.1 and later.
+On Windows, the best way to do this is with [Git Extensions](https://code.google.com/p/gitextensions/).  When prompted about SSH during installation, choosing PuTTY is recommended.
+
+On Mac OS X, the best way to do this is to install Xcode from App Store, and then install the Command Line Tools for Xcode using the Downloads preferences pane within Xcode 4.6.1 and later.
 
 ### (Mac OS X only) Install Homebrew
 
@@ -49,6 +48,12 @@ The recommended version is Emacs 24.3.  The recommended installers for each OS a
 - Download `emacs-24.3-bin-i386.zip` (or the latest version of the -bin package) from [ftp.gnu.org](http://ftp.gnu.org/gnu/emacs/windows/).
 - Unzip to `C:/Program Files (x86)/Emacs`.  When done, you should see a file named `C:/Program Files (x86)/Emacs/bin/runemacs.exe`.
 - If you change the location, you may want to update the `my-system-paths` option later.
+- Adjust some environment variables so that the Bootstrap and Start Emacs steps work.
+  - Open `Control Panel -> System -> Advanced System Settings (on left) -> Environment Variables`.
+  - In User Variables, Inspect `HOME` and make sure it points to something like `C:\Users\You`.
+  - In one of User Variables or System Variables (depending on whether you want the change to apply to all users or just you), edit `PATH` and make sure `C:/Program Files (x86)/Emacs/bin` is there, with a semicolon separating it from the other entries.
+  - Click OK
+  - Relaunch any open Git Bash windows
 
 *Mac OS X*
 
