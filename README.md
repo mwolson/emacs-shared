@@ -1,21 +1,23 @@
 Shared Emacs settings
 =====================
 
+![Emacs icon](http://download-mirror.savannah.gnu.org/releases/emacs/icons/emacs6-128.png)
+
 This is a collection of Emacs Lisp add-ons and an Emacs init file with the following features.
 
-- Cross-platform support: decent level of feature parity between Linux, Windows, and Mac OS X; this includes a custom
+- **Cross-platform support**: decent level of feature parity between Linux, Windows, and Mac OS X; this includes a custom
   patch to improve Windows support for magit
-- Emacs is fullscreen by default on Windows and OS X, with code to account for dock size of 64 pixels on OS X (options:
-  `my-frame-pad-width`, `my-frame-pad-height`, and `my-frame-maximize-p`); frame width and height is customizable if
+- **Fullscreen by default** on Windows and OS X, with code to account for dock size of 64 pixels on OS X (options:
+  my-frame-pad-width, my-frame-pad-height, and my-frame-maximize-p); frame width and height is customizable if
   you don't like fullscreen
-- Uses the solarized-dark color theme by default, with custom code to support using both emacsclient and GUI frame
+- **solarized-dark color theme**, with custom code to support using both emacsclient and GUI frame
 - Can be personalized with a single `setq` statement; there are many options
 - Supports list of features to enable
 - Principle of least surprise is a design goal
-- Same great-looking Inconsolata font on all platforms
-- Splash screen appears while starting a non-daemon GUI, for appearance of speed :)
-- Extensively-documented setup instructions
-- Manuals are pre-built and show up when you do `C-h i`
+- Same great-looking **Inconsolata font** on all platforms
+- **Splash screen** appears while starting a non-daemon GUI, for appearance of speed :)
+- Extensively-documented **setup instructions**
+- **Manuals** are pre-built and show up when you do `C-h i`
 - Supplements your existing `~/.emacs.d/init.el` file instead of replacing it
 
 Installing
