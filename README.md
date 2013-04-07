@@ -48,12 +48,12 @@ The recommended version is Emacs 24.3.  The recommended installers for each OS a
 *Windows*
 
 - Download `emacs-24.3-bin-i386.zip` (or the latest version of the -bin package) from [ftp.gnu.org](http://ftp.gnu.org/gnu/emacs/windows/).
-- Unzip to `C:/Program Files (x86)/Emacs`.  When done, you should see a file named `C:/Program Files (x86)/Emacs/bin/runemacs.exe`.
+- Unzip to `C:\Program Files (x86)\Emacs`.  When done, you should see a file named `C:\Program Files (x86)\Emacs\bin\runemacs.exe`.
 - If you change the location, you may want to update the `my-system-paths` option later.
 - Adjust some environment variables so that the Bootstrap and Start Emacs steps work.
   - Open `Control Panel -> System -> Advanced System Settings (on left) -> Environment Variables`.
   - In User Variables, Inspect `HOME` and make sure it points to something like `C:\Users\You`.
-  - In one of User Variables or System Variables (depending on whether you want the change to apply to all users or just you), edit `PATH` and make sure `C:/Program Files (x86)/Emacs/bin` is there, with a semicolon separating it from the other entries.
+  - In one of User Variables or System Variables (depending on whether you want the change to apply to all users or just you), edit `PATH` and make sure `C:\Program Files (x86)\Emacs\bin` is there, with a semicolon separating it from the other entries.
   - Click OK
   - Relaunch any open Git Bash windows
 
@@ -155,7 +155,7 @@ If you are new to Emacs and very proficient with `vi`, then add this to the end 
 
 *Windows*
 
-Open `Start Menu -> Gnu Emacs -> Emacs`.  This should point to the file `C:/Program Files (x86)/Emacs/bin/runemacs.exe`.
+Open `Start Menu -> Gnu Emacs -> Emacs`.  This should point to the file `C:\Program Files (x86)\Emacs\bin\runemacs.exe`.
 
 *Mac OS X*
 
