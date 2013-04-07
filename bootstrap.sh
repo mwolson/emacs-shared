@@ -80,7 +80,7 @@ if test -n "$BUILD"; then
     (
         cd elisp/magit
         # deal with cl-lib dependency
-        make clean all EFLAGS="--eval \"(add-to-list 'load-path (base64-decode-string \\\"$ELISP_DIR\\\") t)\""
+        make clean core contrib EFLAGS="--eval \"(add-to-list 'load-path (base64-decode-string \\\"$ELISP_DIR\\\") t)\""
 
         if test -n "$BUILD_DOCS"; then
             make install_docs DESTDIR="$DESTDIR" PREFIX=
