@@ -3,13 +3,13 @@ Shared Emacs settings
 
 This is a collection of Emacs Lisp add-ons and an Emacs init file with the following features.
 
-- Uses the solarized-dark theme by default, with custom code to support using both emacsclient and GUI frame
 - Cross-platform support: decent level of feature parity between Linux, Windows, and Mac OS X; this includes a custom
   patch to improve Windows support for magit
 - Emacs is fullscreen by default on Windows and OS X, with code to account for dock size of 64 pixels on OS X (options:
   `my-frame-pad-width`, `my-frame-pad-height`, and `my-frame-maximize-p`); frame width and height is customizable if
   you don't like fullscreen
-- Can be personalized with a single `setq` statement; there are many 
+- Uses the solarized-dark color theme by default, with custom code to support using both emacsclient and GUI frame
+- Can be personalized with a single `setq` statement; there are many options
 - Supports list of features to enable
 - Principle of least surprise is a design goal
 - Same great-looking Inconsolata font on all platforms
@@ -59,13 +59,32 @@ The recommended version is Emacs 24.3.  The recommended installers for each OS a
 
 Use the unofficial [Emacs for OS X](http://emacsformacosx.com/) installer.
 
-You'll want to make sure that your path has the version of Emacs you installed in it, before the ancient version that comes with OS X.  To do this, edit `~/.profile` and add:
+In order for the Bootstrap step to succeed, you'll need to create a script called `emacs` 
 
 ```sh
-export PATH=/Applications/Emacs.app/Contents/Resources/bin:"$PATH"
+mkdir -p ~/bin
+cd ~/bin
+touch emacs
+chmod +x emacs
+<edit ~/bin/emacs in your editor of choice>
+```
+
+`~/bin/emacs` file contents:
+
+```sh
+#!/bin/sh
+exec /Applications/Emacs.app/Contents/MacOS/Emacs "$@"
+```
+
+You'll want to make sure that your path has this script and other Emacs support binaries, before the ancient version that comes with OS X.  To do this, edit `~/.profile` and add:
+
+```sh
+export PATH=~/bin:/Applications/Emacs.app/Contents/MacOS/bin:"$PATH"
 ```
 
 Restart your Terminal app to make the change take effect.  Sourcing the file is not enough, since OS X seems to perform indexing of location on program name.
+
+To verify your work, run `emacs --version` and make sure it shows the version number you'd expect.
 
 *Ubuntu*
 
@@ -148,7 +167,7 @@ GUI frame:
 emacs -n -c
 ```
 
-Curses frame:
+Console frame:
 
 ```sh
 emacs -nw
