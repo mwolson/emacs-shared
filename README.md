@@ -1,8 +1,6 @@
 Shared Emacs settings
 =====================
 
-![Emacs icon](http://download-mirror.savannah.gnu.org/releases/emacs/icons/emacs6-128.png)
-
 This is a collection of Emacs Lisp add-ons and an Emacs init file with the following features.
 
 - **Cross-platform support**: decent level of feature parity between Linux, Windows, and Mac OS X; this includes a custom
@@ -19,6 +17,8 @@ This is a collection of Emacs Lisp add-ons and an Emacs init file with the follo
 - Extensively-documented **setup instructions**
 - **Manuals** are pre-built and show up when you do `C-h i`
 - Supplements your existing `~/.emacs.d/init.el` file instead of replacing it
+
+![Emacs Suared desktop](http://mwolson.org/static/img/emacs-shared.png)
 
 Installing
 ----------
