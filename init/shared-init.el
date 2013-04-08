@@ -383,7 +383,7 @@
 (setq slime-kill-without-query-p t)
 (setq slime-protocol-version 'ignore)
 
-(defun my-slime-connect-nodejs
+(defun my-slime-connect-nodejs ()
   (interactive)
   (let ((process (slime-connect "localhost" 4005)))
     (setf (slime-connection-name process) "NODE")))
