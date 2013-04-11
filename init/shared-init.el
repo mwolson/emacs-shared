@@ -282,35 +282,41 @@
       ad-do-it
 
     (save-match-data
-      (unless (string-match "&[ \t]*\\'" command)
-        (setq command (concat command " &")))
+      (let ((lisp-exp (and (string-match "\\`[[:blank:]]*([^&|]+)[[:blank:]]*\\'" command)
+                           (condition-case nil (read command) (error nil)))))
+        ;; if we accidentally entered a readable lisp expression, eval it
+        (if lisp-exp
+            (eval-expression lisp-exp nil)
 
-      ;; set match data for buffer name
-      (string-match "[ \t]*&[ \t]*\\'" command)
+          (unless (string-match "&[ \t]*\\'" command)
+            (setq command (concat command " &")))
 
-      (let* ((command-buffer-name
-              (format "*Shell Command: %s*"
-                      (substring command 0 (match-beginning 0))))
-             (command-buffer (get-buffer command-buffer-name)))
+          ;; set match data for buffer name
+          (string-match "[ \t]*&[ \t]*\\'" command)
 
-        ;; if the buffer exists and has a live process, rename it uniquely so we can have multiple
-        (if (and command-buffer (get-buffer-process command-buffer))
-            (with-current-buffer command-buffer
-              (rename-uniquely))
-          (when (buffer-live-p command-buffer)
-            (kill-buffer command-buffer)))
-        (setq output-buffer command-buffer-name)
+          (let* ((command-buffer-name
+                  (format "*Shell Command: %s*"
+                          (substring command 0 (match-beginning 0))))
+                 (command-buffer (get-buffer command-buffer-name)))
 
-        ;; insert command at top of buffer
-        (switch-to-buffer-other-window output-buffer)
-        (insert "Running command: " command "\n"
-                (make-string (- (window-width) 1) ?\~)
-                "\n\n")
+            ;; if the buffer exists and has a live process, rename it uniquely
+            (if (and command-buffer (get-buffer-process command-buffer))
+                (with-current-buffer command-buffer
+                  (rename-uniquely))
+              (when (buffer-live-p command-buffer)
+                (kill-buffer command-buffer)))
+            (setq output-buffer command-buffer-name)
 
-        ;; temporarily blow away erase-buffer while doing it, to avoid erasing the above
-        (ad-activate-regexp "erase-buffer-noop")
-        (unwind-protect ad-do-it
-          (ad-deactivate-regexp "erase-buffer-noop"))))))
+            ;; insert command at top of buffer
+            (switch-to-buffer-other-window output-buffer)
+            (insert "Running command: " command "\n"
+                    (make-string (- (window-width) 1) ?\~)
+                    "\n\n")
+
+            ;; temporarily blow away erase-buffer while doing it, to avoid erasing the above
+            (ad-activate-regexp "erase-buffer-noop")
+            (unwind-protect ad-do-it
+              (ad-deactivate-regexp "erase-buffer-noop"))))))))
 (ad-activate 'shell-command)
 
 ;; Load php-mode
