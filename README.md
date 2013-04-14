@@ -35,7 +35,7 @@ You may want to pick up [Homebrew](http://mxcl.github.io/homebrew/) for easier i
 
 ### (Windows only) Install PuTTY
 
-This is useful for doing git development, since Pageant can hold onto your git keys and auto-load them when Windows starts.
+This is useful for doing git development, since Pageant can hold onto your git keys and auto-load them when Windows starts.  If you've already installed PuTTY in the past, make sure that you have have at least version 0.62 installed, since earlier versions might fail in ways that are difficult to diagnose.
 
 ### (Optional) Install Aspell
 
@@ -54,6 +54,7 @@ The recommended version is Emacs 24.3.  The recommended installers for each OS a
   - Open `Control Panel -> System -> Advanced System Settings (on left) -> Environment Variables`.
   - In User Variables, Inspect `HOME` and make sure it points to something like `C:\Users\You`.
   - In one of User Variables or System Variables (depending on whether you want the change to apply to all users or just you), edit `PATH` and make sure `C:\Program Files (x86)\Emacs\bin` is there, with a semicolon separating it from the other entries.
+  - If you have chosen to use PuTTY, then make sure that the `GIT_SSH` variable is set to `C:\Program Files (x86)\PuTTY\plink.exe` (or wherever PuTTY is installed).
   - Click OK
   - Relaunch any open Git Bash windows
 
