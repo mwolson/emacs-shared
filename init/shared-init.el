@@ -1291,10 +1291,5 @@ between the two tags."
       (kill-buffer buf))))
 (add-hook 'after-init-hook #'my-kill-splash-screen)
 
-;;; Menu additions
-
-(require 'easymenu)
-(easy-menu-add-item nil '("tools") ["Increment number at point" increment-number-at-point t])
-
 (provide 'shared-init)
 ;;; shared-init.el ends here
