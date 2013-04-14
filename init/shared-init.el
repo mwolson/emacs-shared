@@ -226,6 +226,13 @@
             (goto-char (point-min)))
           (switch-to-buffer ,outer))))))
 
+(defun increment-number-at-point ()
+  (interactive)
+  (skip-chars-backward "0123456789")
+  (or (looking-at "[0123456789]+")
+      (error "No number at point"))
+  (replace-match (number-to-string (1+ (string-to-number (match-string 0))))))
+
 ;;; Things that can't be changed easily using `customize'
 
 ;; Enable some commands
@@ -1283,6 +1290,11 @@ between the two tags."
     (when (and buf (buffer-live-p buf))
       (kill-buffer buf))))
 (add-hook 'after-init-hook #'my-kill-splash-screen)
+
+;;; Menu additions
+
+(require 'easymenu)
+(easy-menu-add-item nil '("tools") ["Increment number at point" increment-number-at-point t])
 
 (provide 'shared-init)
 ;;; shared-init.el ends here
