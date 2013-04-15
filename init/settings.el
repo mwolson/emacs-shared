@@ -146,7 +146,6 @@
  '(muse-html-charset-default "utf-8")
  '(muse-html-encoding-default (quote utf-8))
  '(muse-html-meta-content-encoding (quote utf-8))
- '(muse-mode-hook (quote (footnote-mode)))
  '(muse-publish-comments-p t)
  '(muse-publish-date-format "%b. %e, %Y")
  '(muse-publish-desc-transforms (quote (muse-wiki-publish-pretty-title muse-wiki-publish-pretty-interwiki muse-publish-strip-URL)))

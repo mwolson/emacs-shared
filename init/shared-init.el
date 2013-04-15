@@ -1193,8 +1193,9 @@ between the two tags."
 ;; Local
 (defun my-muse-mode-keys ()
   (when (my-emacs-feature-enabled 'muse)
-    (local-set-key (kbd "C-c RET") #'confluence-get-page-at-point)))
+    (local-set-key (kbd "C-c .") #'confluence-get-page-at-point)))
 (add-hook 'muse-mode-hook #'my-muse-mode-keys)
+(add-hook 'muse-mode-hook #'footnote-mode)
 
 ;; Global
 (defun my-find-remember-file ()
