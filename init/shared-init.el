@@ -301,9 +301,9 @@
           ;; set match data for buffer name
           (string-match "[ \t]*&[ \t]*\\'" command)
 
-          (let* ((command-buffer-name
-                  (format "*Shell Command: %s*"
-                          (substring command 0 (match-beginning 0))))
+          (let* ((command-name (substring command 0 (min 40 (match-beginning 0))))
+                 (command-name (car (split-string command-name "\n" t)))
+                 (command-buffer-name (format "*Shell Command: %s*" command-name))
                  (command-buffer (get-buffer command-buffer-name)))
 
             ;; if the buffer exists and has a live process, rename it uniquely
