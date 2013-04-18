@@ -1055,6 +1055,7 @@ trailing space to the screen, so we want to clean that up."
 
 ;; Map some magit keys
 (global-set-key "\C-xV" nil)
+(global-set-key "\C-xVb" 'magit-branch-manager)
 (global-set-key "\C-xVc" 'my-magit-log-edit)
 (global-set-key "\C-xVl" 'magit-log)
 (global-set-key "\C-xVs" 'magit-status)
