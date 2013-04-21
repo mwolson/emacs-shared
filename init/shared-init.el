@@ -322,7 +322,9 @@
 
             ;; temporarily blow away erase-buffer while doing it, to avoid erasing the above
             (ad-activate-regexp "erase-buffer-noop")
-            (unwind-protect ad-do-it
+            (unwind-protect
+                (let ((process-environment (cons "PAGER=" process-environment)))
+                  ad-do-it)
               (ad-deactivate-regexp "erase-buffer-noop"))))))))
 (ad-activate 'shell-command)
 
