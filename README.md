@@ -205,3 +205,5 @@ License
 
 Unless stated otherwise, the files contained in this repo may be used, distributed, and modified without restriction.
 
+This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
