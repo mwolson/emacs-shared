@@ -120,9 +120,9 @@
     ;; Don't show the menu unless we are using X
     (set-frame-parameter nil 'menu-bar-lines 0))
   ;; Don't show scroll bars
-  (scroll-bar-mode -1)
+  (ignore-errors (scroll-bar-mode -1))
   ;; Don't show the tool bar
-  (tool-bar-mode -1)
+  (ignore-errors (tool-bar-mode -1))
   ;; Initialize color theme
   (my-reset-theme)
   ;; Maximize frame or re-apply frame settings

@@ -61,13 +61,17 @@ if test -n "$BUILD"; then
     # EMMS
     (
         cd elisp/emms
-        make clean lisp
+        make clean
+        # Don't compile emms-setup.elc, since it causes problems if no dir named ~/.emacs.d/emms exists
+        touch lisp/emms-setup.elc
+        make lisp
 
         if test -n "$BUILD_DOCS"; then
             make docs
             cd doc
             install_info emms.info
         fi
+        rm -f lisp/emms-setup.elc
     )
 
     # js2-mode
