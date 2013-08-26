@@ -49,3 +49,18 @@
 [submodule "elisp/slime"]
 	path = elisp/slime
 	url = git://github.com/antifuchs/slime.git
+[submodule "elisp/clojure-mode"]
+	path = elisp/clojure-mode
+	url = https://github.com/clojure-emacs/clojure-mode.git
+[submodule "elisp/nrepl"]
+	path = elisp/nrepl
+	url = https://github.com/clojure-emacs/nrepl.el.git
+[submodule "elisp/dash"]
+	path = elisp/dash
+	url = https://github.com/magnars/dash.el.git
+[submodule "elisp/pkg-info"]
+	path = elisp/pkg-info
+	url = https://github.com/lunaryorn/pkg-info.el.git
+[submodule "elisp/s"]
+	path = elisp/s
+	url = https://github.com/magnars/s.el

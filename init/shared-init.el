@@ -408,6 +408,16 @@
 (when (and my-slime-function (fboundp my-slime-function))
   (defalias 'slime my-slime-function))
 
+;; Clojure-mode and nrepl setup
+(add-to-list 'load-path (concat my-emacs-path "elisp/clojure-mode"))
+(require 'clojure-mode)
+(add-to-list 'load-path (concat my-emacs-path "elisp/dash"))
+(add-to-list 'load-path (concat my-emacs-path "elisp/pkg-info"))
+(add-to-list 'load-path (concat my-emacs-path "elisp/s"))
+(add-to-list 'load-path (concat my-emacs-path "elisp/nrepl"))
+(require 'nrepl)
+(require 'clojure-test-mode)
+
 ;; Protobuf
 (require 'protobuf-mode)
 (add-to-list 'auto-mode-alist '("\\.proto\\'" . protobuf-mode))

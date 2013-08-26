@@ -1,10 +1,10 @@
 ;;; cl-lib.el --- Properly prefixed CL functions and macros  -*- coding: utf-8 -*-
 
-;; Copyright (C) 2012  Free Software Foundation, Inc.
+;; Copyright (C) 2012, 2013  Free Software Foundation, Inc.
 
 ;; Author: Stefan Monnier <monnier@iro.umontreal.ca>
 ;; vcomment: Emacs-24.3's version is 1.0 so this has to stay below.
-;; Version: 0.2
+;; Version: 0.3
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -309,12 +309,21 @@
 
 (unless (fboundp 'cl-labels)
   (defmacro cl-labels (&rest args)
-    (if (and (boundp 'lexical-binding) lexical-binding)
-        `(labels ,@args)
-      (error "`cl-labels' with dynamic scoping is not implemented"))))
+    (unless (and (boundp 'lexical-binding) lexical-binding)
+      ;; We used to signal an error rather than a message, but in many uses of
+      ;; cl-labels, the value of lexical-binding doesn't actually matter.
+      ;; More importantly, the value of `lexical-binding' here is unreliable
+      ;; (it does not necessarily reflect faithfully whether the output of this
+      ;; macro will be interpreted as lexically bound code or not).
+      (message "This `cl-labels' requires `lexical-binding' to be non-nil"))
+    `(labels ,@args)))
 
 ;;;; ChangeLog:
 
+;; 2013-05-22  Stefan Monnier  <monnier@iro.umontreal.ca>
+;; 
+;; 	* cl-lib.el (cl-labels): Demote error to message and improve it.
+;; 
 ;; 2012-11-30  Stefan Monnier  <monnier@iro.umontreal.ca>
 ;; 
 ;; 	* cl-lib.el: Try and patch things up in case we're hiding the real cl-lib.
