@@ -1,9 +1,11 @@
 #!/bin/bash
 
 if uname | grep 'MINGW32' > /dev/null; then
-    ON_WINDOWS=y
+    OS=Windows
+elif uname | grep 'Darwin' > /dev/null; then
+    OS=OSX
 else
-    ON_WINDOWS=
+    OS=Linux
 fi
 
 if which make > /dev/null; then
@@ -35,7 +37,7 @@ fi
 
 set -e
 
-echo "ON_WINDOWS : $ON_WINDOWS"
+echo "OS         : $OS"
 echo "BUILD      : $BUILD"
 echo "BUILD_DOCS : $BUILD_DOCS"
 echo "DESTDIR    : $DESTDIR"
@@ -76,8 +78,11 @@ if test -n "$BUILD"; then
 
     # js2-mode
     (
-        cd elisp/js2-mode
-        make clean all
+        # Skip compilation on OS X since we get an error when using compiled version there
+        if test "$OS" != "OSX"; then
+            cd elisp/js2-mode
+            make clean all
+        fi
     )
 
     # magit
