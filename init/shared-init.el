@@ -547,6 +547,10 @@
   (local-set-key "\C-cp" my-muse-prefix-map))
 (add-hook 'confluence-edit-mode-hook #'my-confluence-set-keys)
 
+(defun my-text-mode-confluence-keys ()
+  (local-set-key (kbd "C-c .") #'confluence-get-page-at-point))
+(add-hook 'text-mode-hook #'my-text-mode-confluence-keys)
+
 ;;; Keybinds
 (global-set-key "\C-cwf" 'confluence-get-page)
 
@@ -1204,10 +1208,6 @@ between the two tags."
 ;;; Key customizations
 
 ;; Local
-(defun my-muse-mode-keys ()
-  (when (my-emacs-feature-enabled 'muse)
-    (local-set-key (kbd "C-c .") #'confluence-get-page-at-point)))
-(add-hook 'muse-mode-hook #'my-muse-mode-keys)
 (add-hook 'muse-mode-hook #'footnote-mode)
 
 ;; Global
