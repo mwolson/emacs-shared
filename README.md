@@ -37,7 +37,7 @@ You may want to pick up [Homebrew](http://mxcl.github.io/homebrew/) for easier i
 
 This is useful for doing git development, since Pageant can hold onto your git keys and auto-load them when Windows starts.  If you've already installed PuTTY in the past, make sure that you have have at least version 0.62 installed, since earlier versions might fail in ways that are difficult to diagnose.
 
-### (Windows only) Install MSYS
+### (Windows only) Install MinGW
 
 If you want to be able to byte-compile Emacs Lisp libraries, you'll need a working version of "make.exe".  Here's the recommended steps for that:
 - Download and run the [MinGW installer](http://www.mingw.org/)
@@ -215,7 +215,6 @@ To Do
 - Decide whether to document the `ALTERNATE_EDITOR` environment variable on Windows; may be useful for those who want
   to make view source or double-click on various file types open up in an existing Emacs frame
 - Document how to remap Caps Lock to Control (recommended as it can be more ergonomic)
-- Decide whether setting up MSYS on Windows gives us anything useful that Git does not include already
 
 License
 -------
