@@ -37,6 +37,7 @@
            "/usr/local/bin"))
         ((eq system-type 'windows-nt)
          '("C:/Program Files (x86)/Emacs/bin"
+	   "C:/MinGW/bin"
 	   "C:/MinGW/msys/1.0/bin"
 	   "C:/Program Files (x86)/Git/bin"
 	   "C:/Program Files (x86)/Aspell/bin"

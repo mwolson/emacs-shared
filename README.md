@@ -37,6 +37,16 @@ You may want to pick up [Homebrew](http://mxcl.github.io/homebrew/) for easier i
 
 This is useful for doing git development, since Pageant can hold onto your git keys and auto-load them when Windows starts.  If you've already installed PuTTY in the past, make sure that you have have at least version 0.62 installed, since earlier versions might fail in ways that are difficult to diagnose.
 
+### (Windows only) Install MSYS
+
+If you want to be able to byte-compile Emacs Lisp libraries, you'll need a working version of "make.exe".  Here's the recommended steps for that:
+- Download and run the [MinGW installer](http://www.mingw.org/)
+- Install mingw32-make (NOT msys-make) from the GUI installer
+- Bring up a Git Bash prompt
+- `cd /c/MinGW/bin`
+- `ln -s /c/MinGW/bin/mingw32-make.exe make.exe`
+- When you change PATH in the later instructions, add this to the end of PATH as well: `C:\MinGW\bin`
+
 ### (Optional) Install Aspell
 
 Install Aspell and an Aspell dictionary for your language for spell-checking.  This is more likely to be useful on Windows, which does not come with an ispell variant.
@@ -54,7 +64,8 @@ The recommended version is Emacs 24.3.  The recommended installers for each OS a
   - Open `Control Panel -> System -> Advanced System Settings (on left) -> Environment Variables`.
   - In User Variables, Inspect `HOME` and make sure it points to something like `C:\Users\You`.
   - In one of User Variables or System Variables (depending on whether you want the change to apply to all users or just you), edit `PATH` and make sure `C:\Program Files (x86)\Emacs\bin` is there, with a semicolon separating it from the other entries.
-  - If you have chosen to use PuTTY, then make sure that the `GIT_SSH` variable is set to `C:\Program Files (x86)\PuTTY\plink.exe` (or wherever PuTTY is installed).
+  - Don't forget to add `C:\MinGW\bin` as well, if you're using MinGW
+- If you have chosen to use PuTTY, then make sure that the `GIT_SSH` variable is set to `C:\Program Files (x86)\PuTTY\plink.exe` (or wherever PuTTY is installed).
   - Click OK
   - Relaunch any open Git Bash windows
 
