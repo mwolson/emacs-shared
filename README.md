@@ -158,6 +158,13 @@ If you are new to Emacs and very proficient with `vi`, then add this to the end 
 
 Open `Start Menu -> Gnu Emacs -> Emacs`.  This should point to the file `C:\Program Files (x86)\Emacs\bin\runemacs.exe`.
 
+*Windows Taskbar*
+
+To pin Emacs to the Taskbar / Quick Launch bar and have it behave correctly:
+- First pin it
+- Then right-click its Taskbar button, right-click "Emacs", click "Properties"
+- Change "C:\Program Files (x86)\Emacs\bin\emacs.exe" to "C:\Program Files (x86)\Emacs\bin\runemacs.exe"
+
 *Mac OS X*
 
 Open `Applications -> Emacs`.
@@ -196,7 +203,6 @@ To Do
 - Include various Emacs registry hacks for Windows (like Edit with Emacs)
 - Decide whether to document the `ALTERNATE_EDITOR` environment variable on Windows; may be useful for those who want
   to make view source or double-click on various file types open up in an existing Emacs frame
-- Document the hack to make the Quick Launch icon work as expected on Windows
 - Document how to remap Caps Lock to Control (recommended as it can be more ergonomic)
 - Decide whether setting up MSYS on Windows gives us anything useful that Git does not include already
 
