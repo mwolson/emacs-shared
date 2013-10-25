@@ -52,9 +52,9 @@
   "List of annoying things in titles to strip out.")
 (defvar my-emms-np-interval 5
   "How often (in seconds) to check whether the current song has changed.")
-(defvar my-emms-playlist-dir (concat my-music-local-path "/playlists"))
 (defvar my-music-local-path  "~/Music")
 (defvar my-music-remote-path "~/Music")
+(defvar my-emms-playlist-dir (concat my-music-local-path "/playlists"))
 
 ;; Muse settings
 (defvar my-muse-path         (concat my-emacs-path "tpl/muse/"))
