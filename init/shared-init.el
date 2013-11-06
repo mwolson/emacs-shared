@@ -380,10 +380,23 @@
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 
-;; BUG: self is not a browser extern, just a convention that needs checking
 (eval-after-load 'js2-mode
   `(progn
-     (setq js2-browser-externs (delete "self" js2-browser-externs))))
+     ;; BUG: self is not a browser extern, just a convention that needs checking
+     (setq js2-browser-externs (delete "self" js2-browser-externs))
+
+     ;; Consider the chai 'expect()' statement to have side-effects, so we don't warn about it
+     (defun js2-add-strict-warning (msg-id &optional msg-arg beg end)
+       (if (and js2-compiler-strict-mode
+                (not (and (string= msg-id "msg.no.side.effects")
+                          (string= (buffer-substring-no-properties beg (+ beg 7)) "expect("))))
+           (js2-report-warning msg-id msg-arg beg
+                               (and beg end (- end beg)))))))
+
+;; Add support for some mocha testing externs
+(setq-default js2-additional-externs
+              (mapcar 'symbol-name
+                      '(after afterEach before beforeEach describe it)))
 
 ;; Node REPL using SLIME
 (add-to-list 'load-path (concat my-emacs-path "elisp/slime"))
