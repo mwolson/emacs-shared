@@ -398,6 +398,14 @@
               (mapcar 'symbol-name
                       '(after afterEach before beforeEach describe it)))
 
+;; Highlight node.js stacktraces in *compile* buffers
+(defvar my-nodejs-compilation-regexp
+  '("^[ \t]+at .+(\\([^()\n]+\\):\\([0-9]+\\):\\([0-9]+\\))$" 1 2 3))
+
+(add-to-list 'compilation-error-regexp-alist-alist
+             (cons 'nodejs my-nodejs-compilation-regexp))
+(add-to-list 'compilation-error-regexp-alist 'nodejs)
+
 ;; Node REPL using SLIME
 (add-to-list 'load-path (concat my-emacs-path "elisp/slime"))
 (add-to-list 'load-path (concat my-emacs-path "elisp/slime/contrib"))
