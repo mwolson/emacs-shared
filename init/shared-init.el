@@ -406,6 +406,13 @@
              (cons 'nodejs my-nodejs-compilation-regexp))
 (add-to-list 'compilation-error-regexp-alist 'nodejs)
 
+;; Add support for Jade templates
+(add-to-list 'load-path (concat my-emacs-path "elisp/jade-mode"))
+(require 'sws-mode)
+(require 'jade-mode)
+(add-to-list 'auto-mode-alist '("\\.styl$" . sws-mode))
+(add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode))
+
 ;; Node REPL using SLIME
 (add-to-list 'load-path (concat my-emacs-path "elisp/slime"))
 (add-to-list 'load-path (concat my-emacs-path "elisp/slime/contrib"))
