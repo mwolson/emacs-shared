@@ -400,7 +400,7 @@
 
 ;; Highlight node.js stacktraces in *compile* buffers
 (defvar my-nodejs-compilation-regexp
-  '("^[ \t]+at .+(\\([^()\n]+\\):\\([0-9]+\\):\\([0-9]+\\))$" 1 2 3))
+  '("^[ \t]+at +\\(?:.+(\\)?\\([^()\n]+\\):\\([0-9]+\\):\\([0-9]+\\))?$" 1 2 3))
 
 (add-to-list 'compilation-error-regexp-alist-alist
              (cons 'nodejs my-nodejs-compilation-regexp))
