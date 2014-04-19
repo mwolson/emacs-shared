@@ -22,6 +22,9 @@
 [submodule "elisp/erc"]
 	path = elisp/erc
 	url = https://github.com/mwolson/erc.git
+[submodule "elisp/feature-mode"]
+	path = elisp/feature-mode
+	url = https://github.com/michaelklishin/cucumber.el
 [submodule "elisp/ido-ubiquitous"]
 	path = elisp/ido-ubiquitous
 	url = https://github.com/technomancy/ido-ubiquitous.git

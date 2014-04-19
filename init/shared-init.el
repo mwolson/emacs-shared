@@ -413,6 +413,11 @@
 (add-to-list 'auto-mode-alist '("\\.styl$" . sws-mode))
 (add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode))
 
+;; Add support for .feature files used with Cucumber
+(add-to-list 'load-path (concat my-emacs-path "elisp/feature-mode"))
+(require 'feature-mode)
+(add-to-list 'auto-mode-alist '("\.feature$" . feature-mode))
+
 ;; Node REPL using SLIME
 (add-to-list 'load-path (concat my-emacs-path "elisp/slime"))
 (add-to-list 'load-path (concat my-emacs-path "elisp/slime/contrib"))
