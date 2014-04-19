@@ -156,13 +156,6 @@ emacs -q -nw init.el  # or other editing command
 (load-file (concat my-emacs-path "init/shared-init.el"))
 ```
 
-If you are new to Emacs and very proficient with `vi`, then add this to the end of `init.el` to install VIPER *(VI Plan for Emacs Rescue)*.  This will use vi-like keys.  If you're not a vi guru, then it's probably best to not do this.
-
-```lisp
-;; Enable Vi emulation
-(require 'viper)
-```
-
 ### Start Emacs
 
 *Windows*
