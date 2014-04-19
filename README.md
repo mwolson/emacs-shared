@@ -29,6 +29,13 @@ On Windows, the best way to do this is with [Git Extensions](https://code.google
 
 On Mac OS X, the best way to do this is to install Xcode from App Store, and then install the Command Line Tools for Xcode using the Downloads preferences pane within Xcode 4.6.1 and later.
 
+### (Windows only) Install Git manpages
+
+The Windows installer doesn't include manpages.  If you want them (and they're readable with this Emacs configuration by doing `M-x man`) then follow these steps:
+
+- Find and download the manpages for your version of git from [the Git download list](https://code.google.com/p/git-core/downloads/list)
+- Extract them to "C:\Program Files (x86)\Git\share\man", which will probably be a new folder.  That folder should contain directories like "man7" after extraction if you did it right.
+
 ### (Mac OS X only) Install Homebrew
 
 You may want to pick up [Homebrew](http://mxcl.github.io/homebrew/) for easier installation of other useful tools, though it's not a strict requirement.
