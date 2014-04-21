@@ -47,9 +47,13 @@ This is useful for doing git development, since Pageant can hold onto your git k
 ### (Windows only) Install MinGW
 
 If you want to be able to byte-compile Emacs Lisp libraries, you'll need a working version of "make.exe".  Here's the recommended steps for that:
-- Download and run the [MinGW installer](http://www.mingw.org/)
-- Install mingw32-make (NOT msys-make) from the GUI installer
-- Bring up a Git Bash prompt
+- Download the [MinGW installer](http://www.mingw.org/)
+- Run the installer
+- Run the mingw32-get.exe file (it should be in `C:/MinGW/bin`)
+- Click on "All Packages" on the left
+- Find mingw32-make, the "bin" version, right-click on it, "Mark for Installation"
+- On the Installation menu, click on Apply Changes
+- When this is done, bring up a Git Bash prompt and run:
 - `cd /c/MinGW/bin`
 - `ln -s /c/MinGW/bin/mingw32-make.exe make.exe`
 - When you change PATH in the later instructions, add this to the end of PATH as well: `C:\MinGW\bin`
