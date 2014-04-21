@@ -73,6 +73,7 @@ The recommended version is Emacs 24.3.  The recommended installers for each OS a
 - If you change the location, you may want to update the `my-system-paths` option later.
 - Adjust some environment variables so that the Bootstrap and Start Emacs steps work.
   - Open `Control Panel -> System -> Advanced System Settings (on left) -> Environment Variables`.
+  - Note: If any of the below variables aren't present, click on "Add" to add them
   - In User Variables, Inspect `HOME` and make sure it points to something like `C:\Users\You`.
   - In one of User Variables or System Variables (depending on whether you want the change to apply to all users or just you), edit `PATH` and make sure `C:\Program Files (x86)\Emacs\bin` is there, with a semicolon separating it from the other entries.
   - Don't forget to add `C:\MinGW\bin` as well, if you're using MinGW
