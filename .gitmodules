@@ -37,9 +37,6 @@
 [submodule "elisp/magit"]
 	path = elisp/magit
 	url = https://github.com/mwolson/magit.git
-[submodule "elisp/markdown-mode"]
-	path = elisp/markdown-mode
-	url = https://github.com/znag/markdown-mode.git
 [submodule "elisp/maxframe-el"]
 	path = elisp/maxframe-el
 	url = https://github.com/rmm5t/maxframe.el.git

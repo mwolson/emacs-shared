@@ -553,7 +553,6 @@
 (add-hook 'allout-mode-hook 'allout-show-all)
 
 ;; Markdown support
-(add-to-list 'load-path (concat my-emacs-path "elisp/markdown-mode"))
 (autoload 'markdown-mode "markdown-mode"
    "Major mode for editing Markdown files" t)
 (setq auto-mode-alist
