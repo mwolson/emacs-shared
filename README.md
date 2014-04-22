@@ -146,12 +146,16 @@ cd ~/emacs-shared
 ./bootstrap.sh
 ```
 
+### Read up a bit on Emacs usage
+
+At this point, it's recommended to [familiarize yourself with how to open and save files using Emacs](http://mally.stanford.edu/~sr/computing/emacs.html).
+
 ### Create a ~/.emacs.d/init.el file
 
 ```sh
 mkdir -p ~/.emacs.d
 cd ~/.emacs.d
-emacs -q -nw init.el  # or other editing command
+emacs -q init.el  # or other editing command
 ```
 
 `init.el` contents, change these as appropriate:
