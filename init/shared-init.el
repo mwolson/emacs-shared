@@ -406,6 +406,9 @@
              (cons 'nodejs my-nodejs-compilation-regexp))
 (add-to-list 'compilation-error-regexp-alist 'nodejs)
 
+;; Open files that start with "#!/usr/bin/env node" in js2-mode
+(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+
 ;; Add support for Jade templates
 (add-to-list 'load-path (concat my-emacs-path "elisp/jade-mode"))
 (require 'sws-mode)
