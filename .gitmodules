@@ -10,6 +10,9 @@
 [submodule "elisp/dash"]
 	path = elisp/dash
 	url = https://github.com/magnars/dash.el.git
+[submodule "elisp/edit-server-htmlize"]
+	path = elisp/edit-server-htmlize
+	url = https://github.com/frobtech/edit-server-htmlize
 [submodule "elisp/emacs_chrome"]
 	path = elisp/emacs_chrome
 	url = https://github.com/stsquad/emacs_chrome.git
