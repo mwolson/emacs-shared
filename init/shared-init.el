@@ -567,6 +567,12 @@
 (setq auto-mode-alist
    (cons '("\\.\\(markdown\\|md\\)" . markdown-mode) auto-mode-alist))
 
+;; Don't mess with keys that I'm used to
+(defun my-markdown-mode-keys ()
+  (define-key markdown-mode-map (kbd "<M-right>") #'forward-word)
+  (define-key markdown-mode-map (kbd "<M-left>") #'backward-word))
+(add-hook 'markdown-mode-hook #'my-markdown-mode-keys)
+
 ;;; BEGIN confluence ;;;
 (when (my-emacs-feature-enabled 'confluence)
 
