@@ -455,6 +455,12 @@
 (require 'nrepl)
 (require 'clojure-test-mode)
 
+;; Enable LUA mode
+(add-to-list 'load-path (concat my-emacs-path "elisp/lua-mode"))
+(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
+(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
+(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
+
 ;; Protobuf
 (require 'protobuf-mode)
 (add-to-list 'auto-mode-alist '("\\.proto\\'" . protobuf-mode))

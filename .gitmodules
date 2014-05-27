@@ -37,6 +37,9 @@
 [submodule "elisp/js2-mode"]
 	path = elisp/js2-mode
 	url = https://github.com/mooz/js2-mode.git
+[submodule "elisp/lua-mode"]
+	path = elisp/lua-mode
+	url = https://github.com/immerrr/lua-mode.git
 [submodule "elisp/magit"]
 	path = elisp/magit
 	url = https://github.com/mwolson/magit.git
