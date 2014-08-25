@@ -1,3 +1,6 @@
+[submodule "elisp/auto-complete"]
+	path = elisp/auto-complete
+	url = https://github.com/auto-complete/auto-complete.git
 [submodule "elisp/browse-kill-ring"]
 	path = elisp/browse-kill-ring
 	url = https://github.com/browse-kill-ring/browse-kill-ring.git
@@ -22,6 +25,9 @@
 [submodule "elisp/emms"]
 	path = elisp/emms
 	url = git://git.sv.gnu.org/emms.git
+[submodule "elisp/ensime"]
+	path = elisp/ensime
+	url = https://github.com/ensime/ensime-emacs.git
 [submodule "elisp/erc"]
 	path = elisp/erc
 	url = https://github.com/mwolson/erc.git
@@ -58,9 +64,18 @@
 [submodule "elisp/pkg-info"]
 	path = elisp/pkg-info
 	url = https://github.com/lunaryorn/pkg-info.el.git
+[submodule "elisp/popup-el"]
+	path = elisp/popup-el
+	url = https://github.com/auto-complete/popup-el.git
 [submodule "elisp/s"]
 	path = elisp/s
 	url = https://github.com/magnars/s.el
+[submodule "elisp/sbt-mode"]
+	path = elisp/sbt-mode
+	url = https://github.com/hvesalai/sbt-mode.git
+[submodule "elisp/scala-mode2"]
+	path = elisp/scala-mode2
+	url = https://github.com/hvesalai/scala-mode2.git
 [submodule "elisp/sepia"]
 	path = elisp/sepia
 	url = https://github.com/emacsmirror/sepia.git

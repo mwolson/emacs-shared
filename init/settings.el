@@ -163,6 +163,7 @@
  '(save-place t nil (saveplace))
  '(save-place-file "~/.emacs.d/.places")
  '(save-place-limit 20)
+ '(sbt:default-command "test:compile console")
  '(show-paren-mode t)
  '(show-paren-style (quote parenthesis))
  '(smex-save-file "~/.emacs.d/.smex-items")

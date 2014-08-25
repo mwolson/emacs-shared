@@ -45,6 +45,7 @@ echo
 
 git submodule init
 git submodule sync
+git submodule update --depth 1 elisp/ensime
 git submodule update
 echo
 
@@ -106,6 +107,18 @@ if test -n "$BUILD"; then
             make muse.info
             install_info muse.info
         fi
+    )
+
+    # sbt-mode
+    (
+        cd elisp/sbt-mode
+        make clean all
+    )
+
+    # scala-mode2
+    (
+        cd elisp/scala-mode2
+        make clean all
     )
 
     # Sepia
