@@ -41,7 +41,8 @@
 	   "C:/MinGW/msys/1.0/bin"
 	   "C:/Program Files (x86)/Git/bin"
 	   "C:/Program Files (x86)/Aspell/bin"
-	   "C:/Program Files (x86)/PuTTY"))
+	   "C:/Program Files (x86)/PuTTY"
+           "C:/Program Files (x86)/sbt/bin"))
         (t nil)))
 (setq my-system-paths (remove-if-not #'file-exists-p my-system-paths))
 
