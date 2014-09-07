@@ -472,14 +472,6 @@
 (add-to-list 'load-path (concat my-emacs-path "elisp/sbt-mode"))
 (require 'sbt-mode)
 
-;; Ensime (disabled since throws errors when you don't have a project, which is annoying)
-;; (add-to-list 'load-path (concat my-emacs-path "elisp/popup-el"))
-;; (require 'popup)
-;; (add-to-list 'load-path (concat my-emacs-path "elisp/auto-complete"))
-;; (add-to-list 'load-path (concat my-emacs-path "elisp/ensime"))
-;; (require 'ensime)
-;; (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
-
 ;; ANSI colors in compile buffer
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()

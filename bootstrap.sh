@@ -45,7 +45,6 @@ echo
 
 git submodule init
 git submodule sync
-git submodule update --depth 1 elisp/ensime
 git submodule update
 echo
 

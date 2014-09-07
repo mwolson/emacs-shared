@@ -25,9 +25,6 @@
 [submodule "elisp/emms"]
 	path = elisp/emms
 	url = git://git.sv.gnu.org/emms.git
-[submodule "elisp/ensime"]
-	path = elisp/ensime
-	url = https://github.com/ensime/ensime-emacs.git
 [submodule "elisp/erc"]
 	path = elisp/erc
 	url = https://github.com/mwolson/erc.git
