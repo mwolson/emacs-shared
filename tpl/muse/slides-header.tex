@@ -1,5 +1,11 @@
 \documentclass[ignorenonframetext]{beamer}
 
+\usetheme{<lisp>(or (muse-publishing-directive "theme") "default")</lisp>}
+\usecolortheme{<lisp>(or (muse-publishing-directive "color-theme") "default")</lisp>}
+
+% Turn navigation bar off
+\beamertemplatenavigationsymbolsempty
+
 \usepackage[english]{babel}
 \usepackage{ucs}
 \usepackage[utf8x]{inputenc}
@@ -21,6 +27,8 @@
 \title{<lisp>(muse-publish-escape-specials-in-string
   (muse-publishing-directive "title") 'document)</lisp>}
 \author{<lisp>(muse-publishing-directive "author")</lisp>}
+<lisp>(let ((inst (muse-publishing-directive "institute")))
+        (and inst (concat "\\institute{" inst "}")))</lisp>
 \date{<lisp>(muse-publishing-directive "date")</lisp>}
 
 \begin{document}
