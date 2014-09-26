@@ -472,6 +472,12 @@
 (add-to-list 'load-path (concat my-emacs-path "elisp/sbt-mode"))
 (require 'sbt-mode)
 
+;; Emacs-eclim
+;; (add-to-list 'load-path (concat my-emacs-path "elisp/emacs-eclim"))
+;; (require 'eclim)
+;; (require 'eclimd)
+;; (global-eclim-mode)
+
 ;; ANSI colors in compile buffer
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()

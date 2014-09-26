@@ -85,3 +85,6 @@
 [submodule "elisp/tt-mode"]
 	path = elisp/tt-mode
 	url = https://github.com/davorg/tt-mode.git
+[submodule "elisp/emacs-eclim"]
+	path = elisp/emacs-eclim
+	url = https://github.com/senny/emacs-eclim.git
