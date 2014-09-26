@@ -27,7 +27,7 @@
 (defvar my-use-themes        (boundp 'custom-theme-load-path))
 (defvar my-emacs-features    (if (string-equal "root" (getenv "USER"))
                                  nil
-                               '(confluence erc muse magit)))
+                               '(erc magit)))
 (defvar my-recent-files      nil)
 (defvar my-settings-shared-p (not (file-exists-p (locate-user-emacs-file "settings.el"))))
 (defvar my-system-paths
@@ -472,12 +472,6 @@
 (add-to-list 'load-path (concat my-emacs-path "elisp/sbt-mode"))
 (require 'sbt-mode)
 
-;; Emacs-eclim
-;; (add-to-list 'load-path (concat my-emacs-path "elisp/emacs-eclim"))
-;; (require 'eclim)
-;; (require 'eclimd)
-;; (global-eclim-mode)
-
 ;; ANSI colors in compile buffer
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
@@ -622,6 +616,18 @@
 (global-set-key "\C-cwf" 'confluence-get-page)
 
 );;; END confluence
+
+;;; BEGIN eclim ;;;
+
+(when (my-emacs-feature-enabled 'eclim)
+
+;; Setup
+(add-to-list 'load-path (concat my-emacs-path "elisp/emacs-eclim"))
+(require 'eclim)
+(require 'eclimd)
+(global-eclim-mode)
+
+);;; END eclim
 
 ;;; BEGIN emms ;;;
 
