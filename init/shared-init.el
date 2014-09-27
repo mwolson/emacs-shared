@@ -627,6 +627,19 @@
 (require 'eclimd)
 (global-eclim-mode)
 
+(setq help-at-pt-display-when-idle t
+      help-at-pt-timer-delay 0.1)
+
+(help-at-pt-set-timer)
+
+;; Hook eclim up with auto complete mode
+(add-to-list 'load-path (concat my-emacs-path "elisp/auto-complete"))
+(add-to-list 'load-path (concat my-emacs-path "elisp/popup-el"))
+(require 'auto-complete-config)
+(ac-config-default)
+(require 'ac-emacs-eclim-source)
+(ac-emacs-eclim-config)
+
 );;; END eclim
 
 ;;; BEGIN emms ;;;
