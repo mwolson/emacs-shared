@@ -626,7 +626,9 @@
 (require 'eclim)
 (require 'eclimd)
 (global-eclim-mode)
+(setq eclim-auto-save nil)
 
+;; Make help-at-point display more quickly
 (setq help-at-pt-display-when-idle t
       help-at-pt-timer-delay 0.1)
 
