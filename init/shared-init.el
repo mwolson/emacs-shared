@@ -640,6 +640,10 @@
 (require 'ac-emacs-eclim-source)
 (ac-emacs-eclim-config)
 
+;; Keybindings
+(define-key java-mode-map (kbd "M-RET") 'eclim-problems-correct)
+(define-key java-mode-map (kbd "<s-return>") 'eclim-java-find-declaration)
+
 );;; END eclim
 
 ;;; BEGIN emms ;;;
