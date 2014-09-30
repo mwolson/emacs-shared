@@ -588,6 +588,17 @@
   (define-key markdown-mode-map (kbd "<M-left>") #'backward-word))
 (add-hook 'markdown-mode-hook #'my-markdown-mode-keys)
 
+;; Profiling
+(require 'profiler)
+(cl-defmacro with-cpu-profiling (&rest body)
+  `(unwind-protect
+       (progn
+         (ignore-errors (profiler-cpu-log))
+         (profiler-cpu-start profiler-sampling-interval)
+         ,@body)
+     (profiler-report-cpu)
+     (profiler-cpu-stop)))
+
 ;;; BEGIN confluence ;;;
 (when (my-emacs-feature-enabled 'confluence)
 
@@ -628,7 +639,8 @@
 (require 'eclim)
 (require 'eclimd)
 (global-eclim-mode)
-(setq eclim-auto-save nil)
+(setq eclim-accepted-file-regexps '("\\.java")
+      eclim-auto-save nil)
 
 ;; Make help-at-point display more quickly
 (setq help-at-pt-display-when-idle t
