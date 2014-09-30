@@ -42,7 +42,9 @@
 	   "C:/Program Files (x86)/Git/bin"
 	   "C:/Program Files (x86)/Aspell/bin"
 	   "C:/Program Files (x86)/PuTTY"
-           "C:/Program Files (x86)/sbt/bin"))
+           "C:/Program Files (x86)/maven/bin"
+           "C:/Program Files (x86)/sbt/bin"
+           "C:/eclipse"))
         (t nil)))
 (setq my-system-paths (remove-if-not #'file-exists-p my-system-paths))
 
@@ -644,7 +646,9 @@
 
 ;; Keybindings
 (define-key java-mode-map (kbd "M-RET") 'eclim-problems-correct)
-(define-key java-mode-map (kbd "<s-return>") 'eclim-java-find-declaration)
+(if (eq window-system 'ns)
+    (define-key java-mode-map (kbd "<s-return>") 'eclim-java-find-declaration)
+  (define-key java-mode-map (kbd "<C-M-return>") 'eclim-java-find-declaration))
 
 );;; END eclim
 
