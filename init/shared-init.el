@@ -656,6 +656,10 @@
 (require 'ac-emacs-eclim-source)
 (ac-emacs-eclim-config)
 
+;; Load yasnippet
+(add-to-list 'load-path (concat my-emacs-path "elisp/yasnippet"))
+(require 'yasnippet)
+
 ;; Keybindings
 (define-key java-mode-map (kbd "M-RET") 'eclim-problems-correct)
 (if (eq window-system 'ns)

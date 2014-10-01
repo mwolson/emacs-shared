@@ -88,3 +88,6 @@
 [submodule "elisp/tt-mode"]
 	path = elisp/tt-mode
 	url = https://github.com/davorg/tt-mode.git
+[submodule "elisp/yasnippet"]
+	path = elisp/yasnippet
+	url = https://github.com/capitaomorte/yasnippet.git
