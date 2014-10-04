@@ -12,7 +12,7 @@
 (defvar my-default-font      "Inconsolata-14")
 (defvar my-frame-height      50)
 (defvar my-frame-width       120)
-(defvar my-frame-maximize-p  (if (memq window-system '(ns w32)) t nil))
+(defvar my-frame-maximize-p  t)
 (defvar my-frame-pad-width   (if (eq window-system 'ns) 65 nil))
 (defvar my-frame-pad-height  (if (eq window-system 'ns) 15 nil))
 (defvar my-default-directory "~/")
@@ -103,6 +103,10 @@
 (defun my-reset-theme ()
   (interactive)
   (when my-use-themes
+    ;; try out a slightly lighter background color
+    (when (boundp 'solarized-colors)
+      (setcar solarized-colors
+              '(base03  "#04313a" "#042028" "#1c1c1c" "brightblack"   "black")))
     (load-theme 'solarized-dark t)))
 
 ;; This function should be called on the emacsclient commandline in cases where no file is being passed on commandline.
@@ -656,15 +660,24 @@
 (require 'ac-emacs-eclim-source)
 (ac-emacs-eclim-config)
 
+;; Integrate with company-mode
+;; (add-to-list 'load-path (concat my-emacs-path "elisp/company-mode"))
+;; (require 'company)
+;; (require 'company-emacs-eclim)
+;; (company-emacs-eclim-setup)
+;; (global-company-mode t)
+
 ;; Load yasnippet
 (add-to-list 'load-path (concat my-emacs-path "elisp/yasnippet"))
 (require 'yasnippet)
 
 ;; Keybindings
 (define-key java-mode-map (kbd "M-RET") 'eclim-problems-correct)
-(if (eq window-system 'ns)
-    (define-key java-mode-map (kbd "<s-return>") 'eclim-java-find-declaration)
-  (define-key java-mode-map (kbd "<C-M-return>") 'eclim-java-find-declaration))
+(define-key java-mode-map (kbd "<C-M-i>") 'eclim-java-implement)
+(cond ((eq window-system 'ns)
+       (define-key java-mode-map (kbd "<s-return>") 'eclim-java-find-declaration))
+      (t
+       (define-key java-mode-map (kbd "<C-M-return>") 'eclim-java-find-declaration)))
 
 );;; END eclim
 

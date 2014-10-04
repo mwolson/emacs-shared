@@ -159,7 +159,7 @@
  '(remember-filter-functions (quote ((lambda nil (delete-trailing-whitespace)))))
  '(remember-mode-hook (quote (muse-list-edit-minor-mode)))
  '(require-final-newline nil)
- '(safe-local-variable-values (quote ((allout-layout * 0 :))))
+ '(safe-local-variable-values (quote ((emacs-lisp-docstring-fill-column . 75) (allout-layout * 0 :))))
  '(save-place t nil (saveplace))
  '(save-place-file "~/.emacs.d/.places")
  '(save-place-limit 20)

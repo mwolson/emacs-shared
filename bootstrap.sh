@@ -60,6 +60,12 @@ if test -n "$BUILD"; then
         mkdir -p share/info
     fi
 
+    # company-mode
+    # (
+    #     cd elisp/company-mode
+    #     make clean compile
+    # )
+
     # EMMS
     (
         cd elisp/emms
