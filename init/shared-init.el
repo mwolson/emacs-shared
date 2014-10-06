@@ -645,7 +645,7 @@
 (require 'eclim)
 (require 'eclimd)
 (global-eclim-mode)
-(setq eclim-accepted-file-regexps '("\\.java")
+(setq eclim-accepted-file-regexps '("\\.java" "\\.sbt" "\\.scala" "\\.xml")
       eclim-auto-save nil)
 
 ;; Make help-at-point display more quickly
