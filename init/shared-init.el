@@ -28,7 +28,7 @@
 (defvar my-emacs-features    (if (string-equal "root" (getenv "USER"))
                                  nil
                                '(erc magit)))
-(defvar my-sbt-java7-command "sbt-java7")
+(defvar my-sbt-java7-command (if (eq system-type 'windows-nt) "sh -c sbt-java7" "sbt-java7"))
 (defvar my-recent-files      nil)
 (defvar my-settings-shared-p (not (file-exists-p (locate-user-emacs-file "settings.el"))))
 (defvar my-system-paths
@@ -486,6 +486,9 @@
   (interactive)
   (let ((sbt:program-name my-sbt-java7-command))
     (sbt-start)))
+
+(setq sbt:program-name
+      (if (eq system-type 'windows-nt) "sh -c sbt-windows" "sbt"))
 
 ;; ANSI colors in compile buffer
 (require 'ansi-color)

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# This is used to launch sbt on Windows
+
+exec sbt -Djline.terminal=jline.UnsupportedTerminal "$@"
