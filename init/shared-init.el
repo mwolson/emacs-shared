@@ -490,6 +490,20 @@
 (setq sbt:program-name
       (if (eq system-type 'windows-nt) "sh -c sbt-windows" "sbt"))
 
+;; Highlight scala test failures in *compile* buffers
+(defvar my-scalatest-compilation-regexp
+  '("^\\[info][ \t]+\\(?:.+(\\)?\\([^()\n]+\\):\\([0-9]+\\))?$" 1 2))
+(add-to-list 'compilation-error-regexp-alist-alist
+             (cons 'scalatest my-scalatest-compilation-regexp))
+(add-to-list 'compilation-error-regexp-alist 'scalatest)
+
+;; Highlight scala build failures in *compile* buffers
+(defvar my-scala-error-regexp
+  '("^\\[error][ \t]+\\([^()\n]+\\):\\([0-9]+\\):.*$" 1 2))
+(add-to-list 'compilation-error-regexp-alist-alist
+             (cons 'scalaerror my-scala-error-regexp))
+(add-to-list 'compilation-error-regexp-alist 'scalaerror)
+
 ;; ANSI colors in compile buffer
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
