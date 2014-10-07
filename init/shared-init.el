@@ -28,7 +28,7 @@
 (defvar my-emacs-features    (if (string-equal "root" (getenv "USER"))
                                  nil
                                '(erc magit)))
-(defvar my-jdk7-java-home    "")
+(defvar my-sbt-java7-command "sbt-java7")
 (defvar my-recent-files      nil)
 (defvar my-settings-shared-p (not (file-exists-p (locate-user-emacs-file "settings.el"))))
 (defvar my-system-paths
@@ -484,7 +484,7 @@
 (defun sbt-start-java7 ()
   "Start sbt with Java 7 JDK instead of the default one"
   (interactive)
-  (let ((sbt:program-name (concat "sbt --java-home \"" my-jdk7-java-home "\"")))
+  (let ((sbt:program-name my-sbt-java7-command))
     (sbt-start)))
 
 ;; ANSI colors in compile buffer

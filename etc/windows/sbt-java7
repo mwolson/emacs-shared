@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# This is used to launch sbt with a Java 7 JDK on Windows
+
+exec sbt -java-home "C:\PROGRA~1\Java\jdk1.7.0_67" -Djline.terminal=jline.UnsupportedTerminal "$@"

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# This is used to launch sbt with a Java 7 JDK on Linux
+
+exec sbt -java-home /usr/lib/jvm/java-7-openjdk-amd64 "$@"
