@@ -499,7 +499,8 @@
 ;; Send entire buffer to SBT REPL on C-M-x
 (defun my-sbt-eval-buffer ()
   (interactive)
-  (sbt-send-region (point-min) (point-max)))
+  (sbt-send-region (point-min) (point-max))
+  (other-window 1))
 
 (define-key scala-mode-map (kbd "C-M-x") #'my-sbt-eval-buffer)
 
