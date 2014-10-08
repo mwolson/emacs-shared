@@ -490,6 +490,31 @@
 (setq sbt:program-name
       (if (eq system-type 'windows-nt) "sh -c sbt-windows" "sbt"))
 
+;; Send entire buffer to SBT REPL on C-M-x
+(defun my-sbt-eval-buffer ()
+  (interactive)
+  (sbt-send-region (point-min) (point-max)))
+
+(define-key scala-mode-map (kbd "C-M-x") #'my-sbt-eval-buffer)
+
+;; SBT customizations
+(defun my-sbt-mode-hook ()
+  ;; compilation-skip-threshold tells the compilation minor-mode
+  ;; which type of compiler output can be skipped. 1 = skip info
+  ;; 2 = skip info and warnings.
+  (setq compilation-skip-threshold 1)
+
+  ;; Bind C-a to 'comint-bol when in sbt-mode. This will move the
+  ;; cursor to just after prompt.
+  (local-set-key (kbd "C-a") 'comint-bol)
+
+  ;; Bind M-RET to 'comint-accumulate. This will allow you to add
+  ;; more than one line to scala console prompt before sending it
+  ;; for interpretation. It will keep your command history cleaner.
+  (local-set-key (kbd "M-RET") 'comint-accumulate))
+
+(add-hook 'sbt-mode-hook #'my-sbt-mode-hook)
+
 ;; Highlight scala test failures in *compile* buffers
 (defvar my-scalatest-compilation-regexp
   '("^\\[info][ \t]+\\(?:.+(\\)?\\([^()\n]+\\):\\([0-9]+\\))?$" 1 2))
