@@ -490,6 +490,12 @@
 (setq sbt:program-name
       (if (eq system-type 'windows-nt) "sh -c sbt-windows" "sbt"))
 
+;; Grok Scala Worksheets
+(progn
+  (add-to-list 'auto-mode-alist
+               '("\\.sc\\'" . scala-mode))
+  (modify-coding-system-alist 'file "\\.sc\\'" 'utf-8))
+
 ;; Send entire buffer to SBT REPL on C-M-x
 (defun my-sbt-eval-buffer ()
   (interactive)
