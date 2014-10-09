@@ -504,7 +504,21 @@
 
 (define-key scala-mode-map (kbd "C-M-x") #'my-sbt-eval-buffer)
 
-;; SBT customizations
+;; Highlight scala test failures in *compile* and SBT buffers
+(defvar my-scalatest-compilation-regexp
+  '("^\\[info][ \t]+\\(?:.+(\\)?\\([^()\n]+\\):\\([0-9]+\\))?$" 1 2))
+(add-to-list 'compilation-error-regexp-alist-alist
+             (cons 'scalatest my-scalatest-compilation-regexp))
+(add-to-list 'compilation-error-regexp-alist 'scalatest)
+
+;; Highlight scala build failures in *compile* and SBT buffers
+(defvar my-scala-error-regexp
+  '("^\\[error][ \t]+\\([^()\n]+\\):\\([0-9]+\\):.*$" 1 2))
+(add-to-list 'compilation-error-regexp-alist-alist
+             (cons 'scalaerror my-scala-error-regexp))
+(add-to-list 'compilation-error-regexp-alist 'scalaerror)
+
+;; SBT mode hook customizations
 (defun my-sbt-mode-hook ()
   ;; compilation-skip-threshold tells the compilation minor-mode
   ;; which type of compiler output can be skipped. 1 = skip info
@@ -518,23 +532,13 @@
   ;; Bind M-RET to 'comint-accumulate. This will allow you to add
   ;; more than one line to scala console prompt before sending it
   ;; for interpretation. It will keep your command history cleaner.
-  (local-set-key (kbd "M-RET") 'comint-accumulate))
+  (local-set-key (kbd "M-RET") 'comint-accumulate)
 
-(add-hook 'sbt-mode-hook #'my-sbt-mode-hook)
+  ;; Re-add our scalatest matcher since SBT wipes it
+  (add-to-list (make-local-variable 'compilation-error-regexp-alist)
+               'scalatest))
 
-;; Highlight scala test failures in *compile* buffers
-(defvar my-scalatest-compilation-regexp
-  '("^\\[info][ \t]+\\(?:.+(\\)?\\([^()\n]+\\):\\([0-9]+\\))?$" 1 2))
-(add-to-list 'compilation-error-regexp-alist-alist
-             (cons 'scalatest my-scalatest-compilation-regexp))
-(add-to-list 'compilation-error-regexp-alist 'scalatest)
-
-;; Highlight scala build failures in *compile* buffers
-(defvar my-scala-error-regexp
-  '("^\\[error][ \t]+\\([^()\n]+\\):\\([0-9]+\\):.*$" 1 2))
-(add-to-list 'compilation-error-regexp-alist-alist
-             (cons 'scalaerror my-scala-error-regexp))
-(add-to-list 'compilation-error-regexp-alist 'scalaerror)
+(add-hook 'sbt-mode-hook #'my-sbt-mode-hook t)
 
 ;; ANSI colors in compile buffer
 (require 'ansi-color)
