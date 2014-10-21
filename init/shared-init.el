@@ -33,7 +33,8 @@
 (defvar my-settings-shared-p (not (file-exists-p (locate-user-emacs-file "settings.el"))))
 (defvar my-system-paths
   (cond ((eq system-type 'darwin)
-         '("~/bin"
+         '("~/emacs-shared/bin"
+           "~/bin"
            "/Applications/Xcode.app/Contents/Developer/usr/bin"
            "/usr/local/bin"))
         ((eq system-type 'windows-nt)
