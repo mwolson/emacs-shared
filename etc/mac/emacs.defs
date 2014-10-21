@@ -1,0 +1,2 @@
+CLIENT=/Applications/Emacs.app/Contents/MacOS/bin/emacsclient
+DAEMON=/Applications/Emacs.app/Contents/MacOS/Emacs

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+. ~/bin/emacs.defs
+
+exec $CLIENT -n -c -e '(my-init-client)' $@
