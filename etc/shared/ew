@@ -2,4 +2,8 @@
 
 . ~/bin/emacs.defs
 
-exec $CLIENT -n -c -e '(my-init-client)' $@
+if test "$#" -gt 0; then
+    exec $CLIENT -c $@
+else
+    exec $CLIENT -n -c -e '(my-init-client)'
+fi
