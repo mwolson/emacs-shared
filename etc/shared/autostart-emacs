@@ -2,9 +2,9 @@
 #
 # Automatically start Emacs as a daemon if not started already.
 
-. ~/bin/emacs.defs
+. ~/emacs-shared/bin/emacs.defs
 
-LOCK=~/bin/lock-emacs
+LOCK=~/emacs-shared/bin/lock-emacs
 
 lockfile -0 -r 0 $LOCK > /dev/null 2>&1 || exit 0
 

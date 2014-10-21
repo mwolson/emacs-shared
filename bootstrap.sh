@@ -2,10 +2,13 @@
 
 if uname | grep 'MINGW32' > /dev/null; then
     OS=Windows
+    ETC=etc/windows
 elif uname | grep 'Darwin' > /dev/null; then
     OS=OSX
+    ETC=etc/mac
 else
     OS=Linux
+    ETC=etc/linux
 fi
 
 if which make > /dev/null; then
@@ -149,6 +152,11 @@ if test -n "$BUILD"; then
         fi
     )
 fi
+
+rm -fr bin
+mkdir bin
+cp etc/shared/* bin
+cp "$ETC"/* bin
 
 echo >&2
 echo >&2 "Bootstrap complete!  Your Emacs is ready for use."

@@ -1,0 +1,2 @@
+CLIENT=emacsclient.emacs24
+DAEMON=emacs24
