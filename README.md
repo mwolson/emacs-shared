@@ -71,46 +71,10 @@ The recommended version is Emacs 24.3.  The recommended installers for each OS a
 - Download `emacs-24.3-bin-i386.zip` (or the latest version of the -bin package) from [ftp.gnu.org](http://ftp.gnu.org/gnu/emacs/windows/).
 - Unzip to `C:\Program Files (x86)` and then rename `emacs-24.3` to `Emacs`.  When done, you should verify that a file named `C:\Program Files (x86)\Emacs\bin\runemacs.exe` exists.
 - If you change the location, you may want to update the `my-system-paths` option later.
-- Adjust some environment variables so that the Bootstrap and Start Emacs steps work.
-  - Open `Control Panel -> System -> Advanced System Settings (on left) -> Environment Variables`.
-  - Note: If any of the below variables aren't present, click on "Add" to add them
-  - In User Variables, Inspect `HOME` and make sure it points to something like `C:\Users\You`.
-  - In one of User Variables or System Variables (depending on whether you want the change to apply to all users or just you), edit `PATH` and make sure `C:\Program Files (x86)\Emacs\bin` is there, with a semicolon separating it from the other entries.
-  - Don't forget to add `C:\MinGW\bin` as well, if you're using MinGW
-- If you have chosen to use PuTTY, then make sure that the `GIT_SSH` variable is set to `C:\Program Files (x86)\PuTTY\plink.exe` (or wherever PuTTY is installed).
-  - Click OK
-  - Relaunch any open Git Bash windows
 
 *Mac OS X*
 
 Use the unofficial [Emacs for OS X](http://emacsformacosx.com/) installer.
-
-In order for the Bootstrap step to succeed, you'll need to create a script called `emacs` 
-
-```sh
-mkdir -p ~/bin
-cd ~/bin
-touch emacs
-chmod +x emacs
-<edit ~/bin/emacs in your editor of choice>
-```
-
-`~/bin/emacs` file contents:
-
-```sh
-#!/bin/sh
-exec /Applications/Emacs.app/Contents/MacOS/Emacs "$@"
-```
-
-You'll want to make sure that your path has this script and other Emacs support binaries, before the ancient version that comes with OS X.  To do this, edit `~/.profile` and add:
-
-```sh
-export PATH=~/bin:/Applications/Emacs.app/Contents/MacOS/bin:"$PATH"
-```
-
-Restart your Terminal app to make the change take effect.  Sourcing the file is not enough, since OS X seems to perform indexing of location on program name.
-
-To verify your work, run `emacs --version` and make sure it shows the version number you'd expect.
 
 *Ubuntu*
 
@@ -134,17 +98,59 @@ apt-get install fonts-inconsolata
 
 ```sh
 cd ~/
-git clone git://github.com/mwolson/emacs-shared.git
+git clone https://github.com/mwolson/emacs-shared.git
 ```
 
 ### Run boostrap.sh
 
 On Windows, you'll want to open Git Bash and run the command from there.
 
+(Note: On Windows, you'll need to do the "Set up PATH" step first, otherwise it will fail)
+
 ```sh
 cd ~/emacs-shared
 ./bootstrap.sh
 ```
+
+### Set up PATH
+
+*Mac*
+
+You'll want to make sure that your path includes the correct version of Emacs and some helper scripts, ahead of the ancient version that comes with OS X.  To do this, edit `~/.profile` and add:
+
+```sh
+export PATH=~/emacs-shared/bin:~/bin:"$PATH"
+```
+
+Restart your Terminal app to make the change take effect.  Sourcing the file is not enough, since OS X seems to perform indexing of location on program name.
+
+To verify your work, run `emacs --version` and make sure it shows the version number you'd expect.
+
+*Linux*
+
+You'll want to make sure that your path includes the correct version of Emacs and some helper scripts.  To do this, edit `~/.bashrc` and add:
+
+```sh
+export PATH=~/emacs-shared/bin:~/bin:"$PATH"
+```
+
+Restart your Terminal program to make the change take effect, or source the file.
+
+To verify your work, run `emacs --version` and make sure it shows the version number you'd expect.
+
+*Windows*
+
+(Note: for now you'll need to do this ahead of the bootstrap.sh step, otherwise it will fail)
+
+- Adjust some environment variables so that Emacs can be started successfully
+  - Open `Control Panel -> System -> Advanced System Settings (on left) -> Environment Variables`.
+  - Note: If any of the below variables aren't present, click on "Add" to add them
+  - In User Variables, Inspect `HOME` and make sure it points to something like `C:\Users\You`.
+  - In one of User Variables or System Variables (depending on whether you want the change to apply to all users or just you), edit `PATH` and make sure `C:\Program Files (x86)\Emacs\bin` is there, with a semicolon separating it from the other entries.
+  - Don't forget to add `C:\MinGW\bin` as well, if you're using MinGW
+- If you have chosen to use PuTTY, then make sure that the `GIT_SSH` variable is set to `C:\Program Files (x86)\PuTTY\plink.exe` (or wherever PuTTY is installed).
+  - Click OK
+  - Relaunch any open Git Bash windows
 
 ### Read up a bit on Emacs usage
 
