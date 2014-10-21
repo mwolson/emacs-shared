@@ -17,6 +17,13 @@ else
     BUILD=
 fi
 
+# Create bin directory
+rm -fr bin
+mkdir bin
+cp etc/shared/* bin
+cp "$ETC"/* bin
+PATH="$(pwd)"/bin:"$PATH"
+
 # Set this environment variable to rebuild docs; otherwise use pre-built ones
 : ${BUILD_DOCS:=}
 
@@ -152,11 +159,6 @@ if test -n "$BUILD"; then
         fi
     )
 fi
-
-rm -fr bin
-mkdir bin
-cp etc/shared/* bin
-cp "$ETC"/* bin
 
 echo >&2
 echo >&2 "Bootstrap complete!  Your Emacs is ready for use."
