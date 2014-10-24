@@ -6,12 +6,14 @@
 
 LOCK=~/emacs-shared/bin/lock-emacs
 
-lockfile -0 -r 0 $LOCK > /dev/null 2>&1 || exit 0
+(
+    flock -n 9 || exit 1
 
-if ! $CLIENT -e '"pass"' 2>&1 | grep '"pass"' > /dev/null; then
-    echo "Starting Emacs daemon ..."
-    $DAEMON --daemon
-    echo "Starting Emacs daemon ... done"
-fi
+    if ! $CLIENT -e '"pass"' 2>&1 | grep '"pass"' > /dev/null; then
+        echo "Starting Emacs daemon ..."
+        $DAEMON --daemon
+        echo "Starting Emacs daemon ... done"
+    fi
+) 9>$LOCK
 
 rm -f $LOCK
