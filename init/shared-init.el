@@ -709,6 +709,11 @@
 (setq eclim-accepted-file-regexps '("\\.java" "\\.sbt" "\\.scala" "\\.xml")
       eclim-auto-save nil)
 
+;; Rebuild Eclipse project on every save
+(defun my-eclim-mode-hook ()
+  (add-hook 'after-save-hook 'eclim-project-build nil 't))
+(add-hook 'eclim-mode-hook #'my-eclim-mode-hook)
+
 ;; Make help-at-point display more quickly
 (setq help-at-pt-display-when-idle t
       help-at-pt-timer-delay 0.1)
