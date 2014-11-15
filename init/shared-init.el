@@ -714,6 +714,20 @@
   (add-hook 'after-save-hook 'eclim-project-build nil 't))
 (add-hook 'eclim-mode-hook #'my-eclim-mode-hook)
 
+;; Monkey-patch eclim-mode so it doesn't block Emacs while running save hooks
+(defun eclim--after-save-hook ()
+  (when (eclim--accepted-p (buffer-file-name))
+    (ignore-errors
+      (apply 'eclim--call-process-async #'ignore
+             (case major-mode
+               (java-mode "java_src_update")
+               (ruby-mode "ruby_src_update")
+               (php-mode "php_src_update")
+               ((c-mode c++-mode) "c_src_update")
+               ((javascript-mode js-mode) "javascript_src_update"))
+             (eclim--expand-args (list "-p" "-f")))))
+  t)
+
 ;; Make help-at-point display more quickly
 (setq help-at-pt-display-when-idle t
       help-at-pt-timer-delay 0.1)
