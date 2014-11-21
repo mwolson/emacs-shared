@@ -29,6 +29,7 @@
                                  nil
                                '(erc magit)))
 (defvar my-sbt-java7-command (if (eq system-type 'windows-nt) "sh -c sbt-java7" "sbt-java7"))
+(defvar my-sbt-build-on-save nil)
 (defvar my-recent-files      nil)
 (defvar my-settings-shared-p (not (file-exists-p (locate-user-emacs-file "settings.el"))))
 (defvar my-system-paths
@@ -41,10 +42,10 @@
          '("C:/Program Files (x86)/Emacs/bin"
 	   "C:/MinGW/bin"
 	   "C:/MinGW/msys/1.0/bin"
-	   "C:/Program Files (x86)/Git/bin"
+           "C:/Program Files/maven/bin"
 	   "C:/Program Files (x86)/Aspell/bin"
+	   "C:/Program Files (x86)/Git/bin"
 	   "C:/Program Files (x86)/PuTTY"
-           "C:/Program Files (x86)/maven/bin"
            "C:/Program Files (x86)/sbt/bin"
            "C:/eclipse"))
         (t nil)))
@@ -706,12 +707,13 @@
 (require 'eclim)
 (require 'eclimd)
 (global-eclim-mode)
-(setq eclim-accepted-file-regexps '("\\.java" "\\.sbt" "\\.scala" "\\.xml")
+(setq eclim-accepted-file-regexps '("\\.java" "\\.scala" "\\.xml")
       eclim-auto-save nil)
 
 ;; Rebuild Eclipse project on every save
 (defun my-eclim-mode-hook ()
-  (add-hook 'after-save-hook 'eclim-project-build nil 't))
+  (when my-sbt-build-on-save
+    (add-hook 'after-save-hook 'eclim-project-build nil 't)))
 (add-hook 'eclim-mode-hook #'my-eclim-mode-hook)
 
 ;; Monkey-patch eclim-mode so it doesn't block Emacs while running save hooks
