@@ -707,7 +707,7 @@
 (require 'eclim)
 (require 'eclimd)
 (global-eclim-mode)
-(setq eclim-accepted-file-regexps '("\\.java" "\\.scala" "\\.xml")
+(setq eclim-accepted-file-regexps '("\\.java" "\\.scala")
       eclim-auto-save nil)
 
 ;; Rebuild Eclipse project on every save
