@@ -29,7 +29,7 @@
                                  nil
                                '(erc magit)))
 (defvar my-sbt-java7-command (if (eq system-type 'windows-nt) "sh -c sbt-java7" "sbt-java7"))
-(defvar my-sbt-build-on-save nil)
+(defvar my-sbt-build-on-save-p nil)
 (defvar my-recent-files      nil)
 (defvar my-settings-shared-p (not (file-exists-p (locate-user-emacs-file "settings.el"))))
 (defvar my-system-paths
@@ -712,9 +712,14 @@
 
 ;; Rebuild Eclipse project on every save
 (defun my-eclim-mode-hook ()
-  (when my-sbt-build-on-save
+  (when my-sbt-build-on-save-p
     (add-hook 'after-save-hook 'eclim-project-build nil 't)))
 (add-hook 'eclim-mode-hook #'my-eclim-mode-hook)
+
+(defun my-sbt-toggle-build-on-save ()
+  (interactive)
+  (let ((new-val (setq my-sbt-build-on-save-p (not my-sbt-build-on-save-p))))
+    (message "Build on save is now %s" (if new-val "enabled" "disabled"))))
 
 ;; Monkey-patch eclim-mode so it doesn't block Emacs while running save hooks
 (defun eclim--after-save-hook ()
