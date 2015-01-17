@@ -125,16 +125,16 @@ if test -n "$BUILD"; then
     )
 
     # sbt-mode
-    (
-        cd elisp/sbt-mode
-        make clean all
-    )
+    #(
+    #    cd elisp/sbt-mode
+    #    make clean all
+    #)
 
     # scala-mode2
-    (
-        cd elisp/scala-mode2
-        make clean all
-    )
+    #(
+    #    cd elisp/scala-mode2
+    #    make clean all
+    #)
 
     # Sepia
     (

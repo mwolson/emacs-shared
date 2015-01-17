@@ -478,69 +478,69 @@
 (add-to-list 'auto-mode-alist '("\\.proto\\'" . protobuf-mode))
 
 ;; Scala
-(add-to-list 'load-path (concat my-emacs-path "elisp/scala-mode2"))
-(require 'scala-mode2)
-(add-to-list 'load-path (concat my-emacs-path "elisp/sbt-mode"))
-(require 'sbt-mode)
+;; (add-to-list 'load-path (concat my-emacs-path "elisp/scala-mode2"))
+;; (require 'scala-mode2)
+;; (add-to-list 'load-path (concat my-emacs-path "elisp/sbt-mode"))
+;; (require 'sbt-mode)
 
-(defun sbt-start-java7 ()
-  "Start sbt with Java 7 JDK instead of the default one"
-  (interactive)
-  (let ((sbt:program-name my-sbt-java7-command))
-    (sbt-start)))
+;; (defun sbt-start-java7 ()
+;;   "Start sbt with Java 7 JDK instead of the default one"
+;;   (interactive)
+;;   (let ((sbt:program-name my-sbt-java7-command))
+;;     (sbt-start)))
 
-(setq sbt:program-name
-      (if (eq system-type 'windows-nt) "sh -c sbt-windows" "sbt"))
+;; (setq sbt:program-name
+;;       (if (eq system-type 'windows-nt) "sh -c sbt-windows" "sbt"))
 
-;; Grok Scala Worksheets
-(progn
-  (add-to-list 'auto-mode-alist
-               '("\\.sc\\'" . scala-mode))
-  (modify-coding-system-alist 'file "\\.sc\\'" 'utf-8))
+;; ;; Grok Scala Worksheets
+;; (progn
+;;   (add-to-list 'auto-mode-alist
+;;                '("\\.sc\\'" . scala-mode))
+;;   (modify-coding-system-alist 'file "\\.sc\\'" 'utf-8))
 
-;; Send entire buffer to SBT REPL on C-M-x
-(defun my-sbt-eval-buffer ()
-  (interactive)
-  (sbt-send-region (point-min) (point-max))
-  (other-window 1))
+;; ;; Send entire buffer to SBT REPL on C-M-x
+;; (defun my-sbt-eval-buffer ()
+;;   (interactive)
+;;   (sbt-send-region (point-min) (point-max))
+;;   (other-window 1))
 
-(define-key scala-mode-map (kbd "C-M-x") #'my-sbt-eval-buffer)
+;; (define-key scala-mode-map (kbd "C-M-x") #'my-sbt-eval-buffer)
 
-;; Highlight scala test failures in *compile* and SBT buffers
-(defvar my-scalatest-compilation-regexp
-  '("^\\[info][ \t]+\\(?:.+(\\)?\\([^()\n]+\\):\\([0-9]+\\))?$" 1 2))
-(add-to-list 'compilation-error-regexp-alist-alist
-             (cons 'scalatest my-scalatest-compilation-regexp))
-(add-to-list 'compilation-error-regexp-alist 'scalatest)
+;; ;; Highlight scala test failures in *compile* and SBT buffers
+;; (defvar my-scalatest-compilation-regexp
+;;   '("^\\[info][ \t]+\\(?:.+(\\)?\\([^()\n]+\\):\\([0-9]+\\))?$" 1 2))
+;; (add-to-list 'compilation-error-regexp-alist-alist
+;;              (cons 'scalatest my-scalatest-compilation-regexp))
+;; (add-to-list 'compilation-error-regexp-alist 'scalatest)
 
-;; Highlight scala build failures in *compile* and SBT buffers
-(defvar my-scala-error-regexp
-  '("^\\[error][ \t]+\\([^()\n]+\\):\\([0-9]+\\):.*$" 1 2))
-(add-to-list 'compilation-error-regexp-alist-alist
-             (cons 'scalaerror my-scala-error-regexp))
-(add-to-list 'compilation-error-regexp-alist 'scalaerror)
+;; ;; Highlight scala build failures in *compile* and SBT buffers
+;; (defvar my-scala-error-regexp
+;;   '("^\\[error][ \t]+\\([^()\n]+\\):\\([0-9]+\\):.*$" 1 2))
+;; (add-to-list 'compilation-error-regexp-alist-alist
+;;              (cons 'scalaerror my-scala-error-regexp))
+;; (add-to-list 'compilation-error-regexp-alist 'scalaerror)
 
-;; SBT mode hook customizations
-(defun my-sbt-mode-hook ()
-  ;; compilation-skip-threshold tells the compilation minor-mode
-  ;; which type of compiler output can be skipped. 1 = skip info
-  ;; 2 = skip info and warnings.
-  (setq compilation-skip-threshold 1)
+;; ;; SBT mode hook customizations
+;; (defun my-sbt-mode-hook ()
+;;   ;; compilation-skip-threshold tells the compilation minor-mode
+;;   ;; which type of compiler output can be skipped. 1 = skip info
+;;   ;; 2 = skip info and warnings.
+;;   (setq compilation-skip-threshold 1)
 
-  ;; Bind C-a to 'comint-bol when in sbt-mode. This will move the
-  ;; cursor to just after prompt.
-  (local-set-key (kbd "C-a") 'comint-bol)
+;;   ;; Bind C-a to 'comint-bol when in sbt-mode. This will move the
+;;   ;; cursor to just after prompt.
+;;   (local-set-key (kbd "C-a") 'comint-bol)
 
-  ;; Bind M-RET to 'comint-accumulate. This will allow you to add
-  ;; more than one line to scala console prompt before sending it
-  ;; for interpretation. It will keep your command history cleaner.
-  (local-set-key (kbd "M-RET") 'comint-accumulate)
+;;   ;; Bind M-RET to 'comint-accumulate. This will allow you to add
+;;   ;; more than one line to scala console prompt before sending it
+;;   ;; for interpretation. It will keep your command history cleaner.
+;;   (local-set-key (kbd "M-RET") 'comint-accumulate)
 
-  ;; Re-add our scalatest matcher since SBT wipes it
-  (add-to-list (make-local-variable 'compilation-error-regexp-alist)
-               'scalatest))
+;;   ;; Re-add our scalatest matcher since SBT wipes it
+;;   (add-to-list (make-local-variable 'compilation-error-regexp-alist)
+;;                'scalatest))
 
-(add-hook 'sbt-mode-hook #'my-sbt-mode-hook t)
+;; (add-hook 'sbt-mode-hook #'my-sbt-mode-hook t)
 
 ;; ANSI colors in compile buffer
 (require 'ansi-color)
@@ -657,15 +657,15 @@
 (add-hook 'markdown-mode-hook #'my-markdown-mode-keys)
 
 ;; Profiling
-(require 'profiler)
-(cl-defmacro with-cpu-profiling (&rest body)
-  `(unwind-protect
-       (progn
-         (ignore-errors (profiler-cpu-log))
-         (profiler-cpu-start profiler-sampling-interval)
-         ,@body)
-     (profiler-report-cpu)
-     (profiler-cpu-stop)))
+;(require 'profiler)
+;(cl-defmacro with-cpu-profiling (&rest body)
+;  `(unwind-protect
+;       (progn
+;         (ignore-errors (profiler-cpu-log))
+;         (profiler-cpu-start profiler-sampling-interval)
+;         ,@body)
+;     (profiler-report-cpu)
+;     (profiler-cpu-stop)))
 
 ;;; BEGIN confluence ;;;
 (when (my-emacs-feature-enabled 'confluence)
