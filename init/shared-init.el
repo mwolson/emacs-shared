@@ -48,7 +48,7 @@
 	   "C:/Program Files (x86)/PuTTY"
            "C:/Program Files (x86)/sbt/bin"
            "C:/eclipse"))
-        (t nil)))
+        (t '("/opt/maven/bin"))))
 (setq my-system-paths (remove-if-not #'file-exists-p my-system-paths))
 
 ;; EMMS settings
