@@ -64,6 +64,14 @@ Suitable for inclusion in `c-offsets-alist'."
       (goto-char (match-end 0))))
     (vector (+ 4 (current-column)))))
 
+(defun molson-backwards-cascaded-call (stmt-start operator)
+  "Try to move backwards to the previous instance of `operator'.
+Return non-nil if we are looking at one."
+  (and (zerop (c-backward-token-2 1 t stmt-start))
+       (eq (char-after) ?\()
+       (zerop (c-backward-token-2 2 t stmt-start))
+       (looking-at operator)))
+
 (defun molson-lineup-cascaded-calls (langelem)
   "Line up \"cascaded calls\" under each other.
 If the line begins with \"->\" or \".\" and the preceding line ends
@@ -80,14 +88,12 @@ Further, if that rule doesn't apply, lines beginning with \"->\" or
 result = proc
     ->add(17)
     ->add(18)
-    ->add(19)    \                 <- molson-lineup-cascaded-calls
+    ->add(19)                      <- molson-lineup-cascaded-calls
 
 In any other situation nil is returned to allow use in list
 expressions.
 
-Works with: topmost-intro-cont, statement-cont, arglist-cont,
-arglist-cont-nonempty."
-
+Works with: topmost-intro-cont, statement-cont, arglist-cont, arglist-cont-nonempty, func-decl-cont."
   (if (and (eq (c-langelem-sym langelem) 'arglist-cont-nonempty)
 	   (not (eq (c-langelem-2nd-pos c-syntactic-element)
 		    (c-most-enclosing-brace (c-parse-state)))))
@@ -95,28 +101,20 @@ arglist-cont-nonempty."
       ;; anything.  This can occur for arglist-cont-nonempty with
       ;; nested arglist starts on the same line.
       nil
-
     (save-excursion
       (back-to-indentation)
       (let ((operator (and (looking-at "->\\|\\.")
 			   (regexp-quote (match-string 0))))
 	    (stmt-start (c-langelem-pos langelem)) col)
-
 	(when (and operator
 		   (looking-at operator))
-          (if (not (and (zerop (c-backward-token-2 1 t stmt-start))
-                        (eq (char-after) ?\()
-                        (zerop (c-backward-token-2 2 t stmt-start))
-                        (looking-at operator)))
-              (setq col (* 2 c-basic-offset))
+          (if (not (molson-backwards-cascaded-call stmt-start operator))
+              (progn
+                (back-to-indentation)
+                (vector (+ 4 (current-column))))
             (setq col (current-column))
-
-            (while (and (zerop (c-backward-token-2 1 t stmt-start))
-                        (eq (char-after) ?\()
-                        (zerop (c-backward-token-2 2 t stmt-start))
-                        (looking-at operator))
+            (while (molson-backwards-cascaded-call stmt-start operator)
               (setq col (current-column)))
-
             (vector col)))))))
 
 (defun molson-lineup-new-class-instance (langelem)
@@ -236,7 +234,9 @@ Suitable for `arglist-cont-nonempty'"
                         (inexpr-class
                          . (molson-lineup-new-class-instance
                             +))
-                        (func-decl-cont . ++)
+                        (func-decl-cont
+                         . (molson-lineup-cascaded-calls
+                            ++))
                         (member-init-intro . ++)
                         (brace-list-intro
                          . (molson-lineup-blocks
