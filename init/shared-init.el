@@ -477,6 +477,11 @@
 (require 'protobuf-mode)
 (add-to-list 'auto-mode-alist '("\\.proto\\'" . protobuf-mode))
 
+;; Java
+(require 'java-mode-indent-annotations)
+(require 'google-c-style)
+(add-hook 'c-mode-common-hook 'google-set-c-style)
+
 ;; Scala
 (add-to-list 'load-path (concat my-emacs-path "elisp/scala-mode2"))
 (require 'scala-mode2)
