@@ -70,7 +70,13 @@ Return non-nil if we are looking at one."
   (and (zerop (c-backward-token-2 1 t stmt-start))
        (eq (char-after) ?\()
        (zerop (c-backward-token-2 2 t stmt-start))
-       (looking-at operator)))
+       (cond ((looking-at operator) t)
+             ((eq (char-after) ?\>)
+              (forward-char)
+              (and (c-backward-<>-arglist nil stmt-start)
+                   (eq (char-after) ?\<)
+                   (c-backward-token-2 1 t stmt-start)
+                   (looking-at operator))))))
 
 (defun molson-lineup-cascaded-calls (langelem)
   "Line up \"cascaded calls\" under each other.
@@ -185,6 +191,7 @@ Suitable for `arglist-cont-nonempty'"
 (defconst google-c-style
   `((c-recognize-knr-p . nil)
     (c-enable-xemacs-performance-kludge-p . t) ; speed up indentation in XEmacs
+    (c-recognize-<>-arglists . t)
     (c-basic-offset . 2)
     (indent-tabs-mode . nil)
     (c-comment-only-line-offset . 0)
