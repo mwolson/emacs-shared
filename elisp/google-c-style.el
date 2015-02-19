@@ -146,6 +146,7 @@ If we are on first line of block contents, use 2 additional spaces (total 4).
 If we are on 2nd or more line of block contents, align to previous item.
 If we are on the final ')}' part, then close the block.
 If our innermost block-like thing is a paren continuation, indent exactly 4 spaces.
+If we are on a return statement, align after 'return' and any whitespace.
 
 Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list-close."
   (save-excursion
@@ -165,32 +166,46 @@ Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list
        ((looking-at "{")
         (back-to-indentation)
         (cond ((eq (c-langelem-sym langelem) 'statement-cont)
-               ;; if the line before our containing line ends with "{", then align to containing line
                (goto-char (c-langelem-pos langelem))
-               (let ((col (current-column)))
-                 (c-backward-syntactic-ws)
-                 (backward-char)
-                 (when (looking-at "{")
-                   (vector col))))
+               (if (looking-at "return")
+                   ;; this a return statement, which we align differently
+                   (progn
+                     (goto-char (match-end 0))
+                     (c-forward-syntactic-ws)
+                     (vector (current-column)))
+                 ;; if the line before our containing line ends with "{", then align to containing line
+                 (let ((col (current-column)))
+                   (c-backward-syntactic-ws)
+                   (backward-char)
+                   (when (looking-at "{")
+                     (vector col)))))
               ((memq (c-langelem-sym langelem) '(arglist-cont-nonempty brace-list-intro))
-               (vector (+ 2 (current-column))))
-              (t nil)))
+               (vector (+ 2 (current-column))))))
        ((looking-at "(")
         (when (eq (c-langelem-sym langelem) 'arglist-cont-nonempty)
           (back-to-indentation)
-          (vector (+ 4 (current-column)))))
-       (t nil)))))
+          (vector (+ 4 (current-column)))))))))
 
-(defun google-c-lineup-operators-in-parens (langelem)
-  "If we see an operator while surrounded by parens, line it up to 1+ paren level.
+(defun google-c-lineup-parens (langelem)
+  "If we see an expression while surrounded by parens, line it up to 1+ paren level.
+If this is a function call, line up to the 2+ base indent level instead.
 
 Suitable for `arglist-cont-nonempty'"
   (save-excursion
     (back-to-indentation)
     (while (c-skip-comments-and-strings (point-max))
       (c-forward-syntactic-ws))
-    (when (looking-at "[-+*/=:(]")
-      (c-lineup-arglist-intro-after-paren langelem))))
+    (let ((saved-point (point))
+          (stmt-start (c-langelem-pos langelem)))
+      (backward-up-list 1)
+      (if (and (c-backward-token-2 1 t stmt-start)
+               (looking-at "[[:alpha:]]"))
+          ;; we are at a function call, so indent 4
+          (progn (back-to-indentation)
+                 (vector (+ 4 (current-column))))
+        ;; we are at an expression, so indent to 1+ paren
+        (goto-char saved-point)
+        (c-lineup-arglist-intro-after-paren langelem)))))
 
 ;;;###autoload
 (defconst google-c-style
@@ -237,7 +252,7 @@ Suitable for `arglist-cont-nonempty'"
     (c-offsets-alist . ((arglist-intro google-c-lineup-expression-plus-4)
                         (arglist-cont-nonempty
                          . (google-c-lineup-new-class-instance
-                            google-c-lineup-operators-in-parens
+                            google-c-lineup-parens
                             google-c-lineup-blocks
                             ++))
                         (arglist-cont

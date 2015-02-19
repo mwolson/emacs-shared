@@ -46,12 +46,22 @@ public class CachingCrudClient
               // Test: this comment should be aligned with previous line, not aligned with '('
               new Bar());
 
+  private final LoadingCache<Long, Venue> venueCache3 =
+      CacheBuilder
+          .newBuilder()
+          .expireAfterWrite(1, TimeUnit.DAYS)
+          .lineContinuer(new Foo(),
+              // Test: this comment should be +4, not aligned with '('
+              new Bar(),
+              // Test: this comment should be aligned with previous line, not aligned with '('
+              new Bar());
+
   private int arithExpr1 = (4
                             // Test: this comment should be aligned 1 char after the '('
                             / 2); // Test: this should be aligned 1 char after the '('
 
   private int arithExpr2 = (4 /
-                            2 // Test FAIL: this should be aligned 1 char after the '('
+                            2 // Test: this should be aligned 1 char after the '('
                             // Test: this comment should be aligned 1 char after the '('
                             / 2); // Test: this should be aligned 1 char after the '('
 
@@ -60,5 +70,18 @@ public class CachingCrudClient
                                 "bar"
                                 + "bar"); // Test: this should be aligned 1 char after the '('
 
+  int product = 1
+                // Test: this comment should be aligned 2 char after the '='
+                * 2 * 2 // Test: this should be aligned 2 char after the '='
+                * 3
+                * 4;
+
   public CachingCrudClient() {}
+
+  public boolean boolMethod() {
+    return 1 == 1
+           && (0 != 1) // Test: this should be aligned to end of return statement plus whitespace
+           // Test: this comment should align siimilarly
+           && 2 != 1;
+  }
 }
