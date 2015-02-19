@@ -1,5 +1,5 @@
 // This file acts like a unit test of sorts for google-c-style.el:
-// If any content is changed after C-M-\, then the tests fail.
+// If any file contents are changed after C-M-\, then the tests fail.
 // Each test case is preceded with a comment.
 //
 // Use 'C-c C-s' on a line to understand which cc-mode syntactic rule(s) are in effect.

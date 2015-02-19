@@ -64,7 +64,7 @@ Suitable for inclusion in `c-offsets-alist'."
       (goto-char (match-end 0))))
     (vector (+ 4 (current-column)))))
 
-(defun molson-backwards-cascaded-call (stmt-start operator)
+(defun google-c-backwards-cascaded-call (stmt-start operator)
   "Try to move backwards to the previous instance of `operator'.
 Return non-nil if we are looking at one."
   (and (zerop (c-backward-token-2 1 t stmt-start))
@@ -78,15 +78,15 @@ Return non-nil if we are looking at one."
                    (c-backward-token-2 1 t stmt-start)
                    (looking-at operator))))))
 
-(defun molson-lineup-cascaded-calls (langelem)
+(defun google-c-lineup-cascaded-calls (langelem)
   "Line up \"cascaded calls\" under each other.
 If the line begins with \"->\" or \".\" and the preceding line ends
 with one or more function calls preceded by the same token, then the
 arrow is lined up with the first of those tokens.  E.g.:
 
 result = proc->add(17)->add(18)
-             ->add(19) +           <- molson-lineup-cascaded-calls
-  offset;                          <- molson-lineup-cascaded-calls (inactive)
+             ->add(19) +           <- google-c-lineup-cascaded-calls
+  offset;                          <- google-c-lineup-cascaded-calls (inactive)
 
 Further, if that rule doesn't apply, lines beginning with \"->\" or
 \".\" will always be lined up according to c-basic-offset.  E.g.:
@@ -94,7 +94,7 @@ Further, if that rule doesn't apply, lines beginning with \"->\" or
 result = proc
     ->add(17)
     ->add(18)
-    ->add(19)                      <- molson-lineup-cascaded-calls
+    ->add(19)                      <- google-c-lineup-cascaded-calls
 
 In any other situation nil is returned to allow use in list
 expressions.
@@ -117,16 +117,16 @@ arglist-cont-nonempty, func-decl-cont, comment-intro."
 	    (stmt-start (c-langelem-pos langelem)) col)
 	(when (and operator
 		   (looking-at operator))
-          (if (not (molson-backwards-cascaded-call stmt-start operator))
+          (if (not (google-c-backwards-cascaded-call stmt-start operator))
               (progn
                 (back-to-indentation)
                 (vector (+ 4 (current-column))))
             (setq col (current-column))
-            (while (molson-backwards-cascaded-call stmt-start operator)
+            (while (google-c-backwards-cascaded-call stmt-start operator)
               (setq col (current-column)))
             (vector col)))))))
 
-(defun molson-lineup-new-class-instance (langelem)
+(defun google-c-lineup-new-class-instance (langelem)
   "If we are after a new class instance, use 2 spaces, otherwise fall through.
 
 Suitable for arglist-cont-nonempty and inexpr-class."
@@ -139,7 +139,7 @@ Suitable for arglist-cont-nonempty and inexpr-class."
         (vector (current-column)))
        (t nil)))))
 
-(defun molson-lineup-blocks (langelem)
+(defun google-c-lineup-blocks (langelem)
   "Treatment for blocks.
 
 If we are on first line of block contents, use 2 additional spaces (total 4).
@@ -181,7 +181,7 @@ Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list
           (vector (+ 4 (current-column)))))
        (t nil)))))
 
-(defun molson-lineup-operators-in-parens (langelem)
+(defun google-c-lineup-operators-in-parens (langelem)
   "If we see an operator while surrounded by parens, line it up to 1+ paren level.
 
 Suitable for `arglist-cont-nonempty'"
@@ -234,29 +234,29 @@ Suitable for `arglist-cont-nonempty'"
                        scope-operator))
     (c-offsets-alist . ((arglist-intro google-c-lineup-expression-plus-4)
                         (arglist-cont-nonempty
-                         . (molson-lineup-new-class-instance
-                            molson-lineup-operators-in-parens
-                            molson-lineup-blocks
+                         . (google-c-lineup-new-class-instance
+                            google-c-lineup-operators-in-parens
+                            google-c-lineup-blocks
                             ++))
                         (arglist-cont
-                         . (molson-lineup-cascaded-calls
+                         . (google-c-lineup-cascaded-calls
                             0))
                         (inexpr-class
-                         . (molson-lineup-new-class-instance
+                         . (google-c-lineup-new-class-instance
                             +))
                         (func-decl-cont
-                         . (molson-lineup-cascaded-calls
+                         . (google-c-lineup-cascaded-calls
                             ++))
                         (member-init-intro . ++)
                         (brace-list-intro
-                         . (molson-lineup-blocks
+                         . (google-c-lineup-blocks
                             +))
                         (brace-list-close
-                         . (molson-lineup-blocks
+                         . (google-c-lineup-blocks
                             0))
                         (inher-intro . ++)
                         (comment-intro
-                         . (molson-lineup-cascaded-calls
+                         . (google-c-lineup-cascaded-calls
                             0))
                         (arglist-close . c-lineup-arglist)
                         (topmost-intro . 0)
@@ -269,8 +269,8 @@ Suitable for `arglist-cont-nonempty'"
                          .
                          (,(when (fboundp 'c-no-indent-after-java-annotations)
                              'c-no-indent-after-java-annotations)
-                          molson-lineup-cascaded-calls
-                          molson-lineup-blocks
+                          google-c-lineup-cascaded-calls
+                          google-c-lineup-blocks
                           ,(when (fboundp 'c-lineup-assignments)
                              'c-lineup-assignments)
                           ++))
