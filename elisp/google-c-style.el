@@ -99,7 +99,8 @@ result = proc
 In any other situation nil is returned to allow use in list
 expressions.
 
-Works with: topmost-intro-cont, statement-cont, arglist-cont, arglist-cont-nonempty, func-decl-cont."
+Works with: topmost-intro-cont, statement-cont, arglist-cont,
+arglist-cont-nonempty, func-decl-cont, comment-intro."
   (if (and (eq (c-langelem-sym langelem) 'arglist-cont-nonempty)
 	   (not (eq (c-langelem-2nd-pos c-syntactic-element)
 		    (c-most-enclosing-brace (c-parse-state)))))
@@ -109,6 +110,8 @@ Works with: topmost-intro-cont, statement-cont, arglist-cont, arglist-cont-nonem
       nil
     (save-excursion
       (back-to-indentation)
+      (while (c-skip-comments-and-strings (point-max))
+        (c-forward-syntactic-ws))
       (let ((operator (and (looking-at "->\\|\\.")
 			   (regexp-quote (match-string 0))))
 	    (stmt-start (c-langelem-pos langelem)) col)
@@ -252,9 +255,12 @@ Suitable for `arglist-cont-nonempty'"
                          . (molson-lineup-blocks
                             0))
                         (inher-intro . ++)
-                        (comment-intro . 0)
+                        (comment-intro
+                         . (molson-lineup-cascaded-calls
+                            0))
                         (arglist-close . c-lineup-arglist)
                         (topmost-intro . 0)
+                        (topmost-intro-cont . ++)
                         (block-open . 0)
                         (inline-open . 0)
                         (substatement-open . 0)
