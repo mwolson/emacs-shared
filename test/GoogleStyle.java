@@ -41,10 +41,24 @@ public class CachingCrudClient
           .newBuilder()
           .expireAfterWrite(1, TimeUnit.DAYS)
           .lineContinuer(new Foo(),
-              // Test FAIL: this comment should be +4, not aligned with '('
+              // Test: this comment should be +4, not aligned with '('
               new Bar(),
-              // Test FAIL: this comment should be aligned with previous line, not aligned with '('
+              // Test: this comment should be aligned with previous line, not aligned with '('
               new Bar());
+
+  private int arithExpr1 = (4
+                            // Test: this comment should be aligned 1 char after the '('
+                            / 2); // Test: this should be aligned 1 char after the '('
+
+  private int arithExpr2 = (4 /
+                            2 // Test FAIL: this should be aligned 1 char after the '('
+                            // Test: this comment should be aligned 1 char after the '('
+                            / 2); // Test: this should be aligned 1 char after the '('
+
+  private String stringExpr1 = ("foo" +
+                                // a comment
+                                "bar"
+                                + "bar"); // Test: this should be aligned 1 char after the '('
 
   public CachingCrudClient() {}
 }

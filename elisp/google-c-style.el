@@ -187,6 +187,8 @@ Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list
 Suitable for `arglist-cont-nonempty'"
   (save-excursion
     (back-to-indentation)
+    (while (c-skip-comments-and-strings (point-max))
+      (c-forward-syntactic-ws))
     (when (looking-at "[-+*/=:(]")
       (c-lineup-arglist-intro-after-paren langelem))))
 
