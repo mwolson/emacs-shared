@@ -141,7 +141,8 @@ public class CachingCrudClient
                   .put("boolean", FeatureValueHydrator.Boolean.INSTANCE)
                   .build();
 
-  protected final Func2<Event, Event, Map<String, Object>> buildModel =
+  // Note: Pasting this into an Emacs java-mode buffer will cause an error, though loading fresh works fine
+  protected final Func2<Event, Event, Map<String, Object>> buildModel1 =
       new Func2<Event, Event, Map<String, Object>>() {
         // Test: this command and @Override line and function decl are all lined up on +2
         @Override
@@ -153,6 +154,17 @@ public class CachingCrudClient
           return immediateFuture(map);
         }
       };
+
+  // Test SKIP: IntelliJ incorrectly formats "@ValuePlus" +0 instead of +4
+  // protected final Func2<Event, Event, Map<String, Object>> buildModel2 = ImmutableMap.<String, Object>of(
+  //     @ValuePlus(
+  //         "${RESTRICT_TO_ONLY_THIS}",
+  //         "but not this"
+  //     )
+  //     "name",
+  //     event.getName(),
+  //     "id",
+  //     event.getID());
 
   int product = 1
                 // Test: this comment should be aligned 2 char after the '='
