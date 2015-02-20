@@ -78,6 +78,13 @@ Return non-nil if we are looking at one."
                    (c-backward-token-2 1 t stmt-start)
                    (looking-at operator))))))
 
+(defun google-c-skip-comments (limit)
+  "If the point is at the beginning of a comment, skip past it.
+Return non-nil if there was one, nil otherwise."
+  (when (and (looking-at c-current-comment-prefix)
+             (< 0 (- (match-end 0) (point))))
+    (c-skip-comments-and-strings limit)))
+
 (defun google-c-lineup-cascaded-calls (langelem)
   "Line up \"cascaded calls\" under each other.
 If the line begins with \"->\" or \".\" and the preceding line ends
@@ -110,7 +117,7 @@ arglist-cont-nonempty, func-decl-cont, comment-intro."
       nil
     (save-excursion
       (back-to-indentation)
-      (while (c-skip-comments-and-strings (point-max))
+      (while (google-c-skip-comments (point-max))
         (c-forward-syntactic-ws))
       (let ((operator (and (looking-at "->\\|\\.")
 			   (regexp-quote (match-string 0))))
@@ -193,19 +200,23 @@ If this is a function call, line up to the 2+ base indent level instead.
 Suitable for `arglist-cont-nonempty'"
   (save-excursion
     (back-to-indentation)
-    (while (c-skip-comments-and-strings (point-max))
+    (while (google-c-skip-comments (point-max))
       (c-forward-syntactic-ws))
     (let ((saved-point (point))
           (stmt-start (c-langelem-pos langelem)))
       (backward-up-list 1)
-      (if (and (c-backward-token-2 1 t stmt-start)
-               (looking-at "[[:alpha:]]"))
-          ;; we are at a function call, so indent 4
-          (progn (back-to-indentation)
-                 (vector (+ 4 (current-column))))
-        ;; we are at an expression, so indent to 1+ paren
-        (goto-char saved-point)
-        (c-lineup-arglist-intro-after-paren langelem)))))
+      (cond ((not (eq (char-after) ?\())
+             ;; we are in a block or some other construct, don't modify it
+             nil)
+            ((and (c-backward-token-2 1 t stmt-start)
+                  (looking-at "[[:alpha:]]"))
+             ;; we are at a function call, so indent 4
+             (progn (back-to-indentation)
+                    (vector (+ 4 (current-column)))))
+            (t
+             ;; we are at an expression, so indent to 1+ paren
+             (goto-char saved-point)
+             (c-lineup-arglist-intro-after-paren langelem))))))
 
 ;;;###autoload
 (defconst google-c-style
