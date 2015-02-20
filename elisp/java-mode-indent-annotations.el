@@ -81,12 +81,15 @@ after any calls to `c-set-style'."
 It does this by moving across the region from the start of
 LANGELEM to the beginning of this line one sexp at a time.  If
 during this traversal, this function only sees whitespaces
-followed by either a '@' or a '(' then it returns t."
+followed by either a '@' and then subsequent expressions with either
+a '@' or '(' then it returns t."
   (save-excursion
     (condition-case err ;; return nil if  any errors are thrown by forward-sexp
         (let* ((lim (1- (c-point 'bol)))
                (throws (catch 'notAnno
 		     (goto-char (cdr langelem))
+                     (unless (looking-at "\\(\\s \\|\n\\)*@")
+                       (throw 'notAnno t))
 		     (while (< (point) lim)
                        (if (not (looking-at "\\(\\s \\|\n\\)*\\(@\\|(\\)"))
 			   (throw 'notAnno t))

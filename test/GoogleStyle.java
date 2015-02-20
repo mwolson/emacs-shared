@@ -149,6 +149,40 @@ public class CachingCrudClient
            && 2 != 1;
   }
 
+  // Test: 2nd line of function is aligned with first, not indented
+  public void addingNoOp1() {
+    2
+    + 2;
+  }
+
+  // Test: 2nd line of function is aligned with first, not indented
+  public void addingNoOp2() {
+    2 +
+    2;
+  }
+
+  // Test: 2nd line of function is aligned with '(' +1
+  public void addingNoOp3() {
+    (2
+     + 2);
+  }
+
+  // Test: 2nd line of function is aligned with '(' +1
+  public void addingNoOp4() {
+    (2 +
+     2);
+  }
+
+  // Test SKIP: 2nd line is indented +4
+  // IntelliJ bug: does not place a space between "+" and "2" on 2nd line
+  // 2
+  //     + 2;
+
+  // Test SKIP: 2nd line is indented +4
+  // IntelliJ bug: does not place a space between "2" and "+" on 1st line
+  // 2 +
+  //     2;
+
   public static class SpecialRequestBuilder {
 
     private List<String> pancakes;
@@ -246,10 +280,26 @@ public class CachingCrudClient
         .createRequest();
   }
 
-  public HttpServletRequest returnWithParams() {
-    // Test: deals with return + parens, applies +4 to line after
+  public HttpServletRequest returnWithContinuation() {
+    // Test: deals with return + line continuation, applies +4 to line after
     return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
         .getRequest();
+  }
+
+  public String returnWithBuilder1() {
+    // Test: deals with return + builder continuation, aligns to '.'
+    return MoreObjects.toStringHelper(this)
+                      .add("value", value)
+                      .toString();
+  }
+
+  public String returnWithBuilder2() {
+    // IntelliJ bug: a line comment before .toString() gets indented an additional +4
+    // Test: deals with return + builder continuation before '.', applies +4 to remaining
+    return MoreObjects
+        .toStringHelper(this)
+        .add("value", value)
+        .toString();
   }
 
   @Bean
@@ -273,7 +323,15 @@ public class CachingCrudClient
       // Test: this line and next few (with annotations on own lines) are all +4
       @Value("${ALLOW_THIS}")
       final String commaDelimitedThings,
-      @Value("${RESTRICT_TO_ONLY_THIS}")
+      // Test: The ')' aligns with '@' and body lines are +4
+      @ValuePlus(
+          "${RESTRICT_TO_ONLY_THIS}",
+          "but not this"
+      )
+      // Test: The next line after the annotation aligns with '@' and body lines are +4
+      @ValuePlusPlus(
+          "${RESTRICT_TO_ONLY_THIS}",
+          "but not this")
       final boolean strict,
 
       @Value("${BUT_NOT_THIS}") // this line survives the extra whitespace to remain aligned with others
@@ -286,12 +344,17 @@ public class CachingCrudClient
       activeEventIds = Collections.emptySet();
     }
 
+    // Test: line break after 1st arg should cause 2nd arg to be +4
+    appendLogEntry(accessLogBuilder,
+        Optional.fromNullable(httpServletRequest.getHeader("Referer")));
+
     LOG.info(String.format("Rejected parameters request for event id '%s'",
         parametersRequest.criteria.get(0).eventID)); // Test: this aligns to +4, not the opening '('
 
     return new SpecialEventFilterImpl(strict, commaDelimitedThings);
   }
 
+  // Test: The '})' aligns with '@' and body lines are +4
   @TechDebt({
       "bla bla bla wall of text;",
       " more text."

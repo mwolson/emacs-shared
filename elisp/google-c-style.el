@@ -78,12 +78,12 @@ Return non-nil if we are looking at one."
                    (c-backward-token-2 1 t stmt-start)
                    (looking-at operator))))))
 
-(defun google-c-skip-comments (limit)
+(defun google-c-skip-comments ()
   "If the point is at the beginning of a comment, skip past it.
 Return non-nil if there was one, nil otherwise."
   (when (and (looking-at c-current-comment-prefix)
              (< 0 (- (match-end 0) (point))))
-    (c-skip-comments-and-strings limit)))
+    (c-forward-comments)))
 
 (defun google-c-lineup-cascaded-calls (langelem)
   "Line up \"cascaded calls\" under each other.
@@ -117,8 +117,7 @@ arglist-cont-nonempty, func-decl-cont, comment-intro."
       nil
     (save-excursion
       (back-to-indentation)
-      (while (google-c-skip-comments (point-max))
-        (c-forward-syntactic-ws))
+      (google-c-skip-comments)
       (let ((operator (and (looking-at "->\\|\\.")
 			   (regexp-quote (match-string 0))))
 	    (stmt-start (c-langelem-pos langelem)) col)
@@ -171,8 +170,10 @@ Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list
         (vector (current-column)))
        (before-equals nil)
        ((looking-at "{")
-        (back-to-indentation)
         (cond ((eq (c-langelem-sym langelem) 'statement-cont)
+               ;; Note: if we have a no-op line like "2\n+2" as first line of a function, the two lines are aligned
+               ;; because we consider the function to open a block or array initializer.  This is slightly odd, and
+               ;; IntelliJ behaves differently, but we expect IDE's and FindBugs to complain about such lines anyways.
                (goto-char (c-langelem-pos langelem))
                (if (looking-at "return")
                    ;; this a return statement, which we align differently
@@ -187,6 +188,7 @@ Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list
                    (when (looking-at "{")
                      (vector col)))))
               ((memq (c-langelem-sym langelem) '(arglist-cont-nonempty brace-list-intro))
+               (back-to-indentation)
                (vector (+ 2 (current-column))))))
        ((looking-at "(")
         (when (eq (c-langelem-sym langelem) 'arglist-cont-nonempty)
@@ -200,8 +202,7 @@ If this is a function call, line up to the 2+ base indent level instead.
 Suitable for `arglist-cont-nonempty'"
   (save-excursion
     (back-to-indentation)
-    (while (google-c-skip-comments (point-max))
-      (c-forward-syntactic-ws))
+    (google-c-skip-comments)
     (let ((saved-point (point))
           (stmt-start (c-langelem-pos langelem)))
       (backward-up-list 1)
@@ -286,7 +287,10 @@ Suitable for `arglist-cont-nonempty'"
                         (comment-intro
                          . (google-c-lineup-cascaded-calls
                             0))
-                        (arglist-close . c-lineup-arglist)
+                        (arglist-close
+                         . (,(when (fboundp 'c-no-indent-after-java-annotations)
+                               'c-no-indent-after-java-annotations)
+                            c-lineup-arglist))
                         (topmost-intro . 0)
                         (topmost-intro-cont . ++)
                         (block-open . 0)
@@ -294,14 +298,13 @@ Suitable for `arglist-cont-nonempty'"
                         (substatement-open . 0)
                         (annotation-var-cont . 0)
                         (statement-cont
-                         .
-                         (,(when (fboundp 'c-no-indent-after-java-annotations)
-                             'c-no-indent-after-java-annotations)
-                          google-c-lineup-cascaded-calls
-                          google-c-lineup-blocks
-                          ,(when (fboundp 'c-lineup-assignments)
-                             'c-lineup-assignments)
-                          ++))
+                         . (,(when (fboundp 'c-no-indent-after-java-annotations)
+                               'c-no-indent-after-java-annotations)
+                            google-c-lineup-cascaded-calls
+                            google-c-lineup-blocks
+                            ,(when (fboundp 'c-lineup-assignments)
+                               'c-lineup-assignments)
+                            ++))
                         (label . /)
                         (case-label . +)
                         (statement-case-open . +)
