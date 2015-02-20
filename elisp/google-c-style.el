@@ -161,9 +161,11 @@ Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list
           (before-equals (save-excursion
                            (c-backward-syntactic-ws)
                            (backward-char)
-                           (looking-at "="))))
+                           (looking-at "=")))
+          (containing-brace nil))
       (beginning-of-line)
       (backward-up-list 1)
+      (setq containing-brace (point))
       (cond
        (block-complete
         (back-to-indentation)
@@ -172,8 +174,8 @@ Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list
        ((looking-at "{")
         (cond ((eq (c-langelem-sym langelem) 'statement-cont)
                ;; Note: if we have a no-op line like "2\n+2" as first line of a function, the two lines are aligned
-               ;; because we consider the function to open a block or array initializer.  This is slightly odd, and
-               ;; IntelliJ behaves differently, but we expect IDE's and FindBugs to complain about such lines anyways.
+               ;; because we consider the enclosing function to open a block or array initializer.  This is slightly
+               ;; odd, but IntelliJ behaves the same way.
                (goto-char (c-langelem-pos langelem))
                (if (looking-at "return")
                    ;; this a return statement, which we align differently
@@ -181,12 +183,16 @@ Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list
                      (goto-char (match-end 0))
                      (c-forward-syntactic-ws)
                      (vector (current-column)))
-                 ;; if the line before our containing line ends with "{", then align to containing line
                  (let ((col (current-column)))
                    (c-backward-syntactic-ws)
                    (backward-char)
-                   (when (looking-at "{")
-                     (vector col)))))
+                   (if (looking-at "{")
+                       ;; if the line before our containing line ends with "{", then align to containing line
+                       (vector col)
+                     ;; otherwise align to 2+ containing brace
+                     (goto-char containing-brace)
+                     (back-to-indentation)
+                     (vector (+ 2 (current-column)))))))
               ((memq (c-langelem-sym langelem) '(arglist-cont-nonempty brace-list-intro))
                (back-to-indentation)
                (vector (+ 2 (current-column))))))
@@ -301,9 +307,9 @@ Suitable for `arglist-cont-nonempty'"
                          . (,(when (fboundp 'c-no-indent-after-java-annotations)
                                'c-no-indent-after-java-annotations)
                             google-c-lineup-cascaded-calls
-                            google-c-lineup-blocks
                             ,(when (fboundp 'c-lineup-assignments)
                                'c-lineup-assignments)
+                            google-c-lineup-blocks
                             ++))
                         (label . /)
                         (case-label . +)

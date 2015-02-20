@@ -77,6 +77,26 @@ public class CachingCrudClient
                                   }
                                 });
 
+  private final LoadingCache<Long, Venue>
+      // Test outline (can't inline these comments due to IntelliJ bug):
+      // Test: wrapping after a type and before a variable name is +4
+      // Test: the rest is aligned on '.'
+      // Test: inside of argument continuations on lineContinuer will be +4
+      // Test: inside of class expression "new CacheLoader" will be +2, even though inside a function call
+      // Test: methods inside class expression CacheLoader will be + 2
+      // Test: trailing ')}' is also aligned on '.'
+      venueCache5 =
+      CacheBuilder.newBuilder()
+                  .expireAfterWrite(1, TimeUnit.DAYS)
+                  .lineContinuer(
+                      new Foo(),
+                      new Bar())
+                  .build(new CacheLoader<Long, Venue>() {
+                    public Venue load(Long venueId) {
+                      return delegate.getVenue(venueId);
+                    }
+                  });
+
   private int arithExpr1 = (4
                             // Test: this comment should be aligned 1 char after the '('
                             / 2); // Test: this should be aligned 1 char after the '('
@@ -142,11 +162,19 @@ public class CachingCrudClient
 
   public CachingCrudClient() {}
 
-  public boolean boolMethod() {
+  public boolean returnMethod1() {
     return 1 == 1
            && (0 != 1) // Test: this should be aligned to end of return statement plus whitespace
            // Test: this comment should align siimilarly
            && 2 != 1;
+  }
+
+  public boolean returnMethod2() {
+    // Note: this isn't correct Google Style, since it doesn't allow break after operators
+    return 1 == 1 &&
+           (0 != 1) && // Test: this should be aligned to end of return statement plus whitespace
+           // Test: this comment should align siimilarly
+           2 != 1;
   }
 
   // Test: 2nd line of function is aligned with first, not indented
@@ -171,6 +199,26 @@ public class CachingCrudClient
   public void addingNoOp4() {
     (2 +
      2);
+  }
+
+  // Test: 2nd line of function is aligned with first, not indented
+  public void addingNoOp5() {
+    protected final Func2<Event, Event, Map<String, Object>> buildModel =
+        new Func2<Event, Event, Map<String, Object>>() {
+          // Test: this command and @Override line and function decl are all lined up on +2
+          @Override
+          public ListenableFuture<Map<String, Object>> run(Event event, Event eventevent) {
+            final Map<String, Object> map = ImmutableMap.<String, Object>of(
+                "name", event.getName(),
+                "id", event.getID(),
+                "caller", caller);
+            return immediateFuture(map);
+          }
+        };
+
+    // Test: 2nd line is aligned with first, not indented
+    2
+    + 2;
   }
 
   // Test SKIP: 2nd line is indented +4
@@ -328,11 +376,12 @@ public class CachingCrudClient
           "${RESTRICT_TO_ONLY_THIS}",
           "but not this"
       )
+      final boolean strict,
       // Test: The next line after the annotation aligns with '@' and body lines are +4
       @ValuePlusPlus(
           "${RESTRICT_TO_ONLY_THIS}",
           "but not this")
-      final boolean strict,
+      final boolean stricter,
 
       @Value("${BUT_NOT_THIS}") // this line survives the extra whitespace to remain aligned with others
       final boolean lax) {
