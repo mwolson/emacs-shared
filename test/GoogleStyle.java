@@ -3,6 +3,8 @@
 // Each test case is preceded with a comment.
 //
 // Use 'C-c C-s' on a line to understand which cc-mode syntactic rule(s) are in effect.
+//
+// Welcome to the horror show.
 package com.company;
 
 import com.google.common.base.Throwables;
@@ -56,6 +58,25 @@ public class CachingCrudClient
           // Test: this comment should be aligned with previous line, not aligned with '('
           new Bar());
 
+  private final LoadingCache<Long, Venue>
+      // Test outline (can't inline these comments due to IntelliJ bug):
+      // Test: wrapping after a type and before a variable name is +4
+      // Test: the rest is aligned on '.'
+      // Test: inside of argument continuations on lineContinuer will be +4
+      // Test: inside of class expression "new CacheLoader" will be +2, even though inside a function call
+      // Test: methods inside class expression CacheLoader will be + 2
+      // Test: trailing ')}' is also aligned on '.'
+      venueCache4 = CacheBuilder.newBuilder()
+                                .expireAfterWrite(1, TimeUnit.DAYS)
+                                .lineContinuer(
+                                    new Foo(),
+                                    new Bar())
+                                .build(new CacheLoader<Long, Venue>() {
+                                  public Venue load(Long venueId) {
+                                    return delegate.getVenue(venueId);
+                                  }
+                                });
+
   private int arithExpr1 = (4
                             // Test: this comment should be aligned 1 char after the '('
                             / 2); // Test: this should be aligned 1 char after the '('
@@ -100,6 +121,19 @@ public class CachingCrudClient
                   .put("boolean", FeatureValueHydrator.Boolean.INSTANCE)
                   .build();
 
+  protected final Func2<Event, Event, Map<String, Object>> buildModel =
+      new Func2<Event, Event, Map<String, Object>>() {
+        // Test: this command and @Override line and function decl are all lined up on +2
+        @Override
+        public ListenableFuture<Map<String, Object>> run(Event event, Event eventevent) {
+          final Map<String, Object> map = ImmutableMap.<String, Object>of(
+              "name", event.getName(),
+              "id", event.getID(),
+              "caller", caller);
+          return immediateFuture(map);
+        }
+      };
+
   int product = 1
                 // Test: this comment should be aligned 2 char after the '='
                 * 2 * 2 // Test: this should be aligned 2 char after the '='
@@ -134,6 +168,29 @@ public class CachingCrudClient
         Optional<Special.Context> context2) {
 
       pancakes = new LinkedList<String>();
+
+      if (pancakeContext.isPresent()) {
+        this.pancakeBaker = new PancakeBaker(pancakeContext.get());
+      } else {
+        // Test: even though we have two open function calls, indent to +4 just once
+        this.pancakeBaker = new PancakeBaker(new Special.Context(
+            "lalalalalalalala".getBytes(UTF_8),
+            ("fkaehfoirenfeolkanfoieogineaolgnleaknmgelainglean gaebaeginaepgojaegnmeapogjeap;g;eoagjpeaijgpaeojgpeoa"
+             // Test: align this comment and following line to paren +1
+             + "feoifeoijnbio").getBytes(UTF_8),
+            ("gfeoijgoeingoeingle;iaogoin eaogneaoigneaoingoeian goiengoieangoieanglkneklap;g[kmn;glknaepopojpoagjpoj"
+             + "fgoeijoignoin").getBytes(UTF_8)));
+      }
+
+      if (baconContext.isPresent()) {
+        this.baconCryptor = new BaconFryer(urlContext.get());
+      } else {
+        // Test: even though we have two open function calls, indent to +4 just once
+        this.baconCryptor = new BaconFryer(new Special.Context(
+            "lalalalalalalalalalallalalalal".getBytes(UTF_8),
+            "feoijf0o9 3e093jpoif3j pfiojff".getBytes(UTF_8),
+            "f3ofjh3jf039jkf039mp3omf093jff".getBytes(UTF_8)));
+      }
     }
   }
 
@@ -145,5 +202,115 @@ public class CachingCrudClient
                                    .queryParam("apikey", apiKey)
                                    .queryParam("thing_id", query.getVenueId())
                                    .get(Response.class);
+  } // Test: '}' belonging to enclosing method is aligned at left margin +2 after all that
+
+  public PancakeRequest returnNewThing() {
+    Optional<String> string;
+
+    if (!stringParams.isEmpty()) {
+      String value = "foo";
+      string = Optional.of(value);
+    } else {
+      string = Optional.absent();
+    }
+
+    // Test: builder call is +4, next function call continuation line is another +4
+    final FeatureWrapper features = new Gson()
+        .fromJson(new InputStreamReader(resource.getInputStream(), Charset.defaultCharset()),
+            FeatureWrapper.class);
+
+    return new PancakeRequest(
+        // Test: comments also +4
+        arg1,
+        arg2,
+        arg3,
+        arg4);
   }
+
+  public PancakeRequest returnBuilder() {
+    // Test: line continuation of chained builder on a return should be +4
+    return PancakeRequest
+        // Test: comments also +4
+        .build(arg1, arg2, arg3)
+        .method(Methods.GET)
+        .header("Content-Type", "application/x-www-form-urlencoded")
+        .superParam("foo1", "bar1")
+        .superParam("foo2", criteria.bar)
+        .encryptedQueryParam(
+            // Test: function continuation (and comment) is additional +4
+            "text",
+            criteria.bar + "|" + criteria.quux,
+            criteria.baz.toString())
+        .moreParam("qubar", criteria.quux + "flim" + criteria.bar, "")
+        .moreParam("qubbar", criteria.quux, "")
+        .createRequest();
+  }
+
+  public HttpServletRequest returnWithParams() {
+    // Test: deals with return + parens, applies +4 to line after
+    return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+        .getRequest();
+  }
+
+  @Bean
+  public SpecialEventFilter specialEventFilter1(
+      // Test: this line and next (with annotations) are +4
+      @Value("${ALLOW_THIS}") final String commaDelimitedThings,
+      @Value("${RESTRICT_TO_ONLY_THIS}") final boolean strict) {
+
+    final Set<String> activeEventIds;
+    if (commaDelimitedThings != null && !commaDelimitedThings.trim().isEmpty()) {
+      activeEventIds = ImmutableSet.copyOf(Arrays.asList(commaDelimitedThings.split(",")));
+    } else {
+      activeEventIds = Collections.emptySet();
+    }
+
+    return new SpecialEventFilterImpl(strict, commaDelimitedThings);
+  }
+
+  @Bean
+  public SpecialEventFilter specialEventFilter2(
+      // Test: this line and next few (with annotations on own lines) are all +4
+      @Value("${ALLOW_THIS}")
+      final String commaDelimitedThings,
+      @Value("${RESTRICT_TO_ONLY_THIS}")
+      final boolean strict,
+
+      @Value("${BUT_NOT_THIS}") // this line survives the extra whitespace to remain aligned with others
+      final boolean lax) {
+
+    final Set<String> activeEventIds;
+    if (commaDelimitedThings != null && !commaDelimitedThings.trim().isEmpty()) {
+      activeEventIds = ImmutableSet.copyOf(Arrays.asList(commaDelimitedThings.split(",")));
+    } else {
+      activeEventIds = Collections.emptySet();
+    }
+
+    LOG.info(String.format("Rejected parameters request for event id '%s'",
+        parametersRequest.criteria.get(0).eventID)); // Test: this aligns to +4, not the opening '('
+
+    return new SpecialEventFilterImpl(strict, commaDelimitedThings);
+  }
+
+  @TechDebt({
+      "bla bla bla wall of text;",
+      " more text."
+  })
+  @TechDebt("Not asymptotic enough.")
+  @RequestMapping
+  public ModelAndView handleRequestInternal(
+      final HttpServletRequest httpServletRequest,
+      final HttpServletResponse response)
+      throws IOException { // Test: aligns "throws" to rest of continuation, which is +4
+
+    final JsonNode jsonParams = objectMapper.readTree(httpServletRequest.getInputStream());
+  }
+
+  public ModelAndView handleRequestInternalSomeMore(
+      final HttpServletRequest httpServletRequest,
+      final HttpServletResponse response)
+      throws IOException {}
+
+  final JsonNode andWeAreBack = objectMapper.readTree(httpServletRequest.getInputStream());
+  // Test: previous line aligns back to margin +2
 }
