@@ -415,6 +415,43 @@ public class CachingCrudClient
     return new SpecialEventFilterImpl(strict, commaDelimitedThings);
   }
 
+  public void ifCondition1() {
+    final Observable<Event> modelMerge =
+        Observable.zip(details1, details2, new Func2<Event, Event, Event>() {
+          @Override
+          public Event call(Event details1, Event details2) {
+
+            if (eventInfo.getDetails() != null) {
+              eventInfo.setDetails(eventInfo.getDetails());
+            } else {
+              LOG.debug("Not setting formatted date for event ID " + eventInfo.getId());
+            }
+
+            if (EventPredicates.hasDetails(details)) {
+              eventInfo.setErrorMessage(GENERIC_ERROR_MESSAGE);
+            } else if (EventPredicates.detailsEmpty(eventInfo)) {
+              eventInfo.setErrorMessage(UNKNOWN_DETAILS_ERROR_MESSAGE);
+              // Test: if conditions should be wrapped after '('
+            } else if (eventInfo.getDetails().getFormat() != null &&
+                       // Test: comment should be wrapped after '(' as well
+                       eventInfo.getDetails().getFormat().equals("text")) {
+              eventInfo.setErrorMessage(UNKNOWN_DETAILS_ERROR_MESSAGE);
+              // Test: next line should be aligned with leading 'if' statement, not the one 4 lines up
+            } else if (EventPredicates.detailsAfterBlah(eventInfo)) {
+              if (EventPredicates.hasDetails(eventInfo)) {
+                String date = formatDate(eventInfo);
+                eventInfo.setErrorMessage(DETAILS_ERROR_MESSAGE);
+                eventInfo.setErrorMessageSubtext(
+                    String.format(DETAILS_ERROR_MESSAGE_SUBTEXT, date));
+              } else {
+                eventInfo.setErrorMessage(GENERIC_ERROR_MESSAGE);
+              }
+            }
+            return eventInfo;
+          }
+        });
+  }
+
   // Test: The '})' aligns with '@' and body lines are +4
   @TechDebt({
       "bla bla bla wall of text;",

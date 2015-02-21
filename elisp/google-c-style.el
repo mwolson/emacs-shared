@@ -163,8 +163,12 @@ Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list
                            (backward-char)
                            (looking-at "=")))
           (containing-brace nil))
-      (beginning-of-line)
-      (backward-up-list 1)
+      (if (memq (c-langelem-sym langelem) '(brace-list-intro brace-list-close))
+          (progn
+            (goto-char (c-langelem-pos langelem))
+            (back-to-indentation))
+        (beginning-of-line)
+        (backward-up-list 1))
       (setq containing-brace (point))
       (cond
        (block-complete
@@ -172,7 +176,10 @@ Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list
         (vector (current-column)))
        (before-equals nil)
        ((looking-at "{")
-        (cond ((eq (c-langelem-sym langelem) 'statement-cont)
+        (cond ((eq (c-langelem-sym langelem) 'brace-list-intro)
+               (goto-char containing-brace)
+               (vector (+ 2 (current-column))))
+              ((eq (c-langelem-sym langelem) 'statement-cont)
                ;; Note: if we have a no-op line like "2\n+2" as first line of a function, the two lines are aligned
                ;; because we consider the enclosing function to open a block or array initializer.  This is slightly
                ;; odd, but IntelliJ behaves the same way.
@@ -193,7 +200,7 @@ Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list
                      (goto-char containing-brace)
                      (back-to-indentation)
                      (vector (+ 2 (current-column)))))))
-              ((memq (c-langelem-sym langelem) '(arglist-cont-nonempty brace-list-intro))
+              ((eq (c-langelem-sym langelem) 'arglist-cont-nonempty)
                (back-to-indentation)
                (vector (+ 2 (current-column))))))
        ((looking-at "(")
@@ -216,7 +223,11 @@ Suitable for `arglist-cont-nonempty'"
              ;; we are in a block or some other construct, don't modify it
              nil)
             ((and (c-backward-token-2 1 t stmt-start)
-                  (looking-at "[[:alpha:]]"))
+                  (looking-at "\\(\\(if\\|for\\|while\\)\\s *(\\)"))
+             ;; we are at an if/for/while expression, so indent to 1+ paren
+             (goto-char saved-point)
+             (c-lineup-arglist-intro-after-paren langelem))
+            ((looking-at "[[:alpha:]]")
              ;; we are at a function call, so indent 4
              (progn (back-to-indentation)
                     (vector (+ 4 (current-column)))))
