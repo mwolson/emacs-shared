@@ -467,10 +467,14 @@ public class CachingCrudClient
     final JsonNode jsonParams = objectMapper.readTree(httpServletRequest.getInputStream());
   }
 
-  public ModelAndView handleRequestInternalSomeMore(
-      final HttpServletRequest httpServletRequest,
-      final HttpServletResponse response)
-      throws IOException {}
+  // Test: IntelliJ should leave the collapsed block alone
+  public ModelAndView handleRequestInternalEmpty() {}
+
+  // Test SKIP: IntelliJ fails to leave the collapsed block collapsed, if there's at least one line break before it
+  // public ModelAndView handleRequestInternalEmptyMulti(
+  //     final HttpServletRequest httpServletRequest,
+  //     final HttpServletResponse response)
+  //     throws IOException {}
 
   final JsonNode andWeAreBack = objectMapper.readTree(httpServletRequest.getInputStream());
   // Test: previous line aligns back to margin +2
