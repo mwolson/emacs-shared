@@ -157,12 +157,15 @@ If we are on a return statement, align after 'return' and any whitespace.
 Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list-close."
   (save-excursion
     (back-to-indentation)
-    (let ((block-complete (looking-at "}"))
-          (before-equals (save-excursion
-                           (c-backward-syntactic-ws)
-                           (backward-char)
-                           (looking-at "=")))
-          (containing-brace nil))
+    (let* ((block-complete (looking-at "}"))
+           (endpos (if (eq (c-langelem-sym langelem) 'arglist-cont-nonempty)
+                       ;; if it's an arglist-cont-nonempty then we bound the search to be outside of it
+                       (c-langelem-2nd-pos c-syntactic-element)
+                     (point)))
+           (before-equals (save-excursion
+                            (goto-char (c-langelem-pos langelem))
+                            (c-syntactic-re-search-forward c-assignment-op-regexp endpos t t t)))
+           (containing-brace nil))
       (if (memq (c-langelem-sym langelem) '(brace-list-intro brace-list-close))
           (progn
             (goto-char (c-langelem-pos langelem))

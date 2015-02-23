@@ -478,4 +478,13 @@ public class CachingCrudClient
 
   final JsonNode andWeAreBack = objectMapper.readTree(httpServletRequest.getInputStream());
   // Test: previous line aligns back to margin +2
+
+  public class ConcatenateTest {
+
+    // Test: "+" must line up with double-quote on previous line
+    private static final String concatenated =
+        "YagbooScTxxN3BMFJW7Oqm3ps2P29tihNwnK-UUAGNSEQAfvbNmg1K_cM2kdzInyGlsHWxtvfJT57tYuwkDgsrry6G_9"
+        // Test: this comment should also line up with double-quote on previous line
+        + "inveJUS_vP-7tMQbLIMh21IuB_WE";
+  }
 }
