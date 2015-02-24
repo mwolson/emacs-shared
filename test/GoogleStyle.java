@@ -487,4 +487,35 @@ public class CachingCrudClient
         // Test: this comment should also line up with double-quote on previous line
         + "inveJUS_vP-7tMQbLIMh21IuB_WE";
   }
+
+  public class TernaryTest {
+
+    // Test: "?" should be aligned after '='
+    String ternary1 = StringUtils.isBlank(configRunLocationOther)
+                      // Test: comment should be lined up as well
+                      ? configRunLocationLocal : configRunLocationOther;
+
+    // Test: ":" should be indented after '='
+    String ternary2 = StringUtils.isBlank(configRunLocationOther)
+                      // Test: comment should be lined up as well
+                      ? configRunLocationLocal
+                      : configRunLocationOther;
+
+    // Test: "?" should be lined up with previous line (not an additional +4)
+    String ternary3 =
+        StringUtils.isBlank(configRunLocationOther)
+        ? configRunLocationLocal : configRunLocationOther;
+
+    // Test SKIP: ":" should be lined up with previous line (not an additional +4, not lined up with "?")
+    // IntelliJ bug: always aligns with "?", can't turn it off
+    // String ternary4 =
+    //     StringUtils.isBlank(configRunLocationOther) ? configRunLocationLocal
+    //     : configRunLocationOther;
+
+    // Test: "?" and ":" lines should each be aligned with previous line (not an additional +4)
+    String ternary5 =
+        StringUtils.isBlank(configRunLocationOther)
+        ? configRunLocationLocal
+        : configRunLocationOther;
+  }
 }
