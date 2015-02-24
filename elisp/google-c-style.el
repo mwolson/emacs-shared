@@ -157,32 +157,42 @@ If we are on a return statement, align after 'return' and any whitespace.
 Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list-close."
   (save-excursion
     (back-to-indentation)
-    (let* ((block-complete (looking-at "}"))
+    (google-c-skip-comments)
+    (let* ((block-complete (looking-at "[)}]"))
            (endpos (if (eq (c-langelem-sym langelem) 'arglist-cont-nonempty)
                        ;; if it's an arglist-cont-nonempty then we bound the search to be outside of it
                        (c-langelem-2nd-pos c-syntactic-element)
                      (point)))
-           (before-equals (save-excursion
-                            (goto-char (c-langelem-pos langelem))
-                            (c-syntactic-re-search-forward c-assignment-op-regexp endpos t t t)))
-           (containing-brace nil))
-      (if (memq (c-langelem-sym langelem) '(brace-list-intro brace-list-close))
-          (progn
-            (goto-char (c-langelem-pos langelem))
-            (back-to-indentation))
-        (beginning-of-line)
-        (backward-up-list 1))
-      (setq containing-brace (point))
+           (before-equals (when (memq (c-langelem-sym langelem) '(brace-list-intro statement-cont))
+                            (save-excursion
+                              (goto-char (c-langelem-pos langelem))
+                              (and (c-syntactic-re-search-forward c-assignment-op-regexp endpos t t t)
+                                   ;; if a lambda expression follows this, and it's a brace list, we ignore '='
+                                   (or (eq (c-langelem-sym langelem) 'statement-cont)
+                                       (not (c-syntactic-re-search-forward "->" endpos t nil nil)))))))
+           (containing-brace (progn
+                               (beginning-of-line)
+                               (backward-up-list 1)
+                               (point))))
       (cond
        (block-complete
+        (if (eq (c-langelem-sym langelem) 'brace-list-close)
+            (goto-char (c-langelem-pos langelem))
+          (goto-char containing-brace))
         (back-to-indentation)
         (vector (current-column)))
+
+       ((eq (c-langelem-sym langelem) 'brace-list-intro)
+        (goto-char (c-langelem-pos langelem))
+        (back-to-indentation)
+        (if before-equals
+            (vector (+ 4 (current-column)))
+          (vector (+ 2 (current-column)))))
+
        (before-equals nil)
+
        ((looking-at "{")
-        (cond ((eq (c-langelem-sym langelem) 'brace-list-intro)
-               (goto-char containing-brace)
-               (vector (+ 2 (current-column))))
-              ((eq (c-langelem-sym langelem) 'statement-cont)
+        (cond ((eq (c-langelem-sym langelem) 'statement-cont)
                ;; Note: if we have a no-op line like "2\n+2" as first line of a function, the two lines are aligned
                ;; because we consider the enclosing function to open a block or array initializer.  This is slightly
                ;; odd, but IntelliJ behaves the same way.
@@ -206,6 +216,7 @@ Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list
               ((eq (c-langelem-sym langelem) 'arglist-cont-nonempty)
                (back-to-indentation)
                (vector (+ 2 (current-column))))))
+
        ((looking-at "(")
         (when (eq (c-langelem-sym langelem) 'arglist-cont-nonempty)
           (back-to-indentation)
@@ -220,10 +231,14 @@ Suitable for `arglist-cont-nonempty'"
     (back-to-indentation)
     (google-c-skip-comments)
     (let ((saved-point (point))
+          (char-near-point (char-after))
           (stmt-start (c-langelem-pos langelem)))
       (backward-up-list 1)
       (cond ((not (eq (char-after) ?\())
              ;; we are in a block or some other construct, don't modify it
+             nil)
+            ((eq char-near-point ?\))
+             ;; don't align closing parens
              nil)
             ((and (c-backward-token-2 1 t stmt-start)
                   (looking-at "\\(\\(if\\|for\\|while\\)\\s *(\\)"))
@@ -290,6 +305,11 @@ Suitable for `arglist-cont-nonempty'"
                         (arglist-cont
                          . (google-c-lineup-cascaded-calls
                             0))
+                        (arglist-close
+                         . (,(when (fboundp 'c-no-indent-after-java-annotations)
+                               'c-no-indent-after-java-annotations)
+                            google-c-lineup-parens
+                            0))
                         (inexpr-class
                          . (google-c-lineup-new-class-instance
                             +))
@@ -307,10 +327,6 @@ Suitable for `arglist-cont-nonempty'"
                         (comment-intro
                          . (google-c-lineup-cascaded-calls
                             0))
-                        (arglist-close
-                         . (,(when (fboundp 'c-no-indent-after-java-annotations)
-                               'c-no-indent-after-java-annotations)
-                            c-lineup-arglist))
                         (topmost-intro . 0)
                         (topmost-intro-cont . ++)
                         (block-open . 0)

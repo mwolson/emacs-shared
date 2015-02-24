@@ -213,6 +213,13 @@ public class CachingCrudClient
      2);
   }
 
+  // Test: trailing ')' is aligned with open paren
+  public void addingNoOp5() {
+    (2 +
+     2
+    );
+  }
+
   // Test: 2nd line of function is aligned with first, not indented
   public void addingNoOp5() {
     protected final Func2<Event, Event, Map<String, Object>> buildModel =
@@ -435,6 +442,7 @@ public class CachingCrudClient
             } else if (eventInfo.getDetails().getFormat() != null &&
                        // Test: comment should be wrapped after '(' as well
                        eventInfo.getDetails().getFormat().equals("text")) {
+              // Test: next line should be aligned with leading 'if' statement, not the one 4 lines up
               eventInfo.setErrorMessage(UNKNOWN_DETAILS_ERROR_MESSAGE);
               // Test: next line should be aligned with leading 'if' statement, not the one 4 lines up
             } else if (EventPredicates.detailsAfterBlah(eventInfo)) {
@@ -517,5 +525,63 @@ public class CachingCrudClient
         StringUtils.isBlank(configRunLocationOther)
         ? configRunLocationLocal
         : configRunLocationOther;
+  }
+
+  public class ArrayInitializerTest {
+
+    // IntelliJ bug: this should be +2 according to Google, but gets formatted +4, with no way to change it
+    final String[] style1 = {
+        // Test: for consistency with IntelliJ bug, should be +4
+        1,
+        2,
+        3
+    };
+
+    // Test: should be kept on one line
+    final String[] style2 = {1, 2, 3};
+
+    final String[] style3 = ({
+        // Test: for consistency with IntelliJ bug, should be +4
+        1, 2, 3
+    });
+
+    final String[] style4 = ({
+        // Test: for consistency with IntelliJ bug, should be +4
+        1, 2, 3
+        // IntelliJ bug: comments after '}' but before ')' should be aligned to the ')', not +4
+    }
+    ); // Test: should be aligned with beginning of "final"
+
+    public void sideEffects1() {
+      // IntelliJ bug: seems to line up the first block line at +2, rest at +4
+      // Test FAIL: Contents should be lined up +4
+      // {
+      //       1,
+      //       2,
+      //       3
+      // }.forEach(print);
+    }
+
+    public void sideEffects2() {
+      // Test FAIL: Contents should be lined up +4
+      // ({
+      //     1,
+      //     2,
+      //     3
+      // }).forEach(print);
+    }
+  }
+
+  public class LambdaTest {
+
+    final ListenableFuture<DigitalData> digitalDataModel = modelMerge.map(e -> {
+      // Test: This comment and block contents should be indented +2
+      if (!e.getServiceFailure()) {
+        EventAnalyticsPostProcessor analytics = new EventAnalyticsPostProcessor();
+        return analytics.postProcess(e);
+      } else {
+        return null;
+      }
+    });
   }
 }
