@@ -607,6 +607,18 @@ public class CachingCrudClient
         }
       });
 
+      // Test: open lambda blocks as function params are +4
+      // Test: end of open lambda blocks are aligned with the first argument
+      final ListenableFuture<Something> somethingModel = somethingMerge.map(
+          e -> {
+            if (!e.problemo()) {
+              SomethingPostProcessor something = new SomethingPostProcessorPostProcessor();
+              return something.postProcess(e);
+            } else {
+              return null;
+            }
+          });
+
       return new FeatureBundle(featureMapBuilder.build());
     }
 
