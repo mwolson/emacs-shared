@@ -527,6 +527,13 @@ public class CachingCrudClient
         : configRunLocationOther;
   }
 
+  public class AnnotationsTest {
+    // Test FAIL: Should not indent the "public class" line
+    // @Options(
+    //     fail = false)
+    // public class RunCucumber {}
+  }
+
   public class ArrayInitializerTest {
 
     // IntelliJ bug: this should be +2 according to Google, but gets formatted +4, with no way to change it
@@ -601,6 +608,22 @@ public class CachingCrudClient
       });
 
       return new FeatureBundle(featureMapBuilder.build());
+    }
+
+    // Test: lambda blocks that are part of a chained builder call get indented +2 relative to '.'
+    public void chainedLambdas() {
+      Collections.list(request.getHeaderNames())
+                 .stream()
+                 .filter(header -> header.startsWith(FEATURE_HTTP_HEADER_NAME))
+                 .forEach(header -> {
+                   Iterable<String> parts = FEATURE_VALUE_SPLITTER.split(header);
+                   String value = request.getHeader(header);
+                   if (Iterables.size(parts) == 2) {
+                     this.addOverride(Iterables.get(parts, 1), value);
+                   } else {
+                     LOG.warn("unable to override {} with value {}", header, value);
+                   }
+                 });
     }
   }
 }
