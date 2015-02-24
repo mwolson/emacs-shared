@@ -145,6 +145,9 @@ Suitable for arglist-cont-nonempty and inexpr-class."
         (vector (current-column)))
        (t nil)))))
 
+(defvar google-c-lambda-op-regexp "->"
+  "Matches Java lambda operator, which is: ->")
+
 (defun google-c-lineup-blocks (langelem)
   "Treatment for blocks.
 
@@ -154,7 +157,7 @@ If we are on the final ')}' part, then close the block.
 If our innermost block-like thing is a paren continuation, indent exactly 4 spaces.
 If we are on a return statement, align after 'return' and any whitespace.
 
-Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list-close."
+Suitable for arglist-cont-nonempty, brace-list-intro, brace-list-close, statement-block-intro, statement-cont"
   (save-excursion
     (back-to-indentation)
     (google-c-skip-comments)
@@ -163,13 +166,16 @@ Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list
                        ;; if it's an arglist-cont-nonempty then we bound the search to be outside of it
                        (c-langelem-2nd-pos c-syntactic-element)
                      (point)))
+           (before-lambda (save-excursion
+                            (goto-char (c-langelem-pos langelem))
+                            (and (c-syntactic-re-search-forward google-c-lambda-op-regexp endpos t nil nil)
+                                 (point))))
            (before-equals (when (memq (c-langelem-sym langelem) '(brace-list-intro statement-cont))
                             (save-excursion
                               (goto-char (c-langelem-pos langelem))
                               (and (c-syntactic-re-search-forward c-assignment-op-regexp endpos t t t)
-                                   ;; if a lambda expression follows this, and it's a brace list, we ignore '='
-                                   (or (eq (c-langelem-sym langelem) 'statement-cont)
-                                       (not (c-syntactic-re-search-forward "->" endpos t nil nil)))))))
+                                   (or (not before-lambda)
+                                       (< before-lambda (point)))))))
            (containing-brace (progn
                                (beginning-of-line)
                                (backward-up-list 1)
@@ -190,6 +196,11 @@ Suitable for arglist-cont-nonempty, statement-cont, brace-list-intro, brace-list
           (vector (+ 2 (current-column)))))
 
        (before-equals nil)
+
+       (before-lambda
+        (goto-char (c-langelem-pos langelem))
+        (back-to-indentation)
+        (vector (+ 2 (current-column))))
 
        ((looking-at "{")
         (cond ((eq (c-langelem-sym langelem) 'statement-cont)
@@ -333,6 +344,9 @@ Suitable for `arglist-cont-nonempty'"
                         (inline-open . 0)
                         (substatement-open . 0)
                         (annotation-var-cont . 0)
+                        (statement-block-intro
+                         . (google-c-lineup-blocks
+                            +))
                         (statement-cont
                          . (,(when (fboundp 'c-no-indent-after-java-annotations)
                                'c-no-indent-after-java-annotations)

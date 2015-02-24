@@ -556,9 +556,9 @@ public class CachingCrudClient
       // IntelliJ bug: seems to line up the first block line at +2, rest at +4
       // Test FAIL: Contents should be lined up +4
       // {
-      //       1,
-      //       2,
-      //       3
+      //     1,
+      //     2,
+      //     3
       // }.forEach(print);
     }
 
@@ -583,5 +583,24 @@ public class CachingCrudClient
         return null;
       }
     });
+
+    public FeatureBundle getFeatures(FeaturesContext request) {
+      final Map<String, String> overrides = request.getOverrides();
+      final ImmutableMap.Builder<String, Object> featureMapBuilder = ImmutableMap.builder();
+
+      // Test: lambda blocks that are not part of an assignment get indented +2
+      features.forEach(feature -> {
+        // This comment is also +2
+        String override = overrides.get(feature.key());
+        if (override != null) {
+          FeatureValueHydrator valMaker = flagHydrators.get(feature.key());
+          featureMapBuilder.put(feature.key(), valMaker.value(override));
+        } else {
+          featureMapBuilder.put(feature.key(), feature.value(request));
+        }
+      });
+
+      return new FeatureBundle(featureMapBuilder.build());
+    }
   }
 }
