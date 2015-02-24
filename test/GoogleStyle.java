@@ -532,6 +532,12 @@ public class CachingCrudClient
     // @Options(
     //     fail = false)
     // public class RunCucumber {}
+
+    // Test FAIL: Should not indent the 2nd "@TechDebt" line
+    // @TechDebt({
+    //     "line 1;",
+    //     " line 2."})
+    // @TechDebt("line 3.")
   }
 
   public class ArrayInitializerTest {
