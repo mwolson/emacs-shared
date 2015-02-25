@@ -523,10 +523,9 @@ public class CachingCrudClient
 
     // Test SKIP: ":" should be lined up with previous line (not an additional +4, not lined up with "?")
     // IntelliJ bug: always aligns with "?", can't turn it off
-    // TODO: Look this up in IntelliJ bugtracker
-    // String ternary4 =
-    //     StringUtils.isBlank(configRunLocationOther) ? configRunLocationLocal
-    //     : configRunLocationOther;
+    // https://youtrack.jetbrains.com/issue/IDEA-136986
+    // String ternary4 = StringUtils.isBlank(configRunLocationOther) ? configRunLocationLocal
+    //                   : configRunLocationOther;
 
     // Test: "?" and ":" lines should each be aligned with previous line (not an additional +4)
     String ternary5 =
@@ -571,13 +570,13 @@ public class CachingCrudClient
         // Test: for consistency with IntelliJ bug, should be +4
         1, 2, 3
         // IntelliJ bug: comments after '}' but before ')' should be aligned to the ')', not +4
-        // TODO: Look this up in IntelliJ bugtracker
+        // https://youtrack.jetbrains.com/issue/IDEA-136988
     }
     ); // Test: should be aligned with beginning of "final"
 
     public void sideEffects1() {
       // IntelliJ bug: seems to line up the first block line at +2, rest at +4
-      // TODO: Look this up in IntelliJ bugtracker
+      // https://youtrack.jetbrains.com/issue/IDEA-136989
       // Test FAIL: Contents should be lined up +4
       // {
       //     1,
