@@ -60,6 +60,7 @@ public class CachingCrudClient
 
   private final LoadingCache<Long, Venue>
       // Test outline (can't inline these comments due to IntelliJ bug):
+      // https://youtrack.jetbrains.com/issue/IDEA-136980
       // Test: wrapping after a type and before a variable name is +4
       // Test: the rest is aligned on '.'
       // Test: inside of argument continuations on lineContinuer will be +4
@@ -79,6 +80,7 @@ public class CachingCrudClient
 
   private final LoadingCache<Long, Venue>
       // Test outline (can't inline these comments due to IntelliJ bug):
+      // https://youtrack.jetbrains.com/issue/IDEA-136980
       // Test: wrapping after a type and before a variable name is +4
       // Test: the rest is aligned on '.'
       // Test: inside of argument continuations on lineContinuer will be +4
@@ -242,11 +244,13 @@ public class CachingCrudClient
 
   // Test SKIP: 2nd line is indented +4
   // IntelliJ bug: does not place a space between "+" and "2" on 2nd line
+  // https://youtrack.jetbrains.com/issue/IDEA-136985
   // 2
   //     + 2;
 
   // Test SKIP: 2nd line is indented +4
   // IntelliJ bug: does not place a space between "2" and "+" on 1st line
+  // https://youtrack.jetbrains.com/issue/IDEA-136985
   // 2 +
   //     2;
 
@@ -362,6 +366,7 @@ public class CachingCrudClient
 
   public String returnWithBuilder2() {
     // IntelliJ bug: a line comment before .toString() gets indented an additional +4
+    // https://youtrack.jetbrains.com/issue/IDEA-122802
     // Test: deals with return + builder continuation before '.', applies +4 to remaining
     return MoreObjects
         .toStringHelper(this)
@@ -461,6 +466,8 @@ public class CachingCrudClient
   }
 
   // Test: The '})' aligns with '@' and body lines are +4
+  // Note: Google Style allows these to be +2, but IntelliJ does not, per this bug report:
+  // https://youtrack.jetbrains.com/issue/IDEA-54564
   @TechDebt({
       "bla bla bla wall of text;",
       " more text."
@@ -516,6 +523,7 @@ public class CachingCrudClient
 
     // Test SKIP: ":" should be lined up with previous line (not an additional +4, not lined up with "?")
     // IntelliJ bug: always aligns with "?", can't turn it off
+    // TODO: Look this up in IntelliJ bugtracker
     // String ternary4 =
     //     StringUtils.isBlank(configRunLocationOther) ? configRunLocationLocal
     //     : configRunLocationOther;
@@ -543,6 +551,7 @@ public class CachingCrudClient
   public class ArrayInitializerTest {
 
     // IntelliJ bug: this should be +2 according to Google, but gets formatted +4, with no way to change it
+    // https://youtrack.jetbrains.com/issue/IDEA-54564
     final String[] style1 = {
         // Test: for consistency with IntelliJ bug, should be +4
         1,
@@ -562,11 +571,13 @@ public class CachingCrudClient
         // Test: for consistency with IntelliJ bug, should be +4
         1, 2, 3
         // IntelliJ bug: comments after '}' but before ')' should be aligned to the ')', not +4
+        // TODO: Look this up in IntelliJ bugtracker
     }
     ); // Test: should be aligned with beginning of "final"
 
     public void sideEffects1() {
       // IntelliJ bug: seems to line up the first block line at +2, rest at +4
+      // TODO: Look this up in IntelliJ bugtracker
       // Test FAIL: Contents should be lined up +4
       // {
       //     1,
