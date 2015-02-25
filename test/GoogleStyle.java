@@ -486,6 +486,7 @@ public class CachingCrudClient
   public ModelAndView handleRequestInternalEmpty() {}
 
   // Test SKIP: IntelliJ fails to leave the collapsed block collapsed, if there's at least one line break before it
+  // https://youtrack.jetbrains.com/issue/IDEA-136990
   // public ModelAndView handleRequestInternalEmptyMulti(
   //     final HttpServletRequest httpServletRequest,
   //     final HttpServletResponse response)
