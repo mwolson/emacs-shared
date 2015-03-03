@@ -576,10 +576,8 @@ public class CachingCrudClient
     ); // Test: should be aligned with beginning of "final"
 
     public void sideEffects1() {
-      // IntelliJ bug: seems to line up the first block line at +2, rest at +4
-      // https://youtrack.jetbrains.com/issue/IDEA-136989
       // Test FAIL: Contents should be lined up +4
-      // {
+      // new int[]{
       //     1,
       //     2,
       //     3
@@ -588,7 +586,7 @@ public class CachingCrudClient
 
     public void sideEffects2() {
       // Test FAIL: Contents should be lined up +4
-      // ({
+      // (new int[]{
       //     1,
       //     2,
       //     3
