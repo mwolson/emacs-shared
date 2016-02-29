@@ -48,7 +48,7 @@
 	url = https://github.com/immerrr/lua-mode.git
 [submodule "elisp/magit"]
 	path = elisp/magit
-	url = https://github.com/mwolson/magit.git
+	url = https://github.com/magit/magit.git
 [submodule "elisp/maxframe-el"]
 	path = elisp/maxframe-el
 	url = https://github.com/rmm5t/maxframe.el.git
@@ -88,6 +88,9 @@
 [submodule "elisp/tt-mode"]
 	path = elisp/tt-mode
 	url = https://github.com/davorg/tt-mode.git
+[submodule "elisp/with-editor"]
+	path = elisp/with-editor
+	url = https://github.com/magit/with-editor.git
 [submodule "elisp/yasnippet"]
 	path = elisp/yasnippet
 	url = https://github.com/capitaomorte/yasnippet.git

@@ -37,9 +37,6 @@ if test -z "$EPA_WORKS"; then
     exit 1
 fi
 
-# Have to base64-encode this, since sh on windows treats ':' character as some kind of escape sequence
-ELISP_DIR=$(emacs --batch -q --no-site-file --eval "(message (base64-encode-string (expand-file-name \"elisp\")))" 2>&1)
-
 if test -z "ELISP_DIR"; then
     echo >&2 "Error: Could not find \"emacs\" in your path"
     exit 1
@@ -104,11 +101,15 @@ if test -n "$BUILD"; then
     # magit
     (
         cd elisp/magit
-        # deal with cl-lib dependency
-        make clean core contrib EFLAGS="--eval \"(add-to-list 'load-path (base64-decode-string \\\"$ELISP_DIR\\\") t)\""
+        # configure magit to find dependencies
+	echo <<EOF > config.mk
+LOAD_PATH  = -L $DESTDIR/elisp/magit/lisp
+LOAD_PATH += -L $DESTDIR/elisp
+EOF
+        make clean lisp
 
         if test -n "$BUILD_DOCS"; then
-            make install_docs DESTDIR="$DESTDIR" PREFIX=
+            make docs install-docs DESTDIR="$DESTDIR" PREFIX=
         fi
     )
 

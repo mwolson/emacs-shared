@@ -288,6 +288,11 @@
 ;; Don't slow down ls and don't make dired output too wide on w32 systems
 (setq w32-get-true-file-attributes nil)
 
+;; Load common elisp libraries used by other add-ons
+(add-to-list 'load-path (concat my-emacs-path "elisp/dash"))
+(add-to-list 'load-path (concat my-emacs-path "elisp/s"))
+(add-to-list 'load-path (concat my-emacs-path "elisp/with-editor"))
+
 ;; Make shell commands run in unique buffer so we can have multiple at once, and run all shell
 ;; asynchronously.  Taken in part from EmacsWiki: ExecuteExternalCommand page.
 
@@ -458,9 +463,7 @@
 ;; Clojure-mode and nrepl setup
 (add-to-list 'load-path (concat my-emacs-path "elisp/clojure-mode"))
 (require 'clojure-mode)
-(add-to-list 'load-path (concat my-emacs-path "elisp/dash"))
 (add-to-list 'load-path (concat my-emacs-path "elisp/pkg-info"))
-(add-to-list 'load-path (concat my-emacs-path "elisp/s"))
 (add-to-list 'load-path (concat my-emacs-path "elisp/nrepl"))
 (require 'nrepl)
 (require 'clojure-test-mode)
@@ -1256,47 +1259,18 @@ trailing space to the screen, so we want to clean that up."
 (when (my-emacs-feature-enabled 'magit)
 
 ;; Load magit
-(add-to-list 'load-path (concat my-emacs-path "elisp/magit"))
+(add-to-list 'load-path (concat my-emacs-path "elisp/magit/lisp"))
 (require 'magit)
 (require 'magit-blame)
-(require 'magit-svn)
-
-;; Add svn support to magit
-(defun my-enable-magit-svn ()
-  (unless (string= "" (shell-command-to-string "git config svn-remote.svn.url"))
-    (magit-svn-mode 1)))
-(add-hook 'magit-mode-hook 'my-enable-magit-svn)
 
 ;; Setup info
 (add-to-list 'Info-default-directory-list (concat my-emacs-path "share/info"))
 
-;; Hacks
-
-(defun my-magit-diff-head (dir)
-  (interactive (list (or (and (not current-prefix-arg)
-                              (magit-get-top-dir default-directory))
-                         (magit-read-top-dir))))
-  (let ((default-directory (or (magit-get-top-dir dir) default-directory)))
-    (magit-diff "HEAD"))
-  (other-window 1))
-
-(defun my-magit-log-edit ()
-  (interactive)
-  (magit-log-edit)
-  (turn-on-muse-list-edit-minor-mode)
-  (set (make-variable-buffer-local 'fill-paragraph-function) nil))
-
 ;; Map some magit keys
 (global-set-key "\C-xV" nil)
-(global-set-key "\C-xVb" 'magit-branch-manager)
-(global-set-key "\C-xVc" 'my-magit-log-edit)
+(global-set-key "\C-xVb" 'magit-show-refs)
 (global-set-key "\C-xVl" 'magit-log)
 (global-set-key "\C-xVs" 'magit-status)
-(global-set-key "\C-xV=" 'my-magit-diff-head)
-
-;; Don't overwrite Alt-left movement keys in magit modes
-(define-key magit-commit-mode-map (kbd "<M-left>") 'backward-word)
-(define-key magit-status-mode-map (kbd "<M-left>") 'backward-word)
 
 );;; END magit ;;;
 
