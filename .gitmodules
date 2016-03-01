@@ -19,9 +19,6 @@
 [submodule "elisp/emacs_chrome"]
 	path = elisp/emacs_chrome
 	url = https://github.com/stsquad/emacs_chrome.git
-[submodule "elisp/emacs-color-theme-solarized"]
-	path = elisp/emacs-color-theme-solarized
-	url = https://github.com/mwolson/emacs-color-theme-solarized.git
 [submodule "elisp/emacs-eclim"]
 	path = elisp/emacs-eclim
 	url = https://github.com/mwolson/emacs-eclim.git
@@ -94,3 +91,6 @@
 [submodule "elisp/yasnippet"]
 	path = elisp/yasnippet
 	url = https://github.com/capitaomorte/yasnippet.git
+[submodule "elisp/afternoon-theme"]
+	path = elisp/afternoon-theme
+	url = https://github.com/osener/emacs-afternoon-theme.git

@@ -77,9 +77,9 @@
 ;; Add shared elisp directory (but prefer system libs)
 (add-to-list 'load-path (concat my-emacs-path "elisp") t)
 
-;; Add Solarized themes
+;; Add color theme
 (when my-use-themes
-  (add-to-list 'custom-theme-load-path (concat my-emacs-path "elisp/emacs-color-theme-solarized")))
+  (add-to-list 'custom-theme-load-path (concat my-emacs-path "elisp/afternoon-theme")))
 
 ;; Allow maximizing frame
 (add-to-list 'load-path (concat my-emacs-path "elisp/maxframe-el"))
@@ -108,11 +108,7 @@
 (defun my-reset-theme ()
   (interactive)
   (when my-use-themes
-    ;; try out a slightly lighter background color
-    (when (boundp 'solarized-colors)
-      (setcar solarized-colors
-              '(base03  "#04313a" "#042028" "#1c1c1c" "brightblack"   "black")))
-    (load-theme 'solarized-dark t)))
+    (load-theme 'afternoon t)))
 
 ;; This function should be called on the emacsclient commandline in cases where no file is being passed on commandline.
 (defun my-init-client ()
