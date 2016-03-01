@@ -20,6 +20,7 @@
  '(bsh-jar "/usr/share/java/bsh.jar")
  '(case-replace nil)
  '(column-number-mode t)
+ '(confirm-kill-emacs (quote y-or-n-p))
  '(confluence-save-page-comments nil)
  '(confluence-save-page-minor-edits nil)
  '(cperl-close-paren-offset -4)
@@ -28,7 +29,9 @@
  '(cperl-merge-trailing-else nil)
  '(current-language-environment "UTF-8")
  '(custom-safe-themes t)
- '(debian-changelog-mode-hook (quote (turn-on-auto-fill turn-on-muse-list-edit-minor-mode)))
+ '(debian-changelog-mode-hook
+   (quote
+    (turn-on-auto-fill turn-on-muse-list-edit-minor-mode)))
  '(default-input-method "TeX")
  '(delete-selection-mode t)
  '(dict-noauth t)
@@ -41,7 +44,13 @@
  '(doc-view-resolution 132)
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
  '(edit-server-new-frame nil)
- '(edit-server-new-frame-alist (quote ((name . "Emacs TEXTAREA") (width . 120) (height . 30) (minibuffer . t) (menu-bar-lines . t))))
+ '(edit-server-new-frame-alist
+   (quote
+    ((name . "Emacs TEXTAREA")
+     (width . 120)
+     (height . 30)
+     (minibuffer . t)
+     (menu-bar-lines . t))))
  '(eldoc-minor-mode-string " E")
  '(emms-cache-file "~/.emacs.d/.emms-cache")
  '(emms-info-asynchronously nil)
@@ -84,7 +93,9 @@
  '(erc-kill-server-buffer-on-quit t)
  '(erc-log-write-after-insert t)
  '(erc-match-exclude-server-buffer t)
- '(erc-modules (quote (autojoin button capab-identify completion dcc fill identd irccontrols keep-place list match menu move-to-prompt netsplit networks noncommands readonly ring services stamp track)))
+ '(erc-modules
+   (quote
+    (autojoin button capab-identify completion dcc fill identd irccontrols keep-place list match menu move-to-prompt netsplit networks noncommands readonly ring services stamp track)))
  '(erc-notify-signoff-hook (quote (erc-notify-signoff)))
  '(erc-notify-signon-hook (quote (erc-notify-signon)))
  '(erc-prompt-for-nickserv-password nil)
@@ -95,7 +106,9 @@
  '(erc-timestamp-format "[%H:%M] ")
  '(erc-timestamp-intangible nil)
  '(erc-timestamp-only-if-changed-flag nil)
- '(erc-track-exclude-types (quote ("JOIN" "NICK" "PART" "QUIT" "MODE" "001" "305" "306" "333" "353")))
+ '(erc-track-exclude-types
+   (quote
+    ("JOIN" "NICK" "PART" "QUIT" "MODE" "001" "305" "306" "333" "353")))
  '(erc-track-switch-direction (quote importance))
  '(erc-user-full-name (quote user-full-name))
  '(erc-verbose-dcc nil)
@@ -149,8 +162,12 @@
  '(muse-html-meta-content-encoding (quote utf-8))
  '(muse-publish-comments-p t)
  '(muse-publish-date-format "%b. %e, %Y")
- '(muse-publish-desc-transforms (quote (muse-wiki-publish-pretty-title muse-wiki-publish-pretty-interwiki muse-publish-strip-URL)))
- '(muse-wiki-publish-small-title-words (quote ("the" "and" "at" "on" "of" "for" "in" "an" "a" "page")))
+ '(muse-publish-desc-transforms
+   (quote
+    (muse-wiki-publish-pretty-title muse-wiki-publish-pretty-interwiki muse-publish-strip-URL)))
+ '(muse-wiki-publish-small-title-words
+   (quote
+    ("the" "and" "at" "on" "of" "for" "in" "an" "a" "page")))
  '(org-startup-folded nil)
  '(post-jump-header nil)
  '(recentf-mode nil)
@@ -159,7 +176,10 @@
  '(remember-filter-functions (quote ((lambda nil (delete-trailing-whitespace)))))
  '(remember-mode-hook (quote (muse-list-edit-minor-mode)))
  '(require-final-newline nil)
- '(safe-local-variable-values (quote ((emacs-lisp-docstring-fill-column . 75) (allout-layout * 0 :))))
+ '(safe-local-variable-values
+   (quote
+    ((emacs-lisp-docstring-fill-column . 75)
+     (allout-layout * 0 :))))
  '(save-place t nil (saveplace))
  '(save-place-file "~/.emacs.d/.places")
  '(save-place-limit 20)
@@ -168,7 +188,9 @@
  '(show-paren-style (quote parenthesis))
  '(smex-save-file "~/.emacs.d/.smex-items")
  '(sql-product (quote mysql))
- '(tab-stop-list (quote (4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120)))
+ '(tab-stop-list
+   (quote
+    (4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120)))
  '(tab-width 8)
  '(tooltip-use-echo-area t)
  '(tramp-auto-save-directory "~/.emacs.d/.autosave.d")
