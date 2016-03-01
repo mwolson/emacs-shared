@@ -7,9 +7,6 @@
 [submodule "elisp/clojure-mode"]
 	path = elisp/clojure-mode
 	url = https://github.com/clojure-emacs/clojure-mode.git
-[submodule "elisp/confluence"]
-	path = elisp/confluence
-	url = https://github.com/emacsmirror/confluence.git
 [submodule "elisp/dash"]
 	path = elisp/dash
 	url = https://github.com/magnars/dash.el.git

@@ -669,37 +669,6 @@
      (profiler-report-cpu)
      (profiler-cpu-stop)))
 
-;;; BEGIN confluence ;;;
-(when (my-emacs-feature-enabled 'confluence)
-
-;;; Setup
-(add-to-list 'load-path (concat my-emacs-path "elisp/confluence"))
-(require 'confluence)
-
-(let ((settings (locate-user-emacs-file "confluence-auth.el")))
-  (when (file-exists-p settings)
-    (load settings)))
-
-(add-to-list 'edit-server-url-major-mode-alist
-             '("^[^/]+/confluence/" . confluence-edit-mode))
-
-(add-hook 'confluence-edit-mode-hook 'visual-line-mode)
-
-(defun my-confluence-set-keys ()
-  (local-set-key "\C-c" confluence-prefix-map)
-  ;; Restore C-c p binding
-  (local-set-key "\C-cp" my-muse-prefix-map))
-(add-hook 'confluence-edit-mode-hook #'my-confluence-set-keys)
-
-(defun my-text-mode-confluence-keys ()
-  (local-set-key (kbd "C-c .") #'confluence-get-page-at-point))
-(add-hook 'text-mode-hook #'my-text-mode-confluence-keys)
-
-;;; Keybinds
-(global-set-key "\C-cwf" 'confluence-get-page)
-
-);;; END confluence
-
 ;;; BEGIN eclim ;;;
 
 (when (my-emacs-feature-enabled 'eclim)
