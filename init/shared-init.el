@@ -1227,6 +1227,10 @@ trailing space to the screen, so we want to clean that up."
 (add-to-list 'load-path (concat my-emacs-path "elisp/magit/lisp"))
 (require 'magit)
 (require 'magit-blame)
+(require 'git-commit)
+
+;; Kill auto-fill in git-commit mode
+(remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill)
 
 ;; Setup info
 (add-to-list 'Info-default-directory-list (concat my-emacs-path "share/info"))
