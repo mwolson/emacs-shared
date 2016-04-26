@@ -131,6 +131,7 @@
  '(ispell-local-dictionary "american")
  '(ispell-personal-dictionary nil)
  '(ispell-silently-savep t)
+ '(js-indent-level 2)
  '(js2-allow-keywords-as-property-names nil)
  '(js2-auto-indent-flag nil)
  '(js2-basic-offset 2)
