@@ -52,6 +52,7 @@
      (minibuffer . t)
      (menu-bar-lines . t))))
  '(eldoc-minor-mode-string " E")
+ '(electric-indent-mode nil)
  '(emms-cache-file "~/.emacs.d/.emms-cache")
  '(emms-info-asynchronously nil)
  '(emms-info-functions (quote (emms-info-mpd my-emms-info-fromname)))
