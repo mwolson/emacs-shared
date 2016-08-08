@@ -22,40 +22,14 @@
 
 <body>
 
-<div class="menu">
-  <div class="menuitem">
-    <a title="About me, contact info." href="/web/AboutMe.html">About me</a>
-  </div>
-
-  <div class="menuitem">
-    <a title="Photo albums." href="http://albums.mwolson.org/">Albums</a>
-  </div>
-
-  <div class="menuitem">
-    <a title="My blog." href="http://blog.mwolson.org/">Blog</a>
-  </div>
-
-  <div class="menuitem">
-    <a title="Presentations." href="/notes/WikiIndex.html">Presentations</a>
-  </div>
-
-  <div class="menuitem">
-    <a title="Software that I work on." href="/projects/">Projects</a>
-  </div>
-
-</div><!-- menu ends here -->
-
-<h1 id="top">
-<a href="<lisp>(muse-wiki-resolve-project-page "Website")</lisp>"
-style="text-decoration: none;">
-<img src="/static/logos/site-logo.png"
-alt="mwolson.org logo" />
-</a>
-<a class="top" href="<lisp>(muse-wiki-resolve-project-page
-                             (muse-project))</lisp>">
+<div id="top">
+<h1>
+<a href="<lisp>(muse-wiki-resolve-project-page (muse-project))</lisp>">
 <lisp>(concat (car (muse-project)) " - "
               (muse-wiki-publish-pretty-title))</lisp>
 </a>
 </h1>
+</div>
 
+<div id="content">
 <!-- Page published by Emacs Muse begins here -->
