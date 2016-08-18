@@ -2,16 +2,9 @@
 </div>
 
 <div id="footer">
-  <lisp>
-    (concat
-      "<a href=\"http://mwolson.org/web/\">Front</a> | <a href=\""
-      (muse-wiki-resolve-project-page (muse-project))
-      "\">" (car (muse-project)) "</a>"
-      " | <a href=\""
-      (muse-wiki-resolve-project-page (muse-project) "WikiIndex")
-      "\">Index</a>"
-      "")
-  </lisp>
+  <a href="http://mwolson.org/web/">Front</a>
+  | <a href="http://mwolson.org/web/CurriculumVitae.pdf">Resume</a>
+  | <a href="http://mwolson.org/projects/">Projects</a>
   <br />
   <span class="footdate">
   Last updated <lisp>(muse-publishing-directive "date")</lisp>
