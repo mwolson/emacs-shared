@@ -1,48 +1,21 @@
 <!-- Page published by Emacs Muse ends here -->
 </div>
 
-<div class="navfoot"><lisp>
-  (when (muse-publishing-directive "related")
+<div id="footer">
+  <lisp>
     (concat
-      "\n<p><strong>Related:</strong>\n        "
-      (mapconcat
-        (lambda (page)
-          (concat "<a href=\"../bookmarks/"
-                  page "\">" page "</a>"))
-        (split-string
-          (muse-publishing-directive "related"))
-        "\n        ")
-      "\n      </p>"))
+      "<a href=\"http://mwolson.org/web/\">Front</a> | <a href=\""
+      (muse-wiki-resolve-project-page (muse-project))
+      "\">" (car (muse-project)) "</a>"
+      " | <a href=\""
+      (muse-wiki-resolve-project-page (muse-project) "WikiIndex")
+      "\">Index</a>"
+      "")
   </lisp>
   <br />
-  <div class="iconbox">
-  <table width="100%" summary="Footer navigation">
-    <col width="50%" /><col width="50%" />
-    <tr>
-      <td align="center">&nbsp;</td>
-      <td align="right" style="line-height: 175%">
-        <br />
-        <lisp>
-          (concat
-            "[ <a href=\""
-            (muse-wiki-resolve-project-page)
-            "\">Front</a> | <a href=\""
-            (muse-wiki-resolve-project-page (muse-project))
-            "\">" (car (muse-project)) "</a>"
-            " | <a href=\""
-            (muse-wiki-resolve-project-page (muse-project) "WikiIndex")
-            "\">Index</a>"
-            " ]")
-        </lisp>
-        <br />
-        <span class="footdate">
-        Last updated <lisp>(muse-publishing-directive "date")</lisp>
-        </span>
-      </td>
-    </tr>
-  </table>
-  <br />
-  </div>
+  <span class="footdate">
+  Last updated <lisp>(muse-publishing-directive "date")</lisp>
+  </span>
 </div>
 </body>
 </html>
