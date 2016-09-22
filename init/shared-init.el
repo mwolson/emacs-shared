@@ -97,7 +97,7 @@
 (defun my-reset-frame-size ()
   "Reset the size of the current frame according to `default-frame-alist'."
   (interactive)
-  (cond ((and my-frame-maximize-p (eq window-system 'x))
+  (cond ((and my-frame-maximize-p (memq window-system '(w32 x)))
          (set-frame-parameter nil 'fullscreen 'maximized))
         (my-frame-maximize-p
          (maximize-frame))
