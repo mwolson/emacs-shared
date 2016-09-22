@@ -64,12 +64,12 @@ Install Aspell and an Aspell dictionary for your language for spell-checking.  T
 
 ### Install Emacs
 
-The recommended version is Emacs 24.3.  The recommended installers for each OS are:
+The recommended version is Emacs 24.5.  The recommended installers for each OS are:
 
 *Windows*
 
-- Download `emacs-24.3-bin-i386.zip` (or the latest version of the -bin package) from [ftp.gnu.org](http://ftp.gnu.org/gnu/emacs/windows/).
-- Unzip to `C:\Program Files (x86)` and then rename `emacs-24.3` to `Emacs`.  When done, you should verify that a file named `C:\Program Files (x86)\Emacs\bin\runemacs.exe` exists.
+- Download `emacs-24.5-bin-i686-mingw32.zip` from [ftp.gnu.org](http://ftp.gnu.org/gnu/emacs/windows/).
+- Unzip to `C:\Program Files (x86)` and then rename `emacs-24.5` to `Emacs`.  When done, you should verify that a file named `C:\Program Files (x86)\Emacs\bin\runemacs.exe` exists.
 - If you change the location, you may want to update the `my-system-paths` option later.
 
 *Mac OS X*
