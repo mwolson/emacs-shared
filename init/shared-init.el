@@ -77,9 +77,9 @@
 ;; Add shared elisp directory (but prefer system libs)
 (add-to-list 'load-path (concat my-emacs-path "elisp") t)
 
-;; Add Solarized themes
+;; Add color theme
 (when my-use-themes
-  (add-to-list 'custom-theme-load-path (concat my-emacs-path "elisp/emacs-color-theme-solarized")))
+  (add-to-list 'custom-theme-load-path (concat my-emacs-path "elisp/afternoon-theme")))
 
 ;; Allow maximizing frame
 (add-to-list 'load-path (concat my-emacs-path "elisp/maxframe-el"))
@@ -108,11 +108,7 @@
 (defun my-reset-theme ()
   (interactive)
   (when my-use-themes
-    ;; try out a slightly lighter background color
-    (when (boundp 'solarized-colors)
-      (setcar solarized-colors
-              '(base03  "#04313a" "#042028" "#1c1c1c" "brightblack"   "black")))
-    (load-theme 'solarized-dark t)))
+    (load-theme 'afternoon t)))
 
 ;; This function should be called on the emacsclient commandline in cases where no file is being passed on commandline.
 (defun my-init-client ()
@@ -288,6 +284,11 @@
 ;; Don't slow down ls and don't make dired output too wide on w32 systems
 (setq w32-get-true-file-attributes nil)
 
+;; Load common elisp libraries used by other add-ons
+(add-to-list 'load-path (concat my-emacs-path "elisp/dash"))
+(add-to-list 'load-path (concat my-emacs-path "elisp/s"))
+(add-to-list 'load-path (concat my-emacs-path "elisp/with-editor"))
+
 ;; Make shell commands run in unique buffer so we can have multiple at once, and run all shell
 ;; asynchronously.  Taken in part from EmacsWiki: ExecuteExternalCommand page.
 
@@ -458,9 +459,7 @@
 ;; Clojure-mode and nrepl setup
 (add-to-list 'load-path (concat my-emacs-path "elisp/clojure-mode"))
 (require 'clojure-mode)
-(add-to-list 'load-path (concat my-emacs-path "elisp/dash"))
 (add-to-list 'load-path (concat my-emacs-path "elisp/pkg-info"))
-(add-to-list 'load-path (concat my-emacs-path "elisp/s"))
 (add-to-list 'load-path (concat my-emacs-path "elisp/nrepl"))
 (require 'nrepl)
 (require 'clojure-test-mode)
@@ -669,37 +668,6 @@
          ,@body)
      (profiler-report-cpu)
      (profiler-cpu-stop)))
-
-;;; BEGIN confluence ;;;
-(when (my-emacs-feature-enabled 'confluence)
-
-;;; Setup
-(add-to-list 'load-path (concat my-emacs-path "elisp/confluence"))
-(require 'confluence)
-
-(let ((settings (locate-user-emacs-file "confluence-auth.el")))
-  (when (file-exists-p settings)
-    (load settings)))
-
-(add-to-list 'edit-server-url-major-mode-alist
-             '("^[^/]+/confluence/" . confluence-edit-mode))
-
-(add-hook 'confluence-edit-mode-hook 'visual-line-mode)
-
-(defun my-confluence-set-keys ()
-  (local-set-key "\C-c" confluence-prefix-map)
-  ;; Restore C-c p binding
-  (local-set-key "\C-cp" my-muse-prefix-map))
-(add-hook 'confluence-edit-mode-hook #'my-confluence-set-keys)
-
-(defun my-text-mode-confluence-keys ()
-  (local-set-key (kbd "C-c .") #'confluence-get-page-at-point))
-(add-hook 'text-mode-hook #'my-text-mode-confluence-keys)
-
-;;; Keybinds
-(global-set-key "\C-cwf" 'confluence-get-page)
-
-);;; END confluence
 
 ;;; BEGIN eclim ;;;
 
@@ -1256,47 +1224,22 @@ trailing space to the screen, so we want to clean that up."
 (when (my-emacs-feature-enabled 'magit)
 
 ;; Load magit
-(add-to-list 'load-path (concat my-emacs-path "elisp/magit"))
+(add-to-list 'load-path (concat my-emacs-path "elisp/magit/lisp"))
 (require 'magit)
 (require 'magit-blame)
-(require 'magit-svn)
+(require 'git-commit)
 
-;; Add svn support to magit
-(defun my-enable-magit-svn ()
-  (unless (string= "" (shell-command-to-string "git config svn-remote.svn.url"))
-    (magit-svn-mode 1)))
-(add-hook 'magit-mode-hook 'my-enable-magit-svn)
+;; Kill auto-fill in git-commit mode
+(remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill)
 
 ;; Setup info
 (add-to-list 'Info-default-directory-list (concat my-emacs-path "share/info"))
 
-;; Hacks
-
-(defun my-magit-diff-head (dir)
-  (interactive (list (or (and (not current-prefix-arg)
-                              (magit-get-top-dir default-directory))
-                         (magit-read-top-dir))))
-  (let ((default-directory (or (magit-get-top-dir dir) default-directory)))
-    (magit-diff "HEAD"))
-  (other-window 1))
-
-(defun my-magit-log-edit ()
-  (interactive)
-  (magit-log-edit)
-  (turn-on-muse-list-edit-minor-mode)
-  (set (make-variable-buffer-local 'fill-paragraph-function) nil))
-
 ;; Map some magit keys
 (global-set-key "\C-xV" nil)
-(global-set-key "\C-xVb" 'magit-branch-manager)
-(global-set-key "\C-xVc" 'my-magit-log-edit)
+(global-set-key "\C-xVb" 'magit-show-refs)
 (global-set-key "\C-xVl" 'magit-log)
 (global-set-key "\C-xVs" 'magit-status)
-(global-set-key "\C-xV=" 'my-magit-diff-head)
-
-;; Don't overwrite Alt-left movement keys in magit modes
-(define-key magit-commit-mode-map (kbd "<M-left>") 'backward-word)
-(define-key magit-status-mode-map (kbd "<M-left>") 'backward-word)
 
 );;; END magit ;;;
 

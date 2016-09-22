@@ -7,9 +7,6 @@
 [submodule "elisp/clojure-mode"]
 	path = elisp/clojure-mode
 	url = https://github.com/clojure-emacs/clojure-mode.git
-[submodule "elisp/confluence"]
-	path = elisp/confluence
-	url = https://github.com/emacsmirror/confluence.git
 [submodule "elisp/dash"]
 	path = elisp/dash
 	url = https://github.com/magnars/dash.el.git
@@ -19,9 +16,6 @@
 [submodule "elisp/emacs_chrome"]
 	path = elisp/emacs_chrome
 	url = https://github.com/stsquad/emacs_chrome.git
-[submodule "elisp/emacs-color-theme-solarized"]
-	path = elisp/emacs-color-theme-solarized
-	url = https://github.com/mwolson/emacs-color-theme-solarized.git
 [submodule "elisp/emacs-eclim"]
 	path = elisp/emacs-eclim
 	url = https://github.com/mwolson/emacs-eclim.git
@@ -48,7 +42,7 @@
 	url = https://github.com/immerrr/lua-mode.git
 [submodule "elisp/magit"]
 	path = elisp/magit
-	url = https://github.com/mwolson/magit.git
+	url = https://github.com/magit/magit.git
 [submodule "elisp/maxframe-el"]
 	path = elisp/maxframe-el
 	url = https://github.com/rmm5t/maxframe.el.git
@@ -88,6 +82,12 @@
 [submodule "elisp/tt-mode"]
 	path = elisp/tt-mode
 	url = https://github.com/davorg/tt-mode.git
+[submodule "elisp/with-editor"]
+	path = elisp/with-editor
+	url = https://github.com/magit/with-editor.git
 [submodule "elisp/yasnippet"]
 	path = elisp/yasnippet
 	url = https://github.com/capitaomorte/yasnippet.git
+[submodule "elisp/afternoon-theme"]
+	path = elisp/afternoon-theme
+	url = https://github.com/osener/emacs-afternoon-theme.git
