@@ -3,12 +3,11 @@ Shared Emacs settings
 
 This is a collection of Emacs Lisp add-ons and an Emacs init file with the following features.
 
-- **Cross-platform support**: decent level of feature parity between Linux, Windows, and Mac OS X; this includes a custom
-  patch to improve Windows support for magit
+- **Cross-platform support**: decent level of feature parity between Linux, Windows, and Mac OS X
 - **Fullscreen by default** on Windows and OS X, with code to account for dock size of 64 pixels on OS X (options:
   my-frame-pad-width, my-frame-pad-height, and my-frame-maximize-p); frame width and height is customizable if
   you don't like fullscreen
-- **solarized-dark color theme**, with custom code to support using both emacsclient and GUI frame
+- **"afternoon" dark color theme**
 - Can be personalized with a single `setq` statement; there are many options
 - Supports list of features to enable
 - Principle of least surprise is a design goal
@@ -17,8 +16,6 @@ This is a collection of Emacs Lisp add-ons and an Emacs init file with the follo
 - Extensively-documented **setup instructions**
 - **Manuals** are pre-built and show up when you do `C-h i`
 - Supplements your existing `~/.emacs.d/init.el` file instead of replacing it
-
-![Emacs Suared desktop](http://mwolson.org/static/img/emacs-shared.png)
 
 Installing
 ----------
