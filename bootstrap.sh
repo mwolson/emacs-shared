@@ -137,18 +137,6 @@ EOF
         make clean all
     )
 
-    # Sepia
-    (
-        cd elisp/sepia
-
-        if test -n "$BUILD_DOCS"; then
-            # Makefile.PL?  No thanks.
-            makeinfo --no-split -o sepia.info sepia.texi
-            install_info sepia.info
-            rm -f sepia.info
-        fi
-    )
-
     # SLIME
     (
         cd elisp/slime/doc

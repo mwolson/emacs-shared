@@ -346,20 +346,11 @@
 (add-to-list 'load-path (concat my-emacs-path "elisp/php-mode"))
 (require 'php-mode)
 
-;; Load Sepia for editing Perl files
-(add-to-list 'load-path (concat my-emacs-path "elisp/sepia"))
-(setq sepia-perl5lib (list (expand-file-name (concat my-emacs-path "elisp/sepia/lib"))))
-
-;; Don't make sepia the default Perl mode; its q() font-lock handling is terrible
-;(defalias 'perl-mode 'sepia-mode)
+;; Load Perl mode
 (require 'perl-mode)
-(require 'sepia)
-;(put 'cperl-array-face 'face-alias 'font-lock-variable-name-face)
-;(put 'cperl-hash-face 'face-alias 'font-lock-variable-name-face)
-;(put 'cperl-nonoverridable-face 'face-alias 'font-lock-type-face)
 
 ;; courtesy of Jon Philpott
-(defun my-sepia-buffer-name ()
+(defun my-perl-buffer-name ()
   (interactive)
   (save-excursion
     (goto-char (point-min))
@@ -369,18 +360,7 @@
         (if (and buf (not (eq buf (current-buffer))))
             (rename-buffer pkg t)
           (rename-buffer pkg))))))
-;(add-hook 'sepia-mode-hook #'my-sepia-buffer-name)
-(add-hook 'perl-mode-hook #'my-sepia-buffer-name)
-
-;; Restore C-c p binding
-(defun my-sepia-restore-keys ()
-  (when (my-emacs-feature-enabled 'muse)
-    (local-set-key "\C-cp" my-muse-prefix-map)))
-(add-hook 'sepia-mode-hook #'my-sepia-restore-keys)
-
-;; sepia is not allowed to turn on eldoc
-(defun sepia-install-eldoc ()
-  nil)
+(add-hook 'perl-mode-hook #'my-perl-buffer-name)
 
 ;; Template toolkit support
 (add-to-list 'load-path (concat my-emacs-path "elisp/tt-mode"))

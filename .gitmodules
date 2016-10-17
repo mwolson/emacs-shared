@@ -70,9 +70,6 @@
 [submodule "elisp/scala-mode2"]
 	path = elisp/scala-mode2
 	url = https://github.com/hvesalai/scala-mode2.git
-[submodule "elisp/sepia"]
-	path = elisp/sepia
-	url = https://github.com/emacsmirror/sepia.git
 [submodule "elisp/slime"]
 	path = elisp/slime
 	url = https://github.com/antifuchs/slime.git
