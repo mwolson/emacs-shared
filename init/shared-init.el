@@ -629,8 +629,9 @@
 ;; Markdown support
 (autoload 'markdown-mode "markdown-mode"
    "Major mode for editing Markdown files" t)
-(setq auto-mode-alist
-   (cons '("\\.\\(markdown\\|md\\)" . markdown-mode) auto-mode-alist))
+(autoload 'gfm-mode "markdown-mode"
+   "Major mode for editing GitHub Flavored Markdown files" t)
+(add-to-list 'auto-mode-alist '("\\.\\(markdown\\|md\\)\\'" . gfm-mode))
 
 ;; Don't mess with keys that I'm used to
 (defun my-markdown-mode-keys ()
