@@ -627,10 +627,8 @@
 (add-hook 'allout-mode-hook 'allout-show-all)
 
 ;; Markdown support
-(autoload 'markdown-mode "markdown-mode"
-   "Major mode for editing Markdown files" t)
-(autoload 'gfm-mode "markdown-mode"
-   "Major mode for editing GitHub Flavored Markdown files" t)
+(let ((auto-mode-alist '()))
+  (require 'markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.\\(markdown\\|md\\)\\'" . gfm-mode))
 
 ;; Don't mess with keys that I'm used to
