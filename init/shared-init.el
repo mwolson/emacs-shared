@@ -1238,7 +1238,6 @@ trailing space to the screen, so we want to clean that up."
 (require 'muse)          ; load generic module
 (require 'muse-colors)   ; load coloring/font-lock module
 (require 'muse-mode)     ; load authoring mode
-(require 'muse-blosxom)  ; load blosxom module
 (require 'muse-docbook)  ; load DocBook publishing style
 (require 'muse-html)     ; load (X)HTML publishing style
 (require 'muse-ikiwiki)  ; load Ikiwiki support
@@ -1272,11 +1271,6 @@ trailing space to the screen, so we want to clean that up."
 
 ;; Setup projects
 
-;; Here is an example of making a customized version of your favorite publisher.  All this does is run
-;; `my-muse-blosoxm-finalize' on the published file immediately after saving it.
-(muse-derive-style "my-blosxom" "blosxom-xhtml"
-                   :final 'my-muse-blosxom-finalize)
-
 ;; This uses a different header and footer than normal
 (muse-derive-style "my-xhtml" "xhtml"
                    :header (concat my-muse-path "header.html")
@@ -1299,50 +1293,7 @@ trailing space to the screen, so we want to clean that up."
                    :link-suffix 'muse-latex-pdf-extension
                    :osuffix 'muse-latex-pdf-extension)
 
-
 ;;; Functions
-
-;; Switch to the given project and prompt for a file
-(defun my-muse-project-find-file (project)
-  (interactive)
-  (let ((muse-current-project (muse-project project)))
-    (call-interactively 'muse-project-find-file)))
-
-(defun my-muse-blosxom-finalize (file output-path target)
-;;  (my-muse-prepare-entry-for-xanga output-path)
-;; For now, do nothing.
-  )
-
-;; Turn a word or phrase into a clickable Wikipedia link
-(defun my-muse-dictize (beg end)
-  (interactive "r")
-  (let* ((text (buffer-substring-no-properties beg end))
-         (link (concat "dict:" (replace-regexp-in-string " " "_" text t t))))
-    (delete-region beg end)
-    (insert "[[" link "][" text "]]")))
-
-(defun my-muse-surround-math (&optional beg end)
-  "If a region is higlighted, surround it with <math>...</math>.
-If no region is highlighted, insert <math></math> and leave the point
-between the two tags."
-  (interactive (list (ignore-errors (mark)) (point)))
-  (if (and beg end)
-      (save-restriction
-        (narrow-to-region beg end)
-        (goto-char (point-min))
-        (insert "<math>")
-        (goto-char (point-max))
-        (insert "</math>"))
-    (insert "<math>")
-    (save-excursion (insert "</math>"))))
-
-(defun my-muse-cdotize-region (beg end)
-  (interactive "r")
-  (save-restriction
-    (narrow-to-region beg end)
-    (goto-char (point-min))
-    (while (re-search-forward " *\\* *" nil t)
-      (replace-match " \\\\cdot "))))
 
 ;;; Key customizations
 
@@ -1356,11 +1307,7 @@ between the two tags."
 
 (defvar my-muse-prefix-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "C" #'my-muse-cdotize-region)
-    (define-key map "l" 'muse-blosxom-new-entry)
-    (define-key map "M" #'my-muse-surround-math)
     (define-key map "n" #'my-find-remember-file)
-    (define-key map "W" #'my-muse-dictize)
     map)
   "My key customizations for Muse.")
 
