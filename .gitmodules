@@ -1,3 +1,6 @@
+[submodule "elisp/afternoon-theme"]
+	path = elisp/afternoon-theme
+	url = https://github.com/osener/emacs-afternoon-theme.git
 [submodule "elisp/auto-complete"]
 	path = elisp/auto-complete
 	url = https://github.com/auto-complete/auto-complete.git
@@ -10,6 +13,12 @@
 [submodule "elisp/dash"]
 	path = elisp/dash
 	url = https://github.com/magnars/dash.el.git
+[submodule "elisp/docker-tramp"]
+	path = elisp/docker-tramp
+	url = https://github.com/emacs-pe/docker-tramp.el
+[submodule "elisp/dockerfile-mode"]
+	path = elisp/dockerfile-mode
+	url = https://github.com/spotify/dockerfile-mode.git
 [submodule "elisp/edit-server-htmlize"]
 	path = elisp/edit-server-htmlize
 	url = https://github.com/frobtech/edit-server-htmlize
@@ -28,9 +37,6 @@
 [submodule "elisp/feature-mode"]
 	path = elisp/feature-mode
 	url = https://github.com/michaelklishin/cucumber.el
-[submodule "elisp/ido-ubiquitous"]
-	path = elisp/ido-ubiquitous
-	url = https://github.com/technomancy/ido-ubiquitous.git
 [submodule "elisp/jade-mode"]
 	path = elisp/jade-mode
 	url = https://github.com/brianc/jade-mode.git
@@ -85,6 +91,3 @@
 [submodule "elisp/yasnippet"]
 	path = elisp/yasnippet
 	url = https://github.com/capitaomorte/yasnippet.git
-[submodule "elisp/afternoon-theme"]
-	path = elisp/afternoon-theme
-	url = https://github.com/osener/emacs-afternoon-theme.git

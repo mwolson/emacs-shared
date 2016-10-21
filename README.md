@@ -37,6 +37,27 @@ The Windows installer doesn't include manpages.  If you want them (and they're r
 
 You may want to pick up [Homebrew](http://mxcl.github.io/homebrew/) for easier installation of other useful tools, though it's not a strict requirement.
 
+### (Optional, Mac OS X only) Install docker manpages
+
+This isn't really related to Emacs, but if you're using Docker on OS X, it might not install the manpages. Here's how to do that:
+
+``` sh
+git clone https://github.com/docker/docker.git
+cd docker
+make manpages
+cd man
+cp -R man* /usr/local/share/man/
+```
+
+### (Mac OS X only) Update man database
+
+After installing new packges, the `M-x man` command might not list the new manpages for those packages. The `whatis` DB used by `man` gets updated weekly. Further, any manpages for programs that are part of the XCode Commandline Tools will never get installed. To make this happen, run the following:
+
+``` sh
+sudo /etc/periodic/weekly/320.whatis
+sudo /usr/libexec/makewhatis /Applications/Xcode.app/Contents/Developer/usr/share/man
+```
+
 ### (Windows only) Install PuTTY
 
 This is useful for doing git development, since Pageant can hold onto your git keys and auto-load them when Windows starts.  If you've already installed PuTTY in the past, make sure that you have have at least version 0.62 installed, since earlier versions might fail in ways that are difficult to diagnose.
@@ -61,12 +82,12 @@ Install Aspell and an Aspell dictionary for your language for spell-checking.  T
 
 ### Install Emacs
 
-The recommended version is Emacs 24.5.  The recommended installers for each OS are:
+The recommended version is Emacs 25.1.  The recommended installers for each OS are:
 
 *Windows*
 
-- Download `emacs-24.5-bin-i686-mingw32.zip` from [ftp.gnu.org](http://ftp.gnu.org/gnu/emacs/windows/).
-- Unzip to `C:\Program Files (x86)` and then rename `emacs-24.5` to `Emacs`.  When done, you should verify that a file named `C:\Program Files (x86)\Emacs\bin\runemacs.exe` exists.
+- Download `emacs-25.1-x86_64-w64-mingw32.zip` from [ftp.gnu.org](http://ftp.gnu.org/gnu/emacs/windows/).
+- Unzip to `C:\Program Files (x86)` and then rename `emacs-25.1` to `Emacs`.  When done, you should verify that a file named `C:\Program Files (x86)\Emacs\bin\runemacs.exe` exists.
 - If you change the location, you may want to update the `my-system-paths` option later.
 
 *Mac OS X*
@@ -75,7 +96,7 @@ Use the unofficial [Emacs for OS X](http://emacsformacosx.com/) installer.
 
 *Ubuntu*
 
-Install the `emacs24` package.
+Install the `emacs25` package if it's available. If it's not available, [build it manually](http://ubuntuhandbook.org/index.php/2016/09/install-gnu-emacs-25-1-in-ubuntu-16-04/).
 
 ### Inconsolata Font
 

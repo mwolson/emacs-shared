@@ -342,6 +342,30 @@
               (ad-deactivate-regexp "erase-buffer-noop"))))))))
 (ad-activate 'shell-command)
 
+;; Docker support
+(add-to-list 'load-path (concat my-emacs-path "elisp/dockerfile-mode"))
+(require 'dockerfile-mode)
+(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+
+(add-to-list 'load-path (concat my-emacs-path "elisp/docker-tramp"))
+(require 'docker-tramp)
+
+(defun my-docker-machine-env ()
+  (interactive)
+  (let* ((machine "default")
+         (out (shell-command-to-string (concat "docker-machine env " machine)))
+         (changes 0))
+    (save-match-data
+      (dolist (line (split-string out "\n" t))
+        (when (string-match "\\`export \\([^=]+\\)=\"\\(.+\\)\"\\'" line)
+          (let ((env-var (match-string 1 line))
+                (env-setting (match-string 2 line)))
+            (incf changes)
+            (setenv env-var env-setting)))))
+    (if (= changes 0)
+        (message "Could not load docker changes, output:\n%s" out)
+      (message "Loaded Docker env for machine: %s" machine))))
+
 ;; Load php-mode
 (add-to-list 'load-path (concat my-emacs-path "elisp/php-mode"))
 (require 'php-mode)
@@ -604,10 +628,6 @@
 ;; Find funtions and files at point
 (require 'ffap)
 (ffap-bindings)
-
-;; Make completing-read use ido-mode, especially for find-function-at-point
-(add-to-list 'load-path (concat my-emacs-path "elisp/ido-ubiquitous"))
-(require 'ido-ubiquitous)
 
 ;; Grand Unified Debugger
 (require 'gud)
