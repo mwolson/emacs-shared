@@ -15,8 +15,10 @@ File: dir,	Node: Top	This is the top of the INFO tree
 * Menu:
 
 Emacs
-* Emms: (emms).                 The Emacs Multimedia System
-* Magit: (magit).               Using Git from Emacs with Magit.
-* Muse: (muse).                 Authoring and publishing environment for Emacs.
-* SLIME: (slime).               Superior Lisp Interaction Mode for Emacs.
-* Sepia: (sepia).               Simple Emacs Perl Integration.
+* Emms: (emms).           The Emacs Multimedia System
+* Muse: (muse). Authoring and publishing environment for Emacs.
+* SLIME: (slime).    Superior Lisp Interaction Mode for Emacs.
+
+Emacs network features
+* TRAMP: (tramp).               Transparent Remote Access, Multiple Protocol
+                                  Emacs remote file access via ssh and scp.

@@ -1,4 +1,4 @@
-This is emms.info, produced by makeinfo version 4.13 from emms.texinfo.
+This is emms.info, produced by makeinfo version 4.8 from emms.texinfo.
 
 INFO-DIR-SECTION Emacs
 START-INFO-DIR-ENTRY
@@ -3386,10 +3386,10 @@ Function Index
 * bury-buffer:                           Interactive Playlists.
                                                               (line  79)
 * define-emms-simple-player:             Simple Players.      (line   7)
-* describe-mode <1>:                     Streaming Audio.     (line  50)
-* describe-mode <2>:                     Browser Interface.   (line  77)
-* describe-mode:                         Interactive Playlists.
+* describe-mode <1>:                     Interactive Playlists.
                                                               (line  89)
+* describe-mode <2>:                     Browser Interface.   (line  77)
+* describe-mode:                         Streaming Audio.     (line  50)
 * emms-add-directory:                    Basic Commands.      (line  30)
 * emms-add-directory-tree:               Basic Commands.      (line  38)
 * emms-add-file:                         Basic Commands.      (line  21)
@@ -3398,8 +3398,8 @@ Function Index
 * emms-add-url:                          Basic Commands.      (line  45)
 * emms-all:                              Simple Setup.        (line  38)
 * emms-browse-by-album:                  Browser Interface.   (line  19)
-* emms-browse-by-artist:                 Browser Interface.   (line  16)
-* emms-browse-by-genre:                  Browser Interface.   (line  22)
+* emms-browse-by-artist:                 Browser Interface.   (line 104)
+* emms-browse-by-genre:                  Browser Interface.   (line 110)
 * emms-browse-by-year:                   Browser Interface.   (line  25)
 * emms-browser-add-tracks:               Browser Interface.   (line  35)
 * emms-browser-add-tracks-and-play:      Browser Interface.   (line  32)
@@ -3459,9 +3459,9 @@ Function Index
 * emms-mark-unmark-all:                  Markable Playlists.  (line  30)
 * emms-mark-unmark-forward:              Markable Playlists.  (line  36)
 * emms-minimalistic:                     Simple Setup.        (line  29)
-* emms-next <1>:                         Interactive Playlists.
+* emms-next <1>:                         Basic Commands.      (line  73)
+* emms-next:                             Interactive Playlists.
                                                               (line  40)
-* emms-next:                             Basic Commands.      (line  73)
 * emms-next-noerror:                     Core Functions.      (line  12)
 * emms-pause:                            Interactive Playlists.
                                                               (line  49)
@@ -3514,9 +3514,9 @@ Function Index
 * emms-playlist-new:                     Playlists.           (line  21)
 * emms-playlist-next:                    Core Functions.      (line  19)
 * emms-playlist-previous:                Core Functions.      (line  22)
-* emms-playlist-save <1>:                Interactive Playlists.
+* emms-playlist-save <1>:                Playlists.           (line  26)
+* emms-playlist-save:                    Interactive Playlists.
                                                               (line  83)
-* emms-playlist-save:                    Playlists.           (line  26)
 * emms-playlist-set-playlist-buffer:     Interactive Playlists.
                                                               (line  37)
 * emms-playlist-sort-by-info-album:      Sorting Playlists.   (line  22)
@@ -3527,19 +3527,19 @@ Function Index
 * emms-playlist-sort-by-name:            Sorting Playlists.   (line  13)
 * emms-playlist-sort-by-score:           Sorting Playlists.   (line  31)
 * emms-previous:                         Basic Commands.      (line  76)
-* emms-random <1>:                       Interactive Playlists.
+* emms-random <1>:                       Core Functions.      (line  25)
+* emms-random:                           Interactive Playlists.
                                                               (line  76)
-* emms-random:                           Core Functions.      (line  25)
 * emms-seek:                             Core Functions.      (line  78)
-* emms-seek-backward <1>:                Interactive Playlists.
+* emms-seek-backward <1>:                Core Functions.      (line  86)
+* emms-seek-backward:                    Interactive Playlists.
                                                               (line  55)
-* emms-seek-backward:                    Core Functions.      (line  86)
-* emms-seek-forward <1>:                 Interactive Playlists.
+* emms-seek-forward <1>:                 Core Functions.      (line  83)
+* emms-seek-forward:                     Interactive Playlists.
                                                               (line  52)
-* emms-seek-forward:                     Core Functions.      (line  83)
-* emms-show <1>:                         Interactive Playlists.
+* emms-show <1>:                         Basic Commands.      (line  86)
+* emms-show:                             Interactive Playlists.
                                                               (line  58)
-* emms-show:                             Basic Commands.      (line  86)
 * emms-shuffle:                          Basic Commands.      (line  79)
 * emms-smart-browse:                     Browser Interface.   (line  11)
 * emms-sort:                             Basic Commands.      (line  83)
@@ -3685,54 +3685,54 @@ Keybinding Index
 
 
 Tag Table:
-Node: Top667
-Node: Introduction4126
-Node: Installation5582
-Node: Compiling Emms5997
-Node: Simple Setup6684
-Node: Configuration8785
-Node: Finding files and speed10205
-Node: Quickstart Guide11050
-Node: Getting Help13706
-Node: Formats and Freedom14287
-Node: Basic Commands15486
-Node: The Core File18644
-Node: User Variables19078
-Node: Hooks20056
-Node: Core Functions21482
-Node: Sources24349
-Node: Simple Players26494
-Node: Playlists27587
-Node: Track Information28862
-Node: Defining Info Methods30539
-Node: Interactive Playlists31299
-Node: Markable Playlists34461
-Node: Extending Emms36915
-Node: New Player37336
-Node: Simple Player for `play'37724
-Node: More Complex Player39441
-Node: The Browser42390
-Node: Browser Interface43375
-Node: Filtering Tracks45785
-Node: Displaying Covers47560
-Node: Changing Looks48589
-Node: Sorting Playlists51320
-Node: Persistent Playlists52344
-Node: Editing Tracks53503
-Node: Emms Mode Line57313
-Node: Music Player Daemon58516
-Node: Lyrics61811
-Node: Volume63853
-Node: Last.fm65514
-Node: Submitting track informations66554
-Node: Last.fm radio67138
-Node: Streaming Audio70513
-Ref: Streaming Audio-Footnote-172774
-Node: Copying72939
-Node: The GNU FDL110566
-Node: Concept Index132973
-Node: Function Index137539
-Node: Variable Index152371
-Node: Keybinding Index155006
+Node: Top666
+Node: Introduction4125
+Node: Installation5581
+Node: Compiling Emms5996
+Node: Simple Setup6683
+Node: Configuration8784
+Node: Finding files and speed10204
+Node: Quickstart Guide11049
+Node: Getting Help13705
+Node: Formats and Freedom14286
+Node: Basic Commands15485
+Node: The Core File18643
+Node: User Variables19077
+Node: Hooks20055
+Node: Core Functions21481
+Node: Sources24348
+Node: Simple Players26493
+Node: Playlists27586
+Node: Track Information28861
+Node: Defining Info Methods30538
+Node: Interactive Playlists31298
+Node: Markable Playlists34460
+Node: Extending Emms36914
+Node: New Player37335
+Node: Simple Player for `play'37723
+Node: More Complex Player39440
+Node: The Browser42389
+Node: Browser Interface43374
+Node: Filtering Tracks45784
+Node: Displaying Covers47559
+Node: Changing Looks48588
+Node: Sorting Playlists51319
+Node: Persistent Playlists52343
+Node: Editing Tracks53502
+Node: Emms Mode Line57312
+Node: Music Player Daemon58515
+Node: Lyrics61810
+Node: Volume63852
+Node: Last.fm65513
+Node: Submitting track informations66553
+Node: Last.fm radio67137
+Node: Streaming Audio70512
+Ref: Streaming Audio-Footnote-172773
+Node: Copying72938
+Node: The GNU FDL110565
+Node: Concept Index132972
+Node: Function Index137538
+Node: Variable Index152370
+Node: Keybinding Index155005
 
 End Tag Table

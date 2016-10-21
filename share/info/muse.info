@@ -1,4 +1,4 @@
-This is muse.info, produced by makeinfo version 4.13 from muse.texi.
+This is muse.info, produced by makeinfo version 4.8 from muse.texi.
 
 INFO-DIR-SECTION Emacs
 START-INFO-DIR-ENTRY
@@ -1283,7 +1283,7 @@ implicit links. If you want to link to a URL containing spaces or any of
 the characters "][,"'`()<>^", you will have to make the link explicit.
 The punctuation characters ".,;:" are also not recognized as part of a
 URL when they appear at its end. For information on how to make an
-explicit link, see *note Hyperlinks and email addresses with
+explicit link, see *Note Hyperlinks and email addresses with
 descriptions: Explicit Links.
 
    If the `muse-wiki' module is loaded, another form of implicit link
@@ -4222,12 +4222,13 @@ Appendix A GNU Free Documentation License
      an item describing the Modified    Version as stated in the
      previous sentence.
      J. Preserve the network location, if any, given in the Document for
-       public access to a Transparent copy of the Document, and likewise
-       the network locations given in the Document for previous versions
-       it was based on.  These may be placed in the "History" section.
-       You may omit a network location for a work that was published at
-       least four years before the Document itself, or if the original
-      publisher of the version it refers to gives permission.
+       public access to a Transparent copy of the Document, and
+     likewise    the network locations given in the Document for
+     previous versions    it was based on.  These may be placed in the
+     "History" section.     You may omit a network location for a work
+     that was published at    least four years before the Document
+     itself, or if the original    publisher of the version it refers
+     to gives permission.
      K. For any section Entitled "Acknowledgements" or "Dedications,"
      Preserve the Title of the section, and preserve in the section all
        the substance and tone of each of the contributor
@@ -4494,7 +4495,7 @@ Index
 * muse-define-style:                     Style Elements.       (line 11)
 * muse-derive-style:                     Deriving Styles.      (line 11)
 * muse-list-edit-minor-mode:             Muse List Edit Minor Mode.
-                                                               (line  6)
+                                                               (line 44)
 * muse-project-alist, reference:         Options for Projects. (line  6)
 * muse-xml-encoding-map:                 XML.                  (line 22)
 * paragraphs:                            Paragraphs.           (line  6)
@@ -4544,7 +4545,7 @@ Index
 * publishing styles, RSS 2.0:            Journal.              (line 91)
 * publishing styles, slides:             LaTeX.                (line 37)
 * publishing styles, slides-pdf:         LaTeX.                (line 52)
-* publishing styles, texi:               Texinfo.              (line 11)
+* publishing styles, texi:               Texinfo.              (line 14)
 * publishing styles, xml:                XML.                  (line 15)
 * publishing, including markup in headers and footers: Tag Summary.
                                                                (line  6)
@@ -4585,72 +4586,72 @@ Index
 
 
 Tag Table:
-Node: Top1427
-Node: Preface7398
-Node: Introduction7871
-Node: Obtaining Muse9320
-Node: Releases9657
-Node: Development11046
-Node: Installation14905
-Node: Getting Started17564
-Node: Loading Muse17946
-Node: Using Muse Mode18893
-Node: Publishing Files Overview20926
-Node: File Extensions22170
-Node: Projects23390
-Node: Single Project24012
-Node: Multiple Projects24962
-Node: Projects and Subdirectories26365
-Node: Options for Projects28048
-Node: Keystroke Summary32872
-Node: Markup Rules34991
-Node: Paragraphs36710
-Node: Headings38711
-Node: Directives39334
-Node: Emphasizing Text40654
-Node: Footnotes41431
-Node: Verse42068
-Node: Lists42812
-Node: Tables44361
-Node: Explicit Links46095
-Node: Implicit Links46810
-Node: Images49153
-Node: Horizontal Rules and Anchors51643
-Node: Embedded Lisp52291
-Node: Citations53387
-Node: Comments55871
-Node: Tag Summary56530
-Node: Publishing Styles64773
-Node: Blosxom65872
-Node: Blosxom Requirements66479
-Node: Blosxom Entries70014
-Node: Blosxom Options71577
-Node: Book72505
-Node: ConTeXt75564
-Node: DocBook79691
-Node: HTML81168
-Node: Ikiwiki85163
-Node: Journal87502
-Node: LaTeX94029
-Node: Poem99573
-Node: Texinfo101782
-Node: XML103699
-Node: Extending Muse105730
-Node: Markup Functions106367
-Ref: muse-publish-markup-functions106540
-Node: Markup Regexps107194
-Ref: muse-publish-markup-regexps107372
-Node: Markup Strings110379
-Node: Markup Tags116839
-Ref: muse-publish-markup-tags117032
-Node: Style Elements118151
-Node: Deriving Styles121558
-Node: Miscellaneous122857
-Node: Muse List Edit Minor Mode123142
-Node: Getting Help and Reporting Bugs125621
-Node: History128923
-Node: Contributors129706
-Node: GNU Free Documentation License130214
-Node: Concept Index152443
+Node: Top1426
+Node: Preface7397
+Node: Introduction7870
+Node: Obtaining Muse9319
+Node: Releases9656
+Node: Development11045
+Node: Installation14904
+Node: Getting Started17563
+Node: Loading Muse17945
+Node: Using Muse Mode18892
+Node: Publishing Files Overview20925
+Node: File Extensions22169
+Node: Projects23389
+Node: Single Project24011
+Node: Multiple Projects24961
+Node: Projects and Subdirectories26364
+Node: Options for Projects28047
+Node: Keystroke Summary32871
+Node: Markup Rules34990
+Node: Paragraphs36709
+Node: Headings38710
+Node: Directives39333
+Node: Emphasizing Text40653
+Node: Footnotes41430
+Node: Verse42067
+Node: Lists42811
+Node: Tables44360
+Node: Explicit Links46094
+Node: Implicit Links46809
+Node: Images49152
+Node: Horizontal Rules and Anchors51642
+Node: Embedded Lisp52290
+Node: Citations53386
+Node: Comments55870
+Node: Tag Summary56529
+Node: Publishing Styles64772
+Node: Blosxom65871
+Node: Blosxom Requirements66478
+Node: Blosxom Entries70013
+Node: Blosxom Options71576
+Node: Book72504
+Node: ConTeXt75563
+Node: DocBook79690
+Node: HTML81167
+Node: Ikiwiki85162
+Node: Journal87501
+Node: LaTeX94028
+Node: Poem99572
+Node: Texinfo101781
+Node: XML103698
+Node: Extending Muse105729
+Node: Markup Functions106366
+Ref: muse-publish-markup-functions106539
+Node: Markup Regexps107193
+Ref: muse-publish-markup-regexps107371
+Node: Markup Strings110378
+Node: Markup Tags116838
+Ref: muse-publish-markup-tags117031
+Node: Style Elements118150
+Node: Deriving Styles121557
+Node: Miscellaneous122856
+Node: Muse List Edit Minor Mode123141
+Node: Getting Help and Reporting Bugs125620
+Node: History128922
+Node: Contributors129705
+Node: GNU Free Documentation License130213
+Node: Concept Index152454
 
 End Tag Table

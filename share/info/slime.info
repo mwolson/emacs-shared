@@ -1,4 +1,4 @@
-This is slime.info, produced by makeinfo version 4.13 from slime.texi.
+This is slime.info, produced by makeinfo version 4.8 from slime.texi.
 
 INFO-DIR-SECTION Emacs
 START-INFO-DIR-ENTRY
@@ -336,7 +336,7 @@ installation just requires a few lines in your `.emacs':
 copy&paste it from there, but remember to fill in the appropriate paths.
 
    This is the minimal configuration with the fewest frills.  If the
-basic setup is working, you can try additional modules (*note Loading
+basic setup is working, you can try additional modules (*Note Loading
 Contribs::).
 
    We recommend not loading the ILISP package into Emacs if you intend
@@ -444,11 +444,11 @@ The elements of the list should look like
      write the port number to the file.  At startup, SLIME starts the
      Lisp process and sends the result of this function to Lisp's
      standard input.  As default, `slime-init-command' is used.  An
-     example is shown in *note Loading Swank faster: init-example.
+     example is shown in *Note Loading Swank faster: init-example.
 
 `INIT-FUNCTION'
      should be a function which takes no arguments.  It is called after
-     the connection is established. (See also *note
+     the connection is established. (See also *Note
      slime-connected-hook::.)
 
 `ENV'
@@ -1356,7 +1356,7 @@ File: slime.info,  Node: Restarts,  Next: Frame Navigation,  Prev: Examining fra
 `M-x sldb-quit'
      "Quit" - For SLIME evaluation requests, invoke a restart which
      restores to a known program state. For errors in other threads, see
-     *note SWANK:*SLDB-QUIT-RESTART*::.
+     *Note SWANK:*SLDB-QUIT-RESTART*::.
 
 `c'
 `M-x sldb-continue'
@@ -1571,19 +1571,19 @@ recently established connection, but this can be reassigned via the
 `C-c C-x c'
 `M-x slime-list-connections'
      Pop up a buffer listing the established connections.  It is also
-     available by the typing `c' from the SLIME selector (*note
+     available by the typing `c' from the SLIME selector (*Note
      slime-selector::).
 
 `C-c C-x n'
 `M-x slime-cycle-connections'
      Change current Lisp connection by cycling through all connections.
      It is also available by the typing `n' from the SLIME selector
-     (*note slime-selector::).
+     (*Note slime-selector::).
 
 `C-c C-x t'
 `M-x slime-list-threads'
      Pop up a buffer listing the current threads.  It is also available
-     by the typing `t' from the SLIME selector (*note slime-selector::).
+     by the typing `t' from the SLIME selector (*Note slime-selector::).
 
    The buffer displayed by `slime-list-connections' gives a one-line
 summary of each connection. The summary shows the connection's serial
@@ -1679,7 +1679,7 @@ configuration options here in the manual.
      If you are using Allegro CL and GNU Emacs, you can also use
      `emacs-mule-unix' as coding system.  GNU Emacs has often nicer
      fonts for the latter encoding.  (Different encodings can be used
-     for different Lisps, see *note Multiple Lisps::.)
+     for different Lisps, see *Note Multiple Lisps::.)
 
 
 * Menu:
@@ -2942,51 +2942,10 @@ Hackers of the good hack
 SLIME is an Extension of SLIM by Eric Marsden. At the time of writing,
 the authors and code-contributors of SLIME are:
 
-Helmut Eller             Tobias C. Rittweiler     Stas Boukarev
-Luke Gorrie              Matthias Koeppe          Marco Baringer
-Nikodemus Siivola        Alan Ruttenberg          Mark Evenson
-Edi Weitz                Martin Simmons           Juho Snellman
-Christophe Rhodes        Peter Seibel             Geo Carncross
-Attila Lendvai           Douglas Crosher          Daniel Barlow
-Wolfgang Jenkner         Michael Weber            Lawrence Mitchell
-Gábor Melis              Terje Norderhaug         Luís Oliveira
-Brian Downing            Bill Clementson          Andras Simon
-Zach Beane               Espen Wiborg             Antonio Menezes Leitao
-Utz-Uwe Haus             Thomas Schilling         Thomas F. Burdick
-Takehiko Abe             Stelian Ionescu          Richard M Kreuter
-Raymond Toy              Matthew Danish           Mark Harig
-James Bielman            Harald Hanche-Olsen      Andreas Fuchs
-Willem Broekema          Taylor R. Campbell       Lars Magne Ingebrigtsen
-John Paul Wallington     Joerg Hoehle             Didier Verna
-Bryan O'Connor           Anton Kovalenko          Alan Shutko
-Travis Cross             Tobias Rittweiler        Tiago Maduro-Dias
-Stefan Kamphausen        Sean O'Rourke            Robert Lehr
-Robert E. Brown          Nathan Bird              Jouni K Seppanen
-Ivan Toshkov             Ian Eslick               Gary King
-Eric Blood               Eduardo Muñoz            David Reitter
-Christian Lynbech        Chris Capel              Bjørn Nordbø
-Ariel Badichi            Anton Vodonosov          Alexey Dejneka
-Alan Caulkins            Yaroslav Kavenchuk       Wolfgang Mederle
-Wojciech Kaczmarek       William Bland            Vitaly Mayatskikh
-Tom Pierce               Tim Daly Jr.             Sven Van Caekenberghe
-Svein Ove Aas            Steve Smith              StanisBaw Halik
-Russell McManus          Rui Patrocínio           Robert Macomber
-R. Matthew Emerson       Reini Urban              Pawel Ostrowski
-Paulo Madeira            Paul Collins             NIIMI Satoshi
-Neil Van Dyke            Mikel Bancroft           Mészáros Levente
-Matt Pillsbury           Matthew D. Swank         Masayuki Onjo
-Mark Wooding             Marco Monteiro           Lynn Quam
-Levente Mészáros         Lasse Rasinen            Knut Olav Bøhmer
-Kai Kaminski             Julian Stecklina         Juergen Gmeiner
-Jon Allen Boone          Johan Bockgård           Jan Rychter
-James McIlree            Ivan Shvedunov           Ivan Boldyrev
-Ignas Mikalajunas        Hannu Koivisto           Gerd Flaig
-Ga'bor Melis             Gail Zacharias           Frederic Brunel
-Francois-Rene Rideau     Dustin Long              Dan Weinreb
-Dan Pierson              Daniel Koning            Cyrus Harmon
-Cecil Westerhof          B.Scott Michel           Brian Mastenbrook
-Brandon Bergren          Bob Halley               Barry Fishman
-Andrew Myers             Aleksandar Bakic         Alain Picard
+Helmut Eller             Stas Boukarev            Nikodemus Siivola
+Didier Verna             Paulo Madeira            Martin Simmons
+Mark Evenson             Francois-Rene Rideau     Douglas Crosher
+Cyrus Harmon             Christophe Rhodes        
 
    ... not counting the bundled code from `hyperspec.el', `CLOCC', and
 the `CMU AI Repository'.
@@ -3027,11 +2986,11 @@ Key (Character) Index
 * <:                                     Frame Navigation.    (line  23)
 * > <1>:                                 Frame Navigation.    (line  19)
 * >:                                     Inspector.           (line  65)
-* A:                                     Miscellaneous.       (line  32)
 * a:                                     Restarts.            (line   8)
+* A:                                     Miscellaneous.       (line  32)
 * B:                                     Miscellaneous.       (line  19)
-* C:                                     Miscellaneous.       (line  24)
 * c:                                     Restarts.            (line  18)
+* C:                                     Miscellaneous.       (line  24)
 * C-<down>:                              Input Navigation.    (line  14)
 * C-<up>:                                Input Navigation.    (line  14)
 * C-_:                                   slime-macroexpansion-minor-mode.
@@ -3043,11 +3002,13 @@ Key (Character) Index
 * C-c C-]:                               Editing Commands.    (line  20)
 * C-c C-a:                               Other.               (line   8)
 * C-c C-b:                               Recovery.            (line   8)
-* C-c C-c <1>:                           REPL commands.       (line  32)
-* C-c C-c <2>:                           Examining frames.    (line  38)
-* C-c C-c <3>:                           Xref buffer commands.
+* C-c C-c <1>:                           Compilation.         (line  14)
+* C-c C-c <2>:                           Xref buffer commands.
+                                                              (line  22)
+* C-c C-c <3>:                           REPL commands.       (line  32)
+* C-c C-c <4>:                           Examining frames.    (line  38)
+* C-c C-c:                               Xref buffer commands.
                                                               (line  18)
-* C-c C-c:                               Compilation.         (line  14)
 * C-c C-d #:                             Documentation.       (line  59)
 * C-c C-d a:                             slime-autodoc-mode.  (line  24)
 * C-c C-d A:                             Documentation.       (line  25)
@@ -3065,8 +3026,8 @@ Key (Character) Index
 * C-c C-m:                               Macro-expansion.     (line   8)
 * C-c C-n:                               Input Navigation.    (line  29)
 * C-c C-o:                               REPL commands.       (line  40)
-* C-c C-p <1>:                           Input Navigation.    (line  29)
-* C-c C-p:                               Evaluation.          (line  41)
+* C-c C-p <1>:                           Evaluation.          (line  41)
+* C-c C-p:                               Input Navigation.    (line  29)
 * C-c C-r:                               Evaluation.          (line  37)
 * C-c C-s:                               Compound Completion. (line  50)
 * C-c C-t:                               Disassembly.         (line  12)
@@ -3104,8 +3065,8 @@ Key (Character) Index
 * C-c M-p:                               Recovery.            (line  20)
 * C-c M-q:                               Editing Commands.    (line  11)
 * C-c ~:                                 Recovery.            (line  15)
-* C-j <1>:                               Scratch Buffer.      (line  13)
-* C-j:                                   REPL commands.       (line  24)
+* C-j <1>:                               REPL commands.       (line  24)
+* C-j:                                   Scratch Buffer.      (line  13)
 * C-M-x:                                 Evaluation.          (line  18)
 * C-RET:                                 REPL commands.       (line  15)
 * C-x 4 .:                               Finding definitions. (line  23)
@@ -3113,27 +3074,27 @@ Key (Character) Index
 * C-x `:                                 Compilation.         (line  68)
 * C-x C-e:                               Evaluation.          (line  13)
 * C-x M-e:                               Evaluation.          (line  52)
-* d <1>:                                 slime-sprof.         (line  32)
-* d:                                     Multiple connections.
-                                                              (line  58)
 * D:                                     Examining frames.    (line  29)
-* d <1>:                                 Examining frames.    (line  24)
+* d <1>:                                 slime-sprof.         (line  32)
+* d <2>:                                 Multiple connections.
+                                                              (line  58)
+* d <3>:                                 Examining frames.    (line  24)
 * d:                                     Inspector.           (line  28)
 * e <1>:                                 Examining frames.    (line  19)
 * e:                                     Inspector.           (line  32)
-* g <1>:                                 Multiple connections.
+* g <1>:                                 Inspector.           (line  49)
+* g <2>:                                 Multiple connections.
                                                               (line  63)
-* g <2>:                                 slime-macroexpansion-minor-mode.
+* g:                                     slime-macroexpansion-minor-mode.
                                                               (line  17)
-* g:                                     Inspector.           (line  49)
 * i:                                     Examining frames.    (line  34)
 * l:                                     Inspector.           (line  41)
 * M-,:                                   Finding definitions. (line  18)
 * M-.:                                   Finding definitions. (line  13)
 * M-C-a:                                 Editing Commands.    (line  38)
 * M-C-e:                                 Editing Commands.    (line  41)
-* M-n <1>:                               Input Navigation.    (line  18)
-* M-n <2>:                               Frame Navigation.    (line  12)
+* M-n <1>:                               Frame Navigation.    (line  12)
+* M-n <2>:                               Input Navigation.    (line  18)
 * M-n:                                   Compilation.         (line  56)
 * M-p <1>:                               Input Navigation.    (line  18)
 * M-p <2>:                               Frame Navigation.    (line  12)
@@ -3153,17 +3114,17 @@ Key (Character) Index
                                                               (line  22)
 * q <3>:                                 Restarts.            (line  12)
 * q:                                     Inspector.           (line  53)
-* R <1>:                                 Multiple connections.
+* R <1>:                                 Miscellaneous.       (line  14)
+* R:                                     Multiple connections.
                                                               (line  72)
-* R:                                     Miscellaneous.       (line  14)
 * r:                                     Miscellaneous.       (line   8)
-* RET <1>:                               slime-sprof.         (line  24)
-* RET <2>:                               REPL commands.       (line   8)
+* RET <1>:                               REPL commands.       (line   8)
+* RET <2>:                               Xref buffer commands.
+                                                              (line   9)
 * RET <3>:                               Multiple connections.
                                                               (line  54)
 * RET <4>:                               Inspector.           (line  23)
-* RET:                                   Xref buffer commands.
-                                                              (line   9)
+* RET:                                   slime-sprof.         (line  24)
 * s <1>:                                 slime-sprof.         (line  36)
 * s:                                     Stepping.            (line  11)
 * S-TAB:                                 Inspector.           (line  74)
@@ -3171,11 +3132,11 @@ Key (Character) Index
                                                               (line  14)
 * SPC:                                   Documentation.       (line  12)
 * t:                                     Examining frames.    (line  10)
-* TAB <1>:                               REPL commands.       (line  20)
-* TAB:                                   Inspector.           (line  74)
-* v <1>:                                 slime-sprof.         (line  28)
-* v <2>:                                 Examining frames.    (line  14)
-* v:                                     Inspector.           (line  36)
+* TAB <1>:                               Inspector.           (line  74)
+* TAB:                                   REPL commands.       (line  20)
+* v <1>:                                 Examining frames.    (line  14)
+* v <2>:                                 Inspector.           (line  36)
+* v:                                     slime-sprof.         (line  28)
 * x:                                     Stepping.            (line  17)
 
 
@@ -3295,10 +3256,10 @@ Command and Function Index
 * slime-inspector-reinspect:             Inspector.           (line  49)
 * slime-inspector-show-source:           Inspector.           (line  61)
 * slime-inspector-toggle-verbose:        Inspector.           (line  36)
-* slime-interactive-eval <1>:            Miscellaneous.       (line  28)
-* slime-interactive-eval:                Evaluation.          (line  33)
-* slime-interrupt <1>:                   REPL commands.       (line  32)
-* slime-interrupt:                       Recovery.            (line   8)
+* slime-interactive-eval <1>:            Evaluation.          (line  33)
+* slime-interactive-eval:                Miscellaneous.       (line  28)
+* slime-interrupt <1>:                   Recovery.            (line   8)
+* slime-interrupt:                       REPL commands.       (line  32)
 * slime-isearch-system NAME:             ASDF.                (line  33)
 * slime-list-callees:                    Cross-reference.     (line  60)
 * slime-list-callers:                    Cross-reference.     (line  56)
@@ -3310,7 +3271,7 @@ Command and Function Index
 * slime-load-system NAME:                ASDF.                (line  13)
 * slime-macroexpand-1:                   Macro-expansion.     (line   8)
 * slime-macroexpand-1-inplace:           slime-macroexpansion-minor-mode.
-                                                              (line  12)
+                                                              (line  17)
 * slime-macroexpand-all:                 Macro-expansion.     (line  13)
 * slime-macroexpand-undo:                slime-macroexpansion-minor-mode.
                                                               (line  26)
@@ -3370,10 +3331,10 @@ Command and Function Index
 * slime-sprof-toggle-swank-exclusion:    slime-sprof.         (line  36)
 * slime-switch-to-output-buffer:         REPL.                (line  24)
 * slime-sync-package-and-default-directory: Recovery.         (line  15)
-* slime-temp-buffer-quit <1>:            Multiple connections.
-                                                              (line  67)
-* slime-temp-buffer-quit:                slime-macroexpansion-minor-mode.
+* slime-temp-buffer-quit <1>:            slime-macroexpansion-minor-mode.
                                                               (line  22)
+* slime-temp-buffer-quit:                Multiple connections.
+                                                              (line  67)
 * slime-toggle-profile-fdefinition:      Profiling.           (line  11)
 * slime-toggle-trace-fdefinition:        Disassembly.         (line  12)
 * slime-undefine-function:               Evaluation.          (line  58)
@@ -3465,109 +3426,109 @@ Variable and Concept Index
 
 
 Tag Table:
-Node: Top326
-Node: Introduction2591
-Node: Getting started3840
-Node: Platforms4114
-Node: Downloading5283
-Node: CVS5790
-Node: CVS Incantations6806
-Node: Installation7527
-Node: Running8528
-Node: Setup Tuning9057
-Node: Autoloading9532
-Node: Multiple Lisps10290
-Node: Loading Swank faster12711
-Ref: init-example13796
-Node: SLIME mode14085
-Node: User-interface conventions14666
-Node: Temporary buffers15070
-Node: Inferior-lisp16482
-Node: Multithreading17287
-Node: Key bindings18520
-Ref: describe-key19932
-Ref: describe-bindings20059
-Ref: describe-mode20190
-Ref: view-lossage20362
-Node: Evaluation21493
-Node: Compilation23521
-Node: Completion26184
-Node: Finding definitions26800
-Node: Documentation27871
-Node: Cross-reference29918
-Node: Xref buffer commands31574
-Node: Macro-expansion32100
-Node: Disassembly32801
-Node: Recovery33327
-Node: Inspector34053
-Node: Profiling36081
-Node: Other36854
-Node: Semantic indentation37100
-Ref: Semantic indentation-Footnote-139187
-Node: Reader conditionals39282
-Node: Debugger39625
-Node: Examining frames40258
-Node: Restarts41317
-Ref: sldb-quit41519
-Node: Frame Navigation41913
-Node: Stepping42577
-Node: Miscellaneous43226
-Node: Misc44115
-Node: slime-selector44302
-Node: slime-macroexpansion-minor-mode45613
-Node: Multiple connections46437
-Node: Customization49369
-Node: Emacs-side customization49544
-Ref: slime-complete-symbol-function50215
-Ref: slime-net-coding-system50946
-Node: Hooks51612
-Ref: slime-connected-hook51963
-Node: Lisp-side52433
-Node: Communication style52834
-Node: Other configurables55311
-Ref: SWANK:*SLDB-QUIT-RESTART*56502
-Node: Tips and Tricks59006
-Node: Connecting to a remote lisp59231
-Node: Setting up the lisp image59933
-Ref: Setting up the lisp image-Footnote-161772
-Ref: Setting up the lisp image-Footnote-261852
-Node: Setting up Emacs62026
-Ref: Setting up Emacs-Footnote-162841
-Node: Setting up pathname translations63011
-Node: Global IO Redirection64615
-Node: Auto-SLIME65662
-Node: Contributed Packages66079
-Node: Loading Contribs66768
-Node: REPL67986
-Node: REPL commands69334
-Node: Input Navigation70421
-Node: Shortcuts71878
-Node: slime-mrepl73300
-Node: inferior-slime-mode73803
-Node: Compound Completion74469
-Ref: slime-complete-symbol*74646
-Ref: Compound Completion-Footnote-177767
-Node: Fuzzy Completion77886
-Ref: slime-fuzzy-complete-symbol79218
-Node: slime-autodoc-mode79489
-Node: ASDF80694
-Node: Banner82582
-Node: Editing Commands83015
-Node: Fancy Inspector84596
-Node: Presentations85314
-Ref: Presentations-Footnote-191747
-Node: Typeout frames91983
-Node: TRAMP93081
-Node: Documentation Links93353
-Node: Xref and Class Browser93774
-Node: Highlight Edits94354
-Node: Scratch Buffer94810
-Ref: slime-scratch94965
-Node: slime-sprof95575
-Node: slime-fancy96497
-Node: Credits96740
-Node: Key Index101004
-Node: Command Index112366
-Node: Variable Index126960
+Node: Top325
+Node: Introduction2590
+Node: Getting started3839
+Node: Platforms4113
+Node: Downloading5282
+Node: CVS5789
+Node: CVS Incantations6805
+Node: Installation7526
+Node: Running8527
+Node: Setup Tuning9056
+Node: Autoloading9531
+Node: Multiple Lisps10289
+Node: Loading Swank faster12710
+Ref: init-example13795
+Node: SLIME mode14084
+Node: User-interface conventions14665
+Node: Temporary buffers15069
+Node: Inferior-lisp16481
+Node: Multithreading17286
+Node: Key bindings18519
+Ref: describe-key19931
+Ref: describe-bindings20058
+Ref: describe-mode20189
+Ref: view-lossage20361
+Node: Evaluation21492
+Node: Compilation23520
+Node: Completion26183
+Node: Finding definitions26799
+Node: Documentation27870
+Node: Cross-reference29917
+Node: Xref buffer commands31573
+Node: Macro-expansion32099
+Node: Disassembly32800
+Node: Recovery33326
+Node: Inspector34052
+Node: Profiling36080
+Node: Other36853
+Node: Semantic indentation37099
+Ref: Semantic indentation-Footnote-139186
+Node: Reader conditionals39281
+Node: Debugger39624
+Node: Examining frames40257
+Node: Restarts41316
+Ref: sldb-quit41518
+Node: Frame Navigation41912
+Node: Stepping42576
+Node: Miscellaneous43225
+Node: Misc44114
+Node: slime-selector44301
+Node: slime-macroexpansion-minor-mode45612
+Node: Multiple connections46436
+Node: Customization49368
+Node: Emacs-side customization49543
+Ref: slime-complete-symbol-function50214
+Ref: slime-net-coding-system50945
+Node: Hooks51611
+Ref: slime-connected-hook51962
+Node: Lisp-side52432
+Node: Communication style52833
+Node: Other configurables55310
+Ref: SWANK:*SLDB-QUIT-RESTART*56501
+Node: Tips and Tricks59005
+Node: Connecting to a remote lisp59230
+Node: Setting up the lisp image59932
+Ref: Setting up the lisp image-Footnote-161771
+Ref: Setting up the lisp image-Footnote-261851
+Node: Setting up Emacs62025
+Ref: Setting up Emacs-Footnote-162840
+Node: Setting up pathname translations63010
+Node: Global IO Redirection64614
+Node: Auto-SLIME65661
+Node: Contributed Packages66078
+Node: Loading Contribs66767
+Node: REPL67985
+Node: REPL commands69333
+Node: Input Navigation70420
+Node: Shortcuts71877
+Node: slime-mrepl73299
+Node: inferior-slime-mode73802
+Node: Compound Completion74468
+Ref: slime-complete-symbol*74645
+Ref: Compound Completion-Footnote-177766
+Node: Fuzzy Completion77885
+Ref: slime-fuzzy-complete-symbol79217
+Node: slime-autodoc-mode79488
+Node: ASDF80693
+Node: Banner82581
+Node: Editing Commands83014
+Node: Fancy Inspector84595
+Node: Presentations85313
+Ref: Presentations-Footnote-191746
+Node: Typeout frames91982
+Node: TRAMP93080
+Node: Documentation Links93352
+Node: Xref and Class Browser93773
+Node: Highlight Edits94353
+Node: Scratch Buffer94809
+Ref: slime-scratch94964
+Node: slime-sprof95574
+Node: slime-fancy96496
+Node: Credits96739
+Node: Key Index98314
+Node: Command Index109812
+Node: Variable Index124406
 
 End Tag Table

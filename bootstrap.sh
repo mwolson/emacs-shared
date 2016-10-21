@@ -109,7 +109,7 @@ EOF
         make clean lisp
 
         if test -n "$BUILD_DOCS"; then
-            make docs install-docs DESTDIR="$DESTDIR" PREFIX=
+            make info install-info DESTDIR="$DESTDIR" PREFIX=
         fi
     )
 
@@ -156,7 +156,12 @@ EOF
         make lisp
 
         if test -n "$BUILD_DOCS"; then
-            (cd texi; make tramp)
+            (
+                cd texi
+                make tramp
+                cd ../info
+                install_info tramp
+            )
         fi
     )
 fi
