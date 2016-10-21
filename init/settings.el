@@ -172,12 +172,16 @@
  '(muse-wiki-publish-small-title-words
    (quote
     ("the" "and" "at" "on" "of" "for" "in" "an" "a" "page")))
+ '(org-capture-templates
+   (quote
+    (("n" "Note" entry
+      (file+headline "" "Notes")
+      "* %?" :prepend t :empty-lines-after 1))))
+ '(org-default-notes-file "~/Documents/notes.org")
  '(org-startup-folded nil)
  '(post-jump-header nil)
  '(recentf-mode nil)
  '(recentf-save-file "~/.emacs.d/.recentf")
- '(remember-data-file "~/Documents/notes.org")
- '(remember-filter-functions (quote ((lambda nil (delete-trailing-whitespace)))))
  '(require-final-newline nil)
  '(safe-local-variable-values
    (quote
@@ -187,6 +191,7 @@
  '(save-place-file "~/.emacs.d/.places")
  '(save-place-limit 20)
  '(sbt:default-command "test:compile console")
+ '(select-enable-clipboard t)
  '(show-paren-mode t)
  '(show-paren-style (quote parenthesis))
  '(smex-save-file "~/.emacs.d/.smex-items")
@@ -206,8 +211,7 @@
  '(woman-fontify t)
  '(woman-use-own-frame nil)
  '(wtf-custom-alist nil)
- '(wtf-removed-acronyms nil)
- '(x-select-enable-clipboard t))
+ '(wtf-removed-acronyms nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

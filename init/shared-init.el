@@ -27,7 +27,7 @@
 (defvar my-use-themes        (boundp 'custom-theme-load-path))
 (defvar my-emacs-features    (if (string-equal "root" (getenv "USER"))
                                  nil
-                               '(erc magit)))
+                               '(erc magit org)))
 (defvar my-sbt-java7-command (if (eq system-type 'windows-nt) "sh -c sbt-java7" "sbt-java7"))
 (defvar my-sbt-build-on-save-p nil)
 (defvar my-recent-files      nil)
@@ -1271,8 +1271,6 @@ trailing space to the screen, so we want to clean that up."
 (require 'muse-texinfo)  ; load Info publishing style
 (require 'muse-wiki)     ; load Wiki support
 (require 'muse-xml)      ; load XML support
-;;(require 'muse-message)  ; load message support (experimental)
-(require 'remember)
 
 ;; Templates: header/footer
 (setq muse-html-footer (concat my-muse-path "generic-footer.html"))
@@ -1322,22 +1320,34 @@ trailing space to the screen, so we want to clean that up."
 
 ;; Local
 (add-hook 'muse-mode-hook #'footnote-mode)
-
-;; Global
-(defun my-find-remember-file ()
-  (interactive)
-  (find-file remember-data-file))
-
-(defvar my-muse-prefix-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map "n" #'my-find-remember-file)
-    map)
-  "My key customizations for Muse.")
-
-(global-set-key "\C-cp" my-muse-prefix-map)
-
 );;; END muse ;;;
 
+;;; BEGIN Org ;;;
+(when (my-emacs-feature-enabled 'org)
+
+(require 'org)
+(require 'org-capture)
+
+(defun my-org-find-notes-file ()
+  (interactive)
+  (find-file org-default-notes-file))
+
+(defun my-org-capture-note ()
+  (interactive)
+  (org-capture nil "n"))
+
+(defvar my-org-prefix-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "n" #'my-org-find-notes-file)
+    (define-key map " " #'my-org-capture-note)
+    map)
+  "My key customizations for Org.")
+
+(global-set-key "\C-cp" my-org-prefix-map)
+
+(define-key org-mode-map (kbd "<M-left>") #'left-word)
+(define-key org-mode-map (kbd "<M-right>") #'right-word)
+);;; END org ;;;
 
 ;;; Key customizations
 
