@@ -151,8 +151,10 @@ EOF
     # Tramp
     (
         cd elisp/tramp
-        cp ../../extra/tramp/configure .
-        ./configure
+        # HATE ./configure, not running that on Windows
+        cp ../../extra/tramp/Makefile .
+        cp ../../extra/tramp/lisp/* lisp/
+        cp ../../extra/tramp/texi/* texi/
         make lisp
 
         if test -n "$BUILD_DOCS"; then
