@@ -51,7 +51,7 @@ cp -R man* /usr/local/share/man/
 
 ### (Mac OS X only) Update man database
 
-After installing new packges, the `M-x man` command might not list the new manpages for those packages. The `whatis` DB used by `man` gets updated weekly. Further, any manpages for programs that are part of the XCode Commandline Tools will never get installed. To make this happen, run the following:
+After installing new packages, the `M-x man` command might not list the new manpages for those packages, because the `whatis` DB used by `man` gets updated weekly via a cron job. Further, any manpages for programs that are part of the XCode Commandline Tools will never get installed because the cron job inexplicably excludes them. To make force them to be generated, run the following:
 
 ``` sh
 sudo /etc/periodic/weekly/320.whatis
