@@ -91,11 +91,8 @@ if test -n "$BUILD"; then
 
     # js2-mode
     (
-        # Skip compilation on OS X since we get an error when using compiled version there
-        if test "$OS" != "OSX"; then
-            cd elisp/js2-mode
-            make clean all
-        fi
+        cd elisp/js2-mode
+        make clean all
     )
 
     # magit
