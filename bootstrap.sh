@@ -147,6 +147,18 @@ EOF
             make clean
         fi
     )
+
+    # Tramp
+    (
+        cd elisp/tramp
+        cp ../../extra/tramp/configure .
+        ./configure
+        make lisp
+
+        if test -n "$BUILD_DOCS"; then
+            (cd texi; make tramp)
+        fi
+    )
 fi
 
 echo >&2

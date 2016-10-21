@@ -276,6 +276,10 @@
 (require 'dired)
 (require 'dired-x)
 (require 'wdired)
+
+;; Load tramp
+(add-to-list 'load-path (concat my-emacs-path "elisp/tramp/lisp"))
+(add-to-list 'Info-default-directory-list (concat my-emacs-path "elisp/tramp/info"))
 (require 'tramp)
 
 ;; List directories first in dired

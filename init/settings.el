@@ -178,7 +178,6 @@
  '(recentf-save-file "~/.emacs.d/.recentf")
  '(remember-data-file "~/Documents/notes.org")
  '(remember-filter-functions (quote ((lambda nil (delete-trailing-whitespace)))))
- '(remember-mode-hook (quote (muse-list-edit-minor-mode)))
  '(require-final-newline nil)
  '(safe-local-variable-values
    (quote

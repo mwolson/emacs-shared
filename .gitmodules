@@ -82,6 +82,9 @@
 [submodule "elisp/smex"]
 	path = elisp/smex
 	url = https://github.com/nonsequitur/smex.git
+[submodule "elisp/tramp"]
+	path = elisp/tramp
+	url = git://git.savannah.gnu.org/tramp.git
 [submodule "elisp/tt-mode"]
 	path = elisp/tt-mode
 	url = https://github.com/davorg/tt-mode.git
