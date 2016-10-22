@@ -17,6 +17,8 @@ else
     BUILD=
 fi
 
+REQUIRED_EMACS_VERSION=25.1
+
 # Create bin directory
 rm -fr bin
 mkdir bin
@@ -29,16 +31,16 @@ PATH="$(pwd)"/bin:"$PATH"
 
 DESTDIR=$(pwd)
 
-# Make sure we're using a version of Emacs that can at least load epa
-EPA_WORKS=$(emacs --batch -q --no-site-file --eval "(message (locate-library \"epa\"))" 2>&1)
+# Make sure we're using the recommended version of Emacs
+EMACS_VERSION=$(emacs --batch -q --no-site-file --eval "(message \"%s\" emacs-version)" 2>&1)
 
-if test -z "$EPA_WORKS"; then
-    echo >&2 "Error: Your version of Emacs is too old, should be at least version 23.1"
+if ! which emacs > /dev/null; then
+    echo >&2 "Error: Could not find \"emacs\" in your path"
     exit 1
 fi
 
-if test -z "ELISP_DIR"; then
-    echo >&2 "Error: Could not find \"emacs\" in your path"
+if [[ z$EMACS_VERSION != z${REQUIRED_EMACS_VERSION}* ]]; then
+    echo >&2 "Error: Your version of Emacs is \"$EMACS_VERSION\", but should be \"${REQUIRED_EMACS_VERSION}.x\""
     exit 1
 fi
 
