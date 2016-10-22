@@ -7,9 +7,6 @@
 [submodule "elisp/browse-kill-ring"]
 	path = elisp/browse-kill-ring
 	url = https://github.com/browse-kill-ring/browse-kill-ring.git
-[submodule "elisp/clojure-mode"]
-	path = elisp/clojure-mode
-	url = https://github.com/clojure-emacs/clojure-mode.git
 [submodule "elisp/dash"]
 	path = elisp/dash
 	url = https://github.com/magnars/dash.el.git
@@ -55,15 +52,9 @@
 [submodule "elisp/muse"]
 	path = elisp/muse
 	url = https://github.com/alexott/muse.git
-[submodule "elisp/nrepl"]
-	path = elisp/nrepl
-	url = https://github.com/clojure-emacs/nrepl.el.git
 [submodule "elisp/php-mode"]
 	path = elisp/php-mode
 	url = https://github.com/ejmr/php-mode.git
-[submodule "elisp/pkg-info"]
-	path = elisp/pkg-info
-	url = https://github.com/lunaryorn/pkg-info.el.git
 [submodule "elisp/popup-el"]
 	path = elisp/popup-el
 	url = https://github.com/auto-complete/popup-el.git

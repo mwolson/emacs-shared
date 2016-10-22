@@ -463,12 +463,6 @@
   (defalias 'slime my-slime-function))
 
 ;; Clojure-mode and nrepl setup
-(add-to-list 'load-path (concat my-emacs-path "elisp/clojure-mode"))
-(require 'clojure-mode)
-(add-to-list 'load-path (concat my-emacs-path "elisp/pkg-info"))
-(add-to-list 'load-path (concat my-emacs-path "elisp/nrepl"))
-(require 'nrepl)
-(require 'clojure-test-mode)
 
 ;; Enable LUA mode
 (add-to-list 'load-path (concat my-emacs-path "elisp/lua-mode"))
