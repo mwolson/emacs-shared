@@ -295,10 +295,10 @@
 ;; Make shell commands run in unique buffer so we can have multiple at once, and run all shell
 ;; asynchronously.  Taken in part from EmacsWiki: ExecuteExternalCommand page.
 
-(defadvice erase-buffer (around erase-buffer-noop)
+(defadvice erase-buffer (around erase-buffer-noop disable)
   "Make erase-buffer do nothing; only used in conjunction with shell-command.")
 
-(defadvice shell-command (around shell-command-unique-buffer)
+(defadvice shell-command (around shell-command-unique-buffer activate)
   (if (or current-prefix-arg
           (bufferp output-buffer)
           (stringp output-buffer))
@@ -343,7 +343,6 @@
                 (let ((process-environment (cons "PAGER=" process-environment)))
                   ad-do-it)
               (ad-deactivate-regexp "erase-buffer-noop"))))))))
-(ad-activate 'shell-command)
 
 ;; Docker support
 (add-to-list 'load-path (concat my-emacs-path "elisp/dockerfile-mode"))
