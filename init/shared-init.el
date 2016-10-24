@@ -437,14 +437,12 @@
 (add-to-list 'auto-mode-alist '("\.feature$" . feature-mode))
 
 ;; Node REPL using SLIME
-(add-to-list 'load-path (concat my-emacs-path "elisp/slime"))
-(add-to-list 'load-path (concat my-emacs-path "elisp/slime/contrib"))
 (require 'slime)
 (autoload 'slime-js-minor-mode "slime-js" nil t)
 (defun my-turn-on-slime-js ()
   (interactive)
   (slime-js-minor-mode 1))
-(add-hook 'js2-mode-hook #'my-turn-on-slime-js)
+(add-hook 'js-mode-hook #'my-turn-on-slime-js)
 (slime-setup '(slime-repl slime-js))
 (setq slime-auto-connect 'always)
 (setq slime-kill-without-query-p t)
@@ -461,6 +459,14 @@
   (defalias 'slime my-slime-function))
 
 ;; Clojure-mode and nrepl setup
+(require 'ac-cider)
+(add-hook 'cider-mode-hook 'ac-flyspell-workaround)
+(add-hook 'cider-mode-hook 'ac-cider-setup)
+(add-hook 'cider-repl-mode-hook 'ac-cider-setup)
+(eval-after-load "auto-complete"
+  '(progn
+     (add-to-list 'ac-modes 'cider-mode)
+     (add-to-list 'ac-modes 'cider-repl-mode)))
 
 ;; Enable LUA mode
 (add-to-list 'load-path (concat my-emacs-path "elisp/lua-mode"))

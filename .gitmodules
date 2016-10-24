@@ -49,9 +49,6 @@
 [submodule "elisp/scala-mode2"]
 	path = elisp/scala-mode2
 	url = https://github.com/hvesalai/scala-mode2.git
-[submodule "elisp/slime"]
-	path = elisp/slime
-	url = https://github.com/antifuchs/slime.git
 [submodule "elisp/smex"]
 	path = elisp/smex
 	url = https://github.com/nonsequitur/smex.git

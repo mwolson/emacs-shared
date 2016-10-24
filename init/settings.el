@@ -183,15 +183,11 @@
    (quote
     (("melpa-stable" . "http://stable.melpa.org/packages/")
      ("gnu" . "http://elpa.gnu.org/packages/"))))
- '(package-selected-packages (quote (cider auto-complete magit)))
+ '(package-selected-packages (quote (ac-cider slime cider auto-complete magit)))
  '(post-jump-header nil)
  '(recentf-mode nil)
  '(recentf-save-file "~/.emacs.d/.recentf")
  '(require-final-newline nil)
- '(safe-local-variable-values
-   (quote
-    ((emacs-lisp-docstring-fill-column . 75)
-     (allout-layout * 0 :))))
  '(save-place t nil (saveplace))
  '(save-place-file "~/.emacs.d/.places")
  '(save-place-limit 20)
