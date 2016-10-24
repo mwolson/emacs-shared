@@ -179,6 +179,11 @@
       "* %?" :prepend t :empty-lines-after 1))))
  '(org-default-notes-file "~/Documents/notes.org")
  '(org-startup-folded nil)
+ '(package-archives
+   (quote
+    (("melpa-stable" . "http://stable.melpa.org/packages/")
+     ("gnu" . "http://elpa.gnu.org/packages/"))))
+ '(package-selected-packages (quote (cider auto-complete magit)))
  '(post-jump-header nil)
  '(recentf-mode nil)
  '(recentf-save-file "~/.emacs.d/.recentf")

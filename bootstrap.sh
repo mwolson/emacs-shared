@@ -17,6 +17,8 @@ else
     BUILD=
 fi
 
+REQUIRED_EMACS_VERSION=25.1
+
 # Create bin directory
 rm -fr bin
 mkdir bin
@@ -29,16 +31,16 @@ PATH="$(pwd)"/bin:"$PATH"
 
 DESTDIR=$(pwd)
 
-# Make sure we're using a version of Emacs that can at least load epa
-EPA_WORKS=$(emacs --batch -q --no-site-file --eval "(message (locate-library \"epa\"))" 2>&1)
+# Make sure we're using the recommended version of Emacs
+EMACS_VERSION=$(emacs --batch -q --no-site-file --eval "(message \"%s\" emacs-version)" 2>&1)
 
-if test -z "$EPA_WORKS"; then
-    echo >&2 "Error: Your version of Emacs is too old, should be at least version 23.1"
+if ! which emacs > /dev/null; then
+    echo >&2 "Error: Could not find \"emacs\" in your path"
     exit 1
 fi
 
-if test -z "ELISP_DIR"; then
-    echo >&2 "Error: Could not find \"emacs\" in your path"
+if [[ z$EMACS_VERSION != z${REQUIRED_EMACS_VERSION}* ]]; then
+    echo >&2 "Error: Your version of Emacs is \"$EMACS_VERSION\", but should be \"${REQUIRED_EMACS_VERSION}.x\""
     exit 1
 fi
 
@@ -61,17 +63,13 @@ function install_info() {
     install-info --info-dir="$DESTDIR"/share/info "$DESTDIR"/share/info/${name}
 }
 
+emacs --batch -q -l install-packages.el 2>&1 | grep -v '^Loading '
+
 if test -n "$BUILD"; then
     if test -n "$BUILD_DOCS"; then
         rm -fr share/info
         mkdir -p share/info
     fi
-
-    # company-mode
-    # (
-    #     cd elisp/company-mode
-    #     make clean compile
-    # )
 
     # EMMS
     (
@@ -93,21 +91,6 @@ if test -n "$BUILD"; then
     (
         cd elisp/js2-mode
         make clean all
-    )
-
-    # magit
-    (
-        cd elisp/magit
-        # configure magit to find dependencies
-	echo <<EOF > config.mk
-LOAD_PATH  = -L $DESTDIR/elisp/magit/lisp
-LOAD_PATH += -L $DESTDIR/elisp
-EOF
-        make clean lisp
-
-        if test -n "$BUILD_DOCS"; then
-            make info install-info DESTDIR="$DESTDIR" PREFIX=
-        fi
     )
 
     # Muse
