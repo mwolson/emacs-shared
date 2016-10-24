@@ -63,17 +63,13 @@ function install_info() {
     install-info --info-dir="$DESTDIR"/share/info "$DESTDIR"/share/info/${name}
 }
 
+emacs --batch -q -l install-packages.el 2>&1 | grep -v '^Loading '
+
 if test -n "$BUILD"; then
     if test -n "$BUILD_DOCS"; then
         rm -fr share/info
         mkdir -p share/info
     fi
-
-    # company-mode
-    # (
-    #     cd elisp/company-mode
-    #     make clean compile
-    # )
 
     # EMMS
     (
@@ -95,21 +91,6 @@ if test -n "$BUILD"; then
     (
         cd elisp/js2-mode
         make clean all
-    )
-
-    # magit
-    (
-        cd elisp/magit
-        # configure magit to find dependencies
-	echo <<EOF > config.mk
-LOAD_PATH  = -L $DESTDIR/elisp/magit/lisp
-LOAD_PATH += -L $DESTDIR/elisp
-EOF
-        make clean lisp
-
-        if test -n "$BUILD_DOCS"; then
-            make info install-info DESTDIR="$DESTDIR" PREFIX=
-        fi
     )
 
     # Muse

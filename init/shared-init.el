@@ -287,11 +287,6 @@
 ;; Don't slow down ls and don't make dired output too wide on w32 systems
 (setq w32-get-true-file-attributes nil)
 
-;; Load common elisp libraries used by other add-ons
-(add-to-list 'load-path (concat my-emacs-path "elisp/dash"))
-(add-to-list 'load-path (concat my-emacs-path "elisp/s"))
-(add-to-list 'load-path (concat my-emacs-path "elisp/with-editor"))
-
 ;; Make shell commands run in unique buffer so we can have multiple at once, and run all shell
 ;; asynchronously.  Taken in part from EmacsWiki: ExecuteExternalCommand page.
 
@@ -343,6 +338,9 @@
                 (let ((process-environment (cons "PAGER=" process-environment)))
                   ad-do-it)
               (ad-deactivate-regexp "erase-buffer-noop"))))))))
+
+;; Activate packages
+(package-initialize)
 
 ;; Docker support
 (add-to-list 'load-path (concat my-emacs-path "elisp/dockerfile-mode"))
@@ -664,77 +662,15 @@
      (profiler-report-cpu)
      (profiler-cpu-stop)))
 
-;;; BEGIN eclim ;;;
-
-(when (my-emacs-feature-enabled 'eclim)
-
-;; Setup
-(add-to-list 'load-path (concat my-emacs-path "elisp/emacs-eclim"))
-(require 'eclim)
-(require 'eclimd)
-(global-eclim-mode)
-(setq eclim-accepted-file-regexps '("\\.java" "\\.scala")
-      eclim-auto-save nil)
-
-;; Rebuild Eclipse project on every save
-(defun my-eclim-mode-hook ()
-  (when my-sbt-build-on-save-p
-    (add-hook 'after-save-hook 'eclim-project-build nil 't)))
-(add-hook 'eclim-mode-hook #'my-eclim-mode-hook)
-
-(defun my-sbt-toggle-build-on-save ()
-  (interactive)
-  (let ((new-val (setq my-sbt-build-on-save-p (not my-sbt-build-on-save-p))))
-    (message "Build on save is now %s" (if new-val "enabled" "disabled"))))
-
-;; Monkey-patch eclim-mode so it doesn't block Emacs while running save hooks
-(defun eclim--after-save-hook ()
-  (when (eclim--accepted-p (buffer-file-name))
-    (ignore-errors
-      (apply 'eclim--call-process-async #'ignore
-             (case major-mode
-               (java-mode "java_src_update")
-               (ruby-mode "ruby_src_update")
-               (php-mode "php_src_update")
-               ((c-mode c++-mode) "c_src_update")
-               ((javascript-mode js-mode) "javascript_src_update"))
-             (eclim--expand-args (list "-p" "-f")))))
-  t)
-
 ;; Make help-at-point display more quickly
 (setq help-at-pt-display-when-idle t
       help-at-pt-timer-delay 0.1)
 
 (help-at-pt-set-timer)
 
-;; Hook eclim up with auto complete mode
-(add-to-list 'load-path (concat my-emacs-path "elisp/auto-complete"))
-(add-to-list 'load-path (concat my-emacs-path "elisp/popup-el"))
+;; auto-completion for various modes
 (require 'auto-complete-config)
 (ac-config-default)
-(require 'ac-emacs-eclim-source)
-(ac-emacs-eclim-config)
-
-;; Integrate with company-mode
-;; (add-to-list 'load-path (concat my-emacs-path "elisp/company-mode"))
-;; (require 'company)
-;; (require 'company-emacs-eclim)
-;; (company-emacs-eclim-setup)
-;; (global-company-mode t)
-
-;; Load yasnippet
-(add-to-list 'load-path (concat my-emacs-path "elisp/yasnippet"))
-(require 'yasnippet)
-
-;; Keybindings
-(define-key java-mode-map (kbd "M-RET") 'eclim-problems-correct)
-(define-key java-mode-map (kbd "<C-M-i>") 'eclim-java-implement)
-(cond ((eq window-system 'ns)
-       (define-key java-mode-map (kbd "<s-return>") 'eclim-java-find-declaration))
-      (t
-       (define-key java-mode-map (kbd "<C-M-return>") 'eclim-java-find-declaration)))
-
-);;; END eclim
 
 ;;; BEGIN emms ;;;
 
@@ -1219,7 +1155,6 @@ trailing space to the screen, so we want to clean that up."
 (when (my-emacs-feature-enabled 'magit)
 
 ;; Load magit
-(add-to-list 'load-path (concat my-emacs-path "elisp/magit/lisp"))
 (require 'magit)
 (require 'magit-blame)
 (require 'git-commit)
