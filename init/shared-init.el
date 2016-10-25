@@ -27,7 +27,7 @@
 (defvar my-use-themes        (boundp 'custom-theme-load-path))
 (defvar my-emacs-features    (if (string-equal "root" (getenv "USER"))
                                  nil
-                               '(erc magit org)))
+                               '(erc org)))
 (defvar my-sbt-java7-command (if (eq system-type 'windows-nt) "sh -c sbt-java7" "sbt-java7"))
 (defvar my-sbt-build-on-save-p nil)
 (defvar my-recent-files      nil)
@@ -678,6 +678,23 @@
 (require 'auto-complete-config)
 (ac-config-default)
 
+;; Setup info for manually compiled packages
+(add-to-list 'Info-default-directory-list (concat my-emacs-path "share/info"))
+
+;; Load magit
+(require 'magit)
+(require 'magit-blame)
+(require 'git-commit)
+
+;; Kill auto-fill in git-commit mode
+(remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill)
+
+;; Map some magit keys
+(global-set-key "\C-xV" nil)
+(global-set-key "\C-xVb" 'magit-show-refs-current)
+(global-set-key "\C-xVl" 'magit-log-head)
+(global-set-key "\C-xVs" 'magit-status)
+
 ;;; BEGIN emms ;;;
 
 (when (my-emacs-feature-enabled 'emms)
@@ -1155,29 +1172,6 @@ trailing space to the screen, so we want to clean that up."
 (define-key erc-mode-map "\C-c\C-r" nil)
 
 );;; END erc ;;;
-
-;;; BEGIN magit ;;;
-
-(when (my-emacs-feature-enabled 'magit)
-
-;; Load magit
-(require 'magit)
-(require 'magit-blame)
-(require 'git-commit)
-
-;; Kill auto-fill in git-commit mode
-(remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill)
-
-;; Setup info
-(add-to-list 'Info-default-directory-list (concat my-emacs-path "share/info"))
-
-;; Map some magit keys
-(global-set-key "\C-xV" nil)
-(global-set-key "\C-xVb" 'magit-show-refs)
-(global-set-key "\C-xVl" 'magit-log)
-(global-set-key "\C-xVs" 'magit-status)
-
-);;; END magit ;;;
 
 ;;; BEGIN muse ;;;
 
