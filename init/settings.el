@@ -151,6 +151,7 @@
  '(ls-lisp-support-shell-wildcards nil)
  '(ls-lisp-use-insert-directory-program nil)
  '(ls-lisp-verbosity (quote (uid gid)))
+ '(magit-prefer-remote-upstream t)
  '(mail-interactive t)
  '(mail-user-agent (quote gnus-user-agent))
  '(mark-diary-entries-in-calendar t)

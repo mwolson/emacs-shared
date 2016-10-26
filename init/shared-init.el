@@ -698,6 +698,13 @@
 (global-set-key "\C-xVl" 'magit-log-head)
 (global-set-key "\C-xVs" 'magit-status)
 
+;; Monkey-patch this to prefer having `P u` go to an upstream with same name as the current branch
+(defun magit-remote-branch-at-point ()
+  (magit-section-case
+    (branch (concat (car (save-match-data (magit-list-remotes)))
+                    "/" (magit-section-value it)))
+    (commit (magit-name-remote-branch (magit-section-value it)))))
+
 ;;; BEGIN emms ;;;
 
 (when (my-emacs-feature-enabled 'emms)
