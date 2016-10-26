@@ -458,7 +458,7 @@
 (when (and my-slime-function (fboundp my-slime-function))
   (defalias 'slime my-slime-function))
 
-;; Clojure-mode and nrepl setup
+;; CIDER setup
 (require 'ac-cider)
 (add-hook 'cider-mode-hook 'ac-flyspell-workaround)
 (add-hook 'cider-mode-hook 'ac-cider-setup)
@@ -467,6 +467,9 @@
   '(progn
      (add-to-list 'ac-modes 'cider-mode)
      (add-to-list 'ac-modes 'cider-repl-mode)))
+
+;; Show which keys can be entered as a key continuation, mostly for CIDER
+(which-key-mode)
 
 ;; Enable LUA mode
 (add-to-list 'load-path (concat my-emacs-path "elisp/lua-mode"))
