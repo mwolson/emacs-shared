@@ -703,7 +703,13 @@
   (magit-section-case
     (branch (concat (car (save-match-data (magit-list-remotes)))
                     "/" (magit-section-value it)))
-    (commit (magit-name-remote-branch (magit-section-value it)))))
+    (commit (magit-name-remote-branch (magit-section-value it)))
+    (status (concat (car (save-match-data (magit-list-remotes)))
+                    "/" (magit-get-current-branch)))))
+
+(defadvice magit-read-starting-point (around magit-read-starting-point-remote-off activate)
+  (let ((magit-prefer-remote-upstream nil))
+    ad-do-it))
 
 ;;; BEGIN emms ;;;
 
