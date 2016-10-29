@@ -117,17 +117,6 @@ if test -n "$BUILD"; then
         make clean all
     )
 
-    # SLIME
-    (
-        cd elisp/slime/doc
-
-        if test -n "$BUILD_DOCS"; then
-            make clean slime.info
-            install_info slime.info
-            make clean
-        fi
-    )
-
     # Tramp
     (
         cd elisp/tramp
