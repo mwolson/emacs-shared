@@ -352,8 +352,8 @@
 (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
 (add-to-list 'interpreter-mode-alist '("node" . js2-jsx-mode))
 
-(eval-after-load 'js2-mode
-  `(progn
+(eval-after-load "js2-mode"
+  '(progn
      ;; BUG: self is not a browser extern, just a convention that needs checking
      (setq js2-browser-externs (delete "self" js2-browser-externs))
 
@@ -374,9 +374,11 @@
 (defvar my-nodejs-compilation-regexp
   '("^[ \t]+at +\\(?:.+(\\)?\\([^()\n]+\\):\\([0-9]+\\):\\([0-9]+\\))?$" 1 2 3))
 
-(add-to-list 'compilation-error-regexp-alist-alist
-             (cons 'nodejs my-nodejs-compilation-regexp))
-(add-to-list 'compilation-error-regexp-alist 'nodejs)
+(eval-after-load "compile"
+  '(progn
+     (add-to-list 'compilation-error-regexp-alist-alist
+                  (cons 'nodejs my-nodejs-compilation-regexp))
+     (add-to-list 'compilation-error-regexp-alist 'nodejs)))
 
 ;; Add support for Jade templates
 (add-to-list 'load-path (concat my-emacs-path "elisp/jade-mode"))
@@ -533,9 +535,6 @@
 
 ;; Load flyspell mode
 (require 'flyspell)
-
-;; Don't ever hide code when people use allout
-(add-hook 'allout-mode-hook 'allout-show-all)
 
 ;; Markdown support
 (let ((auto-mode-alist '()))

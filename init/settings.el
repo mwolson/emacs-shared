@@ -7,7 +7,6 @@
  ;; If there is more than one, they won't work right.
  '(Man-notify-method (quote bully))
  '(add-log-keep-changes-together t)
- '(allout-auto-activation t)
  '(apropos-do-all t)
  '(auto-compression-mode t nil (jka-compr))
  '(auto-save-file-name-transforms (quote ((".*" "~/.emacs.d/backup/" t))))
