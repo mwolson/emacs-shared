@@ -19,9 +19,6 @@
 [submodule "elisp/erc"]
 	path = elisp/erc
 	url = https://github.com/mwolson/erc.git
-[submodule "elisp/feature-mode"]
-	path = elisp/feature-mode
-	url = https://github.com/michaelklishin/cucumber.el
 [submodule "elisp/jade-mode"]
 	path = elisp/jade-mode
 	url = https://github.com/brianc/jade-mode.git
@@ -40,6 +37,3 @@
 [submodule "elisp/tramp"]
 	path = elisp/tramp
 	url = git://git.savannah.gnu.org/tramp.git
-[submodule "elisp/tt-mode"]
-	path = elisp/tt-mode
-	url = https://github.com/davorg/tt-mode.git

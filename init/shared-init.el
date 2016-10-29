@@ -348,12 +348,6 @@
         (message "Could not load docker changes, output:\n%s" out)
       (message "Loaded Docker env for machine: %s" machine))))
 
-;; Template toolkit support
-(add-to-list 'load-path (concat my-emacs-path "elisp/tt-mode"))
-(autoload 'tt-mode "tt-mode")
-(setq auto-mode-alist
-      (append '(("\\.\\(tt\\|tpl\\)$" . tt-mode)) auto-mode-alist))
-
 ;; Improved Javascript support
 (add-to-list 'load-path (concat my-emacs-path "elisp/js2-mode"))
 (autoload 'js2-jsx-mode "js2-mode" nil t)
@@ -392,11 +386,6 @@
 (require 'jade-mode)
 (add-to-list 'auto-mode-alist '("\\.styl$" . sws-mode))
 (add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode))
-
-;; Add support for .feature files used with Cucumber
-(add-to-list 'load-path (concat my-emacs-path "elisp/feature-mode"))
-(require 'feature-mode)
-(add-to-list 'auto-mode-alist '("\.feature$" . feature-mode))
 
 ;; Highlight current line
 (require 'hl-line)
