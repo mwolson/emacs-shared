@@ -77,18 +77,6 @@ if test -n "$BUILD"; then
         make clean all
     )
 
-    # sbt-mode
-    (
-        cd elisp/sbt-mode
-        make clean all
-    )
-
-    # scala-mode2
-    (
-        cd elisp/scala-mode2
-        make clean all
-    )
-
     # Tramp
     (
         cd elisp/tramp

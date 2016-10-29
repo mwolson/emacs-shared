@@ -28,8 +28,6 @@
 (defvar my-emacs-features    (if (string-equal "root" (getenv "USER"))
                                  nil
                                '(erc org)))
-(defvar my-sbt-java7-command (if (eq system-type 'windows-nt) "sh -c sbt-java7" "sbt-java7"))
-(defvar my-sbt-build-on-save-p nil)
 (defvar my-recent-files      nil)
 (defvar my-settings-shared-p (not (file-exists-p (locate-user-emacs-file "settings.el"))))
 (defvar my-system-paths
@@ -45,9 +43,7 @@
            "C:/Program Files/maven/bin"
 	   "C:/Program Files (x86)/Aspell/bin"
 	   "C:/Program Files (x86)/Git/bin"
-	   "C:/Program Files (x86)/PuTTY"
-           "C:/Program Files (x86)/sbt/bin"
-           "C:/eclipse"))
+	   "C:/Program Files (x86)/PuTTY"))
         (t '("/opt/maven/bin"))))
 (setq my-system-paths (remove-if-not #'file-exists-p my-system-paths))
 
@@ -352,26 +348,6 @@
         (message "Could not load docker changes, output:\n%s" out)
       (message "Loaded Docker env for machine: %s" machine))))
 
-;; Load php-mode
-(add-to-list 'load-path (concat my-emacs-path "elisp/php-mode"))
-(require 'php-mode)
-
-;; Load Perl mode
-(require 'perl-mode)
-
-;; courtesy of Jon Philpott
-(defun my-perl-buffer-name ()
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (when (re-search-forward "^package \\(.+?\\);" nil t)
-      (let* ((pkg (match-string 1))
-             (buf (get-buffer pkg)))
-        (if (and buf (not (eq buf (current-buffer))))
-            (rename-buffer pkg t)
-          (rename-buffer pkg))))))
-(add-hook 'perl-mode-hook #'my-perl-buffer-name)
-
 ;; Template toolkit support
 (add-to-list 'load-path (concat my-emacs-path "elisp/tt-mode"))
 (autoload 'tt-mode "tt-mode")
@@ -422,6 +398,10 @@
 (require 'feature-mode)
 (add-to-list 'auto-mode-alist '("\.feature$" . feature-mode))
 
+;; Highlight current line
+(require 'hl-line)
+(global-hl-line-mode 1)
+
 ;; Node REPL using SLIME
 (require 'slime)
 (autoload 'slime-js-minor-mode "slime-js" nil t)
@@ -471,71 +451,6 @@
 (require 'java-mode-indent-annotations)
 (require 'google-c-style)
 (add-hook 'c-mode-common-hook 'google-set-c-style)
-
-;; Scala
-(add-to-list 'load-path (concat my-emacs-path "elisp/scala-mode2"))
-(require 'scala-mode2)
-(add-to-list 'load-path (concat my-emacs-path "elisp/sbt-mode"))
-(require 'sbt-mode)
-
-(defun sbt-start-java7 ()
-  "Start sbt with Java 7 JDK instead of the default one"
-  (interactive)
-  (let ((sbt:program-name my-sbt-java7-command))
-    (sbt-start)))
-
-(setq sbt:program-name
-      (if (eq system-type 'windows-nt) "sh -c sbt-windows" "sbt"))
-
-;; Grok Scala Worksheets
-(progn
-  (add-to-list 'auto-mode-alist
-               '("\\.sc\\'" . scala-mode))
-  (modify-coding-system-alist 'file "\\.sc\\'" 'utf-8))
-
-;; Send entire buffer to SBT REPL on C-M-x
-(defun my-sbt-eval-buffer ()
-  (interactive)
-  (sbt-send-region (point-min) (point-max))
-  (other-window 1))
-
-(define-key scala-mode-map (kbd "C-M-x") #'my-sbt-eval-buffer)
-
-;; Highlight scala test failures in *compile* and SBT buffers
-(defvar my-scalatest-compilation-regexp
-  '("^\\[info][ \t]+\\(?:.+(\\)?\\([^()\n]+\\):\\([0-9]+\\))?$" 1 2))
-(add-to-list 'compilation-error-regexp-alist-alist
-             (cons 'scalatest my-scalatest-compilation-regexp))
-(add-to-list 'compilation-error-regexp-alist 'scalatest)
-
-;; Highlight scala build failures in *compile* and SBT buffers
-(defvar my-scala-error-regexp
-  '("^\\[error][ \t]+\\([^()\n]+\\):\\([0-9]+\\):.*$" 1 2))
-(add-to-list 'compilation-error-regexp-alist-alist
-             (cons 'scalaerror my-scala-error-regexp))
-(add-to-list 'compilation-error-regexp-alist 'scalaerror)
-
-;; SBT mode hook customizations
-(defun my-sbt-mode-hook ()
-  ;; compilation-skip-threshold tells the compilation minor-mode
-  ;; which type of compiler output can be skipped. 1 = skip info
-  ;; 2 = skip info and warnings.
-  (setq compilation-skip-threshold 1)
-
-  ;; Bind C-a to 'comint-bol when in sbt-mode. This will move the
-  ;; cursor to just after prompt.
-  (local-set-key (kbd "C-a") 'comint-bol)
-
-  ;; Bind M-RET to 'comint-accumulate. This will allow you to add
-  ;; more than one line to scala console prompt before sending it
-  ;; for interpretation. It will keep your command history cleaner.
-  (local-set-key (kbd "M-RET") 'comint-accumulate)
-
-  ;; Re-add our scalatest matcher since SBT wipes it
-  (add-to-list (make-local-variable 'compilation-error-regexp-alist)
-               'scalatest))
-
-(add-hook 'sbt-mode-hook #'my-sbt-mode-hook t)
 
 ;; ANSI colors in compile buffer
 (require 'ansi-color)

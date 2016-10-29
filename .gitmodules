@@ -34,15 +34,6 @@
 [submodule "elisp/maxframe-el"]
 	path = elisp/maxframe-el
 	url = https://github.com/rmm5t/maxframe.el.git
-[submodule "elisp/php-mode"]
-	path = elisp/php-mode
-	url = https://github.com/ejmr/php-mode.git
-[submodule "elisp/sbt-mode"]
-	path = elisp/sbt-mode
-	url = https://github.com/hvesalai/sbt-mode.git
-[submodule "elisp/scala-mode2"]
-	path = elisp/scala-mode2
-	url = https://github.com/hvesalai/scala-mode2.git
 [submodule "elisp/smex"]
 	path = elisp/smex
 	url = https://github.com/nonsequitur/smex.git

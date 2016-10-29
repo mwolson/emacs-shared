@@ -162,7 +162,6 @@
  '(save-place t nil (saveplace))
  '(save-place-file "~/.emacs.d/.places")
  '(save-place-limit 20)
- '(sbt:default-command "test:compile console")
  '(select-enable-clipboard t)
  '(show-paren-mode t)
  '(show-paren-style (quote parenthesis))
