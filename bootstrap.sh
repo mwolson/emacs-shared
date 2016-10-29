@@ -71,12 +71,6 @@ if test -n "$BUILD"; then
         mkdir -p share/info
     fi
 
-    # js2-mode
-    (
-        cd elisp/js2-mode
-        make clean all
-    )
-
     # Tramp
     (
         cd elisp/tramp

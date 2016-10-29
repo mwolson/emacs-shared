@@ -154,7 +154,7 @@
      ("gnu" . "http://elpa.gnu.org/packages/"))))
  '(package-selected-packages
    (quote
-    (which-key ac-cider slime cider auto-complete magit)))
+    (js2-mode which-key ac-cider slime cider auto-complete magit)))
  '(post-jump-header nil)
  '(recentf-mode nil)
  '(recentf-save-file "~/.emacs.d/.recentf")

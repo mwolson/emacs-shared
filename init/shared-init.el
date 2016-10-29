@@ -349,8 +349,6 @@
       (message "Loaded Docker env for machine: %s" machine))))
 
 ;; Improved Javascript support
-(add-to-list 'load-path (concat my-emacs-path "elisp/js2-mode"))
-(autoload 'js2-jsx-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
 (add-to-list 'interpreter-mode-alist '("node" . js2-jsx-mode))
 

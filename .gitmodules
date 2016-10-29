@@ -22,9 +22,6 @@
 [submodule "elisp/jade-mode"]
 	path = elisp/jade-mode
 	url = https://github.com/brianc/jade-mode.git
-[submodule "elisp/js2-mode"]
-	path = elisp/js2-mode
-	url = https://github.com/mooz/js2-mode.git
 [submodule "elisp/lua-mode"]
 	path = elisp/lua-mode
 	url = https://github.com/immerrr/lua-mode.git
