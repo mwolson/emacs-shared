@@ -16,9 +16,6 @@
 [submodule "elisp/emacs_chrome"]
 	path = elisp/emacs_chrome
 	url = https://github.com/stsquad/emacs_chrome.git
-[submodule "elisp/emms"]
-	path = elisp/emms
-	url = git://git.sv.gnu.org/emms.git
 [submodule "elisp/erc"]
 	path = elisp/erc
 	url = https://github.com/mwolson/erc.git
@@ -37,9 +34,6 @@
 [submodule "elisp/maxframe-el"]
 	path = elisp/maxframe-el
 	url = https://github.com/rmm5t/maxframe.el.git
-[submodule "elisp/muse"]
-	path = elisp/muse
-	url = https://github.com/alexott/muse.git
 [submodule "elisp/php-mode"]
 	path = elisp/php-mode
 	url = https://github.com/ejmr/php-mode.git

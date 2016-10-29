@@ -30,9 +30,6 @@
  '(cperl-merge-trailing-else nil)
  '(current-language-environment "UTF-8")
  '(custom-safe-themes t)
- '(debian-changelog-mode-hook
-   (quote
-    (turn-on-auto-fill turn-on-muse-list-edit-minor-mode)))
  '(default-input-method "TeX")
  '(delete-selection-mode t)
  '(dict-noauth t)
@@ -54,22 +51,6 @@
      (menu-bar-lines . t))))
  '(eldoc-minor-mode-string " E")
  '(electric-indent-mode nil)
- '(emms-cache-file "~/.emacs.d/.emms-cache")
- '(emms-info-asynchronously nil)
- '(emms-info-functions (quote (emms-info-mpd my-emms-info-fromname)))
- '(emms-lastfm-radio-metadata-period nil)
- '(emms-player-list (quote (emms-player-mpd emms-player-lastfm-radio)))
- '(emms-player-mpd-verbose nil)
- '(emms-playlist-buffer-name "*EMMS Playlist*")
- '(emms-playlist-default-major-mode (quote emms-playlist-mode))
- '(emms-playlist-mode-open-playlists t)
- '(emms-show-format "NP: %s")
- '(emms-stream-default-action "play")
- '(emms-track-description-function (quote my-emms-info-track-description))
- '(emms-track-info-filters (quote (my-emms-info-filter-titles)))
- '(emms-track-initialize-functions (quote (emms-info-initialize-track)))
- '(emms-volume-change-amount 3)
- '(emms-volume-change-function (quote emms-volume-mpd-change))
  '(enable-recursive-minibuffers t)
  '(erc-anonymous-login nil)
  '(erc-auto-query (quote bury))
@@ -160,19 +141,6 @@
  '(message-log-max 500)
  '(mouse-autoselect-window nil)
  '(mouse-wheel-mode t)
- '(muse-colors-inline-image-method (quote muse-colors-use-publishing-directory))
- '(muse-completing-read-function (quote ido-completing-read))
- '(muse-html-charset-default "utf-8")
- '(muse-html-encoding-default (quote utf-8))
- '(muse-html-meta-content-encoding (quote utf-8))
- '(muse-publish-comments-p t)
- '(muse-publish-date-format "%b. %e, %Y")
- '(muse-publish-desc-transforms
-   (quote
-    (muse-wiki-publish-pretty-title muse-wiki-publish-pretty-interwiki muse-publish-strip-URL)))
- '(muse-wiki-publish-small-title-words
-   (quote
-    ("the" "and" "at" "on" "of" "for" "in" "an" "a" "page")))
  '(org-capture-templates
    (quote
     (("n" "Note" entry

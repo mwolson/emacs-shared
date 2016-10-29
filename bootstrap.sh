@@ -71,38 +71,10 @@ if test -n "$BUILD"; then
         mkdir -p share/info
     fi
 
-    # EMMS
-    (
-        cd elisp/emms
-        make clean
-        # Don't compile emms-setup.elc, since it causes problems if no dir named ~/.emacs.d/emms exists
-        touch lisp/emms-setup.elc
-        make lisp
-
-        if test -n "$BUILD_DOCS"; then
-            make docs
-            cd doc
-            install_info emms.info
-        fi
-        rm -f lisp/emms-setup.elc
-    )
-
     # js2-mode
     (
         cd elisp/js2-mode
         make clean all
-    )
-
-    # Muse
-    (
-        cd elisp/muse
-        make clean lisp
-
-        if test -n "$BUILD_DOCS"; then
-            cd texi
-            make muse.info
-            install_info muse.info
-        fi
     )
 
     # sbt-mode
