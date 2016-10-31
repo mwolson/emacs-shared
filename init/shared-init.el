@@ -363,7 +363,11 @@
                 (not (and (string= msg-id "msg.no.side.effects")
                           (string= (buffer-substring-no-properties beg (+ beg 7)) "expect("))))
            (js2-report-warning msg-id msg-arg beg
-                               (and beg end (- end beg)))))))
+                               (and beg end (- end beg)))))
+
+     (eval-after-load "auto-complete"
+       '(progn
+          (add-to-list 'ac-modes 'js2-jsx-mode)))))
 
 ;; Add support for some mocha testing externs
 (setq-default js2-additional-externs
