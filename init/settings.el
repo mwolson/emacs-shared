@@ -27,6 +27,7 @@
  '(cperl-indent-level 4)
  '(cperl-indent-parens-as-block t)
  '(cperl-merge-trailing-else nil)
+ '(css-indent-offset 2)
  '(current-language-environment "UTF-8")
  '(custom-safe-themes t)
  '(default-input-method "TeX")
