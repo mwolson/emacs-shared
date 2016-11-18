@@ -224,6 +224,12 @@
       (error "No number at point"))
   (replace-match (number-to-string (1+ (string-to-number (match-string 0))))))
 
+(defun git-grep ()
+  (interactive)
+  (require 'ack)
+  (let ((ack-command (concat (cdr (assoc ".git" ack-vc-grep-commands)) " ")))
+    (call-interactively #'ack)))
+
 ;;; Things that can't be changed easily using `customize'
 
 ;; Enable some commands
