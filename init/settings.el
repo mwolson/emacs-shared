@@ -6,6 +6,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(Man-notify-method (quote bully))
+ '(ack-vc-grep-commands (quote ((".git" . "git --no-pager grep -n -i"))))
  '(add-log-keep-changes-together t)
  '(apropos-do-all t)
  '(auto-compression-mode t nil (jka-compr))
