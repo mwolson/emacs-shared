@@ -105,9 +105,6 @@
  '(icomplete-mode t)
  '(ido-default-buffer-method (quote selected-window))
  '(ido-mode (quote buffer) nil (ido))
- '(ido-save-directory-list-file "~/.emacs.d/.ido.last")
- '(ido-ubiquitous-function-exceptions (quote (grep-read-files find-file-at-point)))
- '(ido-ubiquitous-mode t)
  '(imaxima-fnt-size "LARGE")
  '(imaxima-use-maxima-mode-flag t)
  '(indent-tabs-mode nil)
@@ -155,7 +152,7 @@
      ("gnu" . "http://elpa.gnu.org/packages/"))))
  '(package-selected-packages
    (quote
-    (ack yaml-mode js2-mode which-key ac-cider slime cider auto-complete magit)))
+    (ripgrep flx-ido projectile ack yaml-mode js2-mode ac-cider slime cider auto-complete magit)))
  '(post-jump-header nil)
  '(recentf-mode nil)
  '(recentf-save-file "~/.emacs.d/.recentf")

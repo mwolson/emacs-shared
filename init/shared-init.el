@@ -433,9 +433,6 @@
      (add-to-list 'ac-modes 'cider-mode)
      (add-to-list 'ac-modes 'cider-repl-mode)))
 
-;; Show which keys can be entered as a key continuation, mostly for CIDER
-(which-key-mode)
-
 ;; Enable LUA mode
 (add-to-list 'load-path (concat my-emacs-path "elisp/lua-mode"))
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
@@ -480,6 +477,29 @@
 (global-set-key (kbd "C-c M-x") 'smex-update-and-run)
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+
+;; Use flx matching for ido mode
+(flx-ido-mode 1)
+
+;; Enable projectile, a way to quickly find files in projects
+(require 'projectile)
+(projectile-global-mode 1)
+(global-set-key "\C-cp" projectile-mode-map)
+
+;; Insinuate with ripgrep
+(defun my-projectile-ripgrep (regexp)
+  "Run a Ripgrep search with `REGEXP' rooted at the current projectile project root."
+  (interactive
+   (list
+    (read-from-minibuffer "Ripgrep search for: " (thing-at-point 'symbol))))
+  (if (fboundp 'projectile-project-root)
+      (ripgrep-regexp regexp (projectile-project-root))
+    (error "Projectile is not available")))
+
+(require 'ripgrep)
+(define-key ripgrep-search-mode-map (kbd "TAB") #'compilation-next-error)
+(define-key ripgrep-search-mode-map (kbd "<backtab>") #'compilation-previous-error)
+(define-key projectile-command-map "s" #'my-projectile-ripgrep)
 
 ;; Bind N and P in ediff so that I don't leave the control buffer
 (defun my-ediff-next-difference (&rest args)
@@ -714,14 +734,8 @@ trailing space to the screen, so we want to clean that up."
   (interactive)
   (org-capture nil "n"))
 
-(defvar my-org-prefix-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map "n" #'my-org-find-notes-file)
-    (define-key map " " #'my-org-capture-note)
-    map)
-  "My key customizations for Org.")
-
-(global-set-key "\C-cp" my-org-prefix-map)
+(define-key projectile-command-map "n" #'my-org-find-notes-file)
+(define-key projectile-command-map " " #'my-org-capture-note)
 
 (define-key org-mode-map (kbd "<M-left>") #'left-word)
 (define-key org-mode-map (kbd "<M-right>") #'right-word)
