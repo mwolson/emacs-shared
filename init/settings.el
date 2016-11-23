@@ -130,6 +130,7 @@
  '(ls-lisp-support-shell-wildcards nil)
  '(ls-lisp-use-insert-directory-program nil)
  '(ls-lisp-verbosity (quote (uid gid)))
+ '(magit-display-buffer-function (quote magit-display-buffer-fullframe-status-v1))
  '(magit-prefer-remote-upstream t)
  '(mail-interactive t)
  '(mail-user-agent (quote gnus-user-agent))
@@ -154,6 +155,7 @@
    (quote
     (ripgrep flx-ido projectile ack yaml-mode js2-mode ac-cider slime cider auto-complete magit)))
  '(post-jump-header nil)
+ '(projectile-switch-project-action (quote magit-status))
  '(recentf-mode nil)
  '(recentf-save-file "~/.emacs.d/.recentf")
  '(require-final-newline nil)

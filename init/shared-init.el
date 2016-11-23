@@ -609,7 +609,15 @@
 ;; Kill auto-fill in git-commit mode
 (remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill)
 
-;; Map some magit keys
+;; Don't overwrite M-w in magit-status-mode, and clear mark when done
+(defun my-magit-kill-ring-save ()
+  (interactive)
+  (call-interactively #'kill-ring-save)
+  (deactivate-mark))
+
+(define-key magit-status-mode-map (kbd "M-w") #'my-magit-kill-ring-save)
+
+;; Map some magit keys globally
 (global-set-key "\C-xV" nil)
 (global-set-key "\C-xVa" 'magit-blame-popup)
 (global-set-key "\C-xVb" 'magit-show-refs-current)
