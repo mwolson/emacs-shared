@@ -80,6 +80,10 @@ If you want to be able to byte-compile Emacs Lisp libraries, you'll need a worki
 
 Install Aspell and an Aspell dictionary for your language for spell-checking.  This is more likely to be useful on Windows, which does not come with an ispell variant.
 
+### (Optional) Install ripgrep
+
+If you want to quickly search for patterns within multiple files, install [ripgrep](https://github.com/BurntSushi/ripgrep).
+
 ### Install Emacs
 
 The recommended version is Emacs 25.1.  The recommended installers for each OS are:
