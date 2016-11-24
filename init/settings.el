@@ -148,6 +148,14 @@
    (quote
     (smex dockerfile-mode browse-kill-ring atom-one-dark-theme ripgrep flx-ido projectile yaml-mode js2-mode ac-cider slime cider auto-complete magit)))
  '(post-jump-header nil)
+ '(projectile-mode-line
+   (quote
+    (:eval
+     (if
+         (file-remote-p default-directory)
+         " Proj"
+       (format " Proj[%s]"
+               (projectile-project-name))))))
  '(projectile-switch-project-action (quote magit-status))
  '(recentf-mode nil)
  '(recentf-save-file "~/.emacs.d/.recentf")
