@@ -63,7 +63,6 @@
 (package-initialize)
 
 ;; Allow maximizing frame
-(add-to-list 'load-path (concat my-emacs-path "elisp/maxframe-el"))
 (require 'maxframe)
 (when my-frame-pad-width
   (setq mf-max-width (- (display-pixel-width) my-frame-pad-width)))

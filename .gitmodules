@@ -4,9 +4,6 @@
 [submodule "elisp/erc"]
 	path = elisp/erc
 	url = https://github.com/mwolson/erc.git
-[submodule "elisp/maxframe-el"]
-	path = elisp/maxframe-el
-	url = https://github.com/rmm5t/maxframe.el.git
 [submodule "elisp/tramp"]
 	path = elisp/tramp
 	url = git://git.savannah.gnu.org/tramp.git
