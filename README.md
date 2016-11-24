@@ -7,7 +7,7 @@ This is a collection of Emacs Lisp add-ons and an Emacs init file with the follo
 - **Fullscreen by default** on Windows and OS X, with code to account for dock size of 64 pixels on OS X (options:
   my-frame-pad-width, my-frame-pad-height, and my-frame-maximize-p); frame width and height is customizable if
   you don't like fullscreen
-- **"afternoon" dark color theme**
+- **Dark color theme**
 - Can be personalized with a single `setq` statement; there are many options
 - Supports list of features to enable
 - Principle of least surprise is a design goal
@@ -26,16 +26,16 @@ On Windows, the best way to do this is with [Git Extensions](https://code.google
 
 On Mac OS X, the best way to do this is to install Xcode from App Store, and then install the Command Line Tools for Xcode using the Downloads preferences pane within Xcode 4.6.1 and later.
 
+### (Mac OS X only) Install Homebrew
+
+You may want to pick up [Homebrew](http://mxcl.github.io/homebrew/) for easier installation of other useful tools, though it's not a strict requirement.
+
 ### (Windows only) Install Git manpages
 
 The Windows installer doesn't include manpages.  If you want them (and they're readable with this Emacs configuration by doing `M-x man`) then follow these steps:
 
 - Find and download the manpages for your version of git from [the Git download list](https://code.google.com/p/git-core/downloads/list)
 - Extract them to "C:\Program Files (x86)\Git\share\man", which will probably be a new folder.  That folder should contain directories like "man7" after extraction if you did it right.
-
-### (Mac OS X only) Install Homebrew
-
-You may want to pick up [Homebrew](http://mxcl.github.io/homebrew/) for easier installation of other useful tools, though it's not a strict requirement.
 
 ### (Optional, Mac OS X only) Install docker manpages
 
@@ -96,7 +96,7 @@ The recommended version is Emacs 25.1.  The recommended installers for each OS a
 
 *Mac OS X*
 
- - Download the "official-icon" build from [the Mituhara Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-25.1-mac-6.1).
+ - Download the "official-icon" build from [the Mitsuharu Yamamoto Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-25.1-mac-6.1).
  - Open the zip file and drag the Emacs icon over to the Applications folder.
 
 *Ubuntu*
