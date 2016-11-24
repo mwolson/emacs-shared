@@ -153,7 +153,7 @@
      ("gnu" . "http://elpa.gnu.org/packages/"))))
  '(package-selected-packages
    (quote
-    (ripgrep flx-ido projectile ack yaml-mode js2-mode ac-cider slime cider auto-complete magit)))
+    (dockerfile-mode browse-kill-ring atom-one-dark-theme ripgrep flx-ido projectile yaml-mode js2-mode ac-cider slime cider auto-complete magit)))
  '(post-jump-header nil)
  '(projectile-switch-project-action (quote magit-status))
  '(recentf-mode nil)

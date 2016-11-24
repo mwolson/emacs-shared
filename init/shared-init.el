@@ -59,9 +59,8 @@
 ;; Add shared elisp directory (but prefer system libs)
 (add-to-list 'load-path (concat my-emacs-path "elisp") t)
 
-;; Add color theme
-(when my-use-themes
-  (add-to-list 'custom-theme-load-path (concat my-emacs-path "elisp/afternoon-theme")))
+;; Activate packages
+(package-initialize)
 
 ;; Allow maximizing frame
 (add-to-list 'load-path (concat my-emacs-path "elisp/maxframe-el"))
@@ -90,7 +89,7 @@
 (defun my-reset-theme ()
   (interactive)
   (when my-use-themes
-    (load-theme 'afternoon t)))
+    (load-theme 'atom-one-dark t)))
 
 ;; This function should be called on the emacsclient commandline in cases where no file is being passed on commandline.
 (defun my-init-client ()
@@ -224,12 +223,6 @@
       (error "No number at point"))
   (replace-match (number-to-string (1+ (string-to-number (match-string 0))))))
 
-(defun git-grep ()
-  (interactive)
-  (require 'ack)
-  (let ((ack-command (concat (cdr (assoc ".git" ack-vc-grep-commands)) " ")))
-    (call-interactively #'ack)))
-
 ;;; Things that can't be changed easily using `customize'
 
 ;; Enable some commands
@@ -327,14 +320,7 @@
                   ad-do-it)
               (ad-deactivate-regexp "erase-buffer-noop"))))))))
 
-;; Activate packages
-(package-initialize)
-
 ;; Docker support
-(add-to-list 'load-path (concat my-emacs-path "elisp/dockerfile-mode"))
-(require 'dockerfile-mode)
-(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
-
 (add-to-list 'load-path (concat my-emacs-path "elisp/docker-tramp"))
 (require 'docker-tramp)
 
@@ -492,9 +478,7 @@
   (interactive
    (list
     (read-from-minibuffer "Ripgrep search for: " (thing-at-point 'symbol))))
-  (if (fboundp 'projectile-project-root)
-      (ripgrep-regexp regexp (projectile-project-root))
-    (error "Projectile is not available")))
+  (ripgrep-regexp regexp (projectile-project-root)))
 
 (require 'ripgrep)
 (define-key ripgrep-search-mode-map (kbd "TAB") #'compilation-next-error)
@@ -556,8 +540,6 @@
 (require 'gud)
 
 ;; Navigate the kill ring when doing M-y
-(add-to-list 'load-path (concat my-emacs-path "elisp/browse-kill-ring"))
-(require 'browse-kill-ring)
 (browse-kill-ring-default-keybindings)
 
 ;; extension of mine to make list editing easy

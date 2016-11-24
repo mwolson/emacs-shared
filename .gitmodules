@@ -1,15 +1,6 @@
-[submodule "elisp/afternoon-theme"]
-	path = elisp/afternoon-theme
-	url = https://github.com/osener/emacs-afternoon-theme.git
-[submodule "elisp/browse-kill-ring"]
-	path = elisp/browse-kill-ring
-	url = https://github.com/browse-kill-ring/browse-kill-ring.git
 [submodule "elisp/docker-tramp"]
 	path = elisp/docker-tramp
 	url = https://github.com/emacs-pe/docker-tramp.el
-[submodule "elisp/dockerfile-mode"]
-	path = elisp/dockerfile-mode
-	url = https://github.com/spotify/dockerfile-mode.git
 [submodule "elisp/edit-server-htmlize"]
 	path = elisp/edit-server-htmlize
 	url = https://github.com/frobtech/edit-server-htmlize
