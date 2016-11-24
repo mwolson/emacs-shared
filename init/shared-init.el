@@ -19,15 +19,12 @@
 (defvar my-changelog-address "user@example.com")
 (defvar my-email-address     "user@example.com")
 (defvar my-full-name         "Jane Doe")
-(defvar my-irc-handle        "anonymous")
 (defvar my-emacs-path)
 (setq my-emacs-path          (file-name-as-directory (expand-file-name my-emacs-path)))
 
 (defvar my-server-start-p    t)
 (defvar my-use-themes        (boundp 'custom-theme-load-path))
-(defvar my-emacs-features    (if (string-equal "root" (getenv "USER"))
-                                 nil
-                               '(erc org)))
+(defvar my-emacs-features    '(org))
 (defvar my-recent-files      nil)
 (defvar my-settings-shared-p (not (file-exists-p (locate-user-emacs-file "settings.el"))))
 (defvar my-system-paths
@@ -47,12 +44,8 @@
         (t '("/opt/maven/bin"))))
 (setq my-system-paths (remove-if-not #'file-exists-p my-system-paths))
 
-;; grep-find settings
-(defvar my-ignored-dir-regex  "\\(CVS\\|\\.svn\\|\\.bzr\\|\\.hg\\|\\.git\\)")
-(defvar my-ignored-file-regex "\\(.*\\.min\\..*\\)")
-
 ;; SLIME settings
-(defvar my-slime-function    (and (executable-find "node") #'my-slime-connect-nodejs))
+(defvar my-slime-function (and (executable-find "node") #'my-slime-connect-nodejs))
 
 ;;; Display
 
@@ -154,11 +147,7 @@
 ;;; Customizations
 
 ;; Default values for some customization options
-(setq directory-free-space-args "-Pkl"
-      grep-find-command (concat "find . -type f ! -regex \".*/" my-ignored-dir-regex "/.*\""
-                                " ! -regex \".*/" my-ignored-file-regex "\""
-                                " -print0 | xargs -0" (if (eq system-type 'darwin) "" " -e")
-                                " egrep -nH -e "))
+(setq directory-free-space-args "-Pkl")
 
 (when (eq system-type 'windows-nt)
   (setq directory-free-space-args nil))
@@ -235,9 +224,6 @@
   ;; full name
   (setq debian-changelog-full-name my-full-name)
   (setq user-full-name my-full-name)
-  ;; IRC handle
-  (setq erc-email-userid my-irc-handle)
-  (setq erc-nick my-irc-handle)
   ;; changelog email addresses
   (setq add-log-mailing-address my-changelog-address)
   (setq debian-changelog-mailing-address my-changelog-address)
@@ -449,9 +435,11 @@
     (read-from-minibuffer "Ripgrep search for: " (thing-at-point 'symbol))))
   (ripgrep-regexp regexp (projectile-project-root)))
 
-(require 'ripgrep)
-(define-key ripgrep-search-mode-map (kbd "TAB") #'compilation-next-error)
-(define-key ripgrep-search-mode-map (kbd "<backtab>") #'compilation-previous-error)
+(eval-after-load "ripgrep"
+  '(progn
+     (define-key ripgrep-search-mode-map (kbd "TAB") #'compilation-next-error)
+     (define-key ripgrep-search-mode-map (kbd "<backtab>") #'compilation-previous-error)))
+
 (define-key projectile-command-map "s" #'my-projectile-ripgrep)
 
 ;; Bind N and P in ediff so that I don't leave the control buffer
@@ -505,17 +493,11 @@
 (require 'ffap)
 (ffap-bindings)
 
-;; Grand Unified Debugger
-(require 'gud)
-
 ;; Navigate the kill ring when doing M-y
 (browse-kill-ring-default-keybindings)
 
 ;; extension of mine to make list editing easy
 (require 'edit-list)
-
-;; Load flyspell mode
-(require 'flyspell)
 
 ;; Markdown support, preferring Github-flavored Markdown
 (mapc #'(lambda (el)
@@ -542,7 +524,7 @@
 
 ;; Make help-at-point display more quickly
 (setq help-at-pt-display-when-idle t
-      help-at-pt-timer-delay 0.1)
+      help-at-pt-timer-delay 0.8)
 
 (help-at-pt-set-timer)
 
@@ -553,28 +535,17 @@
 ;; Setup info for manually compiled packages
 (add-to-list 'Info-default-directory-list (concat my-emacs-path "share/info"))
 
-;; Load magit
-(require 'magit)
-(require 'magit-blame)
-(require 'git-commit)
-
-;; Kill auto-fill in git-commit mode
-(remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill)
+;; Magit settings
+(eval-after-load "git-commit"
+  '(progn
+     ;; Kill auto-fill in git-commit mode
+     (remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill)))
 
 ;; Don't overwrite M-w in magit-status-mode, and clear mark when done
 (defun my-magit-kill-ring-save ()
   (interactive)
   (call-interactively #'kill-ring-save)
   (deactivate-mark))
-
-(define-key magit-status-mode-map (kbd "M-w") #'my-magit-kill-ring-save)
-
-;; Map some magit keys globally
-(global-set-key "\C-xV" nil)
-(global-set-key "\C-xVa" 'magit-blame-popup)
-(global-set-key "\C-xVb" 'magit-show-refs-current)
-(global-set-key "\C-xVl" 'magit-log-head)
-(global-set-key "\C-xVs" 'magit-status)
 
 ;; Monkey-patch this to prefer having `P u` go to an upstream with same name as the current branch
 (defun magit-remote-branch-at-point ()
@@ -589,116 +560,37 @@
   (let ((magit-prefer-remote-upstream nil))
     ad-do-it))
 
-;;; BEGIN erc ;;;
+(eval-after-load "magit"
+  '(progn
+     (define-key magit-status-mode-map (kbd "M-w") #'my-magit-kill-ring-save)))
 
-(when (my-emacs-feature-enabled 'erc)
-
-;;; Setup
-
-;; NOTE: Due to Emacs bug #14121, we have to load erc in a separate top-level block from the
-;; use of erc-response.contents below, which is why the my-emacs-feature-enabled part is repeated.
-
-;(add-to-list 'load-path (concat my-emacs-path "elisp/erc"))
-(require 'erc))
-
-(when (my-emacs-feature-enabled 'erc)
-
-;; Load authentication info
-(let ((settings (locate-user-emacs-file "erc-auth.el")))
-  (when (file-exists-p settings)
-    (load settings)))
-
-;;; Hack ERC to make buttonized nicks not do anything
-(require 'erc-button)
-(defun erc-nick-popup (nick) nil)
-(defun finger (user host) nil)
-
-;;; Misc. hacks
-
-(setq erc-fill-column fill-column)
-
-;; Function to make ERC more themeable -- don't need this atm
-(defun mwolson/make-erc-themeable ()
-  (interactive)
-  (require 'rcirc)  ; for face definitions
-  (put 'erc-input-face        'face-alias 'rcirc-timestamp)
-  (put 'erc-my-nick-face      'face-alias 'rcirc-my-nick)
-  (put 'erc-keyword-face      'face-alias 'show-paren-match)
-  (put 'erc-nick-default-face 'face-alias 'font-lock-string-face)
-  (put 'erc-notice-face       'face-alias 'font-lock-function-name-face)
-  (put 'erc-timestamp-face    'face-alias 'rcirc-timestamp))
-
-;; Insert 2 different left timestamps: one for day change, one for time
-
-(require 'erc-stamp)
-(defun erc-insert-timestamp-left (string)
-  "Insert timestamps at the beginning of the line."
-  (goto-char (point-min))
-  (let* ((ct (current-time))
-         (ts-left (erc-format-timestamp ct erc-timestamp-format-left)))
-    ;; insert left timestamp
-    (unless (string-equal ts-left erc-timestamp-last-inserted-left)
-      (erc-put-text-property 0 (length ts-left) 'field 'erc-timestamp ts-left)
-      (insert ts-left "\n")
-      (setq erc-timestamp-last-inserted-left ts-left)))
-  (let* ((ignore-p (and erc-timestamp-only-if-changed-flag
-                        (string-equal string erc-timestamp-last-inserted)))
-         (len (length string))
-         (s (if ignore-p (make-string len ? ) string)))
-    (unless ignore-p (setq erc-timestamp-last-inserted string))
-    (erc-put-text-property 0 len 'field 'erc-timestamp s)
-    (erc-put-text-property 0 len 'invisible 'timestamp s)
-    (insert s)))
-
-;;; Remove trailing whitespace in messages
-
-(defun my-erc-remove-trailing-whitespace (proc parsed)
-  "Remove trailing whitespace from the current message.
-Some IM clients use an OTR plug-in that sends some annoying
-trailing space to the screen, so we want to clean that up."
-  (let ((msg (erc-response.contents parsed)))
-    (when (stringp msg)
-      (setf (erc-response.contents parsed)
-            (erc-replace-regexp-in-string "[[:space:]]+\\'" "" msg))
-      nil)))
-(add-hook 'erc-server-PRIVMSG-functions 'my-erc-remove-trailing-whitespace)
-
-;;; Key customizations
-
-;; Make C-c RET (or C-c C-RET) send messages instead of RET
-(define-key erc-mode-map (kbd "RET") nil)
-(define-key erc-mode-map (kbd "C-c RET") 'erc-send-current-line)
-(define-key erc-mode-map (kbd "C-c C-RET") 'erc-send-current-line)
-
-;; Disable some commands that I never want to execute
-(define-key erc-mode-map "\C-c\C-c" nil)
-(define-key erc-mode-map "\C-c\C-e" nil)
-(define-key erc-mode-map "\C-c\C-f" nil)
-(define-key erc-mode-map "\C-c\C-p" nil)
-(define-key erc-mode-map "\C-c\C-q" nil)
-(define-key erc-mode-map "\C-c\C-r" nil)
-
-);;; END erc ;;;
+;; Map some magit keys globally
+(global-set-key "\C-xV" nil)
+(global-set-key "\C-xVa" 'magit-blame-popup)
+(global-set-key "\C-xVb" 'magit-show-refs-current)
+(global-set-key "\C-xVl" 'magit-log-head)
+(global-set-key "\C-xVs" 'magit-status)
 
 ;;; BEGIN Org ;;;
 (when (my-emacs-feature-enabled 'org)
 
-(require 'org)
-(require 'org-capture)
-
 (defun my-org-find-notes-file ()
   (interactive)
+  (require 'org)
   (find-file org-default-notes-file))
 
 (defun my-org-capture-note ()
   (interactive)
+  (require 'org-capture)
   (org-capture nil "n"))
 
 (define-key projectile-command-map "n" #'my-org-find-notes-file)
 (define-key projectile-command-map " " #'my-org-capture-note)
 
-(define-key org-mode-map (kbd "<M-left>") #'left-word)
-(define-key org-mode-map (kbd "<M-right>") #'right-word)
+(eval-after-load "org"
+  '(progn
+     (define-key org-mode-map (kbd "<M-left>") #'left-word)
+     (define-key org-mode-map (kbd "<M-right>") #'right-word)))
 );;; END org ;;;
 
 ;;; Key customizations
@@ -727,23 +619,22 @@ trailing space to the screen, so we want to clean that up."
 (global-set-key "\C-xF" my-find-things-map)
 (global-set-key "\C-xf" my-find-things-map)
 
-;; Make the `q' key bury the current buffer when viewing help
-(require 'view)
-(define-key view-mode-map "q" 'bury-buffer)
+(eval-after-load "view"
+  '(progn
+     ;; Make the `q' key bury the current buffer when viewing help
+     (define-key view-mode-map "q" 'bury-buffer)
+     ;; Make the <DEL> key scroll backwards in View mode
+     (define-key view-mode-map [delete] 'View-scroll-page-backward)))
 
-;; Make the <DEL> key scroll backwards in View mode
-(define-key view-mode-map [delete] 'View-scroll-page-backward)
-
-;; Make the <DEL> key scroll backwards in Info mode
-(require 'info)
-(define-key Info-mode-map [delete] 'Info-scroll-down)
+(eval-after-load "info"
+  '(progn
+     ;; Make the <DEL> key scroll backwards in Info mode
+     (define-key Info-mode-map [delete] 'Info-scroll-down)))
 
 ;; diff-mode: Don't mess with M-q
-(require 'diff-mode)
-(define-key diff-mode-map (kbd "M-q") 'fill-paragraph)
-
-;; SML mode: Don't mess with M-SPC
-;(define-key sml-mode-map (kbd "M-SPC") 'just-one-space)
+(eval-after-load "diff-mode"
+  '(progn
+     (define-key diff-mode-map (kbd "M-q") 'fill-paragraph)))
 
 ;; Use IDO instead of the buffer list when I typo it
 (global-set-key "\C-x\C-b" 'ido-switch-buffer)
@@ -759,7 +650,7 @@ trailing space to the screen, so we want to clean that up."
 (defun my-change-to-default-dir ()
   (interactive)
   (setq-default default-directory (expand-file-name my-default-directory))
-            (setq default-directory (expand-file-name my-default-directory)))
+  (setq default-directory (expand-file-name my-default-directory)))
 (add-hook 'after-init-hook #'my-change-to-default-dir)
 
 ;; Start server
