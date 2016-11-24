@@ -442,20 +442,7 @@
   (toggle-read-only))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
-;; Load Emacs Chrome edit server
-(add-to-list 'load-path (concat my-emacs-path "elisp/emacs_chrome/servers"))
-(require 'edit-server)
-(edit-server-start)
-
-;; Enable edit-server to deal with HTML-ified text entry boxes
-(add-to-list 'load-path (concat my-emacs-path "elisp/edit-server-htmlize"))
-(require 'edit-server-htmlize)
-(add-hook 'edit-server-start-hook 'edit-server-maybe-dehtmlize-buffer)
-(add-hook 'edit-server-done-hook  'edit-server-maybe-htmlize-buffer)
-
 ;; Load smex, which makes M-x work like ido-mode
-(add-to-list 'load-path (concat my-emacs-path "elisp/smex"))
-(require 'smex)
 (add-hook 'after-init-hook 'smex-initialize)
 
 (global-set-key (kbd "M-x") 'smex)

@@ -42,14 +42,6 @@
  '(dired-recursive-deletes (quote always))
  '(doc-view-resolution 132)
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
- '(edit-server-new-frame nil)
- '(edit-server-new-frame-alist
-   (quote
-    ((name . "Emacs TEXTAREA")
-     (width . 120)
-     (height . 30)
-     (minibuffer . t)
-     (menu-bar-lines . t))))
  '(eldoc-minor-mode-string " E")
  '(electric-indent-mode nil)
  '(enable-recursive-minibuffers t)
@@ -104,6 +96,7 @@
  '(git-commit-summary-max-length 120)
  '(icomplete-mode t)
  '(ido-default-buffer-method (quote selected-window))
+ '(ido-enable-flex-matching t)
  '(ido-mode (quote buffer) nil (ido))
  '(imaxima-fnt-size "LARGE")
  '(imaxima-use-maxima-mode-flag t)
@@ -153,7 +146,7 @@
      ("gnu" . "http://elpa.gnu.org/packages/"))))
  '(package-selected-packages
    (quote
-    (dockerfile-mode browse-kill-ring atom-one-dark-theme ripgrep flx-ido projectile yaml-mode js2-mode ac-cider slime cider auto-complete magit)))
+    (smex dockerfile-mode browse-kill-ring atom-one-dark-theme ripgrep flx-ido projectile yaml-mode js2-mode ac-cider slime cider auto-complete magit)))
  '(post-jump-header nil)
  '(projectile-switch-project-action (quote magit-status))
  '(recentf-mode nil)

@@ -1,12 +1,6 @@
 [submodule "elisp/docker-tramp"]
 	path = elisp/docker-tramp
 	url = https://github.com/emacs-pe/docker-tramp.el
-[submodule "elisp/edit-server-htmlize"]
-	path = elisp/edit-server-htmlize
-	url = https://github.com/frobtech/edit-server-htmlize
-[submodule "elisp/emacs_chrome"]
-	path = elisp/emacs_chrome
-	url = https://github.com/stsquad/emacs_chrome.git
 [submodule "elisp/erc"]
 	path = elisp/erc
 	url = https://github.com/mwolson/erc.git
@@ -19,9 +13,6 @@
 [submodule "elisp/maxframe-el"]
 	path = elisp/maxframe-el
 	url = https://github.com/rmm5t/maxframe.el.git
-[submodule "elisp/smex"]
-	path = elisp/smex
-	url = https://github.com/nonsequitur/smex.git
 [submodule "elisp/tramp"]
 	path = elisp/tramp
 	url = git://git.savannah.gnu.org/tramp.git
