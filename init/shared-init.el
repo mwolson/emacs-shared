@@ -81,7 +81,8 @@
 (defun my-reset-theme ()
   (interactive)
   (when my-use-themes
-    (load-theme 'atom-one-dark t)))
+    (load-theme 'atom-one-dark t)
+    (set-face-attribute 'mode-line nil :height 1.1)))
 
 ;; This function should be called on the emacsclient commandline in cases where no file is being passed on commandline.
 (defun my-init-client ()

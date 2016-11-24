@@ -3,7 +3,7 @@
 . ~/emacs-shared/bin/emacs.defs
 
 if test "$#" -gt 0; then
-    exec $CLIENT -c $@
+    exec "$CLIENT" -c "$@"
 else
-    exec $CLIENT -n -c -e '(my-init-client)'
+    exec "$CLIENT" -n -c -e '(my-init-client)'
 fi
