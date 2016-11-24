@@ -412,10 +412,6 @@
      (add-to-list 'ac-modes 'cider-mode)
      (add-to-list 'ac-modes 'cider-repl-mode)))
 
-;; Protobuf
-(require 'protobuf-mode)
-(add-to-list 'auto-mode-alist '("\\.proto\\'" . protobuf-mode))
-
 ;; Java
 (require 'java-mode-indent-annotations)
 (require 'google-c-style)

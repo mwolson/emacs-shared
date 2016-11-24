@@ -6,7 +6,6 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(Man-notify-method (quote bully))
- '(ack-vc-grep-commands (quote ((".git" . "git --no-pager grep -n -i"))))
  '(add-log-keep-changes-together t)
  '(apropos-do-all t)
  '(auto-compression-mode t nil (jka-compr))
@@ -16,8 +15,6 @@
  '(blink-matching-delay 10)
  '(blink-matching-paren-on-screen t)
  '(browse-url-new-window-flag t)
- '(bsh-classpath (quote ("/usr/share/java")))
- '(bsh-jar "/usr/share/java/bsh.jar")
  '(calendar-mark-diary-entries-flag t)
  '(case-replace nil)
  '(column-number-mode t)
@@ -181,9 +178,7 @@
  '(winner-mode t nil (winner))
  '(woman-fill-column 95)
  '(woman-fontify t)
- '(woman-use-own-frame nil)
- '(wtf-custom-alist nil)
- '(wtf-removed-acronyms nil))
+ '(woman-use-own-frame nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
