@@ -10,6 +10,7 @@
 ;;; Options that change behavior of tbis file
 
 (defvar my-default-font      "Inconsolata-18")
+(defvar my-theme             'sanityinc-tomorrow-eighties)
 (defvar my-frame-height      50)
 (defvar my-frame-width       120)
 (defvar my-frame-maximize-p  t)
@@ -81,7 +82,7 @@
 (defun my-reset-theme ()
   (interactive)
   (when my-use-themes
-    (load-theme 'atom-one-dark t)
+    (load-theme my-theme t)
     (set-face-attribute 'mode-line nil :height 1.1)))
 
 ;; This function should be called on the emacsclient commandline in cases where no file is being passed on commandline.
