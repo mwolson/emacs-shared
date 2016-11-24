@@ -96,7 +96,8 @@ The recommended version is Emacs 25.1.  The recommended installers for each OS a
 
 *Mac OS X*
 
-Use the unofficial [Emacs for OS X](http://emacsformacosx.com/) installer.
+ - Download the "official-icon" build from [the Mituhara Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-25.1-mac-6.1).
+ - Open the zip file and drag the Emacs icon over to the Applications folder.
 
 *Ubuntu*
 
