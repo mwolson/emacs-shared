@@ -9,7 +9,7 @@
 
 ;;; Options that change behavior of tbis file
 
-(defvar my-default-font      "Inconsolata-14")
+(defvar my-default-font      "Inconsolata-18")
 (defvar my-frame-height      50)
 (defvar my-frame-width       120)
 (defvar my-frame-maximize-p  t)
