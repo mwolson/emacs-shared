@@ -43,6 +43,7 @@
  '(fill-column 119)
  '(flyspell-issue-welcome-flag nil)
  '(footnote-body-tag-spacing 1)
+ '(gc-cons-threshold 100000000)
  '(git-commit-summary-max-length 120)
  '(icomplete-mode t)
  '(ido-default-buffer-method (quote selected-window))
