@@ -376,13 +376,6 @@
                   (cons 'nodejs my-nodejs-compilation-regexp))
      (add-to-list 'compilation-error-regexp-alist 'nodejs)))
 
-;; Add support for Jade templates
-(add-to-list 'load-path (concat my-emacs-path "elisp/jade-mode"))
-(require 'sws-mode)
-(require 'jade-mode)
-(add-to-list 'auto-mode-alist '("\\.styl$" . sws-mode))
-(add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode))
-
 ;; Highlight current line
 (require 'hl-line)
 (global-hl-line-mode 1)
@@ -418,12 +411,6 @@
   '(progn
      (add-to-list 'ac-modes 'cider-mode)
      (add-to-list 'ac-modes 'cider-repl-mode)))
-
-;; Enable LUA mode
-(add-to-list 'load-path (concat my-emacs-path "elisp/lua-mode"))
-(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
-(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
-(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
 
 ;; Protobuf
 (require 'protobuf-mode)
@@ -535,10 +522,11 @@
 ;; Load flyspell mode
 (require 'flyspell)
 
-;; Markdown support
-(let ((auto-mode-alist '()))
-  (require 'markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.\\(markdown\\|md\\)\\'" . gfm-mode))
+;; Markdown support, preferring Github-flavored Markdown
+(mapc #'(lambda (el)
+          (when (eq (cdr el) 'markdown-mode)
+            (setcdr el 'gfm-mode)))
+      auto-mode-alist)
 
 ;; Don't mess with keys that I'm used to
 (defun my-markdown-mode-keys ()

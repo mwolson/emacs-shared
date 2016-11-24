@@ -4,12 +4,6 @@
 [submodule "elisp/erc"]
 	path = elisp/erc
 	url = https://github.com/mwolson/erc.git
-[submodule "elisp/jade-mode"]
-	path = elisp/jade-mode
-	url = https://github.com/brianc/jade-mode.git
-[submodule "elisp/lua-mode"]
-	path = elisp/lua-mode
-	url = https://github.com/immerrr/lua-mode.git
 [submodule "elisp/maxframe-el"]
 	path = elisp/maxframe-el
 	url = https://github.com/rmm5t/maxframe.el.git

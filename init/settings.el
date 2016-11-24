@@ -146,7 +146,7 @@
      ("gnu" . "http://elpa.gnu.org/packages/"))))
  '(package-selected-packages
    (quote
-    (smex dockerfile-mode browse-kill-ring atom-one-dark-theme ripgrep flx-ido projectile yaml-mode js2-mode ac-cider slime cider auto-complete magit)))
+    (markdown-mode lua-mode smex dockerfile-mode browse-kill-ring atom-one-dark-theme ripgrep flx-ido projectile yaml-mode js2-mode ac-cider slime cider auto-complete magit)))
  '(post-jump-header nil)
  '(projectile-mode-line
    (quote
