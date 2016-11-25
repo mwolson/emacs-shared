@@ -598,6 +598,7 @@ With an optional prefix argument ARG, find a symbol at point for the initial val
 (eval-after-load "autorevert" '(diminish 'auto-revert-mode))
 (eval-after-load "counsel" '(diminish 'counsel-mode))
 (eval-after-load "ivy" '(diminish 'ivy-mode))
+(eval-after-load "org-indent" '(diminish 'org-indent-mode))
 (eval-after-load "slime-js" '(diminish 'slime-js-minor-mode))
 
 ;;; BEGIN Org ;;;
