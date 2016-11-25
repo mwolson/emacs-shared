@@ -575,11 +575,11 @@ With an optional prefix argument ARG, find a symbol at point for the initial val
 (global-set-key "\C-xVs" 'magit-status)
 
 ;; Don't display some minor modes on the mode-line
-(diminish 'auto-complete-mode)
+(eval-after-load "auto-complete" '(diminish 'auto-complete-mode))
 (eval-after-load "autorevert" '(diminish 'auto-revert-mode))
-(diminish 'counsel-mode)
-(diminish 'ivy-mode)
-(diminish 'slime-js-minor-mode)
+(eval-after-load "counsel" '(diminish 'counsel-mode))
+(eval-after-load "ivy" '(diminish 'ivy-mode))
+(eval-after-load "slime-js" '(diminish 'slime-js-minor-mode))
 
 ;;; BEGIN Org ;;;
 (when (my-emacs-feature-enabled 'org)

@@ -19,8 +19,6 @@
  '(case-replace nil)
  '(column-number-mode t)
  '(confirm-kill-emacs (quote y-or-n-p))
- '(confluence-save-page-comments nil)
- '(confluence-save-page-minor-edits nil)
  '(cperl-close-paren-offset -4)
  '(cperl-indent-level 4)
  '(cperl-indent-parens-as-block t)
