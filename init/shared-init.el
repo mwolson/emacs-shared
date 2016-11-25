@@ -84,8 +84,7 @@
 (defun my-reset-theme ()
   (interactive)
   (when my-use-themes
-    (load-theme my-theme t)
-    (set-face-attribute 'mode-line nil :height 1.1)))
+    (load-theme my-theme t)))
 
 ;; This function should be called on the emacsclient commandline in cases where no file is being passed on commandline.
 (defun my-init-client ()
@@ -118,12 +117,14 @@
 ;; Initialize display settings on startup
 (my-init-client)
 
-;; Give the user something to look at while we load
+;; Give people something to look at while we load
 (display-startup-screen)
 (redisplay t)
-
 (add-hook 'server-visit-hook 'my-init-client)
-(global-set-key (kbd "C-x W") 'my-reset-frame-size)
+
+;; Modeline theme
+(require 'spaceline-config)
+(spaceline-emacs-theme)
 
 ;; Tasks that are run after initial startup for appearance of speed
 (defvar my-deferred-startup-hook '(display-startup-echo-area-message))
@@ -437,7 +438,10 @@
         (t . ivy--regex-fuzzy)))
 (setq counsel-mode-override-describe-bindings t)
 (counsel-mode 1)
+
+(define-key ivy-minibuffer-map (kbd "C-r") 'ivy-previous-line-or-history)
 (define-key ivy-occur-grep-mode-map "r" 'ivy-wgrep-change-to-wgrep-mode)
+
 (global-set-key (kbd "C-s") 'counsel-grep-or-swiper)
 (global-set-key (kbd "C-c C-r") 'ivy-resume)
 
@@ -446,6 +450,7 @@
 (projectile-global-mode 1)
 (global-set-key "\C-cp" projectile-mode-map)
 (setq projectile-completion-system 'ivy)
+(setq projectile-indexing-method 'alien)
 
 ;; Insinuate with ripgrep
 (defun my-projectile-ripgrep (regexp &optional arg)

@@ -86,15 +86,15 @@
      ("gnu" . "http://elpa.gnu.org/packages/"))))
  '(package-selected-packages
    (quote
-    (package-utils wgrep swiper diminish counsel ivy color-theme-sanityinc-tomorrow maxframe markdown-mode lua-mode smex dockerfile-mode browse-kill-ring ripgrep flx projectile yaml-mode js2-mode ac-cider slime cider auto-complete magit)))
+    (spaceline package-utils wgrep swiper diminish counsel ivy color-theme-sanityinc-tomorrow maxframe markdown-mode lua-mode smex dockerfile-mode browse-kill-ring ripgrep flx projectile yaml-mode js2-mode ac-cider slime cider auto-complete magit)))
  '(post-jump-header nil)
  '(projectile-mode-line
    (quote
     (:eval
      (if
          (file-remote-p default-directory)
-         " Proj"
-       (format " Proj[%s]"
+         "[-]"
+       (format "[%s]"
                (projectile-project-name))))))
  '(projectile-switch-project-action (quote magit-status))
  '(recentf-mode nil)
