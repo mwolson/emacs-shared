@@ -574,7 +574,7 @@
 
 ;; Don't display some minor modes on the mode-line
 (diminish 'auto-complete-mode)
-(diminish 'auto-revert-mode)
+(eval-after-load "autorevert" '(diminish 'auto-revert-mode))
 (diminish 'counsel-mode)
 (diminish 'ivy-mode)
 (diminish 'slime-js-minor-mode)
