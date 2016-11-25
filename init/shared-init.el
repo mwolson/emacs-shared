@@ -524,12 +524,6 @@
      (profiler-report-cpu)
      (profiler-cpu-stop)))
 
-;; Make help-at-point display more quickly
-(setq help-at-pt-display-when-idle t
-      help-at-pt-timer-delay 0.8)
-
-(help-at-pt-set-timer)
-
 ;; auto-completion for various modes
 (require 'auto-complete-config)
 (ac-config-default)
