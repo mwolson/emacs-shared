@@ -128,11 +128,12 @@
 ;; Tasks that are run after initial startup for appearance of speed
 (defvar my-deferred-startup-hook '(display-startup-echo-area-message))
 (defun my-defer-startup (func)
+  "Defer running a task until sometime after Emacs has started."
   (add-hook 'my-deferred-startup-hook func))
 (defun my-run-deferred-tasks ()
   (run-hooks 'my-deferred-startup-hook))
 
-(run-with-idle-timer 1 nil #'my-run-deferred-tasks)
+(run-with-idle-timer 0.2 nil #'my-run-deferred-tasks)
 
 ;;; OS Setup
 
