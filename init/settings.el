@@ -39,16 +39,12 @@
  '(eldoc-minor-mode-string " E")
  '(electric-indent-mode nil)
  '(enable-recursive-minibuffers t)
- '(ffap-machine-p-known (quote reject))
  '(fill-column 119)
  '(flyspell-issue-welcome-flag nil)
  '(footnote-body-tag-spacing 1)
  '(gc-cons-threshold 100000000)
  '(git-commit-summary-max-length 120)
  '(icomplete-mode t)
- '(ido-default-buffer-method (quote selected-window))
- '(ido-enable-flex-matching t)
- '(ido-mode (quote buffer) nil (ido))
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
  '(ispell-local-dictionary "american")
@@ -93,7 +89,7 @@
      ("gnu" . "http://elpa.gnu.org/packages/"))))
  '(package-selected-packages
    (quote
-    (color-theme-sanityinc-tomorrow maxframe markdown-mode lua-mode smex dockerfile-mode browse-kill-ring ripgrep flx-ido projectile yaml-mode js2-mode ac-cider slime cider auto-complete magit)))
+    (diminish counsel ivy color-theme-sanityinc-tomorrow maxframe markdown-mode lua-mode smex dockerfile-mode browse-kill-ring ripgrep flx projectile yaml-mode js2-mode ac-cider slime cider auto-complete magit)))
  '(post-jump-header nil)
  '(projectile-mode-line
    (quote
@@ -130,4 +126,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(woman-italic ((t (:underline t :slant italic))) t))
+ '(woman-italic ((t (:underline t :slant italic)))))

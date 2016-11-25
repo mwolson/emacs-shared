@@ -414,22 +414,24 @@
   (toggle-read-only))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
-;; Load smex, which makes M-x work like ido-mode
+;; Load smex, which makes M-x work better on Ivy
 (add-hook 'after-init-hook 'smex-initialize)
 
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-(global-set-key (kbd "C-c M-x") 'smex-update-and-run)
-;; This is your old M-x.
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
-
-;; Use flx matching for ido mode
-(flx-ido-mode 1)
+;; Ivy
+(ivy-mode 1)
+(setq ivy-use-virtual-buffers t)
+(setq ivy-count-format "(%d/%d) ")
+(setq ivy-re-builders-alist
+      '((ivy-switch-buffer . ivy--regex-plus)
+        (t . ivy--regex-fuzzy)))
+(setq counsel-mode-override-describe-bindings t)
+(counsel-mode 1)
 
 ;; Enable projectile, a way to quickly find files in projects
 (require 'projectile)
 (projectile-global-mode 1)
 (global-set-key "\C-cp" projectile-mode-map)
+(setq projectile-completion-system 'ivy)
 
 ;; Insinuate with ripgrep
 (defun my-projectile-ripgrep (regexp)
@@ -492,10 +494,6 @@
 
 ;; Make tramp's backup directories the same as the normal ones
 (setq tramp-backup-directory-alist backup-directory-alist)
-
-;; Find funtions and files at point
-(require 'ffap)
-(ffap-bindings)
 
 ;; Navigate the kill ring when doing M-y
 (browse-kill-ring-default-keybindings)
@@ -566,6 +564,7 @@
 
 (eval-after-load "magit"
   '(progn
+     (setq magit-completing-read-function 'ivy-completing-read)
      (define-key magit-status-mode-map (kbd "M-w") #'my-magit-kill-ring-save)))
 
 ;; Map some magit keys globally
@@ -574,6 +573,13 @@
 (global-set-key "\C-xVb" 'magit-show-refs-current)
 (global-set-key "\C-xVl" 'magit-log-head)
 (global-set-key "\C-xVs" 'magit-status)
+
+;; Don't display some minor modes on the mode-line
+(diminish 'auto-complete-mode)
+(diminish 'auto-revert-mode)
+(diminish 'counsel-mode)
+(diminish 'ivy-mode)
+(diminish 'slime-js-minor-mode)
 
 ;;; BEGIN Org ;;;
 (when (my-emacs-feature-enabled 'org)
@@ -640,8 +646,8 @@
   '(progn
      (define-key diff-mode-map (kbd "M-q") 'fill-paragraph)))
 
-;; Use IDO instead of the buffer list when I typo it
-(global-set-key "\C-x\C-b" 'ido-switch-buffer)
+;; Use Ivy instead of the buffer list when I typo it
+(global-set-key "\C-x\C-b" 'ivy-switch-buffer)
 
 ;; Disable some keybinds to avoid typos
 (global-set-key [insert] (lambda () (interactive)))
