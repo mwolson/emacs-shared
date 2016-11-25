@@ -348,12 +348,12 @@
 
      (eval-after-load "auto-complete"
        '(progn
-          (add-to-list 'ac-modes 'js2-jsx-mode)))))
+          (add-to-list 'ac-modes 'js2-jsx-mode)))
 
-;; Add support for some mocha testing externs
-(setq-default js2-additional-externs
-              (mapcar 'symbol-name
-                      '(after afterEach before beforeEach describe it)))
+     ;; Add support for some mocha testing externs
+     (setq-default js2-additional-externs
+                   (mapcar 'symbol-name
+                           '(after afterEach before beforeEach describe it)))))
 
 ;; Highlight node.js stacktraces in *compile* buffers
 (defvar my-nodejs-compilation-regexp
