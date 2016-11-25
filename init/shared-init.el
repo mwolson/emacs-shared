@@ -417,7 +417,7 @@
 ;; Load smex, which makes M-x work better on Ivy
 (add-hook 'after-init-hook 'smex-initialize)
 
-;; Ivy
+;; Ivy, Counsel, and Swiper
 (add-to-list 'load-path (concat my-emacs-path "elisp/swiper"))
 (require 'counsel)
 (ivy-mode 1)
@@ -425,9 +425,13 @@
 (setq ivy-count-format "(%d/%d) ")
 (setq ivy-re-builders-alist
       '((ivy-switch-buffer . ivy--regex-plus)
+        (swiper . ivy--regex-plus)
         (t . ivy--regex-fuzzy)))
 (setq counsel-mode-override-describe-bindings t)
 (counsel-mode 1)
+(define-key ivy-occur-grep-mode-map "r" 'ivy-wgrep-change-to-wgrep-mode)
+(global-set-key (kbd "C-s") 'counsel-grep-or-swiper)
+(global-set-key (kbd "C-c C-r") 'ivy-resume)
 
 ;; Enable projectile, a way to quickly find files in projects
 (require 'projectile)
