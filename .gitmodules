@@ -1,6 +1,9 @@
 [submodule "elisp/docker-tramp"]
 	path = elisp/docker-tramp
 	url = https://github.com/emacs-pe/docker-tramp.el
+[submodule "elisp/package-utils"]
+	path = elisp/package-utils
+	url = https://github.com/Silex/package-utils
 [submodule "elisp/tramp"]
 	path = elisp/tramp
 	url = git://git.savannah.gnu.org/tramp.git
