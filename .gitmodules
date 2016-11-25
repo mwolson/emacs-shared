@@ -4,6 +4,9 @@
 [submodule "elisp/package-utils"]
 	path = elisp/package-utils
 	url = https://github.com/Silex/package-utils
+[submodule "elisp/swiper"]
+	path = elisp/swiper
+	url = https://github.com/mwolson/swiper
 [submodule "elisp/tramp"]
 	path = elisp/tramp
 	url = git://git.savannah.gnu.org/tramp.git

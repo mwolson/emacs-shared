@@ -418,6 +418,8 @@
 (add-hook 'after-init-hook 'smex-initialize)
 
 ;; Ivy
+(add-to-list 'load-path (concat my-emacs-path "elisp/swiper"))
+(require 'counsel)
 (ivy-mode 1)
 (setq ivy-use-virtual-buffers t)
 (setq ivy-count-format "(%d/%d) ")
