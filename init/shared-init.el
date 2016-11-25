@@ -355,10 +355,6 @@
            (js2-report-warning msg-id msg-arg beg
                                (and beg end (- end beg)))))
 
-     (eval-after-load "auto-complete"
-       '(progn
-          (add-to-list 'ac-modes 'js2-jsx-mode)))
-
      ;; Add support for some mocha testing externs
      (setq-default js2-additional-externs
                    (mapcar 'symbol-name
@@ -399,16 +395,6 @@
 ;; unconditionally
 (when (and my-slime-function (fboundp my-slime-function))
   (defalias 'slime my-slime-function))
-
-;; CIDER setup
-(require 'ac-cider)
-(add-hook 'cider-mode-hook 'ac-flyspell-workaround)
-(add-hook 'cider-mode-hook 'ac-cider-setup)
-(add-hook 'cider-repl-mode-hook 'ac-cider-setup)
-(eval-after-load "auto-complete"
-  '(progn
-     (add-to-list 'ac-modes 'cider-mode)
-     (add-to-list 'ac-modes 'cider-repl-mode)))
 
 ;; Java
 (require 'java-mode-indent-annotations)
@@ -543,9 +529,10 @@ With an optional prefix argument ARG, find a symbol at point for the initial val
      (profiler-report-cpu)
      (profiler-cpu-stop)))
 
-;; auto-completion for various modes
-(require 'auto-complete-config)
-(ac-config-default)
+;; Company: auto-completion for various modes
+(setq company-idle-delay 0.3)
+(add-hook 'after-init-hook 'global-company-mode)
+(add-hook 'after-init-hook 'company-statistics-mode)
 
 ;; Setup info for manually compiled packages
 (add-to-list 'Info-default-directory-list (concat my-emacs-path "share/info"))
@@ -594,8 +581,8 @@ With an optional prefix argument ARG, find a symbol at point for the initial val
 (global-set-key "\C-xVs" 'magit-status)
 
 ;; Don't display some minor modes on the mode-line
-(eval-after-load "auto-complete" '(diminish 'auto-complete-mode))
 (eval-after-load "autorevert" '(diminish 'auto-revert-mode))
+(eval-after-load "company" '(diminish 'company-mode))
 (eval-after-load "counsel" '(diminish 'counsel-mode))
 (eval-after-load "ivy" '(diminish 'ivy-mode))
 (eval-after-load "org-indent" '(diminish 'org-indent-mode))
