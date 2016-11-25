@@ -7,7 +7,7 @@
 
 (require 'cl)
 
-;;; Options that change behavior of tbis file
+;;; Options that change behavior of this file
 
 (defvar my-default-font      (cond
                               ((eq window-system 'w32) "Inconsolata-15")
@@ -125,6 +125,15 @@
 (add-hook 'server-visit-hook 'my-init-client)
 (global-set-key (kbd "C-x W") 'my-reset-frame-size)
 
+;; Tasks that are run after initial startup for appearance of speed
+(defvar my-deferred-startup-hook '(display-startup-echo-area-message))
+(defun my-defer-startup (func)
+  (add-hook 'my-deferred-startup-hook func))
+(defun my-run-deferred-tasks ()
+  (run-hooks 'my-deferred-startup-hook))
+
+(run-with-idle-timer 1 nil #'my-run-deferred-tasks)
+
 ;;; OS Setup
 
 ;; Make it easier to use find-library to get to this file
@@ -162,8 +171,6 @@
                     (locate-user-emacs-file "settings.el")))
 (when (file-exists-p custom-file)
   (load custom-file))
-
-;;; Process startup files
 
 ;;; Functions
 
@@ -543,7 +550,7 @@ With an optional prefix argument ARG, find a symbol at point for the initial val
      ;; Kill auto-fill in git-commit mode
      (remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill)))
 
-;; Don't overwrite M-w in magit-status-mode, and clear mark when done
+;; Don't overwrite M-w in magit mode, and clear mark when done
 (defun my-magit-kill-ring-save ()
   (interactive)
   (call-interactively #'kill-ring-save)
@@ -565,7 +572,13 @@ With an optional prefix argument ARG, find a symbol at point for the initial val
 (eval-after-load "magit"
   '(progn
      (setq magit-completing-read-function 'ivy-completing-read)
-     (define-key magit-status-mode-map (kbd "M-w") #'my-magit-kill-ring-save)))
+     (define-key magit-mode-map (kbd "M-w") #'my-magit-kill-ring-save)))
+
+(defun my-preload-magit ()
+  (require 'magit)
+  (require 'git-commit))
+
+(my-defer-startup #'my-preload-magit)
 
 ;; Map some magit keys globally
 (global-set-key "\C-xV" nil)
