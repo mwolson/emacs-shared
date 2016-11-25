@@ -6,8 +6,6 @@
 
 (mapc #'package-install package-selected-packages)
 
-(add-to-list 'load-path (concat default-directory "elisp/package-utils"))
-(provide 'async) ; hack: we're not using async code, so just stub out that library
 (require 'package-utils)
 (package-utils-upgrade-all-no-fetch)
 

@@ -440,10 +440,12 @@
 (setq projectile-completion-system 'ivy)
 
 ;; Insinuate with ripgrep
-(defun my-projectile-ripgrep (regexp)
-  "Run a Ripgrep search with `REGEXP' rooted at the current projectile project root."
-  (interactive (list nil))
-  (counsel-rg (or regexp (thing-at-point 'symbol)) (projectile-project-root)))
+(defun my-projectile-ripgrep (regexp &optional arg)
+  "Run a Ripgrep search with `REGEXP' rooted at the current projectile project root.
+
+With an optional prefix argument ARG, find a symbol at point for the initial value of REGEXP."
+  (interactive (list (and current-prefix-arg (projectile-symbol-or-selection-at-point))))
+  (counsel-rg regexp (projectile-project-root)))
 
 (eval-after-load "ripgrep"
   '(progn
