@@ -438,10 +438,8 @@
 ;; Insinuate with ripgrep
 (defun my-projectile-ripgrep (regexp)
   "Run a Ripgrep search with `REGEXP' rooted at the current projectile project root."
-  (interactive
-   (list
-    (read-from-minibuffer "Ripgrep search for: " (thing-at-point 'symbol))))
-  (ripgrep-regexp regexp (projectile-project-root)))
+  (interactive (list nil))
+  (counsel-rg (or regexp (thing-at-point 'symbol)) (projectile-project-root)))
 
 (eval-after-load "ripgrep"
   '(progn
