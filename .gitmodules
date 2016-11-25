@@ -3,7 +3,7 @@
 	url = https://github.com/emacs-pe/docker-tramp.el
 [submodule "elisp/swiper"]
 	path = elisp/swiper
-	url = https://github.com/abo-abo/swiper
+	url = https://github.com/mwolson/swiper
 [submodule "elisp/tramp"]
 	path = elisp/tramp
 	url = git://git.savannah.gnu.org/tramp.git
