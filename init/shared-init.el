@@ -429,6 +429,7 @@
 (define-key ivy-occur-grep-mode-map "r" 'ivy-wgrep-change-to-wgrep-mode)
 
 (global-set-key (kbd "C-s") 'counsel-grep-or-swiper)
+(global-set-key (kbd "C-r") 'counsel-grep-or-swiper)
 (global-set-key (kbd "C-c C-r") 'ivy-resume)
 
 ;; Enable projectile, a way to quickly find files in projects
@@ -452,6 +453,22 @@ With an optional prefix argument ARG, find a symbol at point for the initial val
      (define-key ripgrep-search-mode-map (kbd "<backtab>") #'compilation-previous-error)))
 
 (define-key projectile-command-map "s" #'my-projectile-ripgrep)
+
+;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
+(add-to-list 'load-path (concat my-emacs-path "elisp/dumb-jump"))
+(require 'dumb-jump)
+(setq dumb-jump-selector 'ivy)
+
+(defvar my-jump-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "." #'dumb-jump-go)
+    (define-key map "," #'dumb-jump-back)
+    (define-key map "/" #'dumb-jump-quick-look)
+    (define-key map "o" #'dumb-jump-go-other-window)
+    map)
+  "My key customizations for dumb-jump.")
+
+(global-set-key (kbd "C-c .") my-jump-map)
 
 ;; Bind N and P in ediff so that I don't leave the control buffer
 (defun my-ediff-next-difference (&rest args)
