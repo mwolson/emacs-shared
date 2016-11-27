@@ -2,13 +2,13 @@
 
 if uname | grep 'MINGW32' > /dev/null; then
     OS=Windows
-    ETC=etc/windows
+    BIN_TPL=tpl/bin/windows
 elif uname | grep 'Darwin' > /dev/null; then
     OS=OSX
-    ETC=etc/mac
+    BIN_TPL=tpl/bin/mac
 else
     OS=Linux
-    ETC=etc/linux
+    BIN_TPL=tpl/bin/linux
 fi
 
 if which make > /dev/null; then
@@ -22,8 +22,8 @@ REQUIRED_EMACS_VERSION=25.1
 # Create bin directory
 rm -fr bin
 mkdir bin
-cp etc/shared/* bin
-cp "$ETC"/* bin
+cp tpl/bin/shared/* bin
+cp "$BIN_TPL"/* bin
 PATH="$(pwd)"/bin:"$PATH"
 
 # Set this environment variable to rebuild docs; otherwise use pre-built ones
