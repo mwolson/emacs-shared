@@ -44,4 +44,4 @@ Most of the settings are optional, except for `my-emacs-path`.
 
 ---
 
-[Back to README.md](../README#documentation)
+[Back to README.md](../README.md#documentation)
