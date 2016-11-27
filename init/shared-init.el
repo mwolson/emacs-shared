@@ -19,6 +19,7 @@
 (defvar my-frame-maximize-p  t)
 (defvar my-frame-pad-width   (if (eq system-type 'darwin) 65 nil))
 (defvar my-frame-pad-height  (if (eq system-type 'darwin) 15 nil))
+(defvar my-remap-cmd-key-p   t)
 (defvar my-default-directory "~/")
 (defvar my-changelog-address "user@example.com")
 (defvar my-email-address     "user@example.com")
@@ -215,13 +216,6 @@
                (point-min) (point-max) (buffer-name ,outer)))
             (goto-char (point-min)))
           (switch-to-buffer ,outer))))))
-
-(defun increment-number-at-point ()
-  (interactive)
-  (skip-chars-backward "0123456789")
-  (or (looking-at "[0123456789]+")
-      (error "No number at point"))
-  (replace-match (number-to-string (1+ (string-to-number (match-string 0))))))
 
 ;;; Things that can't be changed easily using `customize'
 
@@ -675,6 +669,10 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   '(progn
      (define-key diff-mode-map (kbd "M-q") 'fill-paragraph)))
 
+(eval-after-load "cider-repl"
+  '(progn
+     (define-key cider-repl-mode-map (kbd "C-d") #'cider-quit)))
+
 ;; Use Ivy instead of the buffer list when I typo it
 (global-set-key "\C-x\C-b" 'ivy-switch-buffer)
 
@@ -684,6 +682,49 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (global-set-key "\C-t" (lambda () (interactive)))
 (global-set-key "\C-z" (lambda () (interactive)))
 (global-set-key "\C-x\C-z" (lambda () (interactive)))
+
+;; Bind Apple-<key> to Alt-<key> for some Mac keys
+(when (and my-remap-cmd-key-p (eq system-type 'darwin))
+  (setq mac-option-modifier 'meta)
+  (setq mac-command-modifier 'super))
+
+(defun my-set-super-bindings ()
+  (interactive)
+  (eval-after-load "cider-repl"
+    '(progn
+       (define-key cider-repl-mode-map (kbd "s-n") #'cider-repl-next-input)
+       (define-key cider-repl-mode-map (kbd "s-p") #'cider-repl-previous-input)))
+
+  (eval-after-load "magit"
+    '(progn
+       (define-key magit-status-mode-map (kbd "S-c") #'my-magit-kill-ring-save)
+       (define-key magit-status-mode-map (kbd "S-w") #'my-magit-kill-ring-save)))
+
+  (global-set-key (kbd "s-:") #'eval-expression)
+  (global-set-key (kbd "s-;") #'eval-expression)
+  (global-set-key (kbd "s-<") #'beginning-of-buffer)
+  (global-set-key (kbd "s-,") #'beginning-of-buffer)
+  (global-set-key (kbd "s->") #'end-of-buffer)
+  (global-set-key (kbd "s-.") #'end-of-buffer)
+  (global-set-key (kbd "<s-left>") #'left-word)
+  (global-set-key (kbd "<s-right>") #'right-word)
+  (global-set-key (kbd "s-1") #'shell-command)
+  (global-set-key (kbd "s-!") #'shell-command)
+  (global-set-key (kbd "s-c") #'kill-ring-save)
+  (global-set-key (kbd "s-m") (lambda () (interactive)))
+  (global-set-key (kbd "s-p") #'projectile-find-file)
+  (global-set-key (kbd "s-q") #'save-buffers-kill-terminal)
+  (global-set-key (kbd "s-w") #'kill-ring-save)
+  (global-set-key (kbd "s-v") #'yank)
+  (global-set-key (kbd "s-x") #'counsel-M-x)
+  (global-set-key (kbd "<C-s-left>") #'backward-sexp)
+  (global-set-key (kbd "<C-s-right>") #'forward-sexp)
+  (global-set-key (kbd "C-s-n") #'forward-list)
+  (global-set-key (kbd "C-s-p") #'backward-list)
+  (global-set-key (kbd "C-s-x") #'eval-defun))
+
+(when (and my-remap-cmd-key-p (or (eq window-system 'x) (eq system-type 'darwin)))
+  (my-set-super-bindings))
 
 ;; Change to home dir
 (defun my-change-to-default-dir ()

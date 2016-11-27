@@ -27,6 +27,7 @@ Most of the settings are optional, except for `my-emacs-path`.
 
 * `my-default-directory`: After Emacs starts up, switch to this directory
 * `my-emacs-path`: Location of your checkout of the `emacs-shared` repo
+* `my-remap-cmd-key-p`: Whether to remap the <kbd>Command</kbd> key on macOS (or Windows key on Linux) to be mostly a clone of <kbd>Alt</kbd>, with some exceptions
 * `my-settings-shared-p`: Whether to save customization settings into a personal file at `~/.emacs.d/settings.el` or use the ones that come with `emacs-shared` - a default is chosen based on whether that personal settings file is found
 * `my-server-start-p`: Whether to start a server process that can be reused in multiple editing sessions
 * `my-recent-files`: A list of files to open automatically in the background after starting Emacs
