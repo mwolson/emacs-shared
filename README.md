@@ -28,15 +28,11 @@ Entire project search:
 
 ![Magit Screenshot](img/ripgrep.png?raw=true)
 
-Installing Emacs
-----------------
+Documentation
+-------------
 
-[Installation guide](doc/install.md#installing-emacs)
-
-Customizing Emacs
------------------
-
-[Customization guide](doc/customize.md#customizing-emacs)
+* [Installation guide](doc/install.md#installing-emacs)
+* [Customization guide](doc/customize.md#customizing-emacs)
 
 License
 -------

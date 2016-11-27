@@ -235,4 +235,4 @@ git pull
 
 ---
 
-[Back to README.md](https://github.com/mwolson/emacs-shared#installing-emacs)
+[Back to README.md](https://github.com/mwolson/emacs-shared#documentation)

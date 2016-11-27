@@ -43,4 +43,4 @@ Most of the settings are optional, except for `my-emacs-path`.
 
 ---
 
-[Back to README.md](https://github.com/mwolson/emacs-shared#customizing-emacs)
+[Back to README.md](https://github.com/mwolson/emacs-shared#documentation)
