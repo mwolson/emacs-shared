@@ -13,6 +13,7 @@
                               ((eq window-system 'w32) "Inconsolata-15")
                               (t "Inconsolata-18")))
 (defvar my-theme             'sanityinc-tomorrow-eighties)
+(defvar my-use-themes-p      (boundp 'custom-theme-load-path))
 (defvar my-frame-height      50)
 (defvar my-frame-width       120)
 (defvar my-frame-maximize-p  t)
@@ -26,8 +27,6 @@
 (setq my-emacs-path          (file-name-as-directory (expand-file-name my-emacs-path)))
 
 (defvar my-server-start-p    t)
-(defvar my-use-themes        (boundp 'custom-theme-load-path))
-(defvar my-emacs-features    '(org))
 (defvar my-recent-files      nil)
 (defvar my-settings-shared-p (not (file-exists-p (locate-user-emacs-file "settings.el"))))
 (defvar my-system-paths
@@ -83,7 +82,7 @@
 
 (defun my-reset-theme ()
   (interactive)
-  (when my-use-themes
+  (when my-use-themes-p
     (load-theme my-theme t)))
 
 ;; This function should be called on the emacsclient commandline in cases where no file is being passed on commandline.
@@ -246,10 +245,6 @@
 (my-update-personal-info)
 
 ;;; Programs and features
-
-(defun my-emacs-feature-enabled (feature)
-  (and (boundp 'my-emacs-features)
-       (memq feature my-emacs-features)))
 
 ;; Load `dired' itself, with `tramp' extension
 (require 'dired)
@@ -618,9 +613,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (eval-after-load "org-indent" '(diminish 'org-indent-mode))
 (eval-after-load "slime-js" '(diminish 'slime-js-minor-mode))
 
-;;; BEGIN Org ;;;
-(when (my-emacs-feature-enabled 'org)
-
+;; Org Mode settings
 (defun my-org-find-notes-file ()
   (interactive)
   (require 'org)
@@ -638,7 +631,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   '(progn
      (define-key org-mode-map (kbd "<M-left>") #'left-word)
      (define-key org-mode-map (kbd "<M-right>") #'right-word)))
-);;; END org ;;;
 
 ;;; Key customizations
 
