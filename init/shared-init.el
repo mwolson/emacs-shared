@@ -433,24 +433,39 @@
 ;; Enable projectile, a way to quickly find files in projects
 (require 'projectile)
 (projectile-global-mode 1)
-(global-set-key "\C-cp" projectile-mode-map)
 (setq projectile-completion-system 'ivy)
 (setq projectile-indexing-method 'alien)
 
 ;; Insinuate with ripgrep
-(defun my-projectile-ripgrep (regexp &optional arg)
+(defun my-projectile-ripgrep (regexp rg-args &optional arg)
   "Run a Ripgrep search with `REGEXP' rooted at the current projectile project root.
 
-With an optional prefix argument ARG, find a symbol at point for the initial value of REGEXP."
-  (interactive (list (and current-prefix-arg (projectile-symbol-or-selection-at-point))))
-  (counsel-rg regexp (projectile-project-root)))
+With \\[universal-argument], also prompt for extra rg arguments and set into RG-ARGS."
+  (interactive
+   (list (read-from-minibuffer "Ripgrep search for: " (projectile-symbol-or-selection-at-point))
+         (and current-prefix-arg (read-from-minibuffer "Additional rg args: " nil nil nil nil ""))))
+  (ripgrep-regexp regexp (projectile-project-root)
+                  (and rg-args (not (string= rg-args "")) (list rg-args))))
+
+(defun my-projectile-counsel-ripgrep (regexp rg-args &optional arg)
+  "Run a Counsel Ripgrep search with `REGEXP' rooted at the current projectile project root.
+
+With \\[universal-argument], also prompt for extra rg arguments and set into RG-ARGS."
+  (interactive
+   (list (projectile-symbol-or-selection-at-point)
+         (and current-prefix-arg (read-from-minibuffer "Additional rg args: " nil nil nil nil ""))))
+  (counsel-rg regexp (projectile-project-root) rg-args))
+
+(define-key projectile-command-map (kbd "s r") #'my-projectile-ripgrep)
+(define-key projectile-command-map (kbd "s s") #'my-projectile-counsel-ripgrep)
+
+(global-set-key (kbd "C-c p") projectile-command-map)
+(global-set-key (kbd "C-c C-p") projectile-command-map)
 
 (eval-after-load "ripgrep"
   '(progn
      (define-key ripgrep-search-mode-map (kbd "TAB") #'compilation-next-error)
      (define-key ripgrep-search-mode-map (kbd "<backtab>") #'compilation-previous-error)))
-
-(define-key projectile-command-map "s" #'my-projectile-ripgrep)
 
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
 (add-to-list 'load-path (concat my-emacs-path "elisp/dumb-jump"))
