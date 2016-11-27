@@ -35,9 +35,9 @@ Entire project search:
 Documentation
 -------------
 
-* [Installation guide](doc/install.md#installing-emacs)
+* [Installation Guide](doc/install.md#installing-emacs)
 * [Feature Tour](doc/tips.md#emacs-feature-tour)
-* [Customization guide](doc/customize.md#customizing-emacs)
+* [Customization Guide](doc/customize.md#customizing-emacs)
 
 License
 -------
