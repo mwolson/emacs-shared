@@ -31,12 +31,12 @@ Project search:
 Installing Emacs
 ----------------
 
-[Installation guide](doc/install.md)
+[Installation guide](doc/install.md#installing-emacs)
 
 Customizing Emacs
 -----------------
 
-[Customization guide](doc/customize.md)
+[Customization guide](doc/customize.md#customizing-emacs)
 
 License
 -------
