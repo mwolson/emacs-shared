@@ -16,7 +16,7 @@ Differences from other Emacs starter kits:
 
 - Principle of least surprise is a design goal
 - Augments your existing `~/.emacs.d/init.el` file instead of replacing it
-- Can be personalized with a single `setq` statement
+- Can be personalized with `setq` statements
 
 Documentation
 -------------
