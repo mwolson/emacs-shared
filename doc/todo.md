@@ -10,4 +10,4 @@ To Do
 
 ---
 
-[Back to README.md](https://github.com/mwolson/emacs-shared#shared-emacs-settings)
+[Back to README.md](../README.md#documentation)
