@@ -4,6 +4,7 @@ Shared Emacs settings
 This is an Emacs starter kit with:
 
 - **Modern editor features**: Autocomplete, entire project search and replace, find definition
+- **Fast project search** thanks to integration with [ripgrep](https://github.com/BurntSushi/ripgrep)
 - **Cross-platform support**: Tested on Linux, Windows, and macOS
 - **Fullscreen by default**, with a gap left for the Dock on macOS
 - **Dark color theme**, additionally with the [spaceline](https://github.com/TheBB/spaceline) theme for the mode-line
