@@ -140,11 +140,9 @@ emacs -q init.el  # or other editing command
 
 ```lisp
 ;; Configure emacs-shared
-(setq my-changelog-address "you@example.com"
-      my-email-address     "you@example.com"
-      my-full-name         "Your Name"
-      my-irc-handle        "your_irc_handle"
-      my-emacs-path        "~/emacs-shared/")
+(setq my-email-address "you@example.com")
+(setq my-full-name     "Your Name")
+(setq my-emacs-path    "~/emacs-shared/")
 
 ;; Load shared init file
 (load-file (concat my-emacs-path "init/shared-init.el"))
