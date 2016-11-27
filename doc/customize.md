@@ -6,4 +6,4 @@ Customizing Emacs
 
 ---
 
-[Back to README.md](https://github.com/mwolson/emacs-shared#shared-emacs-settings)
+[Back to README.md](https://github.com/mwolson/emacs-shared#customizing-emacs)
