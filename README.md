@@ -36,7 +36,7 @@ Documentation
 -------------
 
 * [Installation guide](doc/install.md#installing-emacs)
-* [Tips](doc/tips.md#tips-for-using-emacs)
+* [Feature Tour](doc/tips.md#emacs-feature-tour)
 * [Customization guide](doc/customize.md#customizing-emacs)
 
 License
