@@ -17,6 +17,13 @@ Differences from other Emacs starter kits:
 - Augments your existing `~/.emacs.d/init.el` file instead of replacing it
 - Can be personalized with a single `setq` statement
 
+Documentation
+-------------
+
+* [Installation Guide](doc/install.md#installing-emacs)
+* [Feature Tour](doc/tips.md#emacs-feature-tour)
+* [Customization Guide](doc/customize.md#customizing-emacs)
+
 Screenshots
 -----------
 
@@ -31,13 +38,6 @@ Interactive search:
 Entire project search:
 
 ![Magit Screenshot](img/ripgrep.png?raw=true)
-
-Documentation
--------------
-
-* [Installation Guide](doc/install.md#installing-emacs)
-* [Feature Tour](doc/tips.md#emacs-feature-tour)
-* [Customization Guide](doc/customize.md#customizing-emacs)
 
 License
 -------
