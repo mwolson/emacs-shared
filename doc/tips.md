@@ -1,6 +1,11 @@
 Emacs Feature Tour
 ==================
 
+Basics
+------
+
+* <kbd>C-g</kbd> as many times as needed, to get out of a prompt
+
 Browsing Projects
 -----------------
 
@@ -23,7 +28,7 @@ Search
   * <kbd>RET</kbd> to visit a result, or
   * <kbd>C-c C-o</kbd> to move the results into a separate buffer. <kbd>r</kbd> within that buffer will allow you to start making changes to any text in that buffer, and <kbd>C-c C-c</kbd> applies the changes.
 * <kbd>C-c p s r</kbd> to search an entire project and put the results in a buffer with links that can be visited
-  * <kbd>g</kbd> to refresh the buffer if you've changed any files, which is useful for refactoring
+  * <kbd>g</kbd> to refresh the buffer, which is useful for refactoring, if you've changed any files
 * <kbd>C-c p r</kbd> to search and replace a phrase throughout an entire project, asking you what to do with each match
 
 Finding Definitions
