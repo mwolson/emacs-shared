@@ -4,7 +4,7 @@ Emacs Feature Tour
 Browsing Projects
 -----------------
 
-* <kbd>M-x projectile-discover-projects-in-directory RET</kbd> to tell Emacs about all projects within a directory tree, like `~/devel` - whenever Emacs finds a `.git` directory, it will add that directory as a project
+* <kbd>M-x projectile-discover-projects-in-directory RET</kbd> to tell Emacs about all projects within a directory tree, like `~/devel`. Whenever Emacs finds a `.git` directory, it will add that directory as a project.
 * <kbd>C-c p p</kbd> to visit a known project in Magit, which is a git status browser and git shell
 * <kbd>C-c p f</kbd> to find a file within the current project
 
@@ -19,10 +19,14 @@ Using Magit
 Search
 ------
 
-* <kbd>C-c p s s</kbd> to search an entire project for a phrase as you type, using `ripgrep` - use <kbd>C-c C-o</kbd> to move the results into a separate buffer. <kbd>r</kbd> within that buffer will allow you to start making changes to any text in that buffer, and <kbd>C-c C-c</kbd> applies the changes.
-* <kbd>C-c p s r</kbd> to search an entire project and put the results in a buffer with links that can be visited - use <kbd>g</kbd> to refresh the buffer if you've changed it, which is useful for refactoring
+* <kbd>C-c p s s</kbd> to search an entire project for a phrase as you type, using `ripgrep`
+  * <kbd>RET</kbd> to visit a result, or
+  * <kbd>C-c C-o</kbd> to move the results into a separate buffer. <kbd>r</kbd> within that buffer will allow you to start making changes to any text in that buffer, and <kbd>C-c C-c</kbd> applies the changes.
+* <kbd>C-c p s r</kbd> to search an entire project and put the results in a buffer with links that can be visited
+  * <kbd>g</kbd> to refresh the buffer if you've changed it, which is useful for refactoring
+* <kbd>C-c p r</kbd> to search and replace a phrase throughout an entire project, asking you what to do with each match
 
-Finding definitions
+Finding Definitions
 -------------------
 
 When you're visiting a source code file, you can use these commands to navigate to the definition of the function that
@@ -31,6 +35,18 @@ the cursor is at.
 * <kbd>C-c . .</kbd> to visit the definition
 * <kbd>C-c . ,</kbd> to return to the original point
 * <kbd>C-c . /</kbd> to get a quick view of the definition
+
+Editing Directories
+-------------------
+
+* <kbd>C-c p D</kbd> to open the root of the project in Dired Mode, which looks like `ls` output but you can manipulate it
+* <kbd>C-c p d</kbd> to open a different project directory in Dired
+* <kbd>RET</kbd> when in Dired, will visit the file at point
+* <kbd>r</kbd> when in Dired, will allow you to make changes to the names of any files
+  * <kbd>C-c C-c</kbd> applies the changes
+  * <kbd>C-c ESC</kbd> removes the changes and takes you back to Dired
+* <kbd>C</kbd> when in Dired, will copy the file
+* <kbd>R</kbd> when in Dired, will rename the file or move it to a different directory
 
 ---
 
