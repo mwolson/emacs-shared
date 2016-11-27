@@ -1,5 +1,5 @@
 Customizing Emacs
------------------
+=================
 
 These can be customized using `(setq ...)`. For example:
 
@@ -13,7 +13,7 @@ These can be customized using `(setq ...)`. For example:
 
 Most of the settings are optional, except for `my-emacs-path`.
 
-### Display
+## Display
 
 * `my-default-font`: This will be a font name and size, for example: `"Inconsolata-18"`
 * `my-theme`: Color theme
@@ -23,7 +23,7 @@ Most of the settings are optional, except for `my-emacs-path`.
 * `my-frame-height`: If the window is not fullscreen, it will be resized to have this many rows on startup
 * `my-frame-width`: If the window is not fullscreen, it will be resized to have this many columns on startup
 
-### Other
+## Other
 
 * `my-default-directory`: After Emacs starts up, switch to this directory
 * `my-emacs-path`: Location of your checkout of the `emacs-shared` repo
@@ -32,7 +32,7 @@ Most of the settings are optional, except for `my-emacs-path`.
 * `my-recent-files`: A list of files to open automatically in the background after starting Emacs
 * `my-system-paths`: A list of directories to use when Emacs wants to find an executable program like `grep` - a large list of defaults is already provided based on OS
 
-### Convenience functions
+## Convenience functions
 
 * <kbd>M-x my-reset-font RET</kbd>: Call this to manually reset the font after you've changed `my-default-font`
 * <kbd>M-x my-reset-frame-size RET</kbd>: Call this to manually reset the size of the window

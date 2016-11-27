@@ -1,25 +1,25 @@
 Installing Emacs
-----------------
+================
 
-### Install git
+## Install git
 
-*Windows*
+### Windows
 
 On Windows, the best way to do this is with [Git Extensions](https://gitextensions.github.io/).  When prompted about SSH during installation, choosing PuTTY is recommended.
 
-*macOS*
+### macOS
 
 On macOS, the best way to do this is to install Xcode from App Store, and then install the Command Line Tools for Xcode using the Downloads preferences pane within Xcode 4.6.1 and later.
 
-### (macOS only) Install Homebrew
+## (macOS only) Install Homebrew
 
 You may want to pick up [Homebrew](http://mxcl.github.io/homebrew/) for easier installation of other useful tools, though it's not a strict requirement.
 
-### (Windows only) Install PuTTY
+## (Windows only) Install PuTTY
 
 This is useful for doing git development, since Pageant can hold onto your git keys and auto-load them when Windows starts.  If you've already installed PuTTY in the past, make sure that you have have at least version 0.62 installed, since earlier versions might fail in ways that are difficult to diagnose.
 
-### (Windows only) Install MinGW
+## (Windows only) Install MinGW
 
 If you want to be able to byte-compile Emacs Lisp libraries, you'll need a working version of "make.exe".  Here's the recommended steps for that:
 - Download the [MinGW installer](http://www.mingw.org/)
@@ -33,51 +33,51 @@ If you want to be able to byte-compile Emacs Lisp libraries, you'll need a worki
 - `ln -s /c/MinGW/bin/mingw32-make.exe make.exe`
 - When you change PATH in the later instructions, add this to the end of PATH as well: `C:\MinGW\bin`
 
-### Install ripgrep
+## Install ripgrep
 
 [ripgrep](https://github.com/BurntSushi/ripgrep) is the fastest project search command available. If you're using Windows, drop the `rg.exe` executable into `C:\MinGW\bin`.
 
-### Install Emacs
+## Install Emacs
 
 The recommended version is Emacs 25.1.  The recommended installers for each OS are:
 
-*Windows*
+### Windows
 
 - Download `emacs-25.1-x86_64-w64-mingw32.zip` from [ftp.gnu.org](http://ftp.gnu.org/gnu/emacs/windows/).
 - Unzip to `C:\Program Files (x86)` and then rename `emacs-25.1` to `Emacs`.  When done, you should verify that a file named `C:\Program Files (x86)\Emacs\bin\runemacs.exe` exists.
 - If you change the location, you may want to update the `my-system-paths` option later.
 
-*macOS*
+### macOS
 
  - Download the "official-icon" build from [the Mitsuharu Yamamoto Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-25.1-mac-6.1).
  - Open the zip file and drag the Emacs icon over to the Applications folder.
 
-*Ubuntu*
+### Ubuntu
 
 Install the `emacs25` package if it's available. If it's not available, [build it manually](http://ubuntuhandbook.org/index.php/2016/09/install-gnu-emacs-25-1-in-ubuntu-16-04/).
 
-### Inconsolata Font
+## Inconsolata Font
 
 Install the Inconsolata font (this can be configured with the `my-default-font` setting).
 
-*Windows and macOS*
+### Windows and macOS
 
 Download the [OpenType file](http://www.levien.com/type/myfonts/Inconsolata.otf) from the [Inconsolata website](http://www.levien.com/type/myfonts/inconsolata.html) and double-click on it.
 
-*Ubuntu*
+### Ubuntu
 
 ```sh
 apt-get install fonts-inconsolata
 ```
 
-### Download the emacs-shared code
+## Download the emacs-shared code
 
 ```sh
 cd ~/
 git clone https://github.com/mwolson/emacs-shared.git
 ```
 
-### Run boostrap.sh
+## Run boostrap.sh
 
 On Windows, you'll want to open Git Bash and run the command from there.
 
@@ -88,9 +88,9 @@ cd ~/emacs-shared
 ./bootstrap.sh
 ```
 
-### Set up PATH
+## Set up PATH
 
-*Mac*
+### Mac
 
 You'll want to make sure that your path includes the correct version of Emacs and some helper scripts, ahead of the ancient version that comes with macOS.  To do this, edit `~/.profile` and add:
 
@@ -102,7 +102,7 @@ Restart your Terminal app to make the change take effect.  Sourcing the file is 
 
 To verify your work, run `emacs --version` and make sure it shows the version number you'd expect.
 
-*Linux*
+### Linux
 
 You'll want to make sure that your path includes the correct version of Emacs and some helper scripts.  To do this, edit `~/.bashrc` and add:
 
@@ -114,7 +114,7 @@ Restart your Terminal program to make the change take effect, or source the file
 
 To verify your work, run `emacs --version` and make sure it shows the version number you'd expect.
 
-*Windows*
+### Windows
 
 (Note: for now you'll need to do this ahead of the bootstrap.sh step, otherwise it will fail)
 
@@ -128,11 +128,11 @@ To verify your work, run `emacs --version` and make sure it shows the version nu
   - Click OK
   - Relaunch any open Git Bash windows
 
-### Read up a bit on Emacs usage
+## Read up a bit on Emacs usage
 
 At this point, it's recommended to [familiarize yourself with how to open and save files using Emacs](http://mally.stanford.edu/~sr/computing/emacs.html).
 
-### Create a ~/.emacs.d/init.el file
+## Create a ~/.emacs.d/init.el file
 
 ```sh
 mkdir -p ~/.emacs.d
@@ -154,9 +154,9 @@ emacs -q init.el  # or other editing command
 (load-file (concat my-emacs-path "init/shared-init.el"))
 ```
 
-### Start Emacs
+## Start Emacs
 
-*Windows*
+### Windows
 
 Open `Start Menu -> Gnu Emacs -> Emacs`.  This should point to the file `C:\Program Files (x86)\Emacs\bin\runemacs.exe`.
 
@@ -167,11 +167,11 @@ To pin Emacs to the Taskbar / Quick Launch bar and have it behave correctly:
 - Then right-click its Taskbar button, right-click "Emacs", click "Properties"
 - Change "C:\Program Files (x86)\Emacs\bin\emacs.exe" to "C:\Program Files (x86)\Emacs\bin\runemacs.exe"
 
-*macOS*
+### macOS
 
 Open `Applications -> Emacs`.
 
-*Linux*
+### Linux
 
 GUI frame:
 
@@ -186,22 +186,22 @@ emacs -nw
 ```
 
 Extras
-------
+======
 
 The following are optional steps.
 
-### Install Aspell
+## Install Aspell
 
 Install Aspell and an Aspell dictionary for your language for spell-checking.  This is more likely to be useful on Windows, which does not come with an ispell variant.
 
-### (Windows only) Install Git manpages
+## (Windows only) Install Git manpages
 
 The Windows installer doesn't include manpages.  If you want them (and they're readable with this Emacs configuration by doing <kbd>M-x man</kbd>) then follow these steps:
 
 - Find and download the manpages for your version of git from [the Git download list](https://code.google.com/p/git-core/downloads/list)
 - Extract them to "C:\Program Files (x86)\Git\share\man", which will probably be a new folder.  That folder should contain directories like "man7" after extraction if you did it right.
 
-### (macOS only) Install docker manpages
+## (macOS only) Install docker manpages
 
 This isn't really related to Emacs, but if you're using Docker on macOS, it might not install the manpages. Here's how to do that:
 
@@ -213,7 +213,7 @@ cd man
 cp -R man* /usr/local/share/man/
 ```
 
-### (macOS only) Update man database
+## (macOS only) Update man database
 
 After installing new packages, the <kbd>M-x man</kbd> command might not list the new manpages for those packages, because the `whatis` DB used by `man` gets updated weekly via a cron job. Further, any manpages for programs that are part of the XCode Commandline Tools will never get installed because the cron job inexplicably excludes them. To make force them to be generated, run the following:
 
@@ -223,7 +223,7 @@ sudo /usr/libexec/makewhatis /Applications/Xcode.app/Contents/Developer/usr/shar
 ```
 
 Updating
---------
+========
 
 To keep up-to-date on the latest `emacs-shared` changes, do:
 
