@@ -24,12 +24,12 @@ rm -fr bin
 mkdir bin
 cp tpl/bin/shared/* bin
 cp "$BIN_TPL"/* bin
-PATH="$(pwd)"/bin:"$PATH"
+PATH="$PWD"/bin:"$PATH"
 
 # Set this environment variable to rebuild docs; otherwise use pre-built ones
 : ${BUILD_DOCS:=}
 
-DESTDIR=$(pwd)
+DESTDIR=$PWD
 
 # Make sure we're using the recommended version of Emacs
 EMACS_VERSION=$(emacs --batch -q --no-site-file --eval "(message \"%s\" emacs-version)" 2>&1)
