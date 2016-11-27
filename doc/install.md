@@ -231,4 +231,4 @@ git pull
 
 ---
 
-[Back to README.md](https://github.com/mwolson/emacs-shared#documentation)
+[Back to README.md](../README.md#documentation)
