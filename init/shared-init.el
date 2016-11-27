@@ -419,9 +419,7 @@
 (setq ivy-use-virtual-buffers t)
 (setq ivy-count-format "(%d/%d) ")
 (setq ivy-re-builders-alist
-      '((ivy-switch-buffer . ivy--regex-plus)
-        (swiper . ivy--regex-plus)
-        (t . ivy--regex-fuzzy)))
+      '((t . ivy--regex-plus)))
 (setq counsel-mode-override-describe-bindings t)
 (counsel-mode 1)
 
