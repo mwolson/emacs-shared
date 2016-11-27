@@ -196,7 +196,7 @@ Install Aspell and an Aspell dictionary for your language for spell-checking.  T
 
 ### (Windows only) Install Git manpages
 
-The Windows installer doesn't include manpages.  If you want them (and they're readable with this Emacs configuration by doing `M-x man`) then follow these steps:
+The Windows installer doesn't include manpages.  If you want them (and they're readable with this Emacs configuration by doing <kbd>M-x man</kbd>) then follow these steps:
 
 - Find and download the manpages for your version of git from [the Git download list](https://code.google.com/p/git-core/downloads/list)
 - Extract them to "C:\Program Files (x86)\Git\share\man", which will probably be a new folder.  That folder should contain directories like "man7" after extraction if you did it right.
@@ -215,7 +215,7 @@ cp -R man* /usr/local/share/man/
 
 ### (macOS only) Update man database
 
-After installing new packages, the `M-x man` command might not list the new manpages for those packages, because the `whatis` DB used by `man` gets updated weekly via a cron job. Further, any manpages for programs that are part of the XCode Commandline Tools will never get installed because the cron job inexplicably excludes them. To make force them to be generated, run the following:
+After installing new packages, the <kbd>M-x man</kbd> command might not list the new manpages for those packages, because the `whatis` DB used by `man` gets updated weekly via a cron job. Further, any manpages for programs that are part of the XCode Commandline Tools will never get installed because the cron job inexplicably excludes them. To make force them to be generated, run the following:
 
 ``` sh
 sudo /etc/periodic/weekly/320.whatis

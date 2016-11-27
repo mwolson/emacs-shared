@@ -34,11 +34,11 @@ Most of the settings are optional, except for `my-emacs-path`.
 
 ### Convenience functions
 
+* <kbd>M-x my-reset-font RET</kbd>: Call this to manually reset the font after you've changed `my-default-font`
+* <kbd>M-x my-reset-frame-size RET</kbd>: Call this to manually reset the size of the window
+* <kbd>M-x my-reset-theme RET</kbd>: Call this to manually reset the theme after you've changed `my-theme`
+* <kbd>M-x my-fetch-url RET</kbd>: Fetch the contents of a URL into a new buffer
 * `(my-defer-startup func)`: Call `func` shortly after Emacs has started - a good choice for moderately expensive tasks
-* `M-x my-reset-font RET`: Call this to manually reset the font after you've changed `my-default-font`
-* `M-x my-reset-frame-size RET`: Call this to manually reset the size of the window
-* `M-x my-reset-theme RET`: Call this to manually reset the theme after you've changed `my-theme`
-* `M-x my-fetch-url RET`: Fetch the contents of a URL into a new buffer
 * `(with-cpu-profiling ...code)`: Profile a block of code to see which function calls within it are taking the longest
 
 ---
