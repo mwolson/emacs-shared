@@ -1,17 +1,21 @@
 Shared Emacs settings
 =====================
 
-This is a collection of Emacs Lisp add-ons and an Emacs init file with the following features.
+This is an Emacs starter kit with:
 
+- **Modern editor features**: Autocomplete, entire project search and replace, find definition
 - **Cross-platform support**: Tested on Linux, Windows, and macOS
 - **Fullscreen by default**, with a gap left for the Dock on macOS
-- **Dark color theme**, with the [spaceline](https://github.com/TheBB/spaceline) theme for the mode-line
-- Can be personalized with a single `setq` statement
-- Principle of least surprise is a design goal
-- **Splash screen** appears while starting Emacs
-- Extensively-documented **setup instructions**
+- **Dark color theme**, additionally with the [spaceline](https://github.com/TheBB/spaceline) theme for the mode-line
+- Extensive **setup instructions**
+- **Splash screen** appears while starting Emacs, and startup is optimally fast
 - **Manuals** are pre-built and show up when you do `C-h i`
+
+Differences from other Emacs starter kits:
+
+- Principle of least surprise is a design goal
 - Augments your existing `~/.emacs.d/init.el` file instead of replacing it
+- Can be personalized with a single `setq` statement
 
 Screenshots
 -----------
