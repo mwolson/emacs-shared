@@ -3,11 +3,11 @@ Installing Emacs
 
 ## Install git
 
-### Windows
+*Windows*
 
 On Windows, the best way to do this is with [Git Extensions](https://gitextensions.github.io/).  When prompted about SSH during installation, choosing PuTTY is recommended.
 
-### macOS
+*macOS*
 
 On macOS, the best way to do this is to install Xcode from App Store, and then install the Command Line Tools for Xcode using the Downloads preferences pane within Xcode 4.6.1 and later.
 
@@ -41,18 +41,18 @@ If you want to be able to byte-compile Emacs Lisp libraries, you'll need a worki
 
 The recommended version is Emacs 25.1.  The recommended installers for each OS are:
 
-### Windows
+*Windows*
 
 - Download `emacs-25.1-x86_64-w64-mingw32.zip` from [ftp.gnu.org](http://ftp.gnu.org/gnu/emacs/windows/).
 - Unzip to `C:\Program Files (x86)` and then rename `emacs-25.1` to `Emacs`.  When done, you should verify that a file named `C:\Program Files (x86)\Emacs\bin\runemacs.exe` exists.
 - If you change the location, you may want to update the `my-system-paths` option later.
 
-### macOS
+*macOS*
 
  - Download the "official-icon" build from [the Mitsuharu Yamamoto Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-25.1-mac-6.1).
  - Open the zip file and drag the Emacs icon over to the Applications folder.
 
-### Ubuntu
+*Ubuntu*
 
 Install the `emacs25` package if it's available. If it's not available, [build it manually](http://ubuntuhandbook.org/index.php/2016/09/install-gnu-emacs-25-1-in-ubuntu-16-04/).
 
@@ -60,11 +60,11 @@ Install the `emacs25` package if it's available. If it's not available, [build i
 
 Install the Inconsolata font (this can be configured with the `my-default-font` setting).
 
-### Windows and macOS
+*Windows and macOS*
 
 Download the [OpenType file](http://www.levien.com/type/myfonts/Inconsolata.otf) from the [Inconsolata website](http://www.levien.com/type/myfonts/inconsolata.html) and double-click on it.
 
-### Ubuntu
+*Ubuntu*
 
 ```sh
 apt-get install fonts-inconsolata
@@ -90,7 +90,7 @@ cd ~/emacs-shared
 
 ## Set up PATH
 
-### Mac
+*macOS*
 
 You'll want to make sure that your path includes the correct version of Emacs and some helper scripts, ahead of the ancient version that comes with macOS.  To do this, edit `~/.profile` and add:
 
@@ -102,7 +102,7 @@ Restart your Terminal app to make the change take effect.  Sourcing the file is 
 
 To verify your work, run `emacs --version` and make sure it shows the version number you'd expect.
 
-### Linux
+*Linux*
 
 You'll want to make sure that your path includes the correct version of Emacs and some helper scripts.  To do this, edit `~/.bashrc` and add:
 
@@ -114,7 +114,7 @@ Restart your Terminal program to make the change take effect, or source the file
 
 To verify your work, run `emacs --version` and make sure it shows the version number you'd expect.
 
-### Windows
+*Windows*
 
 (Note: for now you'll need to do this ahead of the bootstrap.sh step, otherwise it will fail)
 
@@ -156,7 +156,7 @@ emacs -q init.el  # or other editing command
 
 ## Start Emacs
 
-### Windows
+*Windows*
 
 Open `Start Menu -> Gnu Emacs -> Emacs`.  This should point to the file `C:\Program Files (x86)\Emacs\bin\runemacs.exe`.
 
@@ -167,11 +167,11 @@ To pin Emacs to the Taskbar / Quick Launch bar and have it behave correctly:
 - Then right-click its Taskbar button, right-click "Emacs", click "Properties"
 - Change "C:\Program Files (x86)\Emacs\bin\emacs.exe" to "C:\Program Files (x86)\Emacs\bin\runemacs.exe"
 
-### macOS
+*macOS*
 
 Open `Applications -> Emacs`.
 
-### Linux
+*Linux*
 
 GUI frame:
 
