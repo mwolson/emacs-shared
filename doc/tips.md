@@ -5,6 +5,7 @@ Basics
 ------
 
 * <kbd>C-g</kbd> as many times as needed, to get out of a prompt
+* [How to open and save files using Emacs](http://mally.stanford.edu/~sr/computing/emacs.html) - remember that arrow keys and <kbd>Page Up</kbd>/<kbd>Page Down</kbd> work fine as well.
 
 Browsing Projects
 -----------------

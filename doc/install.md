@@ -128,10 +128,6 @@ To verify your work, run `emacs --version` and make sure it shows the version nu
   - Click OK
   - Relaunch any open Git Bash windows
 
-## Read up a bit on Emacs usage
-
-At this point, it's recommended to [familiarize yourself with how to open and save files using Emacs](http://mally.stanford.edu/~sr/computing/emacs.html).
-
 ## Create a ~/.emacs.d/init.el file
 
 ```sh
