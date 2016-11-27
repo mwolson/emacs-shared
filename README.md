@@ -24,7 +24,7 @@ Interactive search:
 
 ![Magit Screenshot](img/swiper.png?raw=true)
 
-Project search:
+Entire project search:
 
 ![Magit Screenshot](img/ripgrep.png?raw=true)
 
