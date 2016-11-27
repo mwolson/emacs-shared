@@ -5,6 +5,10 @@ These can be customized using `(setq ...)`. For example:
 
 ```elisp
 (setq my-frame-maximize-p t)
+(setq my-emacs-path "~/emacs-shared/")
+
+;; customizations must be made before this line
+(load-file (concat my-emacs-path "init/shared-init.el"))
 ```
 
 ### Display
