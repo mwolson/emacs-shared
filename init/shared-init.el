@@ -442,8 +442,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 With \\[universal-argument], also prompt for extra rg arguments and set into RG-ARGS."
   (interactive
    (list (projectile-symbol-or-selection-at-point)
-         (and current-prefix-arg (read-from-minibuffer "Additional rg args: " nil nil nil nil ""))))
-  (counsel-rg regexp (projectile-project-root) rg-args))
+         (if current-prefix-arg (read-from-minibuffer "Additional rg args: " "-i" nil nil nil "-i") "-i")))
+  (let ((counsel-rg-base-command "rg --no-heading --line-number %s ."))
+    (counsel-rg regexp (projectile-project-root) rg-args)))
 
 (define-key projectile-command-map (kbd "s r") #'my-projectile-ripgrep)
 (define-key projectile-command-map (kbd "s s") #'my-projectile-counsel-ripgrep)
