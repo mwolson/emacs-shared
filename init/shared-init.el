@@ -217,6 +217,13 @@
             (goto-char (point-min)))
           (switch-to-buffer ,outer))))))
 
+(defun my-replace-cdrs-in-alist (old-mode new-mode alist)
+  "Replace cdr instances of OLD-MODE with NEW-MODE in ALIST."
+  (mapc #'(lambda (el)
+            (when (eq (cdr el) old-mode)
+              (setcdr el new-mode)))
+        (symbol-value alist)))
+
 ;;; Things that can't be changed easily using `customize'
 
 ;; Enable some commands
@@ -327,9 +334,16 @@
         (message "Could not load docker changes, output:\n%s" out)
       (message "Loaded Docker env for machine: %s" machine))))
 
-;; Improved Javascript support
-(add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
-(add-to-list 'interpreter-mode-alist '("node" . js2-jsx-mode))
+;; Improved JSX support
+(defun my-preload-rjsx-mode ()
+  (require 'rjsx-mode))
+
+(my-defer-startup #'my-preload-rjsx-mode)
+
+(add-to-list 'load-path (concat my-emacs-path "elisp/rjsx-mode"))
+(autoload 'rjsx-mode "rjsx-mode")
+(my-replace-cdrs-in-alist 'js2-mode 'rjsx-mode 'auto-mode-alist)
+(my-replace-cdrs-in-alist 'js2-mode 'rjsx-mode 'interpreter-mode-alist)
 
 (eval-after-load "js2-mode"
   '(progn
@@ -409,6 +423,7 @@
 (setq ivy-count-format "(%d/%d) ")
 (setq ivy-re-builders-alist
       '((t . ivy--regex-plus)))
+(setq counsel-find-file-at-point t)
 (setq counsel-mode-override-describe-bindings t)
 (counsel-mode 1)
 
@@ -527,10 +542,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (require 'edit-list)
 
 ;; Markdown support, preferring Github-flavored Markdown
-(mapc #'(lambda (el)
-          (when (eq (cdr el) 'markdown-mode)
-            (setcdr el 'gfm-mode)))
-      auto-mode-alist)
+(my-replace-cdrs-in-alist 'markdown-link-face 'gfm-mode 'auto-mode-alist)
 
 ;; Don't mess with keys that I'm used to
 (defun my-markdown-mode-keys ()

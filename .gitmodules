@@ -4,6 +4,9 @@
 [submodule "elisp/dumb-jump"]
 	path = elisp/dumb-jump
 	url = https://github.com/mwolson/dumb-jump
+[submodule "elisp/rjsx-mode"]
+	path = elisp/rjsx-mode
+	url = https://github.com/felipeochoa/rjsx-mode
 [submodule "elisp/swiper"]
 	path = elisp/swiper
 	url = https://github.com/mwolson/swiper
