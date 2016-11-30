@@ -335,8 +335,6 @@
       (message "Loaded Docker env for machine: %s" machine))))
 
 ;; Improved JSX support
-(add-to-list 'load-path (concat my-emacs-path "elisp/rjsx-mode"))
-(require 'rjsx-mode)
 (my-replace-cdrs-in-alist 'js-mode 'rjsx-mode 'interpreter-mode-alist)
 (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . rjsx-mode))
 
