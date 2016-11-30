@@ -19,23 +19,26 @@ You may want to pick up [Homebrew](http://mxcl.github.io/homebrew/) for easier i
 
 This is useful for doing git development, since Pageant can hold onto your git keys and auto-load them when Windows starts.  If you've already installed PuTTY in the past, make sure that you have have at least version 0.62 installed, since earlier versions might fail in ways that are difficult to diagnose.
 
-## (Windows only) Install MinGW
+## (Windows only) Install MSYS2
 
-If you want to be able to byte-compile Emacs Lisp libraries, you'll need a working version of "make.exe".  Here's the recommended steps for that:
-- Download the [MinGW installer](http://www.mingw.org/)
-- Run the installer
-- Run the mingw32-get.exe file (it should be in `C:\MinGW\bin`, and also the Start Menu)
-- Click on "All Packages" on the left
-- Find mingw32-make, the "bin" version, right-click on it, "Mark for Installation"
-- On the Installation menu, click on Apply Changes
-- When this is done, bring up a Git Bash prompt and run:
-- `cd /c/MinGW/bin`
-- `ln -s /c/MinGW/bin/mingw32-make.exe make.exe`
-- When you change PATH in the later instructions, add this to the end of PATH as well: `C:\MinGW\bin`
+You'll need a working version of `make.exe` in order to complete the bootstrap script. Here's the recommended steps for that:
+- Download the [MSYS2 installer](http://msys2.github.io/), choosing the one for `x86_64`
+- Run the installer, choosing the default install location (or if you change it, replacing paths as appropriate below)
+- Close the command prompt that came with the installer
+- Use the Start Menu to search for and open the task `Edit the System Environment Variables`. It may pop behind any open windows - if so, bring it to the front. Click `Environment Variables`. In the `System variables` section, double-click on `Path`. Add entries for `C:\msys64\usr\bin` and `C:\msys64\mingw64\bin` (in that order) and move them to the very bottom of the list. Click `OK` until all of those windows close.
+- Open a Git Bash window
+- Run these commands:
+```sh
+pacman -Sy --noconfirm pacman
+pacman -Syu --noconfirm
+pacman -Su --noconfirm
+pacman -S --noconfirm mingw64/mingw-w64-x86_64-make mingw64/mingw-w64-x86_64-gnutls mingw64/mingw-w64-x86_64-aspell-en msys/man-db
+ln -sf /c/msys64/mingw64/bin/mingw32-make.exe /c/msys64/mingw64/bin/make.exe
+```
 
 ## Install ripgrep
 
-[ripgrep](https://github.com/BurntSushi/ripgrep) is the fastest project search command available. If you're using Windows, drop the `rg.exe` executable into `C:\MinGW\bin`.
+[ripgrep](https://github.com/BurntSushi/ripgrep) is the fastest project search command available. If you're using Windows, drop the `rg.exe` executable into `C:\msys64\usr\bin`.
 
 ## Install Emacs
 
@@ -43,8 +46,8 @@ The recommended version is Emacs 25.1.  The recommended installers for each OS a
 
 *Windows*
 
-- Download `emacs-25.1-x86_64-w64-mingw32.zip` from [ftp.gnu.org](http://ftp.gnu.org/gnu/emacs/windows/).
-- Unzip to `C:\Program Files (x86)` and then rename `emacs-25.1` to `Emacs`.  When done, you should verify that a file named `C:\Program Files (x86)\Emacs\bin\runemacs.exe` exists.
+- Download `emacs-25.1-2-x86_64-w64-mingw32.zip` from [ftp.gnu.org](http://ftp.gnu.org/gnu/emacs/windows/).
+- Unzip the `emacs-*-mingw32.zip` file to `C:\Program Files (x86)` and then rename the `emacs-*-mingw32` folder to just `Emacs`.  When done, you should verify that a file named `C:\Program Files (x86)\Emacs\bin\runemacs.exe` exists.
 - If you change the location, you may want to update the `my-system-paths` option later.
 
 *macOS*
@@ -119,12 +122,11 @@ To verify your work, run `emacs --version` and make sure it shows the version nu
 (Note: for now you'll need to do this ahead of the bootstrap.sh step, otherwise it will fail)
 
 - Adjust some environment variables so that Emacs can be started successfully
-  - Open `Control Panel -> System -> Advanced System Settings (on left) -> Environment Variables`.
+  - Use the Start Menu to search for and open the task `Edit the System Environment Variables`. It may pop behind any open windows - if so, bring it to the front. Click `Environment Variables`.
   - Note: If any of the below variables aren't present, click on "Add" to add them
   - In User Variables, Inspect `HOME` and make sure it points to something like `C:\Users\You`.
-  - In one of User Variables or System Variables (depending on whether you want the change to apply to all users or just you), edit `PATH` and make sure `C:\Program Files (x86)\Emacs\bin` is there, with a semicolon separating it from the other entries.
-  - Don't forget to add `C:\MinGW\bin` as well, if you're using MinGW
-- If you have chosen to use PuTTY, then make sure that the `GIT_SSH` variable is set to `C:\Program Files (x86)\PuTTY\plink.exe` (or wherever PuTTY is installed).
+  - In one System Variables, double-click `Path` and make sure an entry for `C:\Program Files (x86)\Emacs\bin` is present.
+  - If you have chosen to use PuTTY, then make sure that the `GIT_SSH` variable is set to `C:\Program Files (x86)\PuTTY\plink.exe` (or wherever PuTTY is installed).
   - Click OK
   - Relaunch any open Git Bash windows
 
@@ -186,7 +188,7 @@ The following are optional steps.
 
 ## Install Aspell
 
-Install Aspell and an Aspell dictionary for your language for spell-checking.  This is more likely to be useful on Windows, which does not come with an ispell variant.
+Install Aspell and an Aspell dictionary for your language if you want to support spell-checking. We've already done this for Windows in the `Install MSYS2` section.
 
 ## (Windows only) Install Git manpages
 
