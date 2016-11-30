@@ -38,8 +38,8 @@
            "/usr/local/bin"))
         ((eq system-type 'windows-nt)
          '("C:/Program Files (x86)/Emacs/bin"
-	   "C:/MinGW/bin"
-	   "C:/MinGW/msys/1.0/bin"
+	   "C:/msys64/usr/bin"
+	   "c:/msys64/mingw64/bin"
            "C:/Program Files/maven/bin"
 	   "C:/Program Files (x86)/Aspell/bin"
 	   "C:/Program Files (x86)/Git/bin"
@@ -151,13 +151,13 @@
                             (if (eq system-type 'windows-nt) ";" ":"))))
 
 ;; Setup manpage browsing
-(if (eq system-type 'windows-nt)
-    (progn
-      (setenv "MANPATH" (concat "C:\\MinGW\\share\\man;"
-                                "C:\\Program Files (x86)\\Git\\share\\man"))
-      (require 'woman)
-      (defalias 'man 'woman))
-  (require 'man))
+(when (eq system-type 'windows-nt)
+  (setenv "MANPATH" (concat "C:\\msys64\\usr\\share\\man;"
+                            "C:\\msys64\\mingw64\\share\\man;"
+                            "C:\\Program Files (x86)\\Git\\share\\man;"
+                            "C:\\Program Files (x86)\\Emacs\\share\\man"))
+  (require 'woman)
+  (defalias 'man 'woman))
 
 ;;; Customizations
 
