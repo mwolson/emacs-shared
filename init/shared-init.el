@@ -315,7 +315,6 @@
               (ad-deactivate-regexp "erase-buffer-noop"))))))))
 
 ;; Docker support
-(add-to-list 'load-path (concat my-emacs-path "elisp/docker-tramp"))
 (require 'docker-tramp)
 
 (defun my-docker-machine-env ()

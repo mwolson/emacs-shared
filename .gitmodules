@@ -1,6 +1,3 @@
-[submodule "elisp/docker-tramp"]
-	path = elisp/docker-tramp
-	url = https://github.com/emacs-pe/docker-tramp.el
 [submodule "elisp/dumb-jump"]
 	path = elisp/dumb-jump
 	url = https://github.com/mwolson/dumb-jump
