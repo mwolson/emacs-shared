@@ -612,6 +612,11 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (eval-after-load "org-indent" '(diminish 'org-indent-mode))
 (eval-after-load "slime-js" '(diminish 'slime-js-minor-mode))
 
+;; Clojure mode settings
+(eval-after-load "clojure-mode"
+  '(progn
+     (require 'cider)))
+
 ;; Org Mode settings
 (defun my-org-find-notes-file ()
   (interactive)
