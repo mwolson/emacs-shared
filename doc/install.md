@@ -218,6 +218,10 @@ sudo /etc/periodic/weekly/320.whatis
 sudo /usr/libexec/makewhatis /Applications/Xcode.app/Contents/Developer/usr/share/man
 ```
 
+## Install grip or marked for markdown preview
+
+Install [grip](https://github.com/joeyespo/grip) if you would like to be able to preview markdown pages. `grip` will send the content to Github's API for rendering. If you're working with sensitive files, you may want to use [marked](https://github.com/chjj/marked) instead and customize the Emacs `markdown-command` option.
+
 Updating
 ========
 
