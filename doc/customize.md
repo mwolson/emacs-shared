@@ -32,6 +32,7 @@ Most of the settings are optional, except for `my-emacs-path`.
 * `my-server-start-p`: Whether to start a server process that can be reused in multiple editing sessions
 * `my-recent-files`: A list of files to open automatically in the background after starting Emacs
 * `my-system-paths`: A list of directories to use when Emacs wants to find an executable program like `grep` - a large list of defaults is already provided based on OS
+* `my-default-ripgrep-args`: A string containing arguments that are passed by default to ripgrep.
 
 ## Convenience functions
 

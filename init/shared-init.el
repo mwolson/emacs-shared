@@ -433,13 +433,17 @@
 (setq projectile-indexing-method 'alien)
 
 ;; Insinuate with ripgrep
+(defvar my-default-ripgrep-args "-i")
+
 (defun my-projectile-ripgrep (regexp rg-args &optional arg)
   "Run a Ripgrep search with `REGEXP' rooted at the current projectile project root.
 
 With \\[universal-argument], also prompt for extra rg arguments and set into RG-ARGS."
   (interactive
    (list (read-from-minibuffer "Ripgrep search for: " (projectile-symbol-or-selection-at-point))
-         (and current-prefix-arg (read-from-minibuffer "Additional rg args: " nil nil nil nil ""))))
+         (if current-prefix-arg
+             (read-from-minibuffer "Additional rg args: " my-default-ripgrep-args nil nil nil my-default-ripgrep-args)
+           my-default-ripgrep-args)))
   (ripgrep-regexp regexp (projectile-project-root)
                   (and rg-args (not (string= rg-args "")) (list rg-args))))
 
@@ -449,7 +453,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 With \\[universal-argument], also prompt for extra rg arguments and set into RG-ARGS."
   (interactive
    (list (projectile-symbol-or-selection-at-point)
-         (if current-prefix-arg (read-from-minibuffer "Additional rg args: " "-i" nil nil nil "-i") "-i")))
+         (if current-prefix-arg
+             (read-from-minibuffer "Additional rg args: " my-default-ripgrep-args nil nil nil my-default-ripgrep-args)
+           my-default-ripgrep-args)))
   (let ((counsel-rg-base-command "rg --no-heading --line-number %s ."))
     (counsel-rg regexp (projectile-project-root) rg-args)))
 
