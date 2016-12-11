@@ -433,7 +433,7 @@
 (setq projectile-indexing-method 'alien)
 
 ;; Insinuate with ripgrep
-(defvar my-default-ripgrep-args "-i")
+(defvar my-default-ripgrep-args "--hidden -i")
 
 (defun my-projectile-ripgrep (regexp rg-args &optional arg)
   "Run a Ripgrep search with `REGEXP' rooted at the current projectile project root.
