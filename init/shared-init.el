@@ -320,7 +320,11 @@
 (defun my-docker-machine-env ()
   (interactive)
   (let* ((machine "default")
-         (out (shell-command-to-string (concat "docker-machine env " machine)))
+         (out (if (file-exists-p "~/.docker-env")
+                  (with-temp-buffer
+                    (insert-file-contents-literally "~/.docker-env")
+                    (buffer-substring (point-min) (point-max)))
+                (shell-command-to-string (concat "docker-machine env " machine))))
          (changes 0))
     (save-match-data
       (dolist (line (split-string out "\n" t))
