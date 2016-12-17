@@ -13,6 +13,8 @@ Browsing Projects
 * <kbd>M-x projectile-discover-projects-in-directory RET</kbd> to tell Emacs about all projects within a directory tree, like `~/devel`. Whenever Emacs finds a `.git` directory, it will add that directory as a project.
 * <kbd>C-c p p</kbd> to visit a known project in Magit, which is a git status browser and git shell
 * <kbd>C-c p f</kbd> to find a file within the current project
+* <kbd>C-c p w p</kbd> to copy the part of the file path relative to the project root
+* <kbd>C-c p w w</kbd> to copy the file path of the current buffer
 
 Using Magit
 -----------

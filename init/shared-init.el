@@ -466,6 +466,25 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (define-key projectile-command-map (kbd "s r") #'my-projectile-ripgrep)
 (define-key projectile-command-map (kbd "s s") #'my-projectile-counsel-ripgrep)
 
+;; Support copying paths relative to the current buffer
+(defun my-path-of-current-buffer ()
+  (expand-file-name (or (buffer-file-name) default-directory)))
+
+(defun my-copy-path-of-current-buffer ()
+  (interactive)
+  (let ((filepath (my-path-of-current-buffer)))
+    (kill-new filepath)
+    (message "Copied '%s' to clipboard" filepath)))
+
+(defun my-copy-project-relative-path-of-current-buffer ()
+  (interactive)
+  (let ((filepath (file-relative-name (my-path-of-current-buffer) (projectile-project-root))))
+    (kill-new filepath)
+    (message "Copied '%s' to clipboard" filepath)))
+
+(define-key projectile-command-map (kbd "w p") #'my-copy-project-relative-path-of-current-buffer)
+(define-key projectile-command-map (kbd "w w") #'my-copy-path-of-current-buffer)
+
 (global-set-key (kbd "C-c p") projectile-command-map)
 (global-set-key (kbd "C-c C-p") projectile-command-map)
 
