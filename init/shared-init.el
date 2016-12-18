@@ -435,6 +435,14 @@
 (projectile-global-mode 1)
 (setq projectile-completion-system 'ivy)
 (setq projectile-indexing-method 'alien)
+(projectile-register-project-type 'npm '("package.json") "npm" "npm test")
+
+(defun my-projectile-test-suffix (project-type)
+  "Find default test files suffix based on PROJECT-TYPE."
+  (cond
+   ((member project-type '(grunt gulp npm)) ".spec")
+   (t (projectile-test-suffix project-type))))
+(setq projectile-test-suffix-function #'my-projectile-test-suffix)
 
 ;; Insinuate with ripgrep
 (defvar my-default-ripgrep-args "--hidden -i")
