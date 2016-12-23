@@ -341,6 +341,10 @@
 (my-replace-cdrs-in-alist 'js-mode 'rjsx-mode 'interpreter-mode-alist)
 (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . rjsx-mode))
 
+(defun my-set-js2-mocha-externs ()
+  (setq js2-additional-externs
+        (mapcar 'symbol-name '(after afterEach before beforeEach describe expect it))))
+
 (eval-after-load "js2-mode"
   '(progn
      ;; BUG: self is not a browser extern, just a convention that needs checking
@@ -355,9 +359,7 @@
                                (and beg end (- end beg)))))
 
      ;; Add support for some mocha testing externs
-     (setq-default js2-additional-externs
-                   (mapcar 'symbol-name
-                           '(after afterEach before beforeEach describe it)))))
+     (add-hook 'js2-init-hook #'my-set-js2-mocha-externs)))
 
 ;; Highlight node.js stacktraces in *compile* buffers
 (defvar my-nodejs-compilation-regexp
