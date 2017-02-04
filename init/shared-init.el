@@ -337,6 +337,9 @@
         (message "Could not load docker changes, output:\n%s" out)
       (message "Loaded Docker env for machine: %s" machine))))
 
+;; Editorconfig support
+(editorconfig-mode 1)
+
 ;; Improved JSX support
 (my-replace-cdrs-in-alist 'js-mode 'rjsx-mode 'interpreter-mode-alist)
 (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . rjsx-mode))

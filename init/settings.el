@@ -87,7 +87,7 @@
      ("gnu" . "http://elpa.gnu.org/packages/"))))
  '(package-selected-packages
    (quote
-    (docker-tramp rjsx-mode el-mock dumb-jump company-statistics company spaceline package-utils wgrep swiper diminish counsel ivy color-theme-sanityinc-tomorrow maxframe markdown-mode lua-mode smex dockerfile-mode browse-kill-ring ripgrep flx projectile yaml-mode js2-mode slime cider magit)))
+    (editorconfig docker-tramp rjsx-mode el-mock dumb-jump company-statistics company spaceline package-utils wgrep swiper diminish counsel ivy color-theme-sanityinc-tomorrow maxframe markdown-mode lua-mode smex dockerfile-mode browse-kill-ring ripgrep flx projectile yaml-mode js2-mode slime cider magit)))
  '(post-jump-header nil)
  '(projectile-mode-line
    (quote
