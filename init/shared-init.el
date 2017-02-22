@@ -650,6 +650,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (eval-after-load "autorevert" '(diminish 'auto-revert-mode))
 (eval-after-load "company" '(diminish 'company-mode))
 (eval-after-load "counsel" '(diminish 'counsel-mode))
+(eval-after-load "editorconfig" '(diminish 'editorconfig-mode))
 (eval-after-load "ivy" '(diminish 'ivy-mode))
 (eval-after-load "org-indent" '(diminish 'org-indent-mode))
 (eval-after-load "slime-js" '(diminish 'slime-js-minor-mode))
