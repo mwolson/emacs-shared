@@ -765,6 +765,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (global-set-key (kbd "s-!") #'shell-command)
   (global-set-key (kbd "s-4") #'ispell-word)
   (global-set-key (kbd "s-$") #'ispell-word)
+  (global-set-key (kbd "s-a") #'mark-whole-buffer)
   (global-set-key (kbd "s-c") #'kill-ring-save)
   (global-set-key (kbd "s-m") (lambda () (interactive)))
   (global-set-key (kbd "s-p") #'projectile-find-file)
