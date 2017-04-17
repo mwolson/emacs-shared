@@ -60,6 +60,8 @@
  '(js2-mode-escape-quotes nil)
  '(js2-rebind-eol-bol-keys nil)
  '(js2-skip-preprocessor-directives t)
+ '(js2-strict-missing-semi-warning nil)
+ '(js2-strict-trailing-comma-warning nil)
  '(ls-lisp-dirs-first t)
  '(ls-lisp-ignore-case t)
  '(ls-lisp-support-shell-wildcards nil)
