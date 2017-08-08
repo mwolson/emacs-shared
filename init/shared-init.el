@@ -341,8 +341,11 @@
 (editorconfig-mode 1)
 
 ;; Improved JSX support
-(my-replace-cdrs-in-alist 'js-mode 'rjsx-mode 'interpreter-mode-alist)
-(add-to-list 'auto-mode-alist '("\\.jsx?\\'" . rjsx-mode))
+;; (my-replace-cdrs-in-alist 'js-mode 'rjsx-mode 'interpreter-mode-alist)
+;; (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . rjsx-mode))
+;;
+;; Use plain old js-mode since it doesn't freeze when loading ES7 code with decorators
+(add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js-mode))
 
 (defun my-set-js2-mocha-externs ()
   (setq js2-additional-externs
