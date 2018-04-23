@@ -42,8 +42,8 @@
 	   "c:/msys64/mingw64/bin"
            "C:/Program Files/maven/bin"
 	   "C:/Program Files (x86)/Aspell/bin"
-	   "C:/Program Files (x86)/Git/bin"
-	   "C:/Program Files (x86)/PuTTY"))
+	   "C:/Program Files/Git/bin"
+	   "C:/Program Files/PuTTY"))
         (t '("/opt/maven/bin"))))
 (setq my-system-paths (remove-if-not #'file-exists-p my-system-paths))
 
@@ -154,7 +154,7 @@
 (when (eq system-type 'windows-nt)
   (setenv "MANPATH" (concat "C:\\msys64\\usr\\share\\man;"
                             "C:\\msys64\\mingw64\\share\\man;"
-                            "C:\\Program Files (x86)\\Git\\share\\man;"
+                            "C:\\Program Files\\Git\\man;"
                             "C:\\Program Files (x86)\\Emacs\\share\\man"))
   (require 'woman)
   (defalias 'man 'woman))

@@ -126,7 +126,7 @@ To verify your work, run `emacs --version` and make sure it shows the version nu
   - Note: If any of the below variables aren't present, click on "Add" to add them
   - In User Variables, Inspect `HOME` and make sure it points to something like `C:\Users\You`.
   - In one System Variables, double-click `Path` and make sure an entry for `C:\Program Files (x86)\Emacs\bin` is present.
-  - If you have chosen to use PuTTY, then make sure that the `GIT_SSH` variable is set to `C:\Program Files (x86)\PuTTY\plink.exe` (or wherever PuTTY is installed).
+  - If you have chosen to use PuTTY, then make sure that the `GIT_SSH` variable is set to `C:\Program Files\PuTTY\plink.exe` (or wherever PuTTY is installed).
   - Click OK
   - Relaunch any open Git Bash windows
 
@@ -194,8 +194,9 @@ Install Aspell and an Aspell dictionary for your language if you want to support
 
 The Windows installer doesn't include manpages.  If you want them (and they're readable with this Emacs configuration by doing <kbd>M-x man</kbd>) then follow these steps:
 
-- Find and download the manpages for your version of git from [the Git download list](https://code.google.com/p/git-core/downloads/list)
-- Extract them to "C:\Program Files (x86)\Git\share\man", which will probably be a new folder.  That folder should contain directories like "man7" after extraction if you did it right.
+- Clone the https://github.com/gitster/git-manpages repo somewhere
+- (Optional) Run `git log` and find the commit that most closely matches your version of git; then switch to it with `git checkout`
+- Move that "git-manpages" folder to "C:\Program Files\Git\", and rename it to "man", so the full path looks like "C:\Program Files\Git\man".  That folder should contain directories like "man7" if you did it right.
 
 ## (macOS only) Install docker manpages
 
