@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if uname | grep 'MINGW32' > /dev/null; then
+if uname | grep 'MINGW' > /dev/null; then
     OS=Windows
     BIN_TPL=tpl/bin/windows
 elif uname | grep 'Darwin' > /dev/null; then
