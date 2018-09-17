@@ -658,6 +658,11 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (eval-after-load "org-indent" '(diminish 'org-indent-mode))
 (eval-after-load "slime-js" '(diminish 'slime-js-minor-mode))
 
+;; Patch security vulnerability fixed in Emacs 25.3
+(eval-after-load "enriched"
+  '(defun enriched-decode-display-prop (start end &optional param)
+     (list start end)))
+
 ;; Clojure mode settings
 (eval-after-load "clojure-mode"
   '(progn
