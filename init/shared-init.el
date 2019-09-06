@@ -443,7 +443,6 @@
 (projectile-global-mode 1)
 (setq projectile-completion-system 'ivy)
 (setq projectile-indexing-method 'alien)
-(projectile-register-project-type 'npm '("package.json") "npm" "npm test")
 
 (defun my-projectile-test-suffix (project-type)
   "Find default test files suffix based on PROJECT-TYPE."
