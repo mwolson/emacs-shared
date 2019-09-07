@@ -68,6 +68,7 @@
  '(ls-lisp-use-insert-directory-program nil)
  '(ls-lisp-verbosity (quote (uid gid)))
  '(magit-display-buffer-function (quote magit-display-buffer-fullframe-status-v1))
+ '(magit-log-section-commit-count 1)
  '(magit-prefer-remote-upstream t)
  '(mail-interactive t)
  '(mail-user-agent (quote gnus-user-agent))
