@@ -42,22 +42,22 @@ ln -sf /c/msys64/mingw64/bin/mingw32-make.exe /c/msys64/mingw64/bin/make.exe
 
 ## Install Emacs
 
-The recommended version is Emacs 25.1.  The recommended installers for each OS are:
+The recommended version is Emacs 26.3.  The recommended installers for each OS are:
 
 *Windows*
 
-- Download `emacs-25.1-2-x86_64-w64-mingw32.zip` from [ftp.gnu.org](http://ftp.gnu.org/gnu/emacs/windows/).
-- Unzip the `emacs-*-mingw32.zip` file to `C:\Program Files (x86)` and then rename the `emacs-*-mingw32` folder to just `Emacs`.  When done, you should verify that a file named `C:\Program Files (x86)\Emacs\bin\runemacs.exe` exists.
+- Download `emacs-26.3-x86_64.zip` from [ftp.gnu.org](http://ftp.gnu.org/gnu/emacs/windows/emacs-26/).
+- Unzip the `emacs-*.zip` file to `C:\Program Files` and then rename the `emacs-*` folder to just `Emacs`.  When done, you should verify that a file named `C:\Program Files\Emacs\bin\runemacs.exe` exists.
 - If you change the location, you may want to update the `my-system-paths` option later.
 
 *macOS*
 
- - Download the "official-icon" build from [the Mitsuharu Yamamoto Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-25.1-mac-6.1).
+ - Download the non-Spacemacs build from [the Mitsuharu Yamamoto Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-26.3-mac-7.7).
  - Open the zip file and drag the Emacs icon over to the Applications folder.
 
 *Ubuntu*
 
-Install the `emacs25` package if it's available. If it's not available, [build it manually](http://ubuntuhandbook.org/index.php/2016/09/install-gnu-emacs-25-1-in-ubuntu-16-04/).
+Install the `emacs26` package if it's available. If it's not available, [build it manually](http://ubuntuhandbook.org/index.php/2016/09/install-gnu-emacs-25-1-in-ubuntu-16-04/).
 
 ## Inconsolata Font
 
@@ -125,7 +125,7 @@ To verify your work, run `emacs --version` and make sure it shows the version nu
   - Use the Start Menu to search for and open the task `Edit the System Environment Variables`. It may pop behind any open windows - if so, bring it to the front. Click `Environment Variables`.
   - Note: If any of the below variables aren't present, click on "Add" to add them
   - In User Variables, Inspect `HOME` and make sure it points to something like `C:\Users\You`.
-  - In one System Variables, double-click `Path` and make sure an entry for `C:\Program Files (x86)\Emacs\bin` is present.
+  - In one System Variables, double-click `Path` and make sure an entry for `C:\Program Files\Emacs\bin` is present.
   - If you have chosen to use PuTTY, then make sure that the `GIT_SSH` variable is set to `C:\Program Files\PuTTY\plink.exe` (or wherever PuTTY is installed).
   - Click OK
   - Relaunch any open Git Bash windows
@@ -154,14 +154,14 @@ emacs -q init.el  # or other editing command
 
 *Windows*
 
-Open `Start Menu -> Gnu Emacs -> Emacs`.  This should point to the file `C:\Program Files (x86)\Emacs\bin\runemacs.exe`.
+Open `Start Menu -> Gnu Emacs -> Emacs`.  This should point to the file `C:\Program Files\Emacs\bin\runemacs.exe`.
 
 *Windows Taskbar*
 
 To pin Emacs to the Taskbar / Quick Launch bar and have it behave correctly:
 - First pin it
 - Then right-click its Taskbar button, right-click "Emacs", click "Properties"
-- Change "C:\Program Files (x86)\Emacs\bin\emacs.exe" to "C:\Program Files (x86)\Emacs\bin\runemacs.exe"
+- Change "C:\Program Files\Emacs\bin\emacs.exe" to "C:\Program Files\Emacs\bin\runemacs.exe"
 
 *macOS*
 
