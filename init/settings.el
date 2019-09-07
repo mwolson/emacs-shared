@@ -90,7 +90,7 @@
      ("gnu" . "http://elpa.gnu.org/packages/"))))
  '(package-selected-packages
    (quote
-    (erlang editorconfig docker-tramp rjsx-mode el-mock dumb-jump company-statistics company spaceline package-utils wgrep swiper diminish counsel ivy color-theme-sanityinc-tomorrow maxframe markdown-mode lua-mode smex dockerfile-mode browse-kill-ring ripgrep flx projectile yaml-mode js2-mode slime cider magit hydra)))
+    (flymake-eslint add-node-modules-path erlang editorconfig docker-tramp rjsx-mode el-mock dumb-jump company-statistics company spaceline package-utils wgrep swiper diminish counsel ivy color-theme-sanityinc-tomorrow maxframe markdown-mode lua-mode smex dockerfile-mode browse-kill-ring ripgrep flx projectile yaml-mode js2-mode slime cider magit hydra web-mode)))
  '(post-jump-header nil)
  '(projectile-mode-line
    (quote
@@ -127,4 +127,5 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(web-mode-html-tag-face ((t (:inherit font-lock-constant-face))))
  '(woman-italic ((t (:underline t :slant italic)))))

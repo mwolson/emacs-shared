@@ -340,12 +340,57 @@
 ;; Editorconfig support
 (editorconfig-mode 1)
 
-;; Improved JSX support
+;; Improved JSX support (disabled)
+;;
 ;; (my-replace-cdrs-in-alist 'js-mode 'rjsx-mode 'interpreter-mode-alist)
 ;; (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . rjsx-mode))
 ;;
 ;; Use plain old js-mode since it doesn't freeze when loading ES7 code with decorators
-(add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js-mode))
+;; (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js-mode))
+
+;; Flymake setup
+
+(require 'flymake-stylelint)
+(add-hook 'scss-mode-hook 'add-node-modules-path t)
+(add-hook 'scss-mode-hook 'flymake-stylelint-enable t)
+
+;; Web Mode setup
+;;
+;; Taken from https://gist.github.com/CodyReichert/9dbc8bd2a104780b64891d8736682cea
+
+(defvar my--js-files-regex "\\.[jt]sx?$")
+
+(add-to-list 'auto-mode-alist '("\\.hbs$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.json$" . web-mode))
+(add-to-list 'auto-mode-alist (cons my--js-files-regex 'web-mode))
+
+(setq web-mode-content-types-alist `(("jsx" . ,my--js-files-regex)))
+
+(defun eslint-fix-file ()
+  (interactive)
+  (message "Running eslint --fix")
+  (redisplay t)
+  (call-process "eslint" nil nil nil "--fix" (buffer-file-name))
+  (message "Running eslint --fix...done"))
+
+(defun eslint-fix-file-and-revert-maybe ()
+  (interactive)
+  (let ((problems (and (fboundp #'flymake-diagnostics) (flymake-diagnostics))))
+    (when problems
+      (eslint-fix-file)
+      (revert-buffer t t))))
+
+(defun my-web-mode-init-hook ()
+  "Hooks for Web mode."
+  (add-node-modules-path)
+  (when (string-match-p my--js-files-regex (buffer-file-name))
+    (flymake-eslint-enable)
+    (add-hook 'after-save-hook #'eslint-fix-file-and-revert-maybe t t)))
+
+(add-hook 'web-mode-hook #'my-web-mode-init-hook)
+
+;; JS2 Mode setup (disabled)
 
 (defun my-set-js2-mocha-externs ()
   (setq js2-additional-externs
