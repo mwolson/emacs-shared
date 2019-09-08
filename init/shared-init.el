@@ -16,6 +16,7 @@
 (defvar my-use-themes-p      (boundp 'custom-theme-load-path))
 (defvar my-frame-height      50)
 (defvar my-frame-width       120)
+(defvar my-frame-maximize-if-pixel-width-lte 1440)
 (defvar my-frame-maximize-p  t)
 (defvar my-frame-pad-width   (if (eq system-type 'darwin) 65 nil))
 (defvar my-frame-pad-height  (if (eq system-type 'darwin) 15 nil))
@@ -47,9 +48,6 @@
         (t '("/opt/maven/bin"))))
 (setq my-system-paths (remove-if-not #'file-exists-p my-system-paths))
 
-;; SLIME settings
-(defvar my-slime-function (and (executable-find "node") #'my-slime-connect-nodejs))
-
 ;;; Display
 
 ;; Add shared elisp directory (but prefer system libs)
@@ -73,13 +71,16 @@
 (defun my-reset-frame-size ()
   "Reset the size of the current frame according to `default-frame-alist'."
   (interactive)
-  (cond ((and my-frame-maximize-p (memq window-system '(w32 x)))
-         (set-frame-parameter nil 'fullscreen 'maximized))
-        (my-frame-maximize-p
-         (maximize-frame))
-        (t
-         (dolist (param '(width height))
-           (set-frame-parameter nil param (cdr (assoc param default-frame-alist)))))))
+  (let ((maximize-p my-frame-maximize-p))
+    (when (and maximize-p my-frame-maximize-if-pixel-width-lte)
+      (setq maximize-p (<= (display-pixel-width) my-frame-maximize-if-pixel-width-lte)))
+    (cond ((and maximize-p (memq window-system '(w32 x)))
+           (set-frame-parameter nil 'fullscreen 'maximized))
+          (maximize-p
+           (maximize-frame))
+          (t
+           (dolist (param '(width height))
+             (set-frame-parameter nil param (cdr (assoc param default-frame-alist))))))))
 
 (defun my-reset-theme ()
   (interactive)
@@ -340,6 +341,13 @@
 ;; Editorconfig support
 (editorconfig-mode 1)
 
+;; Lisp REPL using SLIME
+(require 'slime)
+(slime-setup '(slime-repl))
+(setq slime-auto-connect 'always)
+(setq slime-kill-without-query-p t)
+(setq slime-protocol-version 'ignore)
+
 ;; Improved JSX support (disabled)
 ;;
 ;; (my-replace-cdrs-in-alist 'js-mode 'rjsx-mode 'interpreter-mode-alist)
@@ -354,6 +362,71 @@
 (add-hook 'scss-mode-hook 'add-node-modules-path t)
 (add-hook 'scss-mode-hook 'flymake-stylelint-enable t)
 
+;; NodeJS REPL setup
+
+(require 'js-comint)
+
+(defun my-js-comint-send-last-sexp ()
+  "Send the previous sexp to the inferior Javascript process."
+  (interactive)
+  (let* ((b (save-excursion
+              (backward-sexp)
+              (move-beginning-of-line nil)
+              (point)))
+         (e (point))
+         (str (buffer-substring-no-properties b e)))
+    (js-comint-start-or-switch-to-repl)
+    (js-comint-send-string str)))
+
+(defun my-js-comint-send-line ()
+  "Send the buffer to the inferior Javascript process."
+  (interactive)
+  (let ((text (buffer-substring-no-properties (point-at-bol) (point-at-eol))))
+    (js-comint-start-or-switch-to-repl)
+    (js-comint-send-string text)))
+
+(defun my-js-comint-send-region (start end)
+  "Send the region to the inferior Javascript process."
+  (interactive "r")
+  (let ((text (buffer-substring-no-properties start end)))
+    (js-comint-start-or-switch-to-repl)
+    (js-comint-send-string text)))
+
+(defvar node-repl-interaction-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-x C-e") 'my-js-comint-send-last-sexp)
+    (define-key map (kbd "C-c C-l") 'my-js-comint-send-line)
+    (define-key map (kbd "C-c C-r") 'my-js-comint-send-region)
+    (define-key map (kbd "C-c C-z") 'js-comint-start-or-switch-to-repl)
+    map)
+  "Keymap for node-repl-interaction-mode.")
+
+(define-minor-mode node-repl-interaction-mode
+  "Minor mode to interact with a NodeJS REPL in combination with the `nodejs-repl' package.
+
+When called interactively, toggle `node-repl-interaction-mode'.
+With prefix ARG, enable `node-repl-interaction-mode' if ARG is
+positive, otherwise disable it.
+
+When called from Lisp, enable `node-repl-interaction-mode' if ARG
+is omitted, nil or positive.  If ARG is `toggle', toggle
+`node-repl-interaction-mode'.  Otherwise behave as if called
+interactively.
+
+\\{node-repl-interaction-mode-map}"
+  :keymap node-repl-interaction-mode-map
+  (cond
+   (node-repl-interaction-mode nil)
+   (t nil)))
+
+;; (when (eq system-type 'windows-nt)
+;;   (setq js-comint-program-command "C:/Program Files/nodejs/node.exe"))
+
+(defun inferior-js-mode-hook-setup ()
+  (add-hook 'comint-output-filter-functions 'js-comint-process-output))
+
+(add-hook 'inferior-js-mode-hook 'inferior-js-mode-hook-setup t)
+
 ;; Web Mode setup
 ;;
 ;; Taken from https://gist.github.com/CodyReichert/9dbc8bd2a104780b64891d8736682cea
@@ -366,6 +439,10 @@
 (add-to-list 'auto-mode-alist (cons my--js-files-regex 'web-mode))
 
 (setq web-mode-content-types-alist `(("jsx" . ,my--js-files-regex)))
+
+;; (eval-after-load "web-mode"
+;;   '(progn
+;;      (define-key web-mode-map (kbd "C-c C-j") nil)))
 
 (defun eslint-fix-file ()
   (interactive)
@@ -385,10 +462,11 @@
   "Hooks for Web mode."
   (add-node-modules-path)
   (when (string-match-p my--js-files-regex (buffer-file-name))
+    (node-repl-interaction-mode 1)
     (flymake-eslint-enable)
     (add-hook 'after-save-hook #'eslint-fix-file-and-revert-maybe t t)))
 
-(add-hook 'web-mode-hook #'my-web-mode-init-hook)
+(add-hook 'web-mode-hook #'my-web-mode-init-hook t)
 
 ;; JS2 Mode setup (disabled)
 
@@ -410,7 +488,7 @@
                                (and beg end (- end beg)))))
 
      ;; Add support for some mocha testing externs
-     (add-hook 'js2-init-hook #'my-set-js2-mocha-externs)))
+     (add-hook 'js2-init-hook #'my-set-js2-mocha-externs t)))
 
 ;; Highlight node.js stacktraces in *compile* buffers
 (defvar my-nodejs-compilation-regexp
@@ -426,32 +504,10 @@
 (require 'hl-line)
 (global-hl-line-mode 1)
 
-;; Node REPL using SLIME
-(require 'slime)
-(autoload 'slime-js-minor-mode "slime-js" nil t)
-(defun my-turn-on-slime-js ()
-  (interactive)
-  (slime-js-minor-mode 1))
-(add-hook 'js-mode-hook #'my-turn-on-slime-js)
-(slime-setup '(slime-repl slime-js))
-(setq slime-auto-connect 'always)
-(setq slime-kill-without-query-p t)
-(setq slime-protocol-version 'ignore)
-
-(defun my-slime-connect-nodejs ()
-  (interactive)
-  (let ((process (slime-connect "localhost" 4005)))
-    (setf (slime-connection-name process) "NODE")))
-
-;; Make this configurable, since we may have SLIME users who don't want node.js connection made
-;; unconditionally
-(when (and my-slime-function (fboundp my-slime-function))
-  (defalias 'slime my-slime-function))
-
 ;; Java
 (require 'java-mode-indent-annotations)
 (require 'google-c-style)
-(add-hook 'c-mode-common-hook 'google-set-c-style)
+(add-hook 'c-mode-common-hook 'google-set-c-style t)
 
 ;; ANSI colors in compile buffer
 (require 'ansi-color)
@@ -459,10 +515,10 @@
   (toggle-read-only)
   (ansi-color-apply-on-region (point-min) (point-max))
   (toggle-read-only))
-(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer t)
 
 ;; Load smex, which makes M-x work better on Ivy
-(add-hook 'after-init-hook 'smex-initialize)
+(add-hook 'after-init-hook 'smex-initialize t)
 
 ;; Ivy, Counsel, and Swiper
 (add-to-list 'load-path (concat my-emacs-path "elisp/swiper"))
@@ -583,7 +639,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (defun my-ediff-extra-keys ()
   (define-key ediff-mode-map (kbd "N") #'my-ediff-next-difference)
   (define-key ediff-mode-map (kbd "P") #'my-ediff-previous-difference))
-(add-hook 'ediff-keymap-setup-hook 'my-ediff-extra-keys)
+(add-hook 'ediff-keymap-setup-hook 'my-ediff-extra-keys t)
 
 ;; Make TexInfo easier to work with
 (defun my-texinfo-view-file ()
@@ -600,7 +656,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   "Make texinfo stuff easier to work with."
   (define-key texinfo-mode-map (kbd "C-c C-p") #'makeinfo-buffer)
   (define-key texinfo-mode-map (kbd "C-c C-v") #'my-texinfo-view-file))
-(add-hook 'texinfo-mode-hook 'my-texinfo-extra-keys)
+(add-hook 'texinfo-mode-hook 'my-texinfo-extra-keys t)
 
 ;; Don't warn me when opening some Common Lisp files
 (put 'package 'safe-local-variable 'symbolp)
@@ -629,7 +685,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (defun my-markdown-mode-keys ()
   (define-key markdown-mode-map (kbd "<M-right>") #'forward-word)
   (define-key markdown-mode-map (kbd "<M-left>") #'backward-word))
-(add-hook 'markdown-mode-hook #'my-markdown-mode-keys)
+(add-hook 'markdown-mode-hook #'my-markdown-mode-keys t)
 
 ;; Profiling
 (require 'profiler)
@@ -644,8 +700,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 ;; Company: auto-completion for various modes
 (setq company-idle-delay 0.3)
-(add-hook 'after-init-hook 'global-company-mode)
-(add-hook 'after-init-hook 'company-statistics-mode)
+(add-hook 'after-init-hook 'global-company-mode t)
+(add-hook 'after-init-hook 'company-statistics-mode t)
 
 ;; Setup info for manually compiled packages
 (add-to-list 'Info-default-directory-list (concat my-emacs-path "share/info"))
@@ -839,7 +895,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (interactive)
   (setq-default default-directory (expand-file-name my-default-directory))
   (setq default-directory (expand-file-name my-default-directory)))
-(add-hook 'after-init-hook #'my-change-to-default-dir)
+(add-hook 'after-init-hook #'my-change-to-default-dir t)
 
 ;; Start server
 (when my-server-start-p (server-start))
@@ -853,7 +909,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (let ((buf (get-buffer "*GNU Emacs*")))
     (when (and buf (buffer-live-p buf))
       (kill-buffer buf))))
-(add-hook 'after-init-hook #'my-kill-splash-screen)
+(add-hook 'after-init-hook #'my-kill-splash-screen t)
 
 (provide 'shared-init)
 ;;; shared-init.el ends here
