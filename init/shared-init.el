@@ -464,8 +464,9 @@ interactively.
   (add-node-modules-path)
   (when (string-match-p my--js-files-regex (buffer-file-name))
     (node-repl-interaction-mode 1)
-    (flymake-eslint-enable)
-    (add-hook 'after-save-hook #'eslint-fix-file-and-revert-maybe t t)))
+    (when (executable-find "eslint")
+      (flymake-eslint-enable)
+      (add-hook 'after-save-hook #'eslint-fix-file-and-revert-maybe t t))))
 
 (add-hook 'web-mode-hook #'my-web-mode-init-hook t)
 
