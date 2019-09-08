@@ -10,7 +10,8 @@
 ;;; Options that change behavior of this file
 
 (defvar my-default-font      (cond
-                              ((eq window-system 'w32) "Inconsolata-15")
+                              ((eq system-type 'darwin) "Inconsolata-20")
+                              ((eq window-system 'w32) "Inconsolata-14")
                               (t "Inconsolata-18")))
 (defvar my-theme             'sanityinc-tomorrow-eighties)
 (defvar my-use-themes-p      (boundp 'custom-theme-load-path))

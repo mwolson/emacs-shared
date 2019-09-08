@@ -159,7 +159,7 @@ emacs -q init.el  # or other editing command
 
 *Windows*
 
-Open `Start Menu -> Gnu Emacs -> Emacs`.  This should point to the file `C:\Program Files\Emacs\bin\runemacs.exe`.
+Open `Start Menu -> Emacs`.  This should point to the file `C:\Program Files\Emacs\bin\runemacs.exe`.
 
 *Windows Taskbar*
 
