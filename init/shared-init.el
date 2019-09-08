@@ -679,7 +679,11 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 ;; extension of mine to make list editing easy
 (require 'edit-list)
 
-;; Markdown support, preferring Github-flavored Markdown
+;; Markdown support
+
+(add-to-list 'auto-mode-alist '("\\.mdx\\'" . markdown-mode))
+
+;; Prefer Github-flavored Markdown
 (my-replace-cdrs-in-alist 'markdown-link-face 'gfm-mode 'auto-mode-alist)
 
 ;; Don't mess with keys that I'm used to
