@@ -5,11 +5,11 @@ Installing Emacs
 
 *Windows*
 
-On Windows, the best way to do this is with [Git Extensions](https://gitextensions.github.io/).  When prompted about SSH during installation, choosing PuTTY is recommended.
+On Windows, the best way to do this is to install both [Git Extensions](https://gitextensions.github.io/) and [Git for Windows](https://git-scm.com/download/win). When prompted about SSH during installation, choosing PuTTY is recommended.
 
 *macOS*
 
-On macOS, the best way to do this is to install Xcode from App Store, and then install the Command Line Tools for Xcode using the Downloads preferences pane within Xcode 4.6.1 and later.
+On macOS, the best way to do this is to install Xcode from App Store.
 
 ## (macOS only) Install Homebrew
 
@@ -18,6 +18,11 @@ You may want to pick up [Homebrew](http://mxcl.github.io/homebrew/) for easier i
 ## (Windows only) Install PuTTY
 
 This is useful for doing git development, since Pageant can hold onto your git keys and auto-load them when Windows starts.  If you've already installed PuTTY in the past, make sure that you have have at least version 0.62 installed, since earlier versions might fail in ways that are difficult to diagnose.
+
+To load a key automatically, create or edit a shortcut for Pageant and add the path to the key file as a commandline argument. To start Pageant automatically when Windows starts:
+* Click on the Windows Search bar, type "run", click on the "Run" program
+* Type "shell:startup" and hit Enter
+* Copy the Pageant shortcut that we modified earlier into this folder
 
 ## (Windows only) Install MSYS2
 
@@ -80,7 +85,7 @@ cd ~/
 git clone https://github.com/mwolson/emacs-shared.git
 ```
 
-## Run boostrap.sh
+## Run bootstrap.sh
 
 On Windows, you'll want to open Git Bash and run the command from there.
 
