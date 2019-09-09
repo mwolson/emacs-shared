@@ -339,6 +339,9 @@
         (message "Could not load docker changes, output:\n%s" out)
       (message "Loaded Docker env for machine: %s" machine))))
 
+;; .env file support
+(add-to-list 'auto-mode-alist '("\\.env\\..*\\'" . dotenv-mode))
+
 ;; Editorconfig support
 (editorconfig-mode 1)
 
