@@ -462,7 +462,8 @@ interactively.
 (defun my-web-mode-init-hook ()
   "Hooks for Web mode."
   (add-node-modules-path)
-  (when (string-match-p my--js-files-regex (buffer-file-name))
+  (when (and (not (string-match-p "\\.mdx?" (buffer-name)))
+             (string-match-p my--js-files-regex (buffer-file-name)))
     (node-repl-interaction-mode 1)
     (when (executable-find "eslint")
       (flymake-eslint-enable)
