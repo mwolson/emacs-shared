@@ -195,7 +195,7 @@
   (let ((file buffer-file-name))
     (byte-compile-file file)
     (save-match-data
-      (when (string-match "\\.el$" file)
+      (when (string-match "\\.el\\'" file)
         (delete-file (concat file "c"))))))
 
 (defun my-fetch-url (url)
@@ -432,12 +432,12 @@ interactively.
 ;;
 ;; Taken from https://gist.github.com/CodyReichert/9dbc8bd2a104780b64891d8736682cea
 
-(defvar my--js-files-regex "\\.[jt]sx?$")
+(defvar my--js-files-regex "\\.[jt]sx?\\'")
 
-(add-to-list 'auto-mode-alist '("\\.hbs$" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.json$" . web-mode))
-(add-to-list 'auto-mode-alist (cons my--js-files-regex 'web-mode))
+(add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.json\\'" . web-mode))
+(add-to-list 'auto-mode-alist `(,my--js-files-regex . web-mode))
 
 (setq web-mode-content-types-alist `(("jsx" . ,my--js-files-regex)))
 
@@ -682,7 +682,25 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 ;; Markdown support
 
-(add-to-list 'auto-mode-alist '("\\.mdx\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . poly-markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.mdx\\'" . poly-markdown-mode))
+
+(defun my-define-web-polymode (file-ext)
+  (let* ((sym-name (symbol-name file-ext))
+         (filename (concat "." sym-name))
+         (mode-sym (intern (concat "my-" sym-name "-mode")))
+         (mode-name-alias (intern (concat "my-" sym-name))))
+    (eval `(defun ,mode-sym (&rest mode-args)
+             (cl-letf (((symbol-function 'buffer-file-name)
+                        (lambda () ,filename)))
+               (apply #'web-mode mode-args))))
+    (add-to-list 'polymode-mode-name-aliases (cons file-ext mode-name-alias))))
+
+(eval-after-load "polymode-core"
+  '(progn
+     (add-to-list 'polymode-mode-name-aliases '(bash . sh))
+     (dolist (file-ext '(hbs html js json jsx))
+       (my-define-web-polymode file-ext))))
 
 ;; Prefer Github-flavored Markdown
 (my-replace-cdrs-in-alist 'markdown-link-face 'gfm-mode 'auto-mode-alist)
@@ -761,6 +779,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (eval-after-load "counsel" '(diminish 'counsel-mode))
 (eval-after-load "editorconfig" '(diminish 'editorconfig-mode))
 (eval-after-load "ivy" '(diminish 'ivy-mode))
+(eval-after-load "poly-markdown" '(diminish 'poly-markdown-mode))
 (eval-after-load "org-indent" '(diminish 'org-indent-mode))
 (eval-after-load "slime-js" '(diminish 'slime-js-minor-mode))
 
