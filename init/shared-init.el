@@ -474,6 +474,31 @@ interactively.
 
 (add-hook 'web-mode-hook #'my-web-mode-init-hook t)
 
+;; Monkey-patch issue with closing file before eslint check is done
+(eval-after-load "flymake-eslint"
+  '(defun flymake-eslint--create-process (source-buffer callback)
+     "Internal function.
+Create linter process for SOURCE-BUFFER which invokes CALLBACK once linter is finished.  CALLBACK is passed one argument, which is a buffer containing stdout from linter."
+     (when (process-live-p flymake-eslint--process)
+       (kill-process flymake-eslint--process))
+     (setq flymake-eslint--process
+           (make-process
+            :name "flymake-eslint"
+            :connection-type 'pipe
+            :noquery t
+            :buffer (generate-new-buffer " *flymake-eslint*")
+            :command (list flymake-eslint-executable-name "--no-color" "--no-ignore" "--stdin" "--stdin-filename" (buffer-file-name source-buffer) (or flymake-eslint-executable-args ""))
+            :sentinel `(lambda (proc &rest ignored)
+                         ;; do stuff upon child process termination
+                         (when (and (eq 'exit (process-status proc))
+                                    ;; make sure we're using the latest lint process
+                                    (or (not (buffer-live-p ,source-buffer))
+                                        (with-current-buffer ,source-buffer (eq proc flymake-eslint--process))))
+                           ;; read from eslint output then destroy temp buffer when done
+                           (let ((proc-buffer (process-buffer proc)))
+                             (funcall ,callback proc-buffer)
+                             (kill-buffer proc-buffer))))))))
+
 ;; JS2 Mode setup (disabled)
 
 (defun my-set-js2-mocha-externs ()
