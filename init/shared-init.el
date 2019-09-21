@@ -764,10 +764,14 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (eval-after-load "polymode-core"
   '(progn
-     (dolist (file-ext '(hbs html js json jsx))
-       (my-define-web-polymode file-ext))
+     ;; Commented out since the font-locking tends to bleed into other areas
+     ;; of the file.
+     ;(dolist (file-ext '(hbs html js json jsx))
+     ;  (my-define-web-polymode file-ext))
      (add-to-list 'polymode-mode-name-aliases '(bash . sh))
-     (add-to-list 'polymode-mode-name-aliases '(javascript . my-js))))
+     ;(add-to-list 'polymode-mode-name-aliases '(javascript . my-js))
+     (add-to-list 'polymode-mode-name-aliases '(javascript . js))
+     ))
 
 ;; Prefer Github-flavored Markdown
 (my-replace-cdrs-in-alist 'markdown-link-face 'gfm-mode 'auto-mode-alist)
