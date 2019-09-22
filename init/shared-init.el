@@ -457,10 +457,9 @@ interactively.
 
 (defun eslint-fix-file-and-revert-maybe ()
   (interactive)
-  (let ((problems (and (fboundp #'flymake-diagnostics) (flymake-diagnostics))))
-    (when problems
-      (eslint-fix-file)
-      (revert-buffer t t))))
+  (when (fboundp #'flymake-diagnostics)
+    (eslint-fix-file)
+    (revert-buffer t t)))
 
 (defun my-web-mode-init-hook ()
   "Hooks for Web mode."
