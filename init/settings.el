@@ -119,6 +119,7 @@
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
  '(vc-handled-backends nil)
  '(visible-bell t)
+ '(web-mode-code-indent-offset 2)
  '(woman-fill-column 95)
  '(woman-fontify t)
  '(woman-use-own-frame nil))

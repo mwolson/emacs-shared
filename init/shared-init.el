@@ -464,12 +464,14 @@ interactively.
 (defun my-web-mode-init-hook ()
   "Hooks for Web mode."
   (add-node-modules-path)
-  (when (and (not (string-match-p "\\.mdx?" (buffer-name)))
-             (string-match-p my--js-files-regex (buffer-file-name)))
-    (node-repl-interaction-mode 1)
-    (when (executable-find "eslint")
-      (flymake-eslint-enable)
-      (add-hook 'after-save-hook #'eslint-fix-file-and-revert-maybe t t))))
+  (let ((buf-name (buffer-name))
+        (buf-filename (buffer-file-name)))
+    (when (and (not (string-match-p "\\.mdx?" buf-name))
+               (string-match-p my--js-files-regex buf-filename))
+      (node-repl-interaction-mode 1)
+      (when (executable-find "eslint")
+        (flymake-eslint-enable)
+        (add-hook 'after-save-hook #'eslint-fix-file-and-revert-maybe t t)))))
 
 (add-hook 'web-mode-hook #'my-web-mode-init-hook t)
 
