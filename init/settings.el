@@ -90,7 +90,7 @@
      ("gnu" . "http://elpa.gnu.org/packages/"))))
  '(package-selected-packages
    (quote
-    (dotenv-mode poly-markdown polymode js-comint flymake-eslint add-node-modules-path erlang editorconfig docker-tramp el-mock dumb-jump company-statistics company spaceline package-utils wgrep swiper diminish counsel ivy color-theme-sanityinc-tomorrow maxframe markdown-mode lua-mode smex dockerfile-mode browse-kill-ring ripgrep flx projectile yaml-mode slime cider magit hydra web-mode)))
+    (csharp-mode dotenv-mode poly-markdown polymode js-comint flymake-eslint add-node-modules-path erlang editorconfig docker-tramp el-mock dumb-jump company-statistics company spaceline package-utils wgrep swiper diminish counsel ivy color-theme-sanityinc-tomorrow maxframe markdown-mode lua-mode smex dockerfile-mode browse-kill-ring ripgrep flx projectile yaml-mode slime cider magit hydra web-mode)))
  '(post-jump-header nil)
  '(projectile-mode-line
    (quote
