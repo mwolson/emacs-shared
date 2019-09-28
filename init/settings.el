@@ -72,7 +72,7 @@
  '(magit-prefer-remote-upstream t)
  '(mail-interactive t)
  '(mail-user-agent (quote gnus-user-agent))
- '(markdown-command "grip --export -")
+ '(markdown-command "npx marked")
  '(max-lisp-eval-depth 1000)
  '(max-specpdl-size 1000)
  '(message-log-max 500)

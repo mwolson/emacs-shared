@@ -236,7 +236,9 @@ Then restart any open applications to apply the change to them.
 
 ## Install grip or marked for markdown preview
 
-Install [grip](https://github.com/joeyespo/grip) if you would like to be able to preview markdown pages. `grip` will send the content to Github's API for rendering. If you're working with sensitive files, you may want to use [marked](https://github.com/chjj/marked) instead and customize the Emacs `markdown-command` option.
+By default [marked](https://marked.js.org/) is used to preview markdown pages.
+
+Another option with slightly better output (though not apprioriate for private data) is [grip](https://github.com/joeyespo/grip). This will send the content to Github's API for rendering. Customize the Emacs `markdown-command` option if you would like to use `grip`.
 
 Updating
 ========
