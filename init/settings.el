@@ -131,5 +131,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(line-number-current-line ((t (:inherit highlight))))
  '(web-mode-html-tag-face ((t (:inherit font-lock-constant-face))))
  '(woman-italic ((t (:underline t :slant italic)))))

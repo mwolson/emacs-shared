@@ -365,6 +365,7 @@
 (require 'flymake-stylelint)
 (add-hook 'scss-mode-hook 'add-node-modules-path t)
 (add-hook 'scss-mode-hook 'flymake-stylelint-enable t)
+(add-hook 'scss-mode-hook 'display-line-numbers-mode t)
 
 ;; NodeJS REPL setup
 
@@ -464,6 +465,7 @@ interactively.
 (defun my-web-mode-init-hook ()
   "Hooks for Web mode."
   (add-node-modules-path)
+  (display-line-numbers-mode)
   (let ((buf-name (buffer-name))
         (buf-filename (buffer-file-name)))
     (when (and (not (string-match-p "\\.mdx?" buf-name))
@@ -577,6 +579,7 @@ Create Flymake diag messages from contents of ESLINT-STDOUT-BUFFER, to be report
 (require 'java-mode-indent-annotations)
 (require 'google-c-style)
 (add-hook 'c-mode-common-hook 'google-set-c-style t)
+(add-hook 'c-mode-common-hook 'display-line-numbers-mode t)
 
 ;; ANSI colors in compile buffer
 (require 'ansi-color)
