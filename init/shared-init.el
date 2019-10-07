@@ -445,6 +445,19 @@ interactively.
 
 (setq web-mode-content-types-alist `(("jsx" . ,my--js-files-regex)))
 
+(defun my-define-web-mode (file-ext)
+  (let* ((sym-name (symbol-name file-ext))
+         (filename (concat "." sym-name))
+         (mode-sym (intern (concat "my-" sym-name "-mode")))
+         (mode-name-alias (intern (concat "my-" sym-name))))
+    (eval `(defun ,mode-sym (&rest mode-args)
+             (cl-letf (((symbol-function 'buffer-file-name)
+                        (lambda () ,filename)))
+               (apply #'web-mode mode-args))))))
+
+(my-define-web-mode 'js)
+(my-replace-cdrs-in-alist 'js-mode 'my-js-mode 'interpreter-mode-alist)
+
 ;; (eval-after-load "web-mode"
 ;;   '(progn
 ;;      (define-key web-mode-map (kbd "C-c C-j") nil)))
