@@ -484,7 +484,8 @@ interactively.
     (when (and (not (string-match-p "\\.mdx?" buf-name))
                (string-match-p my--js-files-regex buf-filename))
       (node-repl-interaction-mode 1)
-      (when (executable-find "eslint")
+      (when (and (not (string-match-p "/node_modules/" default-directory))
+                 (executable-find "eslint"))
         (flymake-eslint-enable)
         (add-hook 'after-save-hook #'eslint-fix-file-and-revert-maybe t t)))))
 
