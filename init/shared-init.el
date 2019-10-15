@@ -469,9 +469,11 @@ interactively.
   (call-process "eslint" nil nil nil "--fix" (buffer-file-name))
   (message "Running eslint --fix...done"))
 
+(defvar my-eslint-enabled-p t)
+
 (defun eslint-fix-file-and-revert-maybe ()
   (interactive)
-  (when (fboundp #'flymake-diagnostics)
+  (when (and my-eslint-enabled-p (fboundp #'flymake-diagnostics))
     (eslint-fix-file)
     (revert-buffer t t)))
 
@@ -488,6 +490,11 @@ interactively.
                  (executable-find "eslint"))
         (flymake-eslint-enable)
         (add-hook 'after-save-hook #'eslint-fix-file-and-revert-maybe t t)))))
+
+(defun my-eslint-disable-in-current-buffer ()
+  (interactive)
+  (flymake-mode nil)
+  (set (make-local-variable 'my-eslint-enabled-p) nil))
 
 (add-hook 'web-mode-hook #'my-web-mode-init-hook t)
 
