@@ -97,9 +97,8 @@
         (when my-default-font
           (add-to-list 'default-frame-alist
                        (cons 'font (cdr (assq 'font (frame-parameters))))))
-        (unless my-frame-maximize-p
-          (add-to-list 'default-frame-alist (cons 'height my-frame-height))
-          (add-to-list 'default-frame-alist (cons 'width my-frame-width)))
+        (add-to-list 'default-frame-alist (cons 'height my-frame-height))
+        (add-to-list 'default-frame-alist (cons 'width my-frame-width))
         ;; Make sure DEL key does what I want
         (normal-erase-is-backspace-mode 1)
         ;; Show the menu if we are using X
