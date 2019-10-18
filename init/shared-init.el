@@ -435,7 +435,7 @@ interactively.
 ;;
 ;; Taken from https://gist.github.com/CodyReichert/9dbc8bd2a104780b64891d8736682cea
 
-(defvar my--js-files-regex "\\.[jt]sx?\\'")
+(defvar my--js-files-regex "\\.\\([jt]sx?\\|mjs\\)\\'")
 
 (add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
