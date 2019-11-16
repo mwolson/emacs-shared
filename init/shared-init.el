@@ -75,7 +75,7 @@
   (let ((maximize-p my-frame-maximize-p))
     (when (and maximize-p my-frame-maximize-if-pixel-width-lte)
       (setq maximize-p (<= (display-pixel-width) my-frame-maximize-if-pixel-width-lte)))
-    (cond ((and maximize-p (memq window-system '(w32 x)))
+    (cond ((and maximize-p (memq window-system '(x w32)))
            (set-frame-parameter nil 'fullscreen 'maximized))
           (maximize-p
            (maximize-frame))
@@ -97,8 +97,9 @@
         (when my-default-font
           (add-to-list 'default-frame-alist
                        (cons 'font (cdr (assq 'font (frame-parameters))))))
-        (add-to-list 'default-frame-alist (cons 'height my-frame-height))
-        (add-to-list 'default-frame-alist (cons 'width my-frame-width))
+        (when (or (not my-frame-maximize-p) my-frame-maximize-if-pixel-width-lte)
+          (add-to-list 'default-frame-alist (cons 'height my-frame-height))
+          (add-to-list 'default-frame-alist (cons 'width my-frame-width)))
         ;; Make sure DEL key does what I want
         (normal-erase-is-backspace-mode 1)
         ;; Show the menu if we are using X
