@@ -255,7 +255,6 @@
 (require 'wdired)
 
 ;; Load tramp
-(add-to-list 'load-path (concat my-emacs-path "elisp/tramp/lisp"))
 (require 'tramp)
 
 ;; List directories first in dired
@@ -614,7 +613,6 @@ Create Flymake diag messages from contents of ESLINT-STDOUT-BUFFER, to be report
 (add-hook 'after-init-hook 'smex-initialize t)
 
 ;; Ivy, Counsel, and Swiper
-(add-to-list 'load-path (concat my-emacs-path "elisp/swiper"))
 (require 'counsel)
 (ivy-mode 1)
 (setq ivy-use-virtual-buffers t)
@@ -703,7 +701,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
      (define-key ripgrep-search-mode-map (kbd "<backtab>") #'compilation-previous-error)))
 
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
-(add-to-list 'load-path (concat my-emacs-path "elisp/dumb-jump"))
 (require 'dumb-jump)
 (setq dumb-jump-selector 'ivy)
 

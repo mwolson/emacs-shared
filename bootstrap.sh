@@ -70,25 +70,6 @@ if test -n "$BUILD"; then
         rm -fr share/info
         mkdir -p share/info
     fi
-
-    # Tramp
-    (
-        cd elisp/tramp
-        # HATE ./configure, not running that on Windows
-        cp ../../extra/tramp/Makefile .
-        cp ../../extra/tramp/lisp/* lisp/
-        cp ../../extra/tramp/texi/* texi/
-        make lisp
-
-        if test -n "$BUILD_DOCS"; then
-            (
-                cd texi
-                make tramp
-                cd ../info
-                install_info tramp
-            )
-        fi
-    )
 fi
 
 echo >&2
