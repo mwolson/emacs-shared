@@ -651,7 +651,8 @@ Create Flymake diag messages from contents of ESLINT-STDOUT-BUFFER, to be report
 
 With \\[universal-argument], also prompt for extra rg arguments and set into RG-ARGS."
   (interactive
-   (list (read-from-minibuffer "Ripgrep search for: " (projectile-symbol-or-selection-at-point))
+   (list (read-from-minibuffer "Ripgrep search for: "
+                               (and (use-region-p) (buffer-substring-no-properties (region-beginning) (region-end))))
          (if current-prefix-arg
              (read-from-minibuffer "Additional rg args: " my-default-ripgrep-args nil nil nil my-default-ripgrep-args)
            my-default-ripgrep-args)))
@@ -663,7 +664,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 With \\[universal-argument], also prompt for extra rg arguments and set into RG-ARGS."
   (interactive
-   (list (projectile-symbol-or-selection-at-point)
+   (list (and (use-region-p) (buffer-substring-no-properties (region-beginning) (region-end)))
          (if current-prefix-arg
              (read-from-minibuffer "Additional rg args: " my-default-ripgrep-args nil nil nil my-default-ripgrep-args)
            my-default-ripgrep-args)))
