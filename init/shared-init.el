@@ -15,6 +15,7 @@
                               (t "Inconsolata-18")))
 (defvar my-theme             'sanityinc-tomorrow-eighties)
 (defvar my-use-themes-p      (boundp 'custom-theme-load-path))
+(defvar my-eslint-fix-enabled-p nil)
 (defvar my-frame-height      50)
 (defvar my-frame-width       120)
 (defvar my-frame-maximize-if-pixel-width-lte 1440)
@@ -468,11 +469,9 @@ interactively.
   (call-process "eslint" nil nil nil "--fix" (buffer-file-name))
   (message "Running eslint --fix...done"))
 
-(defvar my-eslint-enabled-p t)
-
 (defun eslint-fix-file-and-revert-maybe ()
   (interactive)
-  (when (and my-eslint-enabled-p (fboundp #'flymake-diagnostics))
+  (when (and my-eslint-fix-enabled-p (fboundp #'flymake-diagnostics))
     (eslint-fix-file)
     (revert-buffer t t)))
 
@@ -493,7 +492,7 @@ interactively.
 (defun my-eslint-disable-in-current-buffer ()
   (interactive)
   (flymake-mode nil)
-  (set (make-local-variable 'my-eslint-enabled-p) nil))
+  (set (make-local-variable 'my-eslint-fix-enabled-p) nil))
 
 (add-hook 'web-mode-hook #'my-web-mode-init-hook t)
 
@@ -600,6 +599,11 @@ Create Flymake diag messages from contents of ESLINT-STDOUT-BUFFER, to be report
 (require 'google-c-style)
 (add-hook 'c-mode-common-hook 'google-set-c-style t)
 (add-hook 'c-mode-common-hook 'display-line-numbers-mode t)
+
+;; C#
+(eval-after-load "csharp-mode"
+  '(progn
+     (define-key csharp-mode-map (kbd "C-c .") nil)))
 
 ;; ANSI colors in compile buffer
 (require 'ansi-color)
