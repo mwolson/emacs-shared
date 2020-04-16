@@ -345,6 +345,13 @@
 ;; Editorconfig support
 (editorconfig-mode 1)
 
+;; Edit Server support through Atomic Chrome / GhostText
+(defun my-start-atomic-chrome ()
+  (require 'atomic-chrome)
+  (atomic-chrome-start-server))
+
+(my-defer-startup #'my-start-atomic-chrome)
+
 ;; Lisp REPL using SLIME
 (require 'slime)
 (slime-setup '(slime-repl))
@@ -599,6 +606,10 @@ Create Flymake diag messages from contents of ESLINT-STDOUT-BUFFER, to be report
 (require 'google-c-style)
 (add-hook 'c-mode-common-hook 'google-set-c-style t)
 (add-hook 'c-mode-common-hook 'display-line-numbers-mode t)
+
+;; Kotlin
+(add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-mode) t)
+(autoload 'kotlin-mode "kotlin-mode" "Major mode for editing Kotlin." t nil)
 
 ;; C#
 (eval-after-load "csharp-mode"
