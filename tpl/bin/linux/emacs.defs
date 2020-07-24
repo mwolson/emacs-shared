@@ -1,2 +1,2 @@
-CLIENT=emacsclient.emacs-26
-DAEMON=emacs-26
+CLIENT=/usr/bin/emacsclient
+DAEMON=/usr/bin/emacs
