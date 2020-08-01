@@ -601,11 +601,36 @@ Create Flymake diag messages from contents of ESLINT-STDOUT-BUFFER, to be report
 (require 'hl-line)
 (global-hl-line-mode 1)
 
+;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
+(require 'dumb-jump)
+(setq dumb-jump-selector 'ivy)
+
+(defvar my-jump-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "." #'dumb-jump-go)
+    (define-key map "," #'dumb-jump-back)
+    (define-key map "/" #'dumb-jump-quick-look)
+    (define-key map "o" #'dumb-jump-go-other-window)
+    map)
+  "My key customizations for dumb-jump.")
+
+(global-set-key (kbd "C-c .") my-jump-map)
+
+(defvar my-dumb-jump-minor-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c .") my-jump-map)
+    map))
+
+(define-minor-mode my-dumb-jump-minor-mode
+  "Minor mode for jumping to variable and function definitions"
+  :keymap my-dumb-jump-minor-mode-map)
+
 ;; Java
 (require 'java-mode-indent-annotations)
 (require 'google-c-style)
 (add-hook 'c-mode-common-hook 'google-set-c-style t)
 (add-hook 'c-mode-common-hook 'display-line-numbers-mode t)
+(add-hook 'c-mode-common-hook 'my-dumb-jump-minor-mode t)
 
 ;; Kotlin
 (add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-mode) t)
@@ -715,21 +740,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   '(progn
      (define-key ripgrep-search-mode-map (kbd "TAB") #'compilation-next-error)
      (define-key ripgrep-search-mode-map (kbd "<backtab>") #'compilation-previous-error)))
-
-;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
-(require 'dumb-jump)
-(setq dumb-jump-selector 'ivy)
-
-(defvar my-jump-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map "." #'dumb-jump-go)
-    (define-key map "," #'dumb-jump-back)
-    (define-key map "/" #'dumb-jump-quick-look)
-    (define-key map "o" #'dumb-jump-go-other-window)
-    map)
-  "My key customizations for dumb-jump.")
-
-(global-set-key (kbd "C-c .") my-jump-map)
 
 ;; Bind N and P in ediff so that I don't leave the control buffer
 (defun my-ediff-next-difference (&rest args)
