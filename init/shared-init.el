@@ -910,6 +910,10 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (define-key markdown-mode-map (kbd "<M-left>") #'backward-word))
 (add-hook 'markdown-mode-hook #'my-markdown-mode-keys t)
 
+;; Support for .nsh files
+(autoload 'nsis-mode "nsis-mode" "NSIS mode" t)
+(setq auto-mode-alist (append '(("\\.[Nn][Ss][HhIi]\\'" . nsis-mode)) auto-mode-alist))
+
 ;; Profiling
 (require 'profiler)
 (cl-defmacro with-cpu-profiling (&rest body)
