@@ -5,12 +5,12 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(Man-notify-method (quote bully))
+ '(Man-notify-method 'bully)
  '(add-log-keep-changes-together t)
  '(apropos-do-all t)
  '(auto-compression-mode t nil (jka-compr))
- '(auto-save-file-name-transforms (quote ((".*" "~/.emacs.d/backup/" t))))
- '(backup-directory-alist (quote ((".*" . "~/.emacs.d/backup"))))
+ '(auto-save-file-name-transforms '((".*" "~/.emacs.d/backup/" t)))
+ '(backup-directory-alist '((".*" . "~/.emacs.d/backup")))
  '(blink-cursor-mode nil nil (frame))
  '(blink-matching-delay 10)
  '(blink-matching-paren-on-screen t)
@@ -18,7 +18,7 @@
  '(calendar-mark-diary-entries-flag t)
  '(case-replace nil)
  '(column-number-mode t)
- '(confirm-kill-emacs (quote y-or-n-p))
+ '(confirm-kill-emacs 'y-or-n-p)
  '(cperl-close-paren-offset -4)
  '(cperl-indent-level 4)
  '(cperl-indent-parens-as-block t)
@@ -30,10 +30,10 @@
  '(delete-selection-mode t)
  '(diff-switches "-u")
  '(dired-dwim-target t)
- '(dired-recursive-copies (quote always))
- '(dired-recursive-deletes (quote always))
+ '(dired-recursive-copies 'always)
+ '(dired-recursive-deletes 'always)
  '(doc-view-resolution 132)
- '(ediff-window-setup-function (quote ediff-setup-windows-plain))
+ '(ediff-window-setup-function 'ediff-setup-windows-plain)
  '(eldoc-minor-mode-string " E")
  '(electric-indent-mode nil)
  '(enable-recursive-minibuffers t)
@@ -66,57 +66,53 @@
  '(ls-lisp-ignore-case t)
  '(ls-lisp-support-shell-wildcards nil)
  '(ls-lisp-use-insert-directory-program nil)
- '(ls-lisp-verbosity (quote (uid gid)))
- '(magit-display-buffer-function (quote magit-display-buffer-fullframe-status-v1))
+ '(ls-lisp-verbosity '(uid gid))
+ '(magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
  '(magit-log-section-commit-count 1)
  '(magit-prefer-remote-upstream t)
  '(mail-interactive t)
- '(mail-user-agent (quote gnus-user-agent))
+ '(mail-user-agent 'gnus-user-agent)
  '(markdown-command "npx marked")
  '(max-lisp-eval-depth 1000)
  '(max-specpdl-size 1000)
  '(message-log-max 500)
  '(mouse-wheel-mode t)
  '(org-capture-templates
-   (quote
-    (("n" "Note" entry
+   '(("n" "Note" entry
       (file+headline "" "Notes")
-      "* %?" :prepend t :empty-lines-after 1))))
+      "* %?" :prepend t :empty-lines-after 1)))
  '(org-default-notes-file "~/Documents/notes.org")
  '(org-startup-folded nil)
  '(package-archives
-   (quote
-    (("melpa-stable" . "http://stable.melpa.org/packages/")
-     ("gnu" . "http://elpa.gnu.org/packages/"))))
+   '(("melpa-stable" . "http://stable.melpa.org/packages/")
+     ("gnu" . "http://elpa.gnu.org/packages/")))
+ '(package-check-signature nil)
  '(package-selected-packages
-   (quote
-    (terraform-mode atomic-chrome swift-mode csharp-mode dotenv-mode poly-markdown polymode js-comint flymake-eslint add-node-modules-path erlang editorconfig docker-tramp el-mock dumb-jump company-statistics company spaceline package-utils wgrep swiper diminish counsel ivy color-theme-sanityinc-tomorrow maxframe markdown-mode lua-mode smex dockerfile-mode browse-kill-ring ripgrep flx projectile yaml-mode slime cider magit hydra web-mode)))
+   '(terraform-mode atomic-chrome swift-mode csharp-mode dotenv-mode poly-markdown polymode js-comint flymake-eslint add-node-modules-path erlang editorconfig docker-tramp el-mock dumb-jump company-statistics company package-utils wgrep swiper diminish counsel ivy color-theme-sanityinc-tomorrow maxframe markdown-mode lua-mode smex dockerfile-mode browse-kill-ring ripgrep flx projectile yaml-mode slime cider magit hydra web-mode))
  '(post-jump-header nil)
  '(projectile-mode-line
-   (quote
-    (:eval
+   '(:eval
      (if
          (file-remote-p default-directory)
          "[-]"
        (format "[%s]"
-               (projectile-project-name))))))
- '(projectile-switch-project-action (quote magit-status))
+               (projectile-project-name)))))
+ '(projectile-switch-project-action 'magit-status)
  '(recentf-mode nil)
  '(require-final-newline nil)
  '(save-place t nil (saveplace))
  '(save-place-limit 20)
  '(select-enable-clipboard t)
  '(show-paren-mode t)
- '(show-paren-style (quote parenthesis))
+ '(show-paren-style 'parenthesis)
  '(smex-save-file "~/.emacs.d/.smex-items")
- '(sql-product (quote postgres))
+ '(sql-product 'postgres)
  '(tab-stop-list
-   (quote
-    (4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120)))
+   '(4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120))
  '(tab-width 8)
  '(tramp-auto-save-directory "~/.emacs.d/.autosave.d")
- '(tramp-backup-directory-alist (quote (("." . "~/.emacs.d/backup"))))
- '(uniquify-buffer-name-style (quote forward) nil (uniquify))
+ '(tramp-backup-directory-alist '(("." . "~/.emacs.d/backup")))
+ '(uniquify-buffer-name-style 'forward nil (uniquify))
  '(vc-handled-backends nil)
  '(visible-bell t)
  '(web-mode-code-indent-offset 2)

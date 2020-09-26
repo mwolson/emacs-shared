@@ -40,7 +40,7 @@
            "/Applications/Xcode.app/Contents/Developer/usr/bin"
            "/usr/local/bin"))
         ((eq system-type 'windows-nt)
-         '("C:/Program Files/Emacs/bin"
+         '("C:/Program Files/Emacs/x86_64/bin"
 	   "C:/msys64/usr/bin"
 	   "c:/msys64/mingw64/bin"
            "C:/Program Files/maven/bin"
@@ -68,7 +68,7 @@
 (defun my-reset-font ()
   (interactive)
   (when my-default-font
-    (set-default-font my-default-font)))
+    (set-frame-font my-default-font nil t)))
 
 (defun my-reset-frame-size ()
   "Reset the size of the current frame according to `default-frame-alist'."
@@ -126,8 +126,9 @@
 (add-hook 'server-visit-hook 'my-init-client)
 
 ;; Modeline theme
-(require 'spaceline-config)
-(spaceline-emacs-theme)
+; currently too large
+;(require 'spaceline-config)
+;(spaceline-emacs-theme)
 
 ;; Tasks that are run after initial startup for appearance of speed
 (defvar my-deferred-startup-hook '(display-startup-echo-area-message))
@@ -158,7 +159,7 @@
   (setenv "MANPATH" (concat "C:\\msys64\\usr\\share\\man;"
                             "C:\\msys64\\mingw64\\share\\man;"
                             "C:\\Program Files\\Git\\man;"
-                            "C:\\Program Files\\Emacs\\share\\man"))
+                            "C:\\Program Files\\Emacs\\x86_64\\share\\man"))
   (require 'woman)
   (defalias 'man 'woman))
 
