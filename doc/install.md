@@ -17,7 +17,7 @@ You may want to pick up [Homebrew](http://mxcl.github.io/homebrew/) for easier i
 
 ## (Windows only) Install PuTTY
 
-This is useful for doing git development, since Pageant can hold onto your git keys and auto-load them when Windows starts.  If you've already installed PuTTY in the past, make sure that you have have at least version 0.62 installed, since earlier versions might fail in ways that are difficult to diagnose.
+This is useful for doing git development, since Pageant can hold onto your git keys and auto-load them when Windows starts. If you've already installed PuTTY in the past, make sure that you have have at least version 0.62 installed, since earlier versions might fail in ways that are difficult to diagnose.
 
 To load a key automatically, create or edit a shortcut for Pageant and add the path to the key file as a commandline argument. To start Pageant automatically when Windows starts:
 * Click on the Windows Search bar, type "run", click on the "Run" program
@@ -47,22 +47,22 @@ ln -sf /c/msys64/mingw64/bin/mingw32-make.exe /c/msys64/mingw64/bin/make.exe
 
 ## Install Emacs
 
-The recommended version is Emacs 26.3.  The recommended installers for each OS are:
+The recommended version is Emacs 27.1. The recommended installers for each OS are:
 
 *Windows*
 
-- Download `emacs-26.3-x86_64.zip` from [ftp.gnu.org](http://ftp.gnu.org/gnu/emacs/windows/emacs-26/).
-- Unzip the `emacs-*.zip` file to `C:\Program Files` and then rename the `emacs-*` folder to just `Emacs`.  When done, you should verify that a file named `C:\Program Files\Emacs\bin\runemacs.exe` exists.
+- [Download and install emacs](https://ftp.gnu.org/gnu/emacs/windows/emacs-27/emacs-27.1-x86_64-installer.exe).
+- When done, you should verify that a file named `C:\Program Files\Emacs\x86_64\bin\runemacs.exe` exists.
 - If you change the location, you may want to update the `my-system-paths` option later.
 
 *macOS*
 
- - Download the non-Spacemacs build from [the Mitsuharu Yamamoto Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-26.3-mac-7.7).
+ - Download the non-Spacemacs build from [the Mitsuharu Yamamoto Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-27.1-mac-8.0.1).
  - Open the zip file and drag the Emacs icon over to the Applications folder.
 
 *Ubuntu*
 
-Install the `emacs26` package if it's available. If it's not available, [build it manually](http://ubuntuhandbook.org/index.php/2016/09/install-gnu-emacs-25-1-in-ubuntu-16-04/).
+Install the `emacs27` package if it's available. If it's not available, [use a PPA](http://ubuntuhandbook.org/index.php/2020/09/install-emacs-27-1-ppa-ubuntu-20-04/).
 
 ## Inconsolata Font
 
@@ -100,19 +100,19 @@ cd ~/emacs-shared
 
 *macOS*
 
-You'll want to make sure that your path includes the correct version of Emacs and some helper scripts, ahead of the ancient version that comes with macOS.  To do this, edit `~/.profile` and add:
+You'll want to make sure that your path includes the correct version of Emacs and some helper scripts, ahead of the ancient version that comes with macOS. To do this, edit `~/.profile` and add:
 
 ```sh
 export PATH=~/emacs-shared/bin:~/bin:"$PATH"
 ```
 
-Restart your Terminal app to make the change take effect.  Sourcing the file is not enough, since macOS seems to perform indexing of location on program name.
+Restart your Terminal app to make the change take effect. Sourcing the file is not enough, since macOS seems to perform indexing of location on program name.
 
 To verify your work, run `emacs --version` and make sure it shows the version number you'd expect.
 
 *Linux*
 
-You'll want to make sure that your path includes the correct version of Emacs and some helper scripts.  To do this, edit `~/.bashrc` and add:
+You'll want to make sure that your path includes the correct version of Emacs and some helper scripts. To do this, edit `~/.bashrc` and add:
 
 ```sh
 export PATH=~/emacs-shared/bin:~/bin:"$PATH"
@@ -130,7 +130,7 @@ To verify your work, run `emacs --version` and make sure it shows the version nu
   - Use the Start Menu to search for and open the task `Edit the System Environment Variables`. It may pop behind any open windows - if so, bring it to the front. Click `Environment Variables`.
   - Note: If any of the below variables aren't present, click on "Add" to add them
   - In User Variables, Inspect `HOME` and make sure it points to something like `C:\Users\You`.
-  - In one System Variables, double-click `Path` and make sure an entry for `C:\Program Files\Emacs\bin` is present.
+  - In one System Variables, double-click `Path` and make sure an entry for `C:\Program Files\Emacs\x86_64\bin` is present.
   - If you have chosen to use PuTTY, then make sure that the `GIT_SSH` variable is set to `C:\Program Files\PuTTY\plink.exe` (or wherever PuTTY is installed).
   - Click OK
   - Relaunch any open Git Bash windows
@@ -159,14 +159,14 @@ emacs -q init.el  # or other editing command
 
 *Windows*
 
-Open `Start Menu -> Emacs`.  This should point to the file `C:\Program Files\Emacs\bin\runemacs.exe`.
+Open `Start Menu -> Emacs`. This should point to the file `C:\Program Files\Emacs\x86_64\bin\runemacs.exe`.
 
 *Windows Taskbar*
 
 To pin Emacs to the Taskbar / Quick Launch bar and have it behave correctly:
 - First pin it
 - Then right-click its Taskbar button, right-click "Emacs", click "Properties"
-- Change "C:\Program Files\Emacs\bin\emacs.exe" to "C:\Program Files\Emacs\bin\runemacs.exe"
+- Change "C:\Program Files\Emacs\x86_64\bin\emacs.exe" to "C:\Program Files\Emacs\x86_64\bin\runemacs.exe"
 
 *macOS*
 
@@ -197,11 +197,11 @@ Install Aspell and an Aspell dictionary for your language if you want to support
 
 ## (Windows only) Install Git manpages
 
-The Windows installer doesn't include manpages.  If you want them (and they're readable with this Emacs configuration by doing <kbd>M-x man</kbd>) then follow these steps:
+The Windows installer doesn't include manpages. If you want them (and they're readable with this Emacs configuration by doing <kbd>M-x man</kbd>) then follow these steps:
 
 - Clone the https://github.com/gitster/git-manpages repo somewhere
 - (Optional) Run `git log` and find the commit that most closely matches your version of git; then switch to it with `git checkout`
-- Move that "git-manpages" folder to "C:\Program Files\Git\", and rename it to "man", so the full path looks like "C:\Program Files\Git\man".  That folder should contain directories like "man7" if you did it right.
+- Move that "git-manpages" folder to "C:\Program Files\Git\", and rename it to "man", so the full path looks like "C:\Program Files\Git\man". That folder should contain directories like "man7" if you did it right.
 
 ## (macOS only) Install docker manpages
 
