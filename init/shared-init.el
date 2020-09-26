@@ -55,9 +55,6 @@
 ;; Add shared elisp directory (but prefer system libs)
 (add-to-list 'load-path (concat my-emacs-path "elisp") t)
 
-;; Activate packages
-(package-initialize)
-
 ;; Allow maximizing frame
 (require 'maxframe)
 (when my-frame-pad-width
