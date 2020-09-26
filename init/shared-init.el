@@ -5,7 +5,7 @@
 ;; The contents of this file may be used, distributed, and modified
 ;; without restriction.
 
-(require 'cl)
+(require 'cl-seq)
 
 ;;; Options that change behavior of this file
 
@@ -48,7 +48,7 @@
 	   "C:/Program Files/Git/bin"
 	   "C:/Program Files/PuTTY"))
         (t '("/opt/maven/bin"))))
-(setq my-system-paths (remove-if-not #'file-exists-p my-system-paths))
+(setq my-system-paths (cl-remove-if-not #'file-exists-p my-system-paths))
 
 ;;; Display
 

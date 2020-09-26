@@ -17,7 +17,7 @@ else
     BUILD=
 fi
 
-REQUIRED_EMACS_VERSION=26.3
+REQUIRED_EMACS_VERSION=27.1
 
 # Create bin directory
 rm -fr bin
