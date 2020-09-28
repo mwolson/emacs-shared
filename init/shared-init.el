@@ -350,6 +350,11 @@
 
 (my-defer-startup #'my-start-atomic-chrome)
 
+;; Long lines support
+(global-so-long-mode 1)
+(add-to-list 'so-long-target-modes 'fundamental-mode)
+(add-to-list 'so-long-target-modes 'web-mode)
+
 ;; Lisp REPL using SLIME
 (require 'slime)
 (slime-setup '(slime-repl))
