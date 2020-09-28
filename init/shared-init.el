@@ -270,8 +270,7 @@
 
 (defadvice shell-command (around shell-command-unique-buffer activate)
   (if (or current-prefix-arg
-          (bufferp output-buffer)
-          (stringp output-buffer))
+          output-buffer)
       ;; if this is used programmatically, allow it to be synchronous
       ad-do-it
 
