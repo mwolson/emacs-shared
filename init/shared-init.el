@@ -505,68 +505,6 @@ interactively.
 
 (add-hook 'web-mode-hook #'my-web-mode-init-hook t)
 
-;; Monkey-patch issue with closing file before eslint check is done
-(eval-after-load "flymake-eslint"
-  '(progn
-     (defun flymake-eslint--create-process (source-buffer callback)
-       "Internal function.
-Create linter process for SOURCE-BUFFER which invokes CALLBACK once linter is finished.  CALLBACK is passed one argument, which is a buffer containing stdout from linter."
-       (when (process-live-p flymake-eslint--process)
-         (kill-process flymake-eslint--process))
-       (setq flymake-eslint--process
-             (make-process
-              :name "flymake-eslint"
-              :connection-type 'pipe
-              :noquery t
-              :buffer (generate-new-buffer " *flymake-eslint*")
-              :command (list flymake-eslint-executable-name "--no-color" "--no-ignore" "--stdin" "--stdin-filename" (buffer-file-name source-buffer) (or flymake-eslint-executable-args ""))
-              :sentinel `(lambda (proc &rest ignored)
-                           ;; do stuff upon child process termination
-                           (when (and (eq 'exit (process-status proc))
-                                      ;; make sure we're using the latest lint process
-                                      (or (not (buffer-live-p ,source-buffer))
-                                          (with-current-buffer ,source-buffer (eq proc flymake-eslint--process))))
-                             ;; read from eslint output then destroy temp buffer when done
-                             (let ((proc-buffer (process-buffer proc)))
-                               (funcall ,callback proc-buffer)
-                               (kill-buffer proc-buffer)))))))
-
-     (defun flymake-eslint--report (eslint-stdout-buffer source-buffer)
-       "Internal function.
-Create Flymake diag messages from contents of ESLINT-STDOUT-BUFFER, to be reported against SOURCE-BUFFER.  Returns a list of results"
-       (with-current-buffer eslint-stdout-buffer
-         ;; start at the top and check each line for an eslint message
-         (goto-char (point-min))
-         (if (looking-at-p "Error:")
-             (let ((diag (flymake-make-diagnostic source-buffer (point-min) (point-max) :error (thing-at-point 'line t))))
-               ;; ehhhhh point-min and point-max here are of the eslint output buffer
-               ;; containing the error message, not source-buffer
-               (list diag))
-           (let ((results '()))
-             (while (not (eobp))
-               (when (looking-at flymake-eslint--message-regex)
-                 (let* ((row (string-to-number (match-string 1)))
-                        (column (string-to-number (match-string 2)))
-                        (type (match-string 3))
-                        (msg (match-string 4))
-                        (lint-rule (match-string 5))
-                        (msg-text (if flymake-eslint-show-rule-name
-                                      (format "%s: %s [%s]" type msg lint-rule)
-                                    (format "%s: %s" type msg)))
-                        (type-symbol (if (string-equal "warning" type) :warning :error))
-                        (src-pos (flymake-diag-region source-buffer row column)))
-                   (when (cdr src-pos)
-                     ;; new Flymake diag message
-                     (push (flymake-make-diagnostic source-buffer
-                                                    (car src-pos)
-                                                    ;; buffer might have changed size
-                                                    (min (buffer-size source-buffer) (cdr src-pos))
-                                                    type-symbol
-                                                    msg-text)
-                           results))))
-               (forward-line 1))
-             results))))))
-
 ;; JS2 Mode setup (disabled)
 
 (defun my-set-js2-mocha-externs ()
@@ -946,19 +884,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (interactive)
   (call-interactively #'kill-ring-save)
   (deactivate-mark))
-
-;; Monkey-patch this to prefer having `P u` go to an upstream with same name as the current branch
-(defun magit-remote-branch-at-point ()
-  (magit-section-case
-    (branch (concat (car (save-match-data (magit-list-remotes)))
-                    "/" (magit-section-value it)))
-    (commit (magit-name-remote-branch (magit-section-value it)))
-    (status (concat (car (save-match-data (magit-list-remotes)))
-                    "/" (magit-get-current-branch)))))
-
-(defadvice magit-read-starting-point (around magit-read-starting-point-remote-off activate)
-  (let ((magit-prefer-remote-upstream nil))
-    ad-do-it))
 
 (eval-after-load "magit"
   '(progn
