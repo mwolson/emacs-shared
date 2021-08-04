@@ -46,7 +46,11 @@ if [[ $OS == Windows ]]; then
     fi
 fi
 
-REQUIRED_EMACS_VERSION=27.1
+if [[ $OS == OSX ]]; then
+    REQUIRED_EMACS_VERSION=27.2
+else
+    REQUIRED_EMACS_VERSION=27.1
+fi
 
 # Set this environment variable to rebuild docs; otherwise use pre-built ones
 : ${BUILD_DOCS:=}

@@ -53,7 +53,7 @@ You'll need to [install cmake](https://cmake.org/) in order to support fast exec
 
 ## Install Emacs
 
-The recommended version is Emacs 27.1. The recommended installers for each OS are:
+The recommended version is Emacs 27.1 (27.2 on Mac). The recommended installers for each OS are:
 
 *Windows*
 
@@ -63,7 +63,7 @@ The recommended version is Emacs 27.1. The recommended installers for each OS ar
 
 *macOS*
 
- - Download the non-Spacemacs build from [the Mitsuharu Yamamoto Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-27.1-mac-8.0.1).
+ - Download the non-Spacemacs build from [the Mitsuharu Yamamoto Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-27.2-mac-8.2).
  - Open the zip file and drag the Emacs icon over to the Applications folder.
 
 *Ubuntu*

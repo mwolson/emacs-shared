@@ -106,6 +106,11 @@
         (when (or (not my-frame-maximize-p) my-frame-maximize-if-pixel-width-lte)
           (add-to-list 'default-frame-alist (cons 'height my-frame-height))
           (add-to-list 'default-frame-alist (cons 'width my-frame-width)))
+        (when (eq window-system 'mac)
+          ;; redisplay slowness https://github.com/hlissner/doom-emacs/issues/2217
+          (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
+          (ignore-errors
+            (mac-auto-operator-composition-mode)))
         ;; Make sure DEL key does what I want
         (normal-erase-is-backspace-mode 1)
         ;; Show the menu if we are using X
@@ -546,8 +551,9 @@ interactively.
      (add-to-list 'compilation-error-regexp-alist 'nodejs)))
 
 ;; Highlight current line
-(require 'hl-line)
-(global-hl-line-mode 1)
+(require 'hl-line-plus)
+(hl-line-when-idle-interval 0.3)
+(toggle-hl-line-when-idle 1)
 
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
 (require 'dumb-jump)
@@ -677,8 +683,8 @@ interactively.
   (toggle-read-only))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer t)
 
-;; Load smex, which makes M-x work better on Ivy
-(add-hook 'after-init-hook 'smex-initialize t)
+;; Load amx, which makes M-x work better on Ivy
+(add-hook 'after-init-hook 'amx-mode t)
 
 ;; Ivy, Counsel, and Swiper
 (require 'counsel)
@@ -694,8 +700,8 @@ interactively.
 (define-key ivy-minibuffer-map (kbd "C-r") 'ivy-previous-line-or-history)
 (define-key ivy-occur-grep-mode-map "r" 'ivy-wgrep-change-to-wgrep-mode)
 
-(global-set-key (kbd "C-s") 'counsel-grep-or-swiper)
-(global-set-key (kbd "C-r") 'counsel-grep-or-swiper)
+(global-set-key (kbd "C-s") 'swiper-isearch)
+(global-set-key (kbd "C-r") 'swiper-isearch)
 (global-set-key (kbd "C-c C-r") 'ivy-resume)
 
 ;; Enable projectile, a way to quickly find files in projects
