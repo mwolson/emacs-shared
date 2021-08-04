@@ -43,6 +43,10 @@ pacman -S --needed mingw64/mingw-w64-x86_64-make mingw64/mingw-w64-x86_64-gnutls
 
 You'll need to [install cmake](https://cmake.org/) in order to support fast execution of Magit. On Mac, install the `cmake` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
 
+## Install fd
+
+[fd](https://github.com/sharkdp/fd/releases) is helpful for reducing time for projectile project management in some cases. On Mac, install the `fd` package from homebrew. For Windows, download the `x86_64-msvc` package from the latest release on the GitHub page and copy the binaries to the `c:\msys64\usr\bin` folder.
+
 ## Install ripgrep
 
 [ripgrep](https://github.com/BurntSushi/ripgrep) is the fastest project search command available. On Mac, install the `ripgrep` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
