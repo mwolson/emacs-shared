@@ -11,7 +11,7 @@
 (require 'package-utils)
 (package-utils-upgrade-all-no-fetch)
 
-(cond ((eq window-system 'w32)
+(cond ((eq system-type 'windows-nt)
        ;; disable these for now, since they sometimes crash Emacs on startup
        (delete-file (concat default-directory "elisp/magit-libgit.el"))
        (delete-file (concat default-directory "elisp/magit-libgit.elc")))
