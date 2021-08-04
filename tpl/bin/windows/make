@@ -1,5 +1,0 @@
-#!/bin/sh
-
-# This is used to launch make on Windows
-
-exec /c/msys64/mingw64/bin/mingw32-make.exe "$@"

@@ -36,7 +36,7 @@ You'll need a working version of `make.exe` in order to complete the bootstrap s
 pacman -Sy pacman
 pacman -Syu
 pacman -Su
-pacman -S --needed mingw64/mingw-w64-x86_64-make mingw64/mingw-w64-x86_64-gnutls mingw64/mingw-w64-x86_64-aspell-en msys/man-db mingw-w64-x86_64-cmake gcc libssh2-devel mingw-w64-x86_64-ninja mingw-w64-x86_64-ripgrep
+pacman -S --needed mingw64/mingw-w64-x86_64-make mingw64/mingw-w64-x86_64-gnutls mingw64/mingw-w64-x86_64-aspell-en msys/man-db mingw-w64-x86_64-cmake gcc git libssh2-devel mingw-w64-x86_64-ninja mingw-w64-x86_64-ripgrep
 ```
 
 ## Install cmake
