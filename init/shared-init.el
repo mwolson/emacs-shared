@@ -56,6 +56,9 @@
 (add-to-list 'load-path (concat my-emacs-path "elisp") t)
 (add-to-list 'load-path (concat my-emacs-path "elisp/libegit2") t)
 
+(when (eq window-system 'w32)
+  (setq libgit--module-file (concat my-emacs-path "elisp/libegit2/build/libegit2.dll")))
+
 ;; Allow maximizing frame
 (require 'maxframe)
 (when my-frame-pad-width

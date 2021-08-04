@@ -1,9 +1,32 @@
 #!/bin/bash
 
-if uname | grep 'MINGW' || uname | grep 'MSYS_NT' > /dev/null; then
+function qpopd() {
+    popd > /dev/null
+}
+
+function qpushd() {
+    pushd "$1" > /dev/null
+}
+
+function qwhich() {
+    which "$1" > /dev/null 2>&1
+}
+
+function uname_grep() {
+    uname | grep "$1" > /dev/null 2>&1
+}
+
+function compile_check() {
+    if ! qwhich "$1"; then
+        echo >&2 "Warning: Could not find \"$1\" in your path, skipping compilation"
+        BUILD=
+    fi
+}
+
+if uname_grep 'MINGW' || uname_grep 'MSYS_NT'; then
     OS=Windows
     BIN_TPL=tpl/bin/windows
-elif uname | grep 'Darwin' > /dev/null; then
+elif uname_grep 'Darwin'; then
     OS=OSX
     BIN_TPL=tpl/bin/mac
 else
@@ -11,45 +34,61 @@ else
     BIN_TPL=tpl/bin/linux
 fi
 
-if which make > /dev/null && which cmake > /dev/null; then
-    BUILD=y
-else
-    BUILD=
+BUILD=y
+compile_check make
+compile_check cmake
+if [[ $OS == Windows ]]; then
+    compile_check ninja
 fi
 
 REQUIRED_EMACS_VERSION=27.1
+
+# Set this environment variable to rebuild docs; otherwise use pre-built ones
+: ${BUILD_DOCS:=}
+
+if [[ $OS == Windows ]]; then
+    if ! qwhich emacs-${REQUIRED_EMACS_VERSION}; then
+        PATH="/c/Program Files/Emacs/x86_64/bin":"$PATH"
+
+        if ! qwhich emacs-${REQUIRED_EMACS_VERSION}; then
+            echo >&2 "Error: Could not find \"emacs-${REQUIRED_EMACS_VERSION}\" in your path"
+            exit 1
+        fi
+    fi
+elif ! qwhich emacs; then
+    echo >&2 "Error: Could not find \"emacs\" in your path"
+    exit 1
+fi
 
 # Create bin directory
 rm -fr bin
 mkdir bin
 cp tpl/bin/shared/* bin
 cp "$BIN_TPL"/* bin
-PATH="$PWD"/bin:"$PATH"
-
-# Set this environment variable to rebuild docs; otherwise use pre-built ones
-: ${BUILD_DOCS:=}
 
 DESTDIR=$PWD
+PATH="$PWD"/bin:"$PATH"
 
 # Make sure we're using the recommended version of Emacs
 EMACS_VERSION=$(emacs --batch -q --no-site-file --eval "(message \"%s\" emacs-version)" 2>&1)
-
-if ! which emacs > /dev/null; then
-    echo >&2 "Error: Could not find \"emacs\" in your path"
-    exit 1
-fi
 
 if [[ z$EMACS_VERSION != z${REQUIRED_EMACS_VERSION}* ]]; then
     echo >&2 "Error: Your version of Emacs is \"$EMACS_VERSION\", but should be \"${REQUIRED_EMACS_VERSION}.x\""
     exit 1
 fi
 
-if ! which cmake > /dev/null; then
+if ! qwhich cmake; then
     echo >&2 "Warning: Could not find \"cmake\" in your path, skipping compilation"
 fi
 
-if ! which make > /dev/null; then
+if ! qwhich make; then
     echo >&2 "Warning: Could not find \"make\" in your path, skipping compilation"
+fi
+
+if [[ $OS == Windows ]]; then
+    if ! qwhich ninja; then
+        echo >&2 "Warning: Could not find \"ninja\" in your path, skipping compilation"
+    fi
 fi
 
 set -e
@@ -72,14 +111,22 @@ function install_info() {
 }
 
 if test -n "$BUILD"; then
-    pushd elisp/libegit2
+    qpushd elisp/libegit2
     git submodule init
     git submodule update
     mkdir -p build
     cd build
-    cmake ..
-    make
-    popd
+
+    if [[ $OS == Windows ]]; then
+        cmake -G Ninja ..
+        ninja
+        echo
+    else
+        cmake ..
+        make
+    fi
+
+    qpopd
 fi
 
 cp elisp/magit/lisp/magit-libgit.el elisp/

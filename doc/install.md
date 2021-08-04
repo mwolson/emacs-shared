@@ -31,23 +31,21 @@ You'll need a working version of `make.exe` in order to complete the bootstrap s
 - Run the installer, choosing the default install location (or if you change it, replacing paths as appropriate below)
 - Close the command prompt that came with the installer
 - Use the Start Menu to search for and open the task `Edit the System Environment Variables`. It may pop behind any open windows - if so, bring it to the front. Click `Environment Variables`. In the `System variables` section, double-click on `Path`. Add entries for `C:\msys64\usr\bin` and `C:\msys64\mingw64\bin` (in that order) and move them to the very bottom of the list. Click `OK` until all of those windows close.
-- Open a Git Bash window
-- Run these commands:
+- Open an "MSYS2 MinGW 64-bit" window and run these commands:
 ```sh
-pacman -Sy --noconfirm pacman
-pacman -Syu --noconfirm
-pacman -Su --noconfirm
-pacman -S --noconfirm mingw64/mingw-w64-x86_64-make mingw64/mingw-w64-x86_64-gnutls mingw64/mingw-w64-x86_64-aspell-en msys/man-db
-ln -sf /c/msys64/mingw64/bin/mingw32-make.exe /c/msys64/mingw64/bin/make.exe
+pacman -Sy pacman
+pacman -Syu
+pacman -Su
+pacman -S --needed mingw64/mingw-w64-x86_64-make mingw64/mingw-w64-x86_64-gnutls mingw64/mingw-w64-x86_64-aspell-en msys/man-db mingw-w64-x86_64-cmake gcc libssh2-devel mingw-w64-x86_64-ninja mingw-w64-x86_64-ripgrep
 ```
 
 ## Install cmake
 
-You'll need to [install cmake](https://cmake.org/) in order to support fast execution of Magit. It has a homebrew package.
+You'll need to [install cmake](https://cmake.org/) in order to support fast execution of Magit. On Mac, install the `cmake` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
 
 ## Install ripgrep
 
-[ripgrep](https://github.com/BurntSushi/ripgrep) is the fastest project search command available. If you're using Windows, drop the `rg.exe` executable into `C:\msys64\usr\bin`.
+[ripgrep](https://github.com/BurntSushi/ripgrep) is the fastest project search command available. On Mac, install the `ripgrep` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
 
 ## Install Emacs
 
@@ -128,13 +126,14 @@ To verify your work, run `emacs --version` and make sure it shows the version nu
 
 *Windows*
 
-(Note: for now you'll need to do this ahead of the bootstrap.sh step, otherwise it will fail)
+(Note: you'll need to do this ahead of the bootstrap.sh step, otherwise it will fail)
 
 - Adjust some environment variables so that Emacs can be started successfully
   - Use the Start Menu to search for and open the task `Edit the System Environment Variables`. It may pop behind any open windows - if so, bring it to the front. Click `Environment Variables`.
   - Note: If any of the below variables aren't present, click on "Add" to add them
   - In User Variables, Inspect `HOME` and make sure it points to something like `C:\Users\You`.
-  - In one System Variables, double-click `Path` and make sure an entry for `C:\Program Files\Emacs\x86_64\bin` is present.
+  - In System Variables, double-click `Path` and make sure an entry for `%USERPROFILE%\emacs-shared\bin` is present at the very top.
+  - In System Variables, double-click `Path` and make sure an entry for `C:\Program Files\Emacs\x86_64\bin` is present at the end.
   - If you have chosen to use PuTTY, then make sure that the `GIT_SSH` variable is set to `C:\Program Files\PuTTY\plink.exe` (or wherever PuTTY is installed).
   - Click OK
   - Relaunch any open Git Bash windows
