@@ -54,6 +54,7 @@
 
 ;; Add shared elisp directory (but prefer system libs)
 (add-to-list 'load-path (concat my-emacs-path "elisp") t)
+(add-to-list 'load-path (concat my-emacs-path "elisp/libegit2") t)
 
 ;; Allow maximizing frame
 (require 'maxframe)

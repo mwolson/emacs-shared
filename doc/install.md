@@ -41,6 +41,10 @@ pacman -S --noconfirm mingw64/mingw-w64-x86_64-make mingw64/mingw-w64-x86_64-gnu
 ln -sf /c/msys64/mingw64/bin/mingw32-make.exe /c/msys64/mingw64/bin/make.exe
 ```
 
+## Install cmake
+
+You'll need to [install cmake](https://cmake.org/) in order to support fast execution of Magit. It has a homebrew package.
+
 ## Install ripgrep
 
 [ripgrep](https://github.com/BurntSushi/ripgrep) is the fastest project search command available. If you're using Windows, drop the `rg.exe` executable into `C:\msys64\usr\bin`.

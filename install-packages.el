@@ -1,3 +1,5 @@
+(add-to-list 'load-path (concat default-directory "elisp/libegit2") t)
+
 (load-file (concat default-directory "init/settings.el"))
 
 (require 'package)
@@ -8,6 +10,10 @@
 
 (require 'package-utils)
 (package-utils-upgrade-all-no-fetch)
+
+(if (file-exists-p (concat default-directory "elisp/libegit2/build/libegit2.so"))
+    (byte-compile-file (concat default-directory "elisp/magit-libgit.el"))
+  (delete-file (concat default-directory "elisp/magit-libgit.elc")))
 
 (defun my-package-autoremove ()
   (interactive)

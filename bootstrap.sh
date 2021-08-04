@@ -11,7 +11,7 @@ else
     BIN_TPL=tpl/bin/linux
 fi
 
-if which make > /dev/null; then
+if which make > /dev/null && which cmake > /dev/null; then
     BUILD=y
 else
     BUILD=
@@ -44,6 +44,14 @@ if [[ z$EMACS_VERSION != z${REQUIRED_EMACS_VERSION}* ]]; then
     exit 1
 fi
 
+if ! which cmake > /dev/null; then
+    echo >&2 "Warning: Could not find \"cmake\" in your path, skipping compilation"
+fi
+
+if ! which make > /dev/null; then
+    echo >&2 "Warning: Could not find \"make\" in your path, skipping compilation"
+fi
+
 set -e
 
 echo "OS         : $OS"
@@ -62,6 +70,19 @@ function install_info() {
     install -m 644 ${name} "$DESTDIR"/share/info
     install-info --info-dir="$DESTDIR"/share/info "$DESTDIR"/share/info/${name}
 }
+
+if test -n "$BUILD"; then
+    pushd elisp/libegit2
+    git submodule init
+    git submodule update
+    mkdir -p build
+    cd build
+    cmake ..
+    make
+    popd
+fi
+
+cp elisp/magit/lisp/magit-libgit.el elisp/
 
 emacs --batch -q -l install-packages.el 2>&1 | grep -v '^Loading '
 
