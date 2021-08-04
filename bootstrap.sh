@@ -39,6 +39,11 @@ compile_check make
 compile_check cmake
 if [[ $OS == Windows ]]; then
     compile_check ninja
+
+    if ! uname_grep 'MINGW64_NT'; then
+        echo >&2 "Warning: Cannot build libgit unless you are in an MSYS2 MinGW 64-bit terminal, skipping compilation"
+        BUILD=
+    fi
 fi
 
 REQUIRED_EMACS_VERSION=27.1
@@ -127,9 +132,13 @@ if test -n "$BUILD"; then
     fi
 
     qpopd
-fi
 
-cp elisp/magit/lisp/magit-libgit.el elisp/
+    # install manually, since they reference the wrong "libgit" package
+    cp elisp/magit/lisp/magit-libgit.el elisp/
+else
+    rm -fr elisp/libegit2/build
+    rm -f elisp/magit-libgit.el*
+fi
 
 emacs --batch -q -l install-packages.el 2>&1 | grep -v '^Loading '
 

@@ -54,10 +54,14 @@
 
 ;; Add shared elisp directory (but prefer system libs)
 (add-to-list 'load-path (concat my-emacs-path "elisp") t)
-(add-to-list 'load-path (concat my-emacs-path "elisp/libegit2") t)
 
-(when (eq window-system 'w32)
-  (setq libgit--module-file (concat my-emacs-path "elisp/libegit2/build/libegit2.dll")))
+;; Support for libgit
+(if (eq system-type 'windows-nt)
+    (setq libgit--module-file (concat my-emacs-path "elisp/libegit2/build/libegit2.dll"))
+  (setq libgit--module-file (concat my-emacs-path "elisp/libegit2/build/libegit2.so")))
+
+(when (file-exists-p libgit--module-file)
+  (add-to-list 'load-path (concat my-emacs-path "elisp/libegit2") t))
 
 ;; Allow maximizing frame
 (require 'maxframe)

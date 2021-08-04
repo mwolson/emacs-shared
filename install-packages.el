@@ -11,14 +11,10 @@
 (require 'package-utils)
 (package-utils-upgrade-all-no-fetch)
 
-(cond ((eq system-type 'windows-nt)
-       ;; disable these for now, since they sometimes crash Emacs on startup
-       (delete-file (concat default-directory "elisp/magit-libgit.el"))
-       (delete-file (concat default-directory "elisp/magit-libgit.elc")))
-      ((or (file-exists-p (concat default-directory "elisp/libegit2/build/libegit2.so"))
-           (file-exists-p (concat default-directory "elisp/libegit2/build/libegit2.dll")))
-       (byte-compile-file (concat default-directory "elisp/magit-libgit.el")))
-      (t (delete-file (concat default-directory "elisp/magit-libgit.elc"))))
+(if (or (file-exists-p (concat default-directory "elisp/libegit2/build/libegit2.so"))
+        (file-exists-p (concat default-directory "elisp/libegit2/build/libegit2.dll")))
+    (byte-compile-file (concat default-directory "elisp/magit-libgit.el"))
+  (delete-file (concat default-directory "elisp/magit-libgit.elc")))
 
 (defun my-package-autoremove ()
   (interactive)

@@ -93,9 +93,11 @@ git clone https://github.com/mwolson/emacs-shared.git
 
 ## Run bootstrap.sh
 
-On Windows, you'll want to open Git Bash and run the command from there.
+On Windows:
+* You will need to do the "Set up PATH" step first, otherwise it will fail.
+* You will want to open an "MSYS2 MinGW 64-bit" window (not Git Bash) and run the commands from there.
 
-(Note: On Windows, you'll need to do the "Set up PATH" step first, otherwise it will fail)
+Commands to run regardless of OS:
 
 ```sh
 cd ~/emacs-shared
