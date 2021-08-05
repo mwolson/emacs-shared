@@ -97,7 +97,6 @@
          "[-]"
        (format "[%s]"
                (projectile-project-name)))))
- '(projectile-switch-project-action 'magit-status)
  '(recentf-mode nil)
  '(require-final-newline nil)
  '(save-place t nil (saveplace))
