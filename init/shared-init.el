@@ -265,6 +265,7 @@
 (require 'dired)
 (require 'dired-x)
 (require 'wdired)
+(require 'ffap)
 
 ;; Load tramp
 (require 'tramp)
