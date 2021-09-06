@@ -39,6 +39,12 @@ pacman -Su
 pacman -S --needed mingw64/mingw-w64-x86_64-make mingw64/mingw-w64-x86_64-gnutls mingw64/mingw-w64-x86_64-aspell-en msys/man-db mingw-w64-x86_64-cmake gcc git libssh2-devel mingw-w64-x86_64-ninja mingw-w64-x86_64-ripgrep
 ```
 
+## (Arch Linux only) Install utilities
+
+```sh
+sudo pacman -S aspell-en gcc make openssh which
+```
+
 ## Install cmake
 
 You'll need to [install cmake](https://cmake.org/) in order to support fast execution of Magit. On Mac, install the `cmake` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
