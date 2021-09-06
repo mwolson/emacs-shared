@@ -35,6 +35,7 @@ else
 fi
 
 BUILD=y
+compile_check which
 compile_check make
 compile_check cmake
 if [[ $OS == Windows ]]; then
@@ -46,11 +47,7 @@ if [[ $OS == Windows ]]; then
     fi
 fi
 
-if [[ $OS == OSX ]]; then
-    REQUIRED_EMACS_VERSION=27.2
-else
-    REQUIRED_EMACS_VERSION=27.1
-fi
+REQUIRED_EMACS_VERSION=27.2
 
 # Set this environment variable to rebuild docs; otherwise use pre-built ones
 : ${BUILD_DOCS:=}

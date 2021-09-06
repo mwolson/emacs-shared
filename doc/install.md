@@ -53,11 +53,11 @@ You'll need to [install cmake](https://cmake.org/) in order to support fast exec
 
 ## Install Emacs
 
-The recommended version is Emacs 27.1 (27.2 on Mac). The recommended installers for each OS are:
+The recommended version is Emacs 27.2. The recommended installers for each OS are:
 
 *Windows*
 
-- [Download and install emacs](https://ftp.gnu.org/gnu/emacs/windows/emacs-27/emacs-27.1-x86_64-installer.exe).
+- [Download and install emacs](https://ftp.gnu.org/gnu/emacs/windows/emacs-27/emacs-27.2-x86_64-installer.exe).
 - When done, you should verify that a file named `C:\Program Files\Emacs\x86_64\bin\runemacs.exe` exists.
 - If you change the location, you may want to update the `my-system-paths` option later.
 
