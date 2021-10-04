@@ -126,5 +126,6 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(line-number-current-line ((t (:inherit highlight))))
+ '(tab-line ((t (:inherit variable-pitch :background "dim gray" :foreground "black" :height 0.9))))
  '(web-mode-html-tag-face ((t (:inherit font-lock-constant-face))))
  '(woman-italic ((t (:underline t :slant italic)))))

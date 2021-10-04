@@ -125,6 +125,7 @@
   (my-reset-theme)
   ;; Maximize frame or re-apply frame settings
   (when window-system
+    (global-tab-line-mode 1)
     (my-reset-frame-size)))
 
 ;; Initialize display settings on startup
