@@ -61,6 +61,11 @@ if [[ $OS == Windows ]]; then
             exit 1
         fi
     fi
+elif [[ $OS == OSX ]]; then
+    if ! qwhich /Applications/Emacs.app/Contents/MacOS/Emacs; then
+        echo >&2 "Error: Emacs does not seem to be installed in Applications"
+        exit 1
+    fi
 elif ! qwhich emacs; then
     echo >&2 "Error: Could not find \"emacs\" in your path"
     exit 1
