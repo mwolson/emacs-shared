@@ -82,7 +82,7 @@ Install the Inconsolata font (this can be configured with the `my-default-font` 
 
 *Windows and macOS*
 
-Download the [OpenType file](http://www.levien.com/type/myfonts/Inconsolata.otf) from the [Inconsolata website](http://www.levien.com/type/myfonts/inconsolata.html) and double-click on it.
+Download the family from [Google Fonts](https://fonts.google.com/specimen/Inconsolata), open the zip, and double-click on the "Inconsolata-VariableFont_wdth,wght.ttf" file to install it.
 
 *Ubuntu*
 
