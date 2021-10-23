@@ -49,6 +49,10 @@ fi
 
 REQUIRED_EMACS_VERSION=27.2
 
+if [[ $OS == Linux ]] && grep "^Ubuntu" < /etc/issue > /dev/null 2>&1; then
+    REQUIRED_EMACS_VERSION=27.1
+fi
+
 # Set this environment variable to rebuild docs; otherwise use pre-built ones
 : ${BUILD_DOCS:=}
 

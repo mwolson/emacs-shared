@@ -59,7 +59,7 @@ You'll need to [install cmake](https://cmake.org/) in order to support fast exec
 
 ## Install Emacs
 
-The recommended version is Emacs 27.2. The recommended installers for each OS are:
+The recommended version is Emacs 27.2 (27.1 on Ubuntu). The recommended installers for each OS are:
 
 *Windows*
 
