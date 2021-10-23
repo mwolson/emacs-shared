@@ -362,7 +362,8 @@
   (require 'atomic-chrome)
   (atomic-chrome-start-server))
 
-(my-defer-startup #'my-start-atomic-chrome)
+(when my-server-start-p
+  (my-defer-startup #'my-start-atomic-chrome))
 
 ;; Long lines support
 (global-so-long-mode 1)
