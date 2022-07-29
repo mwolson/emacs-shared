@@ -833,8 +833,10 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 ;; Markdown support
 
-(add-to-list 'auto-mode-alist '("\\.md\\'" . poly-markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.mdx\\'" . poly-markdown-mode))
+;(add-to-list 'auto-mode-alist '("\\.md\\'" . poly-markdown-mode))
+;(add-to-list 'auto-mode-alist '("\\.mdx\\'" . poly-markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . gfm-mode))
+(add-to-list 'auto-mode-alist '("\\.mdx\\'" . gfm-mode))
 
 (defun my-define-web-polymode (file-ext)
   (let* ((sym-name (symbol-name file-ext))
