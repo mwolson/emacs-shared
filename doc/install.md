@@ -72,6 +72,10 @@ The recommended version is Emacs 28.2 (27.1 on Ubuntu). The recommended installe
  - Download the non-Spacemacs build from [the Mitsuharu Yamamoto Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-28.2-mac-9.1).
  - Open the zip file and drag the Emacs icon over to the Applications folder.
 
+*Arch Linux*
+
+Install the `emacs` package.
+
 *Ubuntu*
 
 Install the `emacs27` package if it's available. If it's not available, [use a PPA](http://ubuntuhandbook.org/index.php/2020/09/install-emacs-27-1-ppa-ubuntu-20-04/).
@@ -83,6 +87,12 @@ Install the Inconsolata font (this can be configured with the `my-default-font` 
 *Windows and macOS*
 
 Download the family from [Google Fonts](https://fonts.google.com/specimen/Inconsolata), open the zip, and double-click on the "Inconsolata-VariableFont_wdth,wght.ttf" file to install it.
+
+*Arch Linux*
+
+```sh
+pacman -S ttf-inconsolata
+```
 
 *Ubuntu*
 
