@@ -75,7 +75,10 @@ If upgrading:
   - In System Variables, double-click `Path` and make sure an entry for `%USERPROFILE%\emacs-shared\bin` is present at the very top.
   - In System Variables, double-click `Path` and make sure an entry for `C:\Program Files\Emacs\emacs-28.2\bin` is present at the end. If you see an entry for a different version of Emacs, change it to have this content instead and remove any duplicates of it.
 - Change any desktop icons to point to `C:\Program Files\Emacs\emacs-28.2\bin\runemacs.exe`.
-- Unpin Emacs, run it, and then:
+- Before running `bootstrap.sh`, you may want to check `.bashrc` and update any `PATH` entries to point to `/c/Program Files/Emacs/emacs-28.2/bin` and restart Terminal.
+- Now run `bootstrap.sh` in a MINGW64/MYS2 Terminal window.
+- Unpin Emacs and then:
+  - Run Emacs from Start menu or a desktop shortcut
   - Pin it
   - Then right-click its Taskbar button, right-click "Emacs", click "Properties"
   - Change "C:\Program Files\Emacs\emacs-28.2\bin\emacs.exe" to "C:\Program Files\Emacs\emacs-28.2\bin\runemacs.exe"
@@ -124,6 +127,12 @@ git clone https://github.com/mwolson/emacs-shared.git
 
 On Windows:
 * You will need to do the "Set up PATH" step first, otherwise it will fail.
+* For MSYS2 support, you may need to add something like this to `.bashrc` and restart any open Terminal windows:
+  ```sh
+  if uname | grep "MINGW64_NT" > /dev/null 2>&1; then
+    export PATH="~/emacs-shared/bin":"/c/Program Files/Emacs/emacs-28.2/bin":"$PATH"
+  fi
+  ```
 * You will want to open an "MSYS2 MinGW 64-bit" window (not Git Bash) and run the commands from there.
 
 Commands to run regardless of OS:
@@ -245,7 +254,7 @@ The Windows installer doesn't include manpages. If you want them (and they're re
 
 This isn't really related to Emacs, but if you're using Docker on macOS, it might not install the manpages. Here's how to do that:
 
-``` sh
+```sh
 git clone https://github.com/docker/docker.git
 cd docker
 make manpages
@@ -257,7 +266,7 @@ cp -R man* /usr/local/share/man/
 
 After installing new packages, the <kbd>M-x man</kbd> command might not list the new manpages for those packages, because the `whatis` DB used by `man` gets updated weekly via a cron job. Further, any manpages for programs that are part of the XCode Commandline Tools will never get installed because the cron job inexplicably excludes them. To make force them to be generated, run the following:
 
-``` sh
+```sh
 sudo /etc/periodic/weekly/320.whatis
 sudo /usr/libexec/makewhatis /Applications/Xcode.app/Contents/Developer/usr/share/man
 ```
