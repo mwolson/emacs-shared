@@ -40,7 +40,7 @@
            "/Applications/Xcode.app/Contents/Developer/usr/bin"
            "/usr/local/bin"))
         ((eq system-type 'windows-nt)
-         '("C:/Program Files/Emacs/x86_64/bin"
+         `(,(concat "C:/Program Files/Emacs/emacs-" emacs-version "/bin")
 	   "C:/msys64/usr/bin"
 	   "c:/msys64/mingw64/bin"
            "C:/Program Files/maven/bin"
@@ -170,7 +170,7 @@
   (setenv "MANPATH" (concat "C:\\msys64\\usr\\share\\man;"
                             "C:\\msys64\\mingw64\\share\\man;"
                             "C:\\Program Files\\Git\\man;"
-                            "C:\\Program Files\\Emacs\\x86_64\\share\\man"))
+                            "C:\\Program Files\\Emacs\\emacs-" emacs-version "\\share\\man"))
   (require 'woman)
   (defalias 'man 'woman))
 

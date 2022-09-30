@@ -58,7 +58,7 @@ fi
 
 if [[ $OS == Windows ]]; then
     if ! qwhich emacs-${REQUIRED_EMACS_VERSION}; then
-        PATH="/c/Program Files/Emacs/x86_64/bin":"$PATH"
+        PATH="/c/Program Files/Emacs/emacs-${REQUIRED_EMACS_VERSION}/bin":"$PATH"
 
         if ! qwhich emacs-${REQUIRED_EMACS_VERSION}; then
             echo >&2 "Error: Could not find \"emacs-${REQUIRED_EMACS_VERSION}\" in your path"
@@ -129,6 +129,7 @@ if test -n "$BUILD"; then
     qpushd elisp/libegit2
     git submodule init
     git submodule update
+    rm -fr build
     mkdir -p build
     cd build
 

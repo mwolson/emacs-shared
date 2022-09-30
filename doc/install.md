@@ -64,8 +64,21 @@ The recommended version is Emacs 28.2 (27.1 on Ubuntu). The recommended installe
 *Windows*
 
 - [Download and install emacs](https://ftp.gnu.org/gnu/emacs/windows/emacs-28/emacs-28.2-installer.exe).
-- When done, you should verify that a file named `C:\Program Files\Emacs\x86_64\bin\runemacs.exe` exists.
+- When done, you should verify that a file named `C:\Program Files\Emacs\emacs-28.2\bin\runemacs.exe` exists.
 - If you change the location, you may want to update the `my-system-paths` option later.
+
+If upgrading:
+
+- Adjust some environment variables so that Emacs can be started successfully
+  - Use the Start Menu to search for and open the task `Edit the System Environment Variables`. It may pop behind any open windows - if so, bring it to the front. Click `Environment Variables`.
+  - Note: If any of the below variables aren't present, click on "Add" to add them
+  - In System Variables, double-click `Path` and make sure an entry for `%USERPROFILE%\emacs-shared\bin` is present at the very top.
+  - In System Variables, double-click `Path` and make sure an entry for `C:\Program Files\Emacs\emacs-28.2\bin` is present at the end. If you see an entry for a different version of Emacs, change it to have this content instead and remove any duplicates of it.
+- Change any desktop icons to point to `C:\Program Files\Emacs\emacs-28.2\bin\runemacs.exe`.
+- Unpin Emacs, run it, and then:
+  - Pin it
+  - Then right-click its Taskbar button, right-click "Emacs", click "Properties"
+  - Change "C:\Program Files\Emacs\emacs-28.2\bin\emacs.exe" to "C:\Program Files\Emacs\emacs-28.2\bin\runemacs.exe"
 
 *macOS*
 
@@ -155,7 +168,7 @@ To verify your work, run `emacs --version` and make sure it shows the version nu
   - Note: If any of the below variables aren't present, click on "Add" to add them
   - In User Variables, Inspect `HOME` and make sure it points to something like `C:\Users\You`.
   - In System Variables, double-click `Path` and make sure an entry for `%USERPROFILE%\emacs-shared\bin` is present at the very top.
-  - In System Variables, double-click `Path` and make sure an entry for `C:\Program Files\Emacs\x86_64\bin` is present at the end.
+  - In System Variables, double-click `Path` and make sure an entry for `C:\Program Files\Emacs\emacs-28.2\bin` is present at the end.
   - If you have chosen to use PuTTY, then make sure that the `GIT_SSH` variable is set to `C:\Program Files\PuTTY\plink.exe` (or wherever PuTTY is installed).
   - Click OK
   - Relaunch any open Git Bash windows
@@ -184,14 +197,14 @@ emacs -q init.el  # or other editing command
 
 *Windows*
 
-Open `Start Menu -> Emacs`. This should point to the file `C:\Program Files\Emacs\x86_64\bin\runemacs.exe`.
+Open `Start Menu -> Emacs`. This should point to the file `C:\Program Files\Emacs\emacs-28.2\bin\runemacs.exe`.
 
 *Windows Taskbar*
 
 To pin Emacs to the Taskbar / Quick Launch bar and have it behave correctly:
 - First pin it
 - Then right-click its Taskbar button, right-click "Emacs", click "Properties"
-- Change "C:\Program Files\Emacs\x86_64\bin\emacs.exe" to "C:\Program Files\Emacs\x86_64\bin\runemacs.exe"
+- Change "C:\Program Files\Emacs\emacs-28.2\bin\emacs.exe" to "C:\Program Files\Emacs\emacs-28.2\bin\runemacs.exe"
 
 *macOS*
 
