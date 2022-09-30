@@ -59,17 +59,17 @@ You'll need to [install cmake](https://cmake.org/) in order to support fast exec
 
 ## Install Emacs
 
-The recommended version is Emacs 27.2 (27.1 on Ubuntu). The recommended installers for each OS are:
+The recommended version is Emacs 28.2 (27.1 on Ubuntu). The recommended installers for each OS are:
 
 *Windows*
 
-- [Download and install emacs](https://ftp.gnu.org/gnu/emacs/windows/emacs-27/emacs-27.2-x86_64-installer.exe).
+- [Download and install emacs](https://ftp.gnu.org/gnu/emacs/windows/emacs-28/emacs-28.2-installer.exe).
 - When done, you should verify that a file named `C:\Program Files\Emacs\x86_64\bin\runemacs.exe` exists.
 - If you change the location, you may want to update the `my-system-paths` option later.
 
 *macOS*
 
- - Download the non-Spacemacs build from [the Mitsuharu Yamamoto Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-27.2-mac-8.2).
+ - Download the non-Spacemacs build from [the Mitsuharu Yamamoto Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-28.2-mac-9.1).
  - Open the zip file and drag the Emacs icon over to the Applications folder.
 
 *Ubuntu*

@@ -1,2 +1,2 @@
 CLIENT=emacsclient
-DAEMON=emacs-27.2
+DAEMON=emacs-28.2

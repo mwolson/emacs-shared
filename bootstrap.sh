@@ -47,7 +47,7 @@ if [[ $OS == Windows ]]; then
     fi
 fi
 
-REQUIRED_EMACS_VERSION=27.2
+REQUIRED_EMACS_VERSION=28.2
 
 if [[ $OS == Linux ]] && grep "^Ubuntu" < /etc/issue > /dev/null 2>&1; then
     REQUIRED_EMACS_VERSION=27.1
