@@ -11,7 +11,7 @@
 
 (defvar my-default-font      (cond
                               ((eq system-type 'darwin) "Inconsolata-20")
-                              ((eq window-system 'w32) "Inconsolata-14")
+                              ((eq system-type 'windows-nt) "Inconsolata-14")
                               (t "Inconsolata-18")))
 (defvar my-theme             'sanityinc-tomorrow-eighties)
 (defvar my-use-themes-p      (boundp 'custom-theme-load-path))
@@ -147,7 +147,8 @@
   "Defer running a task until sometime after Emacs has started."
   (add-hook 'my-deferred-startup-hook func))
 (defun my-run-deferred-tasks ()
-  (run-hooks 'my-deferred-startup-hook))
+  (unless (eq system-type 'windows-nt)
+    (run-hooks 'my-deferred-startup-hook)))
 
 (run-with-idle-timer 0.2 nil #'my-run-deferred-tasks)
 
