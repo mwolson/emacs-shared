@@ -961,6 +961,19 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
      (define-key org-mode-map (kbd "<M-left>") #'left-word)
      (define-key org-mode-map (kbd "<M-right>") #'right-word)))
 
+;; Helm settings
+
+(eval-after-load "helm-files"
+  '(progn
+     (define-key helm-find-files-map (kbd "TAB") #'helm-ff-RET)))
+
+(global-set-key "\C-x\C-f" 'helm-find-files)
+
+(defun my-preload-helm ()
+  (require 'helm-files))
+
+(my-defer-startup #'my-preload-helm)
+
 ;;; Key customizations
 
 (global-set-key "\C-xg" 'goto-line)

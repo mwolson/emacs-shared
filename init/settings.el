@@ -89,7 +89,7 @@
      ("gnu" . "http://elpa.gnu.org/packages/")))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(amx terraform-mode atomic-chrome swift-mode csharp-mode dotenv-mode poly-markdown polymode js-comint flymake-eslint add-node-modules-path erlang editorconfig docker-tramp el-mock dumb-jump company-statistics company package-utils wgrep swiper diminish counsel ivy color-theme-sanityinc-tomorrow maxframe markdown-mode lua-mode dockerfile-mode browse-kill-ring ripgrep flx projectile yaml-mode slime cider magit hydra web-mode))
+   '(helm amx terraform-mode atomic-chrome swift-mode csharp-mode dotenv-mode poly-markdown polymode js-comint flymake-eslint add-node-modules-path erlang editorconfig docker-tramp el-mock dumb-jump company-statistics company package-utils wgrep swiper diminish counsel ivy color-theme-sanityinc-tomorrow maxframe markdown-mode lua-mode dockerfile-mode browse-kill-ring ripgrep flx projectile yaml-mode slime cider magit hydra web-mode))
  '(post-jump-header nil)
  '(projectile-mode-line
    '(:eval
