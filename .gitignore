@@ -1,2 +1,3 @@
 /bin
+/build/emacs
 /elisp/magit-libgit.el*

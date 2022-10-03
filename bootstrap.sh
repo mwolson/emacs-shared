@@ -31,7 +31,12 @@ elif uname_grep 'Darwin'; then
     BIN_TPL=tpl/bin/mac
 else
     OS=Linux
-    BIN_TPL=tpl/bin/linux
+    if grep "^Ubuntu" < /etc/issue > /dev/null 2>&1; then
+        OS_VARIANT=Ubuntu
+        BIN_TPL=tpl/bin/ubuntu
+    else
+        BIN_TPL=tpl/bin/linux
+    fi
 fi
 
 BUILD=y
@@ -49,10 +54,6 @@ fi
 
 REQUIRED_EMACS_VERSION=28.2
 
-if [[ $OS == Linux ]] && grep "^Ubuntu" < /etc/issue > /dev/null 2>&1; then
-    REQUIRED_EMACS_VERSION=27.1
-fi
-
 # Set this environment variable to rebuild docs; otherwise use pre-built ones
 : ${BUILD_DOCS:=}
 
@@ -66,8 +67,13 @@ if [[ $OS == Windows ]]; then
         fi
     fi
 elif [[ $OS == OSX ]]; then
-    if ! qwhich /Applications/Emacs.app/Contents/MacOS/Emacs; then
+    if ! test -e /Applications/Emacs.app/Contents/MacOS/Emacs; then
         echo >&2 "Error: Emacs does not seem to be installed in Applications"
+        exit 1
+    fi
+elif [[ $OS_VARIANT == Ubuntu ]]; then
+    if ! test -x /usr/local/bin/emacs; then
+        echo >&2 "Error: /usr/local/bin/emacs does not exist"
         exit 1
     fi
 elif ! qwhich emacs; then

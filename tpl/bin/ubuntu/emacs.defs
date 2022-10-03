@@ -1,0 +1,2 @@
+CLIENT=/usr/local/bin/emacsclient
+DAEMON=/usr/local/bin/emacs
