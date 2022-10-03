@@ -59,9 +59,9 @@ You'll need to [install cmake](https://cmake.org/) in order to support fast exec
 
 ## Install Emacs
 
-The recommended version is Emacs 28.2 (27.1 on Ubuntu). The recommended installers for each OS are:
+The recommended version is Emacs 28.2. The recommended ways to install Emacs for each OS are as follows.
 
-*Windows*
+### Install Emacs on Windows
 
 - [Download and install emacs](https://ftp.gnu.org/gnu/emacs/windows/emacs-28/emacs-28.2-installer.exe).
 - When done, you should verify that a file named `C:\Program Files\Emacs\emacs-28.2\bin\runemacs.exe` exists.
@@ -83,18 +83,33 @@ If upgrading:
   - Then right-click its Taskbar button, right-click "Emacs", click "Properties"
   - Change "C:\Program Files\Emacs\emacs-28.2\bin\emacs.exe" to "C:\Program Files\Emacs\emacs-28.2\bin\runemacs.exe"
 
-*macOS*
+### Install Emacs on macOS
 
  - Download the non-Spacemacs build from [the Mitsuharu Yamamoto Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-28.2-mac-9.1).
  - Open the zip file and drag the Emacs icon over to the Applications folder.
 
-*Arch Linux*
+### Install Emacs on Arch Linux
 
 Install the `emacs` package.
 
-*Ubuntu*
+### Install Emacs on Ubuntu
 
-Install the `emacs27` package if it's available. If it's not available, [use a PPA](http://ubuntuhandbook.org/index.php/2020/09/install-emacs-27-1-ppa-ubuntu-20-04/).
+We'll build from scratch, since no PPAs have consistently had latest version releases in a timely way.
+
+* Uninstall any versions of Emacs that were previously installed by `apt` or `dpkg`.
+* Edit `/etc/apt/sources.list` and uncomment all `#deb-src` lines that match `deb` lines and run `sudo apt update`.
+* Follow these instructions, derived from [this post](https://practical.li/blog/posts/build-emacs-28-on-ubuntu/):
+  ```sh
+sudo apt build-dep -y emacs
+sudo apt install libjansson4 libjansson-dev gnutls-bin
+cd build/emacs
+curl -o - https://ftp.gnu.org/gnu/emacs/emacs-28.2.tar.gz | tar -xzf -
+cd emacs-28.2
+./autogen.sh
+./configure
+make -j$(proc)
+sudo make install
+  ```
 
 ## Inconsolata Font
 
@@ -129,9 +144,9 @@ On Windows:
 * You will need to do the "Set up PATH" step first, otherwise it will fail.
 * For MSYS2 support, you may need to add something like this to `.bashrc` and restart any open Terminal windows:
   ```sh
-  if uname | grep "MINGW64_NT" > /dev/null 2>&1; then
-    export PATH="~/emacs-shared/bin":"/c/Program Files/Emacs/emacs-28.2/bin":"$PATH"
-  fi
+if uname | grep "MINGW64_NT" > /dev/null 2>&1; then
+  export PATH="~/emacs-shared/bin":"/c/Program Files/Emacs/emacs-28.2/bin":"$PATH"
+fi
   ```
 * You will want to open an "MSYS2 MinGW 64-bit" window (not Git Bash) and run the commands from there.
 
