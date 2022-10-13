@@ -1,6 +1,6 @@
 [submodule "elisp/libegit2"]
 	path = elisp/libegit2
-	url = git@github.com:magit/libegit2.git
+	url = https://github.com/magit/libegit2.git
 [submodule "elisp/magit"]
 	path = elisp/magit
-	url = git@github.com:magit/magit.git
+	url = https://github.com/magit/magit.git
