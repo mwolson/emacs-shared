@@ -967,6 +967,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (eval-after-load "helm-files"
   '(progn
+     (define-key helm-find-files-map "/" #'helm-execute-persistent-action)
      (define-key helm-find-files-map (kbd "TAB") #'helm-execute-persistent-action)))
 
 (global-set-key "\C-x\C-f" 'helm-find-files)
