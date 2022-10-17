@@ -918,7 +918,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 ;; Map some magit keys globally
 (global-set-key "\C-xV" nil)
-(global-set-key "\C-xVa" 'magit-blame-popup)
+(global-set-key "\C-xVa" 'magit-blame)
 (global-set-key "\C-xVb" 'magit-show-refs-current)
 (global-set-key "\C-xVl" 'magit-log-head)
 (global-set-key "\C-xVs" 'magit-status)
