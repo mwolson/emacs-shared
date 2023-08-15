@@ -30,7 +30,6 @@
  '(delete-selection-mode t)
  '(diff-switches "-u")
  '(dired-dwim-target t)
- '(dired-kill-when-opening-new-dired-buffer t)
  '(dired-recursive-copies 'always)
  '(dired-recursive-deletes 'always)
  '(doc-view-resolution 132)
