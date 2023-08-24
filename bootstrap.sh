@@ -131,6 +131,12 @@ function install_info() {
     install-info --info-dir="$DESTDIR"/share/info "$DESTDIR"/share/info/${name}
 }
 
+qpushd elisp/archive-rpm
+git submodule init
+git submodule update
+emacs --batch -q --eval='(package-install-file default-directory)' 2>&1 | grep -v '^Loading '
+qpopd
+
 if test -n "$BUILD"; then
     qpushd elisp/libegit2
     git submodule init

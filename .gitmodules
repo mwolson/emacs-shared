@@ -1,3 +1,6 @@
+[submodule "elisp/archive-rpm"]
+	path = elisp/archive-rpm
+	url = https://github.com/nbarrientos/archive-rpm.git
 [submodule "elisp/libegit2"]
 	path = elisp/libegit2
 	url = https://github.com/magit/libegit2.git
