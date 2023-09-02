@@ -962,21 +962,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
      (define-key org-mode-map (kbd "<M-left>") #'left-word)
      (define-key org-mode-map (kbd "<M-right>") #'right-word)))
 
-;; Helm settings
-; also to try: https://github.com/bling/fzf.el
-
-(eval-after-load "helm-files"
-  '(progn
-     (define-key helm-find-files-map "/" #'helm-execute-persistent-action)
-     (define-key helm-find-files-map (kbd "TAB") #'helm-execute-persistent-action)))
-
-;(global-set-key "\C-x\C-f" 'helm-find-files)
-
-(defun my-preload-helm ()
-  (require 'helm-files))
-
-(my-defer-startup #'my-preload-helm)
-
 ;;; Key customizations
 
 (global-set-key "\C-xg" 'goto-line)
