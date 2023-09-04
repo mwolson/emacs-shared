@@ -330,7 +330,8 @@
               (ad-deactivate-regexp "erase-buffer-noop"))))))))
 
 ;; Docker support
-(require 'docker-tramp)
+(when (< emacs-major-version 29)
+  (require 'docker-tramp))
 
 (defun my-docker-machine-env ()
   (interactive)
