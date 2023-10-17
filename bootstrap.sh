@@ -47,15 +47,16 @@ if [[ $OS == Windows ]]; then
     compile_check ninja
 
     if ! uname_grep 'MINGW64_NT'; then
+        # Symptom of building in Git Bash is that Emacs will crash when trying to use magit
         echo >&2 "Warning: Cannot build libgit unless you are in an MSYS2 MinGW 64-bit terminal, skipping compilation"
         BUILD=
     fi
 fi
 
-REQUIRED_EMACS_VERSION=28.2
+REQUIRED_EMACS_VERSION=29.1
 
-# Set this environment variable to rebuild docs; otherwise use pre-built ones
-: ${BUILD_DOCS:=}
+# Set this environment variable to rebuild git-for-windows manpages; otherwise use pre-built ones
+: ${BUILD_GIT_MANPAGES:=}
 
 if [[ $OS == Windows ]]; then
     if ! qwhich emacs-${REQUIRED_EMACS_VERSION}; then
@@ -114,22 +115,16 @@ fi
 
 set -e
 
-echo "OS         : $OS"
-echo "BUILD      : $BUILD"
-echo "BUILD_DOCS : $BUILD_DOCS"
-echo "DESTDIR    : $DESTDIR"
+echo "OS      : $OS"
+echo "BUILD   : $BUILD"
+echo "BUILD_GIT_MANPAGES : $BUILD_GIT_MANPAGES"
+echo "DESTDIR : $DESTDIR"
 echo
 
 git submodule init
 git submodule sync
 git submodule update
 echo
-
-function install_info() {
-    name=$1
-    install -m 644 ${name} "$DESTDIR"/share/info
-    install-info --info-dir="$DESTDIR"/share/info "$DESTDIR"/share/info/${name}
-}
 
 qpushd elisp/archive-rpm
 git submodule init
@@ -165,12 +160,43 @@ fi
 
 emacs --batch -q -l install-packages.el 2>&1 | grep -v '^Loading '
 
-if test -n "$BUILD"; then
-    if test -n "$BUILD_DOCS"; then
-        rm -fr share/info
-        mkdir -p share/info
-    fi
+qpushd share/man
+git submodule init
+git submodule update
+qpopd
+
+if test -n "$BUILD_GIT_MANPAGES"; then
+    qpushd extra/git
+    git submodule init
+    git submodule update
+
+    # check this for most up-to-date path:
+    # https://packages.msys2.org/package/docbook-xsl?repo=msys&variant=x86_64
+    xmlcatalog --noout \
+      --add rewriteURI \
+      http://docbook.sourceforge.net/release/xsl/current \
+      /ucrt64/share/xml/docbook/xsl-stylesheets-1.79.2 \
+      /etc/xml/catalog
+
+    # check this for most up-to-date path:
+    # https://packages.msys2.org/package/docbook-xml?repo=msys&variant=x86_64
+    xmlcatalog --noout \
+      --add rewriteURI \
+      http://www.oasis-open.org/docbook/xml/4.5/xsl/current \
+      /ucrt64/share/xml/docbook/xml-dtd-4.5 \
+      /etc/xml/catalog
+    xmlcatalog --noout \
+      --add rewriteURI \
+      http://www.oasis-open.org/docbook/xml/4.5 \
+      /ucrt64/share/xml/docbook/xml-dtd-4.5 \
+      /etc/xml/catalog
+
+    # see also end of INSTALL doc at https://github.com/git-for-windows/git/blob/main/INSTALL#L229
+    make prefix=$DESTDIR install-man
+
+    echo >&2 "Built manpages, make sure to check them in"
+    qpopd
 fi
 
 echo >&2
-echo >&2 "Bootstrap complete!  Your Emacs is ready for use."
+echo >&2 "Bootstrap complete! Your Emacs is ready for use."

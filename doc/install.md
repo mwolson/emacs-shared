@@ -59,12 +59,12 @@ You'll need to [install cmake](https://cmake.org/) in order to support fast exec
 
 ## Install Emacs
 
-The recommended version is Emacs 28.2. The recommended ways to install Emacs for each OS are as follows.
+The recommended version is Emacs 29.1. The recommended ways to install Emacs for each OS are as follows.
 
 ### Install Emacs on Windows
 
-- [Download and install emacs](https://ftp.gnu.org/gnu/emacs/windows/emacs-28/emacs-28.2-installer.exe).
-- When done, you should verify that a file named `C:\Program Files\Emacs\emacs-28.2\bin\runemacs.exe` exists.
+- [Download and install emacs](https://ftp.gnu.org/gnu/emacs/windows/emacs-29/emacs-29.1-installer.exe).
+- When done, you should verify that a file named `C:\Program Files\Emacs\emacs-29.1\bin\runemacs.exe` exists.
 - If you change the location, you may want to update the `my-system-paths` option later.
 
 If upgrading:
@@ -73,19 +73,19 @@ If upgrading:
   - Use the Start Menu to search for and open the task `Edit the System Environment Variables`. It may pop behind any open windows - if so, bring it to the front. Click `Environment Variables`.
   - Note: If any of the below variables aren't present, click on "Add" to add them
   - In System Variables, double-click `Path` and make sure an entry for `%USERPROFILE%\emacs-shared\bin` is present at the very top.
-  - In System Variables, double-click `Path` and make sure an entry for `C:\Program Files\Emacs\emacs-28.2\bin` is present at the end. If you see an entry for a different version of Emacs, change it to have this content instead and remove any duplicates of it.
-- Change any desktop icons to point to `C:\Program Files\Emacs\emacs-28.2\bin\runemacs.exe`.
-- Before running `bootstrap.sh`, you may want to check `.bashrc` and update any `PATH` entries to point to `/c/Program Files/Emacs/emacs-28.2/bin` and restart Terminal.
+  - In System Variables, double-click `Path` and make sure an entry for `C:\Program Files\Emacs\emacs-29.1\bin` is present at the end. If you see an entry for a different version of Emacs, change it to have this content instead and remove any duplicates of it.
+- Change any desktop icons to point to `C:\Program Files\Emacs\emacs-29.1\bin\runemacs.exe`.
+- Before running `bootstrap.sh`, you may want to check `.bashrc` and update any `PATH` entries to point to `/c/Program Files/Emacs/emacs-29.1/bin` and restart Terminal.
 - Now run `bootstrap.sh` in a MINGW64/MYS2 Terminal window.
 - Unpin Emacs and then:
   - Run Emacs from Start menu or a desktop shortcut
   - Pin it
   - Then right-click its Taskbar button, right-click "Emacs", click "Properties"
-  - Change "C:\Program Files\Emacs\emacs-28.2\bin\emacs.exe" to "C:\Program Files\Emacs\emacs-28.2\bin\runemacs.exe"
+  - Change "C:\Program Files\Emacs\emacs-29.1\bin\emacs.exe" to "C:\Program Files\Emacs\emacs-29.1\bin\runemacs.exe"
 
 ### Install Emacs on macOS
 
- - Download the non-Spacemacs build from [the Mitsuharu Yamamoto Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-28.2-mac-9.1).
+ - Download the non-Spacemacs build from [the Mitsuharu Yamamoto Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-29.1-mac-10.0).
  - Open the zip file and drag the Emacs icon over to the Applications folder.
 
 ### Install Emacs on Arch Linux
@@ -103,8 +103,8 @@ We'll build from scratch, since no PPAs have consistently had latest version rel
 sudo apt build-dep -y emacs
 sudo apt install libjansson4 libjansson-dev gnutls-bin
 cd build/emacs
-curl -o - https://ftp.gnu.org/gnu/emacs/emacs-28.2.tar.gz | tar -xzf -
-cd emacs-28.2
+curl -o - https://ftp.gnu.org/gnu/emacs/emacs-29.1.tar.gz | tar -xzf -
+cd emacs-29.1
 ./autogen.sh
 ./configure
 make -j$(proc)
@@ -145,7 +145,7 @@ On Windows:
 * For MSYS2 support, you may need to add something like this to `.bashrc` and restart any open Terminal windows:
   ```sh
 if uname | grep "MINGW64_NT" > /dev/null 2>&1; then
-  export PATH="~/emacs-shared/bin":"/c/Program Files/Emacs/emacs-28.2/bin":"$PATH"
+  export PATH="~/emacs-shared/bin":"/c/Program Files/Emacs/emacs-29.1/bin":"$PATH"
 fi
   ```
 * You will want to open an "MSYS2 MinGW 64-bit" window (not Git Bash) and run the commands from there.
@@ -192,7 +192,7 @@ To verify your work, run `emacs --version` and make sure it shows the version nu
   - Note: If any of the below variables aren't present, click on "Add" to add them
   - In User Variables, Inspect `HOME` and make sure it points to something like `C:\Users\You`.
   - In System Variables, double-click `Path` and make sure an entry for `%USERPROFILE%\emacs-shared\bin` is present at the very top.
-  - In System Variables, double-click `Path` and make sure an entry for `C:\Program Files\Emacs\emacs-28.2\bin` is present at the end.
+  - In System Variables, double-click `Path` and make sure an entry for `C:\Program Files\Emacs\emacs-29.1\bin` is present at the end.
   - If you have chosen to use PuTTY, then make sure that the `GIT_SSH` variable is set to `C:\Program Files\PuTTY\plink.exe` (or wherever PuTTY is installed).
   - Click OK
   - Relaunch any open Git Bash windows
@@ -221,14 +221,14 @@ emacs -q init.el  # or other editing command
 
 *Windows*
 
-Open `Start Menu -> Emacs`. This should point to the file `C:\Program Files\Emacs\emacs-28.2\bin\runemacs.exe`.
+Open `Start Menu -> Emacs`. This should point to the file `C:\Program Files\Emacs\emacs-29.1\bin\runemacs.exe`.
 
 *Windows Taskbar*
 
 To pin Emacs to the Taskbar / Quick Launch bar and have it behave correctly:
 - First pin it
 - Then right-click its Taskbar button, right-click "Emacs", click "Properties"
-- Change "C:\Program Files\Emacs\emacs-28.2\bin\emacs.exe" to "C:\Program Files\Emacs\emacs-28.2\bin\runemacs.exe"
+- Change "C:\Program Files\Emacs\emacs-29.1\bin\emacs.exe" to "C:\Program Files\Emacs\emacs-29.1\bin\runemacs.exe"
 
 *macOS*
 
@@ -257,13 +257,26 @@ The following are optional steps.
 
 Install Aspell and an Aspell dictionary for your language if you want to support spell-checking. We've already done this for Windows in the `Install MSYS2` section.
 
-## (Windows only) Install Git manpages
+## (Windows only) Build Git manpages
 
-The Windows installer doesn't include manpages. If you want them (and they're readable with this Emacs configuration by doing <kbd>M-x man</kbd>) then follow these steps:
+The Windows installer for Git doesn't include manpages. Some prebuilt ones will be made available after running `bootstrap.sh`.
 
-- Clone the https://github.com/gitster/git-manpages repo somewhere
-- (Optional) Run `git log` and find the commit that most closely matches your version of git; then switch to it with `git checkout`
-- Move that "git-manpages" folder to "C:\Program Files\Git\", and rename it to "man", so the full path looks like "C:\Program Files\Git\man". That folder should contain directories like "man7" if you did it right.
+If you want them to rebuild them to reflect the latest git-for-windows changes, do this:
+
+```sh
+pushd extra/git
+git pull
+popd
+
+BUILD_GIT_MANPAGES=y ./bootstrap.sh
+
+# To commit them to my repo; skip otherwise
+pushd share/man
+git add . ; git add -u .
+git commit -m "Build for commit ..."
+git push upstream main
+popd
+```
 
 ## (macOS only) Install docker manpages
 

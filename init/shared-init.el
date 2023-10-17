@@ -41,12 +41,10 @@
            "/usr/local/bin"))
         ((eq system-type 'windows-nt)
          `(,(concat "C:/Program Files/Emacs/emacs-" emacs-version "/bin")
-	   "C:/msys64/usr/bin"
-	   "c:/msys64/mingw64/bin"
-           "C:/Program Files/maven/bin"
-	   "C:/Program Files (x86)/Aspell/bin"
-	   "C:/Program Files/Git/bin"
-	   "C:/Program Files/PuTTY"))
+           "C:/Program Files/Git/bin"
+           "C:/msys64/usr/bin"
+           "c:/msys64/ucrt64/bin"
+           "C:/Program Files/maven/bin"))
         (t '("/opt/maven/bin"))))
 (setq my-system-paths (cl-remove-if-not #'file-exists-p my-system-paths))
 
@@ -73,7 +71,8 @@
 (defun my-reset-font ()
   (interactive)
   (when my-default-font
-    (set-frame-font my-default-font nil t)))
+    (set-frame-font my-default-font nil t)
+    (set-face-attribute 'fixed-pitch nil :font my-default-font)))
 
 (defun my-reset-frame-size ()
   "Reset the size of the current frame according to `default-frame-alist'."
@@ -168,9 +167,9 @@
 
 ;; Setup manpage browsing
 (when (eq system-type 'windows-nt)
-  (setenv "MANPATH" (concat "C:\\msys64\\usr\\share\\man;"
-                            "C:\\msys64\\mingw64\\share\\man;"
-                            "C:\\Program Files\\Git\\man;"
+  (setenv "MANPATH" (concat (expand-file-name "~/emacs-shared/share/man") ";"
+                            "C:\\msys64\\usr\\share\\man;"
+                            "C:\\msys64\\ucrt64\\share\\man;"
                             "C:\\Program Files\\Emacs\\emacs-" emacs-version "\\share\\man"))
   (require 'woman)
   (defalias 'man 'woman))

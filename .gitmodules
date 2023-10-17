@@ -7,3 +7,9 @@
 [submodule "elisp/magit"]
 	path = elisp/magit
 	url = https://github.com/magit/magit.git
+[submodule "extra/git"]
+	path = extra/git
+	url = https://github.com/git-for-windows/git.git
+[submodule "share/man"]
+	path = share/man
+	url = https://github.com/mwolson/git-for-windows-manpages.git
