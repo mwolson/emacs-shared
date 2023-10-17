@@ -132,6 +132,11 @@ git submodule update
 emacs --batch -q --eval='(package-install-file default-directory)' 2>&1 | grep -v '^Loading '
 qpopd
 
+qpushd extra/emacs
+git submodule init
+git submodule update
+qpopd
+
 if test -n "$BUILD"; then
     qpushd elisp/libegit2
     git submodule init

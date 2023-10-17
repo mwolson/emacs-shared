@@ -1,5 +1,4 @@
-Installing Emacs
-================
+# Installing Emacs
 
 ## Install git
 
@@ -243,35 +242,13 @@ Console frame:
 emacs -nw
 ```
 
-Extras
-======
+# Extras
 
 The following are optional steps.
 
 ## Install Aspell
 
 Install Aspell and an Aspell dictionary for your language if you want to support spell-checking. We've already done this for Windows in the `Install MSYS2` section.
-
-## (Windows only) Build Git manpages
-
-The Windows installer for Git doesn't include manpages. Some prebuilt ones will be made available after running `bootstrap.sh`.
-
-If you want them to rebuild them to reflect the latest git-for-windows changes, do this:
-
-```sh
-pushd extra/git
-git pull
-popd
-
-BUILD_GIT_MANPAGES=y ./bootstrap.sh
-
-# To commit them to my repo; skip otherwise
-pushd share/man
-git add . ; git add -u .
-git commit -m "Build for commit ..."
-git push upstream main
-popd
-```
 
 ## (macOS only) Install docker manpages
 
@@ -310,8 +287,7 @@ By default [marked](https://marked.js.org/) is used to preview markdown pages.
 
 Another option with slightly better output (though not apprioriate for private data) is [grip](https://github.com/joeyespo/grip). This will send the content to Github's API for rendering. Customize the Emacs `markdown-command` option if you would like to use `grip`.
 
-Updating
-========
+# Updating
 
 To keep up-to-date on the latest `emacs-shared` changes, do:
 
@@ -319,6 +295,41 @@ To keep up-to-date on the latest `emacs-shared` changes, do:
 cd ~/emacs-shared
 git pull
 ./bootstrap.sh
+```
+
+# Maintenance
+
+The following are tasks used to maintain the repo, and not required for a typical installation.
+
+## Build Git manpages
+
+The Windows installer for Git doesn't include manpages. Some prebuilt ones will be made available after running `bootstrap.sh`.
+
+If you want them to rebuild them to reflect the latest git-for-windows changes, do this:
+
+```sh
+pushd extra/git
+git pull
+popd
+
+BUILD_GIT_MANPAGES=y ./bootstrap.sh
+
+pushd share/man
+git add . ; git add -u .
+git commit -m "Build for commit ..."
+git push upstream main
+popd
+```
+
+## Update Emacs Source Code
+
+Do this:
+
+```sh
+pushd extra/emacs
+git fetch --depth 1 origin tag emacs-29.1
+git checkout emacs-29.1
+popd
 ```
 
 ---

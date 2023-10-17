@@ -165,6 +165,8 @@
                             (append my-system-paths (list (getenv "PATH")))
                             (if (eq system-type 'windows-nt) ";" ":"))))
 
+(setq source-directory "~/emacs-shared/extra/emacs")
+
 ;; Setup manpage browsing
 (when (eq system-type 'windows-nt)
   (setenv "MANPATH" (concat (expand-file-name "~/emacs-shared/share/man") ";"
@@ -559,113 +561,32 @@ interactively.
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
 (require 'dumb-jump)
 (setq dumb-jump-selector 'ivy)
+(add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
 
-;; typescript support from https://github.com/amake/.emacs.d/blob/master/init.el
-;; see https://github.com/jacktasia/dumb-jump/issues/97
-(unless (dumb-jump-get-language-by-filename "foo.ts")
-  (mapc (lambda (item) (add-to-list 'dumb-jump-language-file-exts item))
-        '((:language "typescript" :ext "ts" :agtype "ts" :rgtype "ts")
-          (:language "typescript" :ext "tsx" :agtype "ts" :rgtype "ts")))
-
-  (mapc (lambda (item) (add-to-list 'dumb-jump-language-comments item))
-        '((:comment "//" :language "typescript")))
-
-  (mapc (lambda (item) (add-to-list 'dumb-jump-find-rules item))
-        ;; Rules translated from link below, except where noted
-        ;; https://github.com/jacktasia/dumb-jump/issues/97#issuecomment-346441412
-        ;;
-        ;; --regex-typescript=/^[ \t]*(export[ \t]+(abstract[ \t]+)?)?class[ \t]+([a-zA-Z0-9_$]+)/\3/c,classes/
-        '((:type "type" :supports ("ag" "grep" "rg" "git-grep") :language "typescript"
-                 :regex "(export\\s+(abstract\\s+)?)?class\\s+JJJ\\b"
-                 :tests ("class test" "export class test" "abstract class test"
-                         "export abstract class test")
-                 :not ("class testnot"))
-          ;; --regex-typescript=/^[ \t]*(declare[ \t]+)?namespace[ \t]+([a-zA-Z0-9_$]+)/\2/c,modules/
-          (:type "module" :supports ("ag" "grep" "rg" "git-grep") :language "typescript"
-                 :regex "(declare\\s+)?namespace\\s+JJJ\\b"
-                 :tests ("declare namespace test" "namespace test")
-                 :not ("declare testnot"))
-          ;; --regex-typescript=/^[ \t]*(export[ \t]+)?module[ \t]+([a-zA-Z0-9_$]+)/\2/n,modules/
-          (:type "module" :supports ("ag" "grep" "rg" "git-grep") :language "typescript"
-                 :regex "(export\\s+)?module\\s+JJJ\\b"
-                 :tests ("export module test" "module test")
-                 :not ("module testnot"))
-          ;; --regex-typescript=/^[ \t]*(export[ \t]+)?(async[ \t]+)?function[ \t]+([a-zA-Z0-9_$]+)/\3/f,functions/
-          (:type "function" :supports ("ag" "grep" "rg" "git-grep") :language "typescript"
-                 :regex "(export\\s+)?(async\\s+)?function\\s+JJJ\\b"
-                 :tests ("function test" "export function test" "export async function test"
-                         "async function test")
-                 :not ("function testnot"))
-          ;;--regex-typescript=/^[ \t]*export[ \t]+(var|let|const)[ \t]+([a-zA-Z0-9_$]+)/\2/v,variables/
-          (:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "typescript"
-                 :regex "export\\s+(var|let|const)\\s+JJJ\\b"
-                 :tests ("export var test" "export let test" "export const test")
-                 :not ("export var testnot"))
-          ;; --regex-typescript=/^[ \t]*(var|let|const)[ \t]+([a-zA-Z0-9_$]+)[ \t]*=[ \t]*function[ \t]*[*]?[ \t]*\(\)/\2/v,varlambdas/
-          (:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "typescript"
-                 :regex "(var|let|const)\\s+JJJ\\s*=\\s*function\\s*\\*?\\s*\\\(\\\)"
-                 :tests ("var test = function ()" "let test = function()" "const test=function*()")
-                 :not ("var testnot = function ()"))
-          ;; --regex-typescript=/^[ \t]*(export[ \t]+)?(public|protected|private)[ \t]+(static[ \t]+)?(abstract[ \t]+)?(((get|set)[ \t]+)|(async[ \t]+[*]*[ \t]*))?([a-zA-Z1-9_$]+)/\9/m,members/
-          (:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "typescript"
-                 :regex "(export\\s+)?(public|protected|private)\\s+(static\\s+)?(abstract\\s+)?(((get|set)\\s+)|(async\\s+))?JJJ\\b"
-                 :tests ("public test" "protected static test" "private abstract get test"
-                         "export public static set test" "export protected abstract async test")
-                 :not ("public testnot"))
-          ;; --regex-typescript=/^[ \t]*(export[ \t]+)?interface[ \t]+([a-zA-Z0-9_$]+)/\2/i,interfaces/
-          (:type "type" :supports ("ag" "grep" "rg" "git-grep") :language "typescript"
-                 :regex "(export\\s+)?interface\\s+JJJ\\b"
-                 :tests ("interface test" "export interface test")
-                 :not ("interface testnot"))
-          ;; --regex-typescript=/^[ \t]*(export[ \t]+)?type[ \t]+([a-zA-Z0-9_$]+)/\2/t,types/
-          (:type "type" :supports ("ag" "grep" "rg" "git-grep") :language "typescript"
-                 :regex "(export\\s+)?type\\s+JJJ\\b"
-                 :tests ("type test" "export type test")
-                 :not ("type testnot"))
-          ;; --regex-typescript=/^[ \t]*(export[ \t]+)?enum[ \t]+([a-zA-Z0-9_$]+)/\2/e,enums/
-          (:type "type" :supports ("ag" "grep" "rg" "git-grep") :language "typescript"
-                 :regex "(export\\s+)?enum\\s+JJJ\\b"
-                 :tests ("enum test" "export enum test")
-                 :not ("enum testnot"))
-          ;; --regex-typescript=/^[ \t]*import[ \t]+([a-zA-Z0-9_$]+)/\1/I,imports/
-          (:type "type" :supports ("ag" "grep" "rg" "git-grep") :language "typescript"
-                 :regex "import\\s+JJJ\\b"
-                 :tests ("import test")
-                 :not ("import testnot"))
-          ;; Custom definition for public methods without "public" keyword.
-          ;; Fragile! Requires brace on same line.
-          (:type "function" :supports ("ag" "grep" "rg" "git-grep") :language "typescript"
-                 :regex "\\bJJJ\\s*\\(.*\\{"
-                 :tests ("test() {" "test(foo: bar) {")
-                 :not ("testnot() {"))
-          )))
-
-(defvar my-jump-map
+(defvar my-xref-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "." #'dumb-jump-go)
-    (define-key map "," #'dumb-jump-back)
-    (define-key map "/" #'dumb-jump-quick-look)
-    (define-key map "o" #'dumb-jump-go-other-window)
+    (define-key map "." #'xref-find-definitions)
+    (define-key map "," #'xref-go-back)
     map)
   "My key customizations for dumb-jump.")
 
-(global-set-key (kbd "C-c .") my-jump-map)
+(global-set-key (kbd "C-c .") my-xref-map)
 
-(defvar my-dumb-jump-minor-mode-map
+(defvar my-xref-minor-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c .") my-jump-map)
+    (define-key map (kbd "C-c .") my-xref-map)
     map))
 
-(define-minor-mode my-dumb-jump-minor-mode
+(define-minor-mode my-xref-minor-mode
   "Minor mode for jumping to variable and function definitions"
-  :keymap my-dumb-jump-minor-mode-map)
+  :keymap my-xref-minor-mode-map)
 
 ;; Java
 (require 'java-mode-indent-annotations)
 (require 'google-c-style)
 (add-hook 'c-mode-common-hook 'google-set-c-style t)
 (add-hook 'c-mode-common-hook 'display-line-numbers-mode t)
-(add-hook 'c-mode-common-hook 'my-dumb-jump-minor-mode t)
+(add-hook 'c-mode-common-hook 'my-xref-minor-mode t)
 
 ;; Kotlin
 (add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-mode) t)

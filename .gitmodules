@@ -1,15 +1,24 @@
 [submodule "elisp/archive-rpm"]
 	path = elisp/archive-rpm
+        shallow = true
 	url = https://github.com/nbarrientos/archive-rpm.git
 [submodule "elisp/libegit2"]
 	path = elisp/libegit2
+        shallow = true
 	url = https://github.com/magit/libegit2.git
 [submodule "elisp/magit"]
 	path = elisp/magit
+        shallow = true
 	url = https://github.com/magit/magit.git
+[submodule "extra/emacs"]
+	path = extra/emacs
+        shallow = true
+	url = https://github.com/emacs-mirror/emacs.git
 [submodule "extra/git"]
 	path = extra/git
+        shallow = true
 	url = https://github.com/git-for-windows/git.git
 [submodule "share/man"]
 	path = share/man
+        shallow = true
 	url = https://github.com/mwolson/git-for-windows-manpages.git

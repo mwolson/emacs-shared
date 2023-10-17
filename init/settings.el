@@ -74,7 +74,7 @@
  '(mail-user-agent 'gnus-user-agent)
  '(markdown-command "npx marked")
  '(max-lisp-eval-depth 1000)
- '(max-specpdl-size 1000)
+ '(max-specpdl-size 1000 t)
  '(message-log-max 500)
  '(mouse-wheel-mode t)
  '(org-capture-templates
@@ -119,7 +119,9 @@
  '(web-mode-markup-indent-offset 2)
  '(woman-fill-column 95)
  '(woman-fontify t)
- '(woman-use-own-frame nil))
+ '(woman-use-own-frame nil)
+ '(xref-search-program 'ripgrep)
+ '(xref-show-definitions-function 'xref-show-definitions-completing-read))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
