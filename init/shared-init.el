@@ -11,7 +11,7 @@
 
 (defvar my-default-font      (cond
                               ((eq system-type 'darwin) "Inconsolata-20")
-                              ((eq system-type 'windows-nt) "Inconsolata-14")
+                              ((eq system-type 'windows-nt) "Consolas-12")
                               (t "Inconsolata-18")))
 (defvar my-theme             'sanityinc-tomorrow-eighties)
 (defvar my-use-themes-p      (boundp 'custom-theme-load-path))
