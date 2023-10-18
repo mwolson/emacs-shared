@@ -88,7 +88,7 @@
      ("gnu" . "http://elpa.gnu.org/packages/")))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(archive-rpm amx terraform-mode atomic-chrome swift-mode csharp-mode dotenv-mode poly-markdown polymode js-comint flymake-eslint add-node-modules-path erlang editorconfig el-mock dumb-jump company-statistics company package-utils wgrep swiper diminish counsel ivy color-theme-sanityinc-tomorrow maxframe markdown-mode lua-mode dockerfile-mode browse-kill-ring ripgrep flx projectile yaml-mode slime cider magit hydra web-mode))
+   '(add-node-modules-path amx archive-rpm atomic-chrome browse-kill-ring cider color-theme-sanityinc-tomorrow company company-statistics counsel csharp-mode diminish dockerfile-mode dotenv-mode dumb-jump editorconfig el-mock erlang flx flymake-eslint hydra ivy js-comint lua-mode magit markdown-mode maxframe modus-themes package-utils poly-markdown polymode projectile ripgrep slime swift-mode swiper terraform-mode web-mode wgrep yaml-mode))
  '(post-jump-header nil)
  '(projectile-mode-line
    '(:eval
@@ -128,6 +128,6 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(line-number-current-line ((t (:inherit highlight))))
- '(tab-line ((t (:inherit variable-pitch :background "dim gray" :foreground "black" :height 0.9))))
  '(web-mode-html-tag-face ((t (:inherit font-lock-constant-face))))
+ '(web-mode-json-key-face ((t (:foreground nil :inherit font-lock-variable-name-face))))
  '(woman-italic ((t (:underline t :slant italic)))))

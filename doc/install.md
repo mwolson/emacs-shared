@@ -111,11 +111,13 @@ sudo make install
 
 Install the Inconsolata font (this can be configured with the `my-default-font` setting).
 
-*Windows and macOS*
+*macOS*
 
 Download the family from [Google Fonts](https://fonts.google.com/specimen/Inconsolata), open the zip, and double-click on the "Inconsolata-VariableFont_wdth,wght.ttf" file to install it.
 
-Note that we currently use Consolas instead, because Inconsolata has a lot of vertical space between lines currently.
+*Windows*
+
+On Windows we currently use [Fira Code](https://github.com/tonsky/FiraCode#download--install) instead, because Inconsolata has a lot of vertical space between lines currently.
 
 *Arch Linux*
 

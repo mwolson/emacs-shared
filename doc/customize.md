@@ -16,7 +16,9 @@ Most of the settings are optional, except for `my-emacs-path`.
 ## Display
 
 * `my-default-font`: This will be a font name and size, for example: `"Inconsolata-18"`
-* `my-theme`: Which color theme to apply
+* `my-modus-theme`: Which [modus color theme](https://protesilaos.com/emacs/modus-themes-pictures) to apply; set this to `nil` if using `my-theme`
+* `my-modus-theme-overrides`: Pallette overrides for `modus-themes-common-palette-overrides`
+* `my-theme`: Which color theme to apply; set this to `nil` if using `my-modus-theme`
 * `my-use-themes-p`: Whether to use a color theme
 * `my-frame-maximize-p`: Whether to make the window fullscreen on startup
 * `my-frame-pad-width`, `my-frame-pad-height`: The width and height left over for the macOS Dock

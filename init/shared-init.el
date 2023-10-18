@@ -11,9 +11,11 @@
 
 (defvar my-default-font      (cond
                               ((eq system-type 'darwin) "Inconsolata-20")
-                              ((eq system-type 'windows-nt) "Consolas-12")
+                              ((eq system-type 'windows-nt) "Fira Code-11")
                               (t "Inconsolata-18")))
-(defvar my-theme             'sanityinc-tomorrow-eighties)
+(defvar my-theme             nil)
+(defvar my-modus-theme       'modus-vivendi-deuteranopia)
+(defvar my-modus-theme-overrides '((bg-main "#1C1C1C") (comment fg-dim)))
 (defvar my-use-themes-p      (boundp 'custom-theme-load-path))
 (defvar my-eslint-fix-enabled-p nil)
 (defvar my-frame-height      50)
@@ -91,7 +93,11 @@
 (defun my-reset-theme ()
   (interactive)
   (when my-use-themes-p
-    (load-theme my-theme t)))
+    (if my-modus-theme
+        (progn
+          (setopt modus-themes-common-palette-overrides my-modus-theme-overrides)
+          (modus-themes-select my-modus-theme))
+      (load-theme my-theme t))))
 
 ;; This function should be called on the emacsclient commandline in cases where no file is being passed on commandline.
 (defun my-init-client ()
@@ -858,11 +864,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (eval-after-load "poly-markdown" '(diminish 'poly-markdown-mode))
 (eval-after-load "org-indent" '(diminish 'org-indent-mode))
 (eval-after-load "slime-js" '(diminish 'slime-js-minor-mode))
-
-;; Patch security vulnerability fixed in Emacs 25.3
-(eval-after-load "enriched"
-  '(defun enriched-decode-display-prop (start end &optional param)
-     (list start end)))
 
 ;; Clojure mode settings
 (eval-after-load "clojure-mode"
