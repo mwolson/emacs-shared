@@ -15,7 +15,10 @@
                               (t "Inconsolata-18")))
 (defvar my-theme             nil)
 (defvar my-modus-theme       'modus-vivendi-deuteranopia)
-(defvar my-modus-theme-overrides '((bg-main "#1C1C1C") (comment fg-dim)))
+(defvar my-modus-theme-overrides
+  '((bg-main             "#1C1C1C")
+    (bg-mode-line-active "#484d67")
+    (comment             fg-dim)))
 (defvar my-use-themes-p      (boundp 'custom-theme-load-path))
 (defvar my-eslint-fix-enabled-p nil)
 (defvar my-frame-height      50)
