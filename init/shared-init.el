@@ -855,15 +855,21 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (global-set-key "\C-xVl" 'magit-log-head)
 (global-set-key "\C-xVs" 'magit-status)
 
+;; Don't display any minor modes on the mode-line
+(require 'minions)
+(setopt minions-mode-line-delimiters '("" . ""))
+(setopt minions-mode-line-lighter " ")
+(minions-mode 1)
+
 ;; Don't display some minor modes on the mode-line
-(eval-after-load "autorevert" '(diminish 'auto-revert-mode))
-(eval-after-load "company" '(diminish 'company-mode))
-(eval-after-load "counsel" '(diminish 'counsel-mode))
-(eval-after-load "editorconfig" '(diminish 'editorconfig-mode))
-(eval-after-load "ivy" '(diminish 'ivy-mode))
-(eval-after-load "poly-markdown" '(diminish 'poly-markdown-mode))
-(eval-after-load "org-indent" '(diminish 'org-indent-mode))
-(eval-after-load "slime-js" '(diminish 'slime-js-minor-mode))
+;; (eval-after-load "autorevert" '(diminish 'auto-revert-mode))
+;; (eval-after-load "company" '(diminish 'company-mode))
+;; (eval-after-load "counsel" '(diminish 'counsel-mode))
+;; (eval-after-load "editorconfig" '(diminish 'editorconfig-mode))
+;; (eval-after-load "ivy" '(diminish 'ivy-mode))
+;; (eval-after-load "poly-markdown" '(diminish 'poly-markdown-mode))
+;; (eval-after-load "org-indent" '(diminish 'org-indent-mode))
+;; (eval-after-load "slime-js" '(diminish 'slime-js-minor-mode))
 
 ;; Clojure mode settings
 (eval-after-load "clojure-mode"
