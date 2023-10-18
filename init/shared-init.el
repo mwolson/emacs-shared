@@ -632,6 +632,14 @@ interactively.
 (setq projectile-completion-system 'ivy)
 (setq projectile-indexing-method 'alien)
 
+;; Ignore submodules, since they are especially annoying in this repo,
+;; and I generally don't want to search them automatically from project root
+(setq projectile-git-submodule-command nil)
+;; Tell fd to ignore any other .gitignore files that it finds in subdirectories,
+;; mostly for submodule purposes, and only use the one in the top-level git repo
+(setq projectile-git-fd-args
+      (concat projectile-git-fd-args " --no-ignore-vcs --ignore-file .gitignore"))
+
 (defun my-projectile-test-suffix (project-type)
   "Find default test files suffix based on PROJECT-TYPE."
   (cond
