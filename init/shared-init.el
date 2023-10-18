@@ -657,7 +657,7 @@ interactively.
 (setq projectile-test-suffix-function #'my-projectile-test-suffix)
 
 ;; Insinuate with ripgrep
-(defvar my-default-ripgrep-args "--hidden -i")
+(defvar my-default-ripgrep-args "--hidden -i --no-ignore-vcs --ignore-file .gitignore --glob=!.git/")
 
 (defun my-projectile-ripgrep (regexp rg-args &optional arg)
   "Run a Ripgrep search with `REGEXP' rooted at the current projectile project root.
