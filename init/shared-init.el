@@ -569,7 +569,7 @@ interactively.
 
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
 (require 'dumb-jump)
-(setq dumb-jump-selector 'ivy)
+(setopt dumb-jump-selector 'ivy)
 (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
 
 (defvar my-xref-map
@@ -821,9 +821,15 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
      (profiler-cpu-stop)))
 
 ;; Company: auto-completion for various modes
-(setq company-idle-delay 0.3)
+(setopt company-idle-delay 0.2)
+(setopt company-tooltip-align-annotations t)
+(setopt company-tooltip-limit 20)
 (add-hook 'after-init-hook 'global-company-mode t)
 (add-hook 'after-init-hook 'company-statistics-mode t)
+
+(eval-after-load "company"
+  '(progn
+     (define-key company-active-map (kbd "<tab>") 'company-complete-selection)))
 
 ;; Setup info for manually compiled packages
 (add-to-list 'Info-default-directory-list (concat my-emacs-path "share/info"))
@@ -863,16 +869,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (setopt minions-mode-line-delimiters '("" . ""))
 (setopt minions-mode-line-lighter " ")
 (minions-mode 1)
-
-;; Don't display some minor modes on the mode-line
-;; (eval-after-load "autorevert" '(diminish 'auto-revert-mode))
-;; (eval-after-load "company" '(diminish 'company-mode))
-;; (eval-after-load "counsel" '(diminish 'counsel-mode))
-;; (eval-after-load "editorconfig" '(diminish 'editorconfig-mode))
-;; (eval-after-load "ivy" '(diminish 'ivy-mode))
-;; (eval-after-load "poly-markdown" '(diminish 'poly-markdown-mode))
-;; (eval-after-load "org-indent" '(diminish 'org-indent-mode))
-;; (eval-after-load "slime-js" '(diminish 'slime-js-minor-mode))
 
 ;; Clojure mode settings
 (eval-after-load "clojure-mode"
