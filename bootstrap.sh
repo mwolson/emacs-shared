@@ -123,24 +123,24 @@ echo
 
 git submodule init
 git submodule sync
-git submodule update
+git submodule update --depth 1
 echo
 
 qpushd elisp/archive-rpm
 git submodule init
-git submodule update
+git submodule update --depth 1
 emacs --batch -q --eval='(package-install-file default-directory)' 2>&1 | grep -v '^Loading '
 qpopd
 
 qpushd extra/emacs
 git submodule init
-git submodule update
+git submodule update --depth 1
 qpopd
 
 if test -n "$BUILD"; then
     qpushd elisp/libegit2
     git submodule init
-    git submodule update
+    git submodule update --depth 1
     rm -fr build
     mkdir -p build
     cd build
@@ -167,13 +167,13 @@ emacs --batch -q -l install-packages.el 2>&1 | grep -v '^Loading '
 
 qpushd share/man
 git submodule init
-git submodule update
+git submodule update --depth 1
 qpopd
 
 if test -n "$BUILD_GIT_MANPAGES"; then
     qpushd extra/git
     git submodule init
-    git submodule update
+    git submodule update --depth 1
 
     # check this for most up-to-date path:
     # https://packages.msys2.org/package/docbook-xsl?repo=msys&variant=x86_64
