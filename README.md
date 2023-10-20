@@ -7,7 +7,7 @@ This is an Emacs starter kit with:
 - **Fast project search** thanks to integration with [ripgrep](https://github.com/BurntSushi/ripgrep)
 - **Cross-platform support**: Tested on Linux, Windows, and macOS
 - **Fullscreen by default**, with a gap left for the Dock on macOS
-- **Dark color theme**, additionally with the [spaceline](https://github.com/TheBB/spaceline) theme for the mode-line
+- **Dark color theme**
 - Extensive **setup instructions**
 - **Splash screen** appears while starting Emacs, and startup is optimally fast
 - **Manuals** are pre-built and show up when you do `C-h i`

@@ -10,9 +10,9 @@
 ;;; Options that change behavior of this file
 
 (defvar my-default-font      (cond
-                              ((eq system-type 'darwin) "Inconsolata-20")
+                              ((eq system-type 'darwin) "Fira Code Retina-18")
                               ((eq system-type 'windows-nt) "Fira Code-11")
-                              (t "Inconsolata-18")))
+                              (t "Fira Code-17")))
 (defvar my-theme             nil)
 (defvar my-modus-theme       'modus-vivendi-deuteranopia)
 (defvar my-modus-theme-overrides

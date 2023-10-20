@@ -107,13 +107,13 @@ make -j$(proc)
 sudo make install
 ```
 
-## Inconsolata Font
+## Fonts
 
-Install the Inconsolata font (this can be configured with the `my-default-font` setting).
+Typically we install the Fira Code font. This can be configured with the `my-default-font` setting.
 
 *macOS*
 
-Download the family from [Google Fonts](https://fonts.google.com/specimen/Inconsolata), open the zip, and double-click on the "Inconsolata-VariableFont_wdth,wght.ttf" file to install it.
+Download [Fira Code](https://github.com/tonsky/FiraCode#download--install), open the zip, open the `ttf` folder, select all fonts, control-click and choose Open to install them.
 
 *Windows*
 
@@ -122,13 +122,13 @@ On Windows we currently use [Fira Code](https://github.com/tonsky/FiraCode#downl
 *Arch Linux*
 
 ```sh
-pacman -S ttf-inconsolata
+pacman -S ttf-fira-code
 ```
 
 *Ubuntu*
 
 ```sh
-apt-get install fonts-inconsolata
+apt-get install fonts-firacode
 ```
 
 ## Download the emacs-shared code
