@@ -491,9 +491,8 @@ interactively.
 (my-define-web-mode 'js)
 (my-replace-cdrs-in-alist 'js-mode 'my-js-mode 'interpreter-mode-alist)
 
-;; (eval-after-load "web-mode"
-;;   '(progn
-;;      (define-key web-mode-map (kbd "C-c C-j") nil)))
+;; (with-eval-after-load "web-mode"
+;;   (define-key web-mode-map (kbd "C-c C-j") nil))
 
 (defun eslint-fix-file ()
   (interactive)
@@ -535,31 +534,29 @@ interactively.
   (setq js2-additional-externs
         (mapcar 'symbol-name '(after afterEach before beforeEach describe expect it))))
 
-(eval-after-load "js2-mode"
-  '(progn
-     ;; BUG: self is not a browser extern, just a convention that needs checking
-     (setq js2-browser-externs (delete "self" js2-browser-externs))
+(with-eval-after-load "js2-mode"
+   ;; BUG: self is not a browser extern, just a convention that needs checking
+   (setq js2-browser-externs (delete "self" js2-browser-externs))
 
-     ;; Consider the chai 'expect()' statement to have side-effects, so we don't warn about it
-     (defun js2-add-strict-warning (msg-id &optional msg-arg beg end)
-       (if (and js2-compiler-strict-mode
-                (not (and (string= msg-id "msg.no.side.effects")
-                          (string= (buffer-substring-no-properties beg (+ beg 7)) "expect("))))
-           (js2-report-warning msg-id msg-arg beg
-                               (and beg end (- end beg)))))
+   ;; Consider the chai 'expect()' statement to have side-effects, so we don't warn about it
+   (defun js2-add-strict-warning (msg-id &optional msg-arg beg end)
+     (if (and js2-compiler-strict-mode
+              (not (and (string= msg-id "msg.no.side.effects")
+                        (string= (buffer-substring-no-properties beg (+ beg 7)) "expect("))))
+         (js2-report-warning msg-id msg-arg beg
+                             (and beg end (- end beg)))))
 
-     ;; Add support for some mocha testing externs
-     (add-hook 'js2-init-hook #'my-set-js2-mocha-externs t)))
+   ;; Add support for some mocha testing externs
+   (add-hook 'js2-init-hook #'my-set-js2-mocha-externs t))
 
 ;; Highlight node.js stacktraces in *compile* buffers
 (defvar my-nodejs-compilation-regexp
   '("^[ \t]+at +\\(?:.+(\\)?\\([^()\n]+\\):\\([0-9]+\\):\\([0-9]+\\))?$" 1 2 3))
 
-(eval-after-load "compile"
-  '(progn
-     (add-to-list 'compilation-error-regexp-alist-alist
-                  (cons 'nodejs my-nodejs-compilation-regexp))
-     (add-to-list 'compilation-error-regexp-alist 'nodejs)))
+(with-eval-after-load "compile"
+   (add-to-list 'compilation-error-regexp-alist-alist
+                (cons 'nodejs my-nodejs-compilation-regexp))
+   (add-to-list 'compilation-error-regexp-alist 'nodejs))
 
 ;; Highlight current line
 (require 'hl-line-plus)
@@ -600,9 +597,8 @@ interactively.
 (autoload 'kotlin-mode "kotlin-mode" "Major mode for editing Kotlin." t nil)
 
 ;; C#
-(eval-after-load "csharp-mode"
-  '(progn
-     (define-key csharp-mode-map (kbd "C-c .") nil)))
+(with-eval-after-load "csharp-mode"
+  (define-key csharp-mode-map (kbd "C-c .") nil))
 
 ;; ANSI colors in compile buffer
 (require 'ansi-color)
@@ -707,10 +703,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (global-set-key (kbd "C-c p") projectile-command-map)
 (global-set-key (kbd "C-c C-p") projectile-command-map)
 
-(eval-after-load "ripgrep"
-  '(progn
-     (define-key ripgrep-search-mode-map (kbd "TAB") #'compilation-next-error)
-     (define-key ripgrep-search-mode-map (kbd "<backtab>") #'compilation-previous-error)))
+(with-eval-after-load "ripgrep"
+  (define-key ripgrep-search-mode-map (kbd "TAB") #'compilation-next-error)
+  (define-key ripgrep-search-mode-map (kbd "<backtab>") #'compilation-previous-error))
 
 ;; Bind N and P in ediff so that I don't leave the control buffer
 (defun my-ediff-next-difference (&rest args)
@@ -799,16 +794,14 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
                (apply #'web-mode mode-args))))
     (add-to-list 'polymode-mode-name-aliases (cons file-ext mode-name-alias))))
 
-(eval-after-load "polymode-core"
-  '(progn
-     ;; Commented out since the font-locking tends to bleed into other areas
-     ;; of the file.
-     ;(dolist (file-ext '(hbs html js json jsx))
-     ;  (my-define-web-polymode file-ext))
-     (add-to-list 'polymode-mode-name-aliases '(bash . sh))
-     ;(add-to-list 'polymode-mode-name-aliases '(javascript . my-js))
-     (add-to-list 'polymode-mode-name-aliases '(javascript . js))
-     ))
+(with-eval-after-load "polymode-core"
+   ;; Commented out since the font-locking tends to bleed into other areas
+   ;; of the file.
+   ;(dolist (file-ext '(hbs html js json jsx))
+   ;  (my-define-web-polymode file-ext))
+   (add-to-list 'polymode-mode-name-aliases '(bash . sh))
+   ;(add-to-list 'polymode-mode-name-aliases '(javascript . my-js))
+   (add-to-list 'polymode-mode-name-aliases '(javascript . js)))
 
 ;; Prefer Github-flavored Markdown
 (my-replace-cdrs-in-alist 'markdown-link-face 'gfm-mode 'auto-mode-alist)
@@ -841,18 +834,16 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (add-hook 'after-init-hook 'global-company-mode t)
 (add-hook 'after-init-hook 'company-statistics-mode t)
 
-(eval-after-load "company"
-  '(progn
-     (define-key company-active-map (kbd "<tab>") 'company-complete-selection)))
+(with-eval-after-load "company"
+  (define-key company-active-map (kbd "<tab>") 'company-complete-selection))
 
 ;; Setup info for manually compiled packages
 (add-to-list 'Info-default-directory-list (concat my-emacs-path "share/info"))
 
 ;; Magit settings
-(eval-after-load "git-commit"
-  '(progn
-     ;; Kill auto-fill in git-commit mode
-     (remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill)))
+(with-eval-after-load "git-commit"
+  ;; Kill auto-fill in git-commit mode
+  (remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill))
 
 ;; Don't overwrite M-w in magit mode, and clear mark when done
 (defun my-magit-kill-ring-save ()
