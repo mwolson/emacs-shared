@@ -399,7 +399,6 @@
 (require 'flymake-stylelint)
 (add-hook 'scss-mode-hook 'add-node-modules-path t)
 (add-hook 'scss-mode-hook 'flymake-stylelint-enable t)
-(add-hook 'scss-mode-hook 'display-line-numbers-mode t)
 
 ;; NodeJS REPL setup
 
@@ -594,7 +593,6 @@ interactively.
 (require 'java-mode-indent-annotations)
 (require 'google-c-style)
 (add-hook 'c-mode-common-hook 'google-set-c-style t)
-(add-hook 'c-mode-common-hook 'display-line-numbers-mode t)
 (add-hook 'c-mode-common-hook 'my-xref-minor-mode t)
 
 ;; Kotlin
@@ -766,6 +764,21 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 ;; extension of mine to make list editing easy
 (require 'edit-list)
+
+;; Tree-sitter
+(add-to-list 'treesit-extra-load-path (concat my-emacs-path "extra/tree-sitter-module/dist"))
+
+;; All programming modes
+(defun my-turn-on-display-line-numbers-mode ()
+  (interactive)
+  (display-line-numbers-mode 1))
+
+(defun my-turn-off-display-line-numbers-mode ()
+  (interactive)
+  (display-line-numbers-mode -1))
+
+(add-hook 'prog-mode-hook 'my-turn-on-display-line-numbers-mode t)
+(add-hook 'lisp-interaction-mode-hook 'my-turn-off-display-line-numbers-mode t)
 
 ;; Markdown support
 

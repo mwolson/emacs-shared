@@ -18,6 +18,10 @@
 	path = extra/git
         shallow = true
 	url = https://github.com/git-for-windows/git.git
+[submodule "extra/tree-sitter-module"]
+	path = extra/tree-sitter-module
+        shallow = true
+	url = https://github.com/casouri/tree-sitter-module.git
 [submodule "share/man"]
 	path = share/man
         shallow = true

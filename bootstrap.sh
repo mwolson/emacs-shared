@@ -137,6 +137,12 @@ git submodule init
 git submodule update --depth 1
 qpopd
 
+qpushd extra/tree-sitter-module
+git submodule init
+git submodule update --depth 1
+JOBS=4 ./batch.sh
+qpopd
+
 if test -n "$BUILD"; then
     qpushd elisp/libegit2
     git submodule init
