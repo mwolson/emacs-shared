@@ -766,7 +766,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (require 'edit-list)
 
 ;; Tree-sitter
-(add-to-list 'treesit-extra-load-path (concat my-emacs-path "extra/tree-sitter-module/dist"))
+; disabling until wider adoption is reached
+;(add-to-list 'treesit-extra-load-path (concat my-emacs-path "extra/tree-sitter-module/dist"))
 
 ;; All programming modes
 (defun my-turn-on-display-line-numbers-mode ()

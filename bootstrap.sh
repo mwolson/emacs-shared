@@ -140,7 +140,8 @@ qpopd
 qpushd extra/tree-sitter-module
 git submodule init
 git submodule update --depth 1
-JOBS=4 ./batch.sh
+# disabling until wider adoption is reached
+# JOBS=4 ./batch.sh
 qpopd
 
 if test -n "$BUILD"; then
