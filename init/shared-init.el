@@ -73,6 +73,32 @@
 (when my-frame-pad-height
   (setq mf-max-height (- (display-pixel-height) my-frame-pad-height)))
 
+;; Increase height of the tab bar icons; may not be necessary in Emacs 30+
+;; https://www.reddit.com/r/emacs/comments/16yeb5x/how_do_i_make_this_button_bigger_it_is_very_small/
+(when (= emacs-major-version 29)
+  (with-eval-after-load "tab-bar"
+    (require 'icons)
+
+    (define-icon tab-bar-new nil
+      `((image "tabs/new.xpm"
+               :height (1.0 . em)
+               :margin ,tab-bar-button-margin
+               :ascent center)
+        (text " + "))
+      "Icon for creating a new tab."
+      :version "29.1"
+      :help-echo "New tab")
+
+    (define-icon tab-bar-close nil
+      `((image "tabs/close.xpm"
+               :height (1.0 . em)
+               :margin ,tab-bar-button-margin
+               :ascent center)
+        (text " x"))
+      "Icon for closing the clicked tab."
+      :version "29.1"
+      :help-echo "Click to close tab")))
+
 (defun my-reset-font ()
   (interactive)
   (when my-default-font
