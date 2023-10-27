@@ -650,36 +650,13 @@ interactively.
    (t (projectile-test-suffix project-type))))
 (setq projectile-test-suffix-function #'my-projectile-test-suffix)
 
-;; Insinuate with ripgrep
-(defvar my-default-ripgrep-args "--hidden -i --no-ignore-vcs --ignore-file .gitignore --glob=!.git/")
+(global-set-key (kbd "C-c p") projectile-command-map)
+(global-set-key (kbd "C-c C-p") projectile-command-map)
 
-(defun my-projectile-ripgrep (regexp rg-args &optional arg)
-  "Run a Ripgrep search with `REGEXP' rooted at the current projectile project root.
-
-With \\[universal-argument], also prompt for extra rg arguments and set into RG-ARGS."
-  (interactive
-   (list (read-from-minibuffer "Ripgrep search for: "
-                               (and (use-region-p) (buffer-substring-no-properties (region-beginning) (region-end))))
-         (if current-prefix-arg
-             (read-from-minibuffer "Additional rg args: " my-default-ripgrep-args nil nil nil my-default-ripgrep-args)
-           my-default-ripgrep-args)))
-  (ripgrep-regexp regexp (projectile-project-root)
-                  (and rg-args (not (string= rg-args "")) (list rg-args))))
-
-(defun my-projectile-counsel-ripgrep (regexp rg-args &optional arg)
-  "Run a Counsel Ripgrep search with `REGEXP' rooted at the current projectile project root.
-
-With \\[universal-argument], also prompt for extra rg arguments and set into RG-ARGS."
-  (interactive
-   (list (and (use-region-p) (buffer-substring-no-properties (region-beginning) (region-end)))
-         (if current-prefix-arg
-             (read-from-minibuffer "Additional rg args: " my-default-ripgrep-args nil nil nil my-default-ripgrep-args)
-           my-default-ripgrep-args)))
-  (let ((counsel-rg-base-command "rg --no-heading --line-number %s ."))
-    (counsel-rg regexp (projectile-project-root) rg-args)))
-
-(define-key projectile-command-map (kbd "s r") #'my-projectile-ripgrep)
-(define-key projectile-command-map (kbd "s s") #'my-projectile-counsel-ripgrep)
+;; Set up project.el
+(defun my-project-root ()
+  "Return root directory of the current project."
+  (project-root (project-current t)))
 
 ;; Support copying paths relative to the current buffer
 (defun my-path-of-current-buffer ()
@@ -693,19 +670,47 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (defun my-copy-project-relative-path-of-current-buffer ()
   (interactive)
-  (let ((filepath (file-relative-name (my-path-of-current-buffer) (projectile-project-root))))
+  (let ((filepath (file-relative-name (my-path-of-current-buffer) (my-project-root))))
     (kill-new filepath)
     (message "Copied '%s' to clipboard" filepath)))
 
 (define-key projectile-command-map (kbd "w p") #'my-copy-project-relative-path-of-current-buffer)
 (define-key projectile-command-map (kbd "w w") #'my-copy-path-of-current-buffer)
 
-(global-set-key (kbd "C-c p") projectile-command-map)
-(global-set-key (kbd "C-c C-p") projectile-command-map)
-
+;; Insinuate with ripgrep
 (with-eval-after-load "ripgrep"
   (define-key ripgrep-search-mode-map (kbd "TAB") #'compilation-next-error)
   (define-key ripgrep-search-mode-map (kbd "<backtab>") #'compilation-previous-error))
+
+(defvar my-default-ripgrep-args "--hidden -i --no-ignore-vcs --ignore-file .gitignore --glob=!.git/")
+
+(defun my-project-ripgrep (regexp rg-args &optional arg)
+  "Run a Ripgrep search with `REGEXP' rooted at the current projectile project root.
+
+With \\[universal-argument], also prompt for extra rg arguments and set into RG-ARGS."
+  (interactive
+   (list (read-from-minibuffer "Ripgrep search for: "
+                               (and (use-region-p) (buffer-substring-no-properties (region-beginning) (region-end))))
+         (if current-prefix-arg
+             (read-from-minibuffer "Additional rg args: " my-default-ripgrep-args nil nil nil my-default-ripgrep-args)
+           my-default-ripgrep-args)))
+  (ripgrep-regexp regexp (my-project-root)
+                  (and rg-args (not (string= rg-args "")) (list rg-args))))
+
+(defun my-counsel-ripgrep (regexp rg-args &optional arg)
+  "Run a Counsel Ripgrep search with `REGEXP' rooted at the current project root.
+
+With \\[universal-argument], also prompt for extra rg arguments and set into RG-ARGS."
+  (interactive
+   (list (and (use-region-p) (buffer-substring-no-properties (region-beginning) (region-end)))
+         (if current-prefix-arg
+             (read-from-minibuffer "Additional rg args: " my-default-ripgrep-args nil nil nil my-default-ripgrep-args)
+           my-default-ripgrep-args)))
+  (let ((counsel-rg-base-command "rg --no-heading --line-number %s ."))
+    (counsel-rg regexp (my-project-root) rg-args)))
+
+(define-key projectile-command-map (kbd "s r") #'my-project-ripgrep)
+(define-key projectile-command-map (kbd "s s") #'my-counsel-ripgrep)
 
 ;; Bind N and P in ediff so that I don't leave the control buffer
 (defun my-ediff-next-difference (&rest args)
