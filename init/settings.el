@@ -88,15 +88,9 @@
      ("gnu" . "http://elpa.gnu.org/packages/")))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(add-node-modules-path amx archive-rpm atomic-chrome browse-kill-ring cider color-theme-sanityinc-tomorrow company company-statistics counsel csharp-mode diminish dockerfile-mode dotenv-mode dumb-jump editorconfig el-mock erlang flx flymake-eslint hydra ivy js-comint lua-mode magit markdown-mode maxframe minions modus-themes package-utils poly-markdown polymode projectile ripgrep slime swift-mode swiper terraform-mode web-mode wgrep yaml-mode))
+   '(add-node-modules-path amx archive-rpm atomic-chrome browse-kill-ring cider color-theme-sanityinc-tomorrow company company-statistics counsel csharp-mode diminish dockerfile-mode dotenv-mode dumb-jump editorconfig el-mock erlang flx flymake-eslint hydra ivy js-comint lua-mode magit markdown-mode maxframe minions modus-themes package-utils poly-markdown polymode rg slime swift-mode swiper terraform-mode web-mode wgrep yaml-mode))
  '(post-jump-header nil)
- '(projectile-mode-line
-   '(:eval
-     (if
-         (file-remote-p default-directory)
-         "[-]"
-       (format "[%s]"
-               (projectile-project-name)))))
+ '(project-vc-merge-submodules nil)
  '(recentf-mode nil)
  '(require-final-newline nil)
  '(save-place t nil (saveplace))
@@ -111,7 +105,6 @@
  '(tramp-auto-save-directory "~/.emacs.d/.autosave.d")
  '(tramp-backup-directory-alist '(("." . "~/.emacs.d/backup")))
  '(uniquify-buffer-name-style 'forward nil (uniquify))
- '(vc-handled-backends nil)
  '(visible-bell t)
  '(web-mode-code-indent-offset 2)
  '(web-mode-enable-auto-indentation nil)

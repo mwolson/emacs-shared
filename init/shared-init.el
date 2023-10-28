@@ -629,29 +629,10 @@ interactively.
 (global-set-key (kbd "C-r") 'swiper-isearch)
 (global-set-key (kbd "C-c C-r") 'ivy-resume)
 
-;; Enable projectile, a way to quickly find files in projects
-(require 'projectile)
-(projectile-global-mode 1)
-(setq projectile-completion-system 'ivy)
-(setq projectile-indexing-method 'alien)
-
-;; Ignore submodules, since they are especially annoying in this repo,
-;; and I generally don't want to search them automatically from project root
-(setq projectile-git-submodule-command nil)
 ;; Tell fd to ignore any other .gitignore files that it finds in subdirectories,
 ;; mostly for submodule purposes, and only use the one in the top-level git repo
-(setq projectile-git-fd-args
-      (concat projectile-git-fd-args " --no-ignore-vcs --ignore-file .gitignore"))
-
-(defun my-projectile-test-suffix (project-type)
-  "Find default test files suffix based on PROJECT-TYPE."
-  (cond
-   ((member project-type '(grunt gulp npm)) ".spec")
-   (t (projectile-test-suffix project-type))))
-(setq projectile-test-suffix-function #'my-projectile-test-suffix)
-
-(global-set-key (kbd "C-c p") projectile-command-map)
-(global-set-key (kbd "C-c C-p") projectile-command-map)
+;(setq sample-git-fd-args
+;      (concat sample-git-fd-args " --no-ignore-vcs --ignore-file .gitignore"))
 
 ;; Set up project.el
 (defun my-project-root ()
@@ -674,28 +655,17 @@ interactively.
     (kill-new filepath)
     (message "Copied '%s' to clipboard" filepath)))
 
-(define-key projectile-command-map (kbd "w p") #'my-copy-project-relative-path-of-current-buffer)
-(define-key projectile-command-map (kbd "w w") #'my-copy-path-of-current-buffer)
-
 ;; Insinuate with ripgrep
-(with-eval-after-load "ripgrep"
-  (define-key ripgrep-search-mode-map (kbd "TAB") #'compilation-next-error)
-  (define-key ripgrep-search-mode-map (kbd "<backtab>") #'compilation-previous-error))
+(defvar my-default-ripgrep-args "--hidden -i --no-ignore-vcs --ignore-file=.gitignore --glob=!.git/")
 
-(defvar my-default-ripgrep-args "--hidden -i --no-ignore-vcs --ignore-file .gitignore --glob=!.git/")
+(defun my-rg-command-line-flags (&optional flags)
+  (append flags (split-string-shell-command my-default-ripgrep-args)))
 
-(defun my-project-ripgrep (regexp rg-args &optional arg)
-  "Run a Ripgrep search with `REGEXP' rooted at the current projectile project root.
+(setq rg-command-line-flags-function #'my-rg-command-line-flags)
 
-With \\[universal-argument], also prompt for extra rg arguments and set into RG-ARGS."
-  (interactive
-   (list (read-from-minibuffer "Ripgrep search for: "
-                               (and (use-region-p) (buffer-substring-no-properties (region-beginning) (region-end))))
-         (if current-prefix-arg
-             (read-from-minibuffer "Additional rg args: " my-default-ripgrep-args nil nil nil my-default-ripgrep-args)
-           my-default-ripgrep-args)))
-  (ripgrep-regexp regexp (my-project-root)
-                  (and rg-args (not (string= rg-args "")) (list rg-args))))
+(with-eval-after-load "rg"
+  (define-key rg-mode-map (kbd "e") #'rg-rerun-change-regexp)
+  (define-key rg-mode-map (kbd "r") #'wgrep-change-to-wgrep-mode))
 
 (defun my-counsel-ripgrep (regexp rg-args &optional arg)
   "Run a Counsel Ripgrep search with `REGEXP' rooted at the current project root.
@@ -708,9 +678,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
            my-default-ripgrep-args)))
   (let ((counsel-rg-base-command "rg --no-heading --line-number %s ."))
     (counsel-rg regexp (my-project-root) rg-args)))
-
-(define-key projectile-command-map (kbd "s r") #'my-project-ripgrep)
-(define-key projectile-command-map (kbd "s s") #'my-counsel-ripgrep)
 
 ;; Bind N and P in ediff so that I don't leave the control buffer
 (defun my-ediff-next-difference (&rest args)
@@ -850,6 +817,11 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   ;; Kill auto-fill in git-commit mode
   (remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill))
 
+(with-eval-after-load "project"
+  (define-key project-prefix-map (kbd "RET") #'magit-project-status)
+  (define-key project-prefix-map "m" #'magit-project-status)
+  (add-to-list 'project-switch-commands '(magit-project-status "Magit") t))
+
 ;; Don't overwrite M-w in magit mode, and clear mark when done
 (defun my-magit-kill-ring-save ()
   (interactive)
@@ -896,15 +868,31 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (require 'org-capture)
   (org-capture nil "n"))
 
-(define-key projectile-command-map "n" #'my-org-find-notes-file)
-(define-key projectile-command-map " " #'my-org-capture-note)
-
 (eval-after-load "org"
   '(progn
      (define-key org-mode-map (kbd "<M-left>") #'left-word)
      (define-key org-mode-map (kbd "<M-right>") #'right-word)))
 
 ;;; Key customizations
+(defvar my-project-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "a") #'project-remember-projects-under)
+    (define-key map (kbd "c") #'project-compile)
+    (define-key map (kbd "f") #'project-find-file)
+    (define-key map (kbd "k") #'project-kill-buffers)
+    (define-key map (kbd "n") #'my-org-find-notes-file)
+    (define-key map (kbd "p") #'project-switch-project)
+    (define-key map (kbd "t") #'project-switch-to-buffer)
+    (define-key map (kbd "s r") #'rg-project)
+    (define-key map (kbd "s s") #'my-counsel-ripgrep)
+    (define-key map (kbd "w p") #'my-copy-project-relative-path-of-current-buffer)
+    (define-key map (kbd "w w") #'my-copy-path-of-current-buffer)
+    (define-key map (kbd "!") #'project-async-shell-command)
+    (define-key map (kbd " ") #'my-org-capture-note)
+    map))
+
+(global-set-key (kbd "C-c p") my-project-command-map)
+(global-set-key (kbd "C-c C-p") my-project-command-map)
 
 (global-set-key "\C-xg" 'goto-line)
 
@@ -993,7 +981,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (global-set-key (kbd "s-a") #'mark-whole-buffer)
   (global-set-key (kbd "s-c") #'kill-ring-save)
   (global-set-key (kbd "s-m") (lambda () (interactive)))
-  (global-set-key (kbd "s-p") #'projectile-find-file)
+  (global-set-key (kbd "s-p") #'project-find-file)
   (global-set-key (kbd "s-q") #'save-buffers-kill-terminal)
   (global-set-key (kbd "s-w") #'kill-ring-save)
   (global-set-key (kbd "s-v") #'yank)

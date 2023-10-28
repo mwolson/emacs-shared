@@ -46,7 +46,7 @@ You'll need to [install cmake](https://cmake.org/) in order to support fast exec
 
 ## Install fd
 
-[fd](https://github.com/sharkdp/fd/releases) is helpful for reducing time for projectile project management in some cases. On Mac, install the `fd` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
+[fd](https://github.com/sharkdp/fd/releases) is helpful for reducing time for locating files in project directories in some cases. On Mac, install the `fd` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
 
 ## Install ninja
 
