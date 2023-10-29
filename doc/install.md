@@ -14,6 +14,10 @@ On macOS, the best way to do this is to install Xcode from App Store.
 
 You may want to pick up [Homebrew](http://mxcl.github.io/homebrew/) for easier installation of other useful tools, though it's not a strict requirement.
 
+## (Windows only) Install chocolatey
+
+It's recommended to do an [individual install of Chocolatey](https://chocolatey.org/install#individual) to make it easier to install `fnm` for node.js installation later on.
+
 ## (Windows only) Install MSYS2
 
 You'll need a working version of `make.exe` in order to complete the bootstrap script. Here's the recommended steps for that:
@@ -55,6 +59,15 @@ You'll need to [install ninja](https://ninja-build.org/) in order to support fas
 ## Install ripgrep
 
 [ripgrep](https://github.com/BurntSushi/ripgrep) is the fastest project search command available. On Mac, install the `ripgrep` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
+
+## Install node.js
+
+It's recommended to do a [manual install of fnm](https://github.com/Schniz/fnm#manually), configure your shell to work with it, restart any open terminals, and then install the latest LTS node.js version with:
+
+```sh
+fnm install --lts
+fnm use <version> # replace <version> with the version number that got installed
+```
 
 ## Install Emacs
 

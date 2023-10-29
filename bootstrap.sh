@@ -43,6 +43,8 @@ BUILD=y
 compile_check which
 compile_check make
 compile_check cmake
+compile_check node
+compile_check npm
 if [[ $OS == Windows ]]; then
     compile_check ninja
 
@@ -145,6 +147,8 @@ git submodule update --depth 1
 qpopd
 
 if test -n "$BUILD"; then
+    npm ci
+
     qpushd elisp/libegit2
     git submodule init
     git submodule update --depth 1

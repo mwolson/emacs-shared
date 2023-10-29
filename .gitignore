@@ -6,4 +6,5 @@
 /elisp/magit-libgit.el*
 /extra/emacs/*
 /extra/git/*
+/node_modules
 /share/man/*

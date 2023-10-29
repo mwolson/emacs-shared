@@ -40,7 +40,8 @@
 (defvar my-settings-shared-p (not (file-exists-p (locate-user-emacs-file "settings.el"))))
 (defvar my-system-paths
   (cond ((eq system-type 'darwin)
-         '("~/emacs-shared/bin"
+         '(,(concat my-emacs-path "bin")
+           ,(concat my-emacs-path "node_modules/.bin")
            "~/bin"
            "/Applications/Xcode.app/Contents/Developer/usr/bin"
            "/usr/local/bin"))
@@ -49,11 +50,11 @@
            "C:/Program Files/Git/bin"
            "C:/msys64/usr/bin"
            "c:/msys64/ucrt64/bin"
+           ,(concat my-emacs-path "node_modules/.bin")
            "C:/Program Files/maven/bin"))
-        (t '("/opt/maven/bin"))))
+        (t '(,(concat my-emacs-path "node_modules/.bin")
+             "/opt/maven/bin"))))
 (setq my-system-paths (cl-remove-if-not #'file-exists-p my-system-paths))
-
-;;; Display
 
 ;; Add shared elisp directory (but prefer system libs)
 (add-to-list 'load-path (concat my-emacs-path "elisp") t)
@@ -65,6 +66,8 @@
 
 (when (file-exists-p libgit--module-file)
   (add-to-list 'load-path (concat my-emacs-path "elisp/libegit2") t))
+
+;;; Display
 
 ;; Allow maximizing frame
 (require 'maxframe)
@@ -165,7 +168,35 @@
 ;; Make it easier to use find-library to get to this file
 (add-to-list 'load-path (concat my-emacs-path "init"))
 
+(defun my-normalize-msys-path (in-path)
+  "Attempt to convert IN-PATH from \"/c/foo\" to \"C:/foo\".
+
+Limitations:
+- IN-PATH must contain at least a drive element and a path element
+- IN-PATH must not have quoted elements such as the \"\\\" character in folder names"
+  (if (not (eq system-type 'windows-nt))
+      in-path
+    (save-match-data
+      (let* ((match-idx (string-match "^/\\([a-z]\\)/\\(.+\\)$" in-path))
+             (drive-part (and match-idx (match-string 1 in-path)))
+             (path-part (and match-idx (match-string 2 in-path))))
+        (if (not match-idx)
+            in-path
+          (concat (upcase drive-part) ":\\"
+                  (replace-regexp-in-string "/" "\\\\" path-part)))))))
+
+(defun my-fnm-get-node-path ()
+  (when (and (executable-find "fnm") (executable-find "sh"))
+    (save-match-data
+      (let* ((fnm-env (shell-command-to-string "sh -c \"fnm env\""))
+             (match-idx (string-match "PATH=\"\\(.+\\)\":\\$PATH" fnm-env))
+             (path-part (and match-idx (match-string 1 fnm-env))))
+        (and path-part (my-normalize-msys-path path-part))))))
+
 (when my-system-paths
+  (let ((node-path (my-fnm-get-node-path)))
+    (when node-path
+      (setq my-system-paths (append my-system-paths (list node-path)))))
   (setq exec-path (append my-system-paths exec-path))
   (setenv "PATH" (mapconcat (lambda (path)
                               (if (eq system-type 'windows-nt)

@@ -1,5 +1,4 @@
-Customizing Emacs
-=================
+# Customizing Emacs
 
 These can be customized using `(setq ...)`. For example:
 

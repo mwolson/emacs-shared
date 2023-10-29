@@ -1,5 +1,4 @@
-Shared Emacs settings
-=====================
+# Shared Emacs settings
 
 This is an Emacs starter kit with:
 
@@ -18,15 +17,13 @@ Differences from other Emacs starter kits:
 - Augments your existing `~/.emacs.d/init.el` file instead of replacing it
 - Can be personalized with `setq` statements
 
-Documentation
--------------
+## Documentation
 
 * [Installation Guide](doc/install.md#installing-emacs)
 * [Feature Tour](doc/tips.md#emacs-feature-tour)
 * [Customization Guide](doc/customize.md#customizing-emacs)
 
-Screenshots
------------
+## Screenshots
 
 `git` integration:
 
@@ -40,8 +37,7 @@ Entire project search:
 
 ![Magit Screenshot](img/ripgrep.png?raw=true)
 
-License
--------
+## License
 
 Unless stated otherwise, the files contained in this repo may be used, distributed, and modified without restriction.
 
