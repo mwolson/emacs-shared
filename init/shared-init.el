@@ -497,15 +497,17 @@ interactively.
 (add-hook 'inferior-js-mode-hook 'inferior-js-mode-hook-setup t)
 
 ;; Web Mode setup
-;;
-;; Taken from https://gist.github.com/CodyReichert/9dbc8bd2a104780b64891d8736682cea
 
 (defvar my--js-files-regex "\\.\\([jt]sx?\\|mjs\\)\\'")
 
 (add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.json\\'" . web-mode))
-(add-to-list 'auto-mode-alist `(,my--js-files-regex . web-mode))
+
+(define-derived-mode my-ts-web-mode web-mode "Web"
+  "Variant of Web Mode that allows JS/TS-specific hooks to be executed.")
+
+(add-to-list 'auto-mode-alist `(,my--js-files-regex . my-ts-web-mode))
 
 (setq web-mode-content-types-alist `(("jsx" . ,my--js-files-regex)))
 
@@ -517,7 +519,7 @@ interactively.
     (eval `(defun ,mode-sym (&rest mode-args)
              (cl-letf (((symbol-function 'buffer-file-name)
                         (lambda () ,filename)))
-               (apply #'web-mode mode-args))))))
+               (apply #'my-ts-web-mode mode-args))))))
 
 (my-define-web-mode 'js)
 (my-replace-cdrs-in-alist 'js-mode 'my-js-mode 'interpreter-mode-alist)
@@ -538,26 +540,20 @@ interactively.
     (eslint-fix-file)
     (revert-buffer t t)))
 
-(defun my-web-mode-init-hook ()
-  "Hooks for Web mode."
-  (add-node-modules-path)
-  (display-line-numbers-mode)
-  (let ((buf-name (buffer-name))
-        (buf-filename (buffer-file-name)))
-    (when (and (not (string-match-p "\\.mdx?" buf-name))
-               (string-match-p my--js-files-regex buf-filename))
-      (node-repl-interaction-mode 1)
-      (when (and (not (string-match-p "/node_modules/" default-directory))
-                 (executable-find "eslint"))
-        (flymake-eslint-enable)
-        (add-hook 'after-save-hook #'eslint-fix-file-and-revert-maybe t t)))))
+(defun my-ts-init ()
+  "Hooks for Web mode JS/TS files."
+  (node-repl-interaction-mode 1)
+  (when (and (not (string-match-p "/node_modules/" default-directory))
+             (executable-find "eslint"))
+    (add-hook 'after-save-hook #'eslint-fix-file-and-revert-maybe t t)))
 
 (defun my-eslint-disable-in-current-buffer ()
   (interactive)
   (flymake-mode nil)
   (set (make-local-variable 'my-eslint-fix-enabled-p) nil))
 
-(add-hook 'web-mode-hook #'my-web-mode-init-hook t)
+(add-hook 'web-mode-hook #'add-node-modules-path t)
+(add-hook 'my-ts-web-mode-hook #'my-ts-init t)
 
 ;; JS2 Mode setup (disabled)
 
@@ -710,6 +706,26 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (let ((counsel-rg-base-command "rg --no-heading --line-number %s ."))
     (counsel-rg regexp (my-project-root) rg-args)))
 
+;; Set up apheleia for automatic running of prettier
+(apheleia-global-mode 1)
+
+;; Set up eglot for LSP features
+(defvar my-eglot-diagnostics-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "<mouse-3>") 'eglot-code-actions-at-mouse)
+    map)
+  "Keymap active in Eglot-backed Flymake diagnostic overlays.")
+(setq eglot-diagnostics-map my-eglot-diagnostics-map)
+
+(require 'eglot)
+(add-hook 'c-mode-common-hook 'eglot-ensure)
+(add-hook 'my-ts-web-mode-hook 'eglot-ensure)
+(add-to-list 'eglot-server-programs
+             `(my-ts-web-mode . ("typescript-language-server" "--stdio"
+                                 :initializationOptions
+                                 (:plugins [(:name "typescript-eslint-language-service"
+                                                   :location ,my-emacs-path)]))))
+
 ;; Bind N and P in ediff so that I don't leave the control buffer
 (defun my-ediff-next-difference (&rest args)
   (interactive)
@@ -762,6 +778,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 ;; extension of mine to make list editing easy
 (require 'edit-list)
+(defalias 'my-edit-list 'edit-list)
 
 ;; Tree-sitter
 ; disabling until wider adoption is reached
@@ -797,11 +814,24 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
                (apply #'web-mode mode-args))))
     (add-to-list 'polymode-mode-name-aliases (cons file-ext mode-name-alias))))
 
+(defun my-define-ts-web-polymode (file-ext)
+  (let* ((sym-name (symbol-name file-ext))
+         (filename (concat "." sym-name))
+         (mode-sym (intern (concat "my-" sym-name "-mode")))
+         (mode-name-alias (intern (concat "my-" sym-name))))
+    (eval `(defun ,mode-sym (&rest mode-args)
+             (cl-letf (((symbol-function 'buffer-file-name)
+                        (lambda () ,filename)))
+               (apply #'my-ts-web-mode mode-args))))
+    (add-to-list 'polymode-mode-name-aliases (cons file-ext mode-name-alias))))
+
 (with-eval-after-load "polymode-core"
    ;; Commented out since the font-locking tends to bleed into other areas
    ;; of the file.
-   ;(dolist (file-ext '(hbs html js json jsx))
+   ;(dolist (file-ext '(hbs html json))
    ;  (my-define-web-polymode file-ext))
+   ;(dolist (file-ext '(js jsx))
+   ;  (my-define-ts-web-polymode file-ext))
    (add-to-list 'polymode-mode-name-aliases '(bash . sh))
    ;(add-to-list 'polymode-mode-name-aliases '(javascript . my-js))
    (add-to-list 'polymode-mode-name-aliases '(javascript . js)))
@@ -979,6 +1009,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (global-set-key "\C-t" (lambda () (interactive)))
 (global-set-key "\C-z" (lambda () (interactive)))
 (global-set-key "\C-x\C-z" (lambda () (interactive)))
+(global-set-key (kbd "<mouse-2>") (lambda () (interactive)))
+(global-set-key (kbd "<mouse-3>") (lambda () (interactive)))
 
 ;; Bind Apple-<key> to Alt-<key> for some Mac keys
 (when (and my-remap-cmd-key-p (eq system-type 'darwin))

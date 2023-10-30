@@ -31,7 +31,7 @@ pacman -Sy pacman
 pacman -Syu
 pacman -Su
 pacman -S --needed base-devel libssh2-devel msys/man-db xmlto
-pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,cmake,fd,gcc,gnutls,make,ninja,ripgrep}
+pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,cmake,fd,gcc,gnutls,make,ninja,ripgrep}
 ```
 * Make sure you do not have git installed through MSYS2 (we want it to come from Git For Windows instead so we get caching) by running this and ignoring any "target not found" errors:
 ```sh
@@ -43,6 +43,10 @@ pacman -R git
 ```sh
 sudo pacman -S aspell-en base-devel cmake fd gnutls libssh2-devel make man-db man-pages ninja openssh ripgrep
 ```
+
+## Install clangd
+
+You'll need to [install clangd](https://clangd.llvm.org/installation) in order to support language server features for C/C++. On Mac, install the `llvm` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
 
 ## Install cmake
 
@@ -56,10 +60,6 @@ You'll need to [install cmake](https://cmake.org/) in order to support fast exec
 
 You'll need to [install ninja](https://ninja-build.org/) in order to support fast execution of Magit. On Mac, install the `ninja` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
 
-## Install ripgrep
-
-[ripgrep](https://github.com/BurntSushi/ripgrep) is the fastest project search command available. On Mac, install the `ripgrep` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
-
 ## Install node.js
 
 It's recommended to do a [manual install of fnm](https://github.com/Schniz/fnm#manually), configure your shell to work with it, restart any open terminals, and then install the latest LTS node.js version with:
@@ -68,6 +68,10 @@ It's recommended to do a [manual install of fnm](https://github.com/Schniz/fnm#m
 fnm install --lts
 fnm use <version> # replace <version> with the version number that got installed
 ```
+
+## Install ripgrep
+
+[ripgrep](https://github.com/BurntSushi/ripgrep) is the fastest project search command available. On Mac, install the `ripgrep` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
 
 ## Install Emacs
 

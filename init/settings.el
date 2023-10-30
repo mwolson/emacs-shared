@@ -88,7 +88,7 @@
      ("gnu" . "http://elpa.gnu.org/packages/")))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(add-node-modules-path amx archive-rpm atomic-chrome browse-kill-ring cider color-theme-sanityinc-tomorrow company company-statistics counsel csharp-mode diminish dockerfile-mode dotenv-mode dumb-jump editorconfig el-mock erlang flx flymake-eslint hydra ivy js-comint lua-mode magit markdown-mode maxframe minions modus-themes package-utils poly-markdown polymode rg slime swift-mode swiper terraform-mode web-mode wgrep yaml-mode))
+   '(add-node-modules-path amx apheleia archive-rpm atomic-chrome browse-kill-ring cider color-theme-sanityinc-tomorrow company company-statistics counsel csharp-mode diminish dockerfile-mode dotenv-mode dumb-jump editorconfig el-mock erlang flx hydra ivy js-comint lua-mode magit markdown-mode maxframe minions modus-themes package-utils poly-markdown polymode rg slime swift-mode swiper terraform-mode web-mode wgrep yaml-mode))
  '(post-jump-header nil)
  '(project-vc-merge-submodules nil)
  '(recentf-mode nil)
@@ -122,5 +122,5 @@
  ;; If there is more than one, they won't work right.
  '(line-number-current-line ((t (:inherit highlight))))
  '(web-mode-html-tag-face ((t (:inherit font-lock-constant-face))))
- '(web-mode-json-key-face ((t (:foreground nil :inherit font-lock-variable-name-face))))
+ '(web-mode-json-key-face ((t (:foreground unspecified :inherit font-lock-variable-name-face))))
  '(woman-italic ((t (:underline t :slant italic)))))
