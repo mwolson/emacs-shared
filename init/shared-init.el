@@ -40,7 +40,7 @@
 (defvar my-settings-shared-p (not (file-exists-p (locate-user-emacs-file "settings.el"))))
 (defvar my-system-paths
   (cond ((eq system-type 'darwin)
-         '(,(concat my-emacs-path "bin")
+         `(,(concat my-emacs-path "bin")
            ,(concat my-emacs-path "node_modules/.bin")
            "~/bin"
            "/Applications/Xcode.app/Contents/Developer/usr/bin"
@@ -52,7 +52,7 @@
            "c:/msys64/ucrt64/bin"
            ,(concat my-emacs-path "node_modules/.bin")
            "C:/Program Files/maven/bin"))
-        (t '(,(concat my-emacs-path "node_modules/.bin")
+        (t `(,(concat my-emacs-path "node_modules/.bin")
              "/opt/maven/bin"))))
 (setq my-system-paths (cl-remove-if-not #'file-exists-p my-system-paths))
 
