@@ -14,7 +14,7 @@ Most of the settings are optional, except for `my-emacs-path`.
 
 ## Display
 
-* `my-default-font`: This will be a font name and size, for example: `"Inconsolata-18"`
+* `my-default-font`: This will be a font name and size, for example: `"Fira Code-17"`
 * `my-modus-theme`: Which [modus color theme](https://protesilaos.com/emacs/modus-themes-pictures) to apply; set this to `nil` if using `my-theme`
 * `my-modus-theme-overrides`: Pallette overrides for `modus-themes-common-palette-overrides`
 * `my-theme`: Which color theme to apply; set this to `nil` if using `my-modus-theme`

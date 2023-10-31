@@ -138,7 +138,7 @@ Download [Fira Code](https://github.com/tonsky/FiraCode#download--install), open
 
 *Windows*
 
-On Windows we currently use [Fira Code](https://github.com/tonsky/FiraCode#download--install) instead, because Inconsolata has a lot of vertical space between lines currently.
+Download [Fira Code](https://github.com/tonsky/FiraCode#download--install) and follow the instructions.
 
 *Arch Linux*
 
