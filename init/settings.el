@@ -34,6 +34,7 @@
  '(dired-recursive-deletes 'always)
  '(doc-view-resolution 132)
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
+ '(eldoc-echo-area-display-truncation-message nil)
  '(eldoc-minor-mode-string " E")
  '(electric-indent-mode nil)
  '(enable-recursive-minibuffers t)

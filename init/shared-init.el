@@ -219,10 +219,10 @@ Limitations:
 ;;; Customizations
 
 ;; Default values for some customization options
-(setq directory-free-space-args "-Pkl")
 
-(when (eq system-type 'windows-nt)
-  (setq directory-free-space-args nil))
+(if (eq system-type 'windows-nt)
+    (setopt directory-free-space-args nil)
+  (setopt directory-free-space-args "-Pkl"))
 
 ;; Load customizations
 (setq custom-file (if my-settings-shared-p
@@ -293,14 +293,18 @@ Limitations:
   (interactive)
   ;; full name
   (setq debian-changelog-full-name my-full-name)
-  (setq user-full-name my-full-name)
+  (setopt user-full-name my-full-name)
   ;; changelog email addresses
-  (setq add-log-mailing-address my-changelog-address)
+  (when (featurep 'add-log)
+    (setopt add-log-mailing-address my-changelog-address))
   (setq debian-changelog-mailing-address my-changelog-address)
   ;; email addresses
   (setq post-email-address my-email-address)
-  (setq user-mail-address my-email-address))
+  (setopt user-mail-address my-email-address))
 (my-update-personal-info)
+
+(with-eval-after-load "add-log"
+  (setopt add-log-mailing-address my-changelog-address))
 
 ;;; Programs and features
 
@@ -413,9 +417,9 @@ Limitations:
 ;; Lisp REPL using SLIME
 (require 'slime)
 (slime-setup '(slime-repl))
-(setq slime-auto-connect 'always)
-(setq slime-kill-without-query-p t)
-(setq slime-protocol-version 'ignore)
+(setopt slime-auto-connect 'always)
+(setopt slime-kill-without-query-p t)
+(setopt slime-protocol-version 'ignore)
 
 ;; Improved JSX support (disabled)
 ;;
@@ -489,7 +493,7 @@ interactively.
    (t nil)))
 
 ;; (when (eq system-type 'windows-nt)
-;;   (setq js-comint-program-command "C:/Program Files/nodejs/node.exe"))
+;;   (setopt js-comint-program-command "C:/Program Files/nodejs/node.exe"))
 
 (defun inferior-js-mode-hook-setup ()
   (add-hook 'comint-output-filter-functions 'js-comint-process-output))
@@ -641,12 +645,12 @@ interactively.
 ;; Ivy, Counsel, and Swiper
 (require 'counsel)
 (ivy-mode 1)
-(setq ivy-use-virtual-buffers t)
-(setq ivy-count-format "(%d/%d) ")
+(setopt ivy-use-virtual-buffers t)
+(setopt ivy-count-format "(%d/%d) ")
 (setq ivy-re-builders-alist
       '((t . ivy--regex-plus)))
-(setq counsel-find-file-at-point t)
-(setq counsel-mode-override-describe-bindings t)
+(setopt counsel-find-file-at-point t)
+(setopt counsel-mode-override-describe-bindings t)
 (counsel-mode 1)
 
 (define-key ivy-minibuffer-map (kbd "C-r") 'ivy-previous-line-or-history)
@@ -681,6 +685,31 @@ interactively.
   (let ((filepath (file-relative-name (my-path-of-current-buffer) (my-project-root))))
     (kill-new filepath)
     (message "Copied '%s' to clipboard" filepath)))
+
+(defun my-remove-project-switch-bindings (to-remove)
+  (dolist (item (cdr project-prefix-map))
+    (let* ((raw-key (car item))
+           (cmd (cdr item)))
+      (when (and (memq cmd to-remove) (integerp raw-key))
+        (keymap-set project-prefix-map (string raw-key) nil))))
+  (setq project-switch-commands
+        (cl-remove-if #'(lambda (item) (memq (car item) to-remove))
+                      project-switch-commands)))
+
+(with-eval-after-load "project"
+  (my-remove-project-switch-bindings '(project-eshell
+                                       project-find-dir
+                                       project-find-regexp
+                                       project-query-replace-regexp
+                                       project-vc-dir))
+  (add-to-list 'project-switch-commands '(project-dired "Dired") t)
+  (define-key project-prefix-map "d" #'project-dired)
+  (add-to-list 'project-switch-commands '(my-counsel-ripgrep "Ripgrep") t)
+  (define-key project-prefix-map "r" #'my-counsel-ripgrep)
+  (define-key project-prefix-map "s" #'my-counsel-ripgrep)
+  (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
+  (define-key project-prefix-map (kbd "RET") #'magit-project-status)
+  (define-key project-prefix-map "m" #'magit-project-status))
 
 ;; Insinuate with ripgrep
 (defvar my-default-ripgrep-args "--hidden -i --no-ignore-vcs --ignore-file=.gitignore --glob=!.git/")
@@ -718,6 +747,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (setq eglot-diagnostics-map my-eglot-diagnostics-map)
 
 (require 'eglot)
+(setopt eglot-send-changes-idle-time 0.2)
 (add-hook 'c-mode-common-hook 'eglot-ensure)
 (add-hook 'my-ts-web-mode-hook 'eglot-ensure)
 (add-to-list 'eglot-server-programs
@@ -771,7 +801,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
 
 ;; Make tramp's backup directories the same as the normal ones
-(setq tramp-backup-directory-alist backup-directory-alist)
+(setopt tramp-backup-directory-alist backup-directory-alist)
 
 ;; Navigate the kill ring when doing M-y
 (browse-kill-ring-default-keybindings)
@@ -878,21 +908,15 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   ;; Kill auto-fill in git-commit mode
   (remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill))
 
-(with-eval-after-load "project"
-  (define-key project-prefix-map (kbd "RET") #'magit-project-status)
-  (define-key project-prefix-map "m" #'magit-project-status)
-  (add-to-list 'project-switch-commands '(magit-project-status "Magit") t))
-
 ;; Don't overwrite M-w in magit mode, and clear mark when done
 (defun my-magit-kill-ring-save ()
   (interactive)
   (call-interactively #'kill-ring-save)
   (deactivate-mark))
 
-(eval-after-load "magit"
-  '(progn
-     (setq magit-completing-read-function 'ivy-completing-read)
-     (define-key magit-mode-map (kbd "M-w") #'my-magit-kill-ring-save)))
+(with-eval-after-load "magit"
+  (setopt magit-completing-read-function 'ivy-completing-read)
+  (define-key magit-mode-map (kbd "M-w") #'my-magit-kill-ring-save))
 
 (defun my-preload-magit ()
   (require 'magit)
@@ -914,9 +938,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (minions-mode 1)
 
 ;; Clojure mode settings
-(eval-after-load "clojure-mode"
-  '(progn
-     (require 'cider)))
+(with-eval-after-load "clojure-mode"
+  (require 'cider))
 
 ;; Org Mode settings
 (defun my-org-find-notes-file ()
@@ -929,10 +952,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (require 'org-capture)
   (org-capture nil "n"))
 
-(eval-after-load "org"
-  '(progn
-     (define-key org-mode-map (kbd "<M-left>") #'left-word)
-     (define-key org-mode-map (kbd "<M-right>") #'right-word)))
+(with-eval-after-load "org"
+  (define-key org-mode-map (kbd "<M-left>") #'left-word)
+  (define-key org-mode-map (kbd "<M-right>") #'right-word))
 
 ;;; Key customizations
 (defvar my-project-command-map
@@ -979,26 +1001,22 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (global-set-key "\C-xF" my-find-things-map)
 (global-set-key "\C-xf" my-find-things-map)
 
-(eval-after-load "view"
-  '(progn
-     ;; Make the `q' key bury the current buffer when viewing help
-     (define-key view-mode-map "q" 'bury-buffer)
-     ;; Make the <DEL> key scroll backwards in View mode
-     (define-key view-mode-map [delete] 'View-scroll-page-backward)))
+(with-eval-after-load "view"
+  ;; Make the `q' key bury the current buffer when viewing help
+  (define-key view-mode-map "q" 'bury-buffer)
+  ;; Make the <DEL> key scroll backwards in View mode
+  (define-key view-mode-map [delete] 'View-scroll-page-backward))
 
-(eval-after-load "info"
-  '(progn
-     ;; Make the <DEL> key scroll backwards in Info mode
-     (define-key Info-mode-map [delete] 'Info-scroll-down)))
+(with-eval-after-load "info"
+  ;; Make the <DEL> key scroll backwards in Info mode
+  (define-key Info-mode-map [delete] 'Info-scroll-down))
 
 ;; diff-mode: Don't mess with M-q
-(eval-after-load "diff-mode"
-  '(progn
-     (define-key diff-mode-map (kbd "M-q") 'fill-paragraph)))
+(with-eval-after-load "diff-mode"
+  (define-key diff-mode-map (kbd "M-q") 'fill-paragraph))
 
-(eval-after-load "cider-repl"
-  '(progn
-     (define-key cider-repl-mode-map (kbd "C-d") #'cider-quit)))
+(with-eval-after-load "cider-repl"
+  (define-key cider-repl-mode-map (kbd "C-d") #'cider-quit))
 
 ;; Use Ivy instead of the buffer list when I typo it
 (global-set-key "\C-x\C-b" 'ivy-switch-buffer)
@@ -1014,20 +1032,17 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 ;; Bind Apple-<key> to Alt-<key> for some Mac keys
 (when (and my-remap-cmd-key-p (eq system-type 'darwin))
-  (setq mac-option-modifier 'meta)
-  (setq mac-command-modifier 'super))
+  (setopt mac-option-modifier 'meta)
+  (setopt mac-command-modifier 'super))
 
 (defun my-set-super-bindings ()
   (interactive)
-  (eval-after-load "cider-repl"
-    '(progn
-       (define-key cider-repl-mode-map (kbd "s-n") #'cider-repl-next-input)
-       (define-key cider-repl-mode-map (kbd "s-p") #'cider-repl-previous-input)))
-
-  (eval-after-load "magit"
-    '(progn
-       (define-key magit-status-mode-map (kbd "S-c") #'my-magit-kill-ring-save)
-       (define-key magit-status-mode-map (kbd "S-w") #'my-magit-kill-ring-save)))
+  (with-eval-after-load "cider-repl"
+    (define-key cider-repl-mode-map (kbd "s-n") #'cider-repl-next-input)
+    (define-key cider-repl-mode-map (kbd "s-p") #'cider-repl-previous-input))
+  (with-eval-after-load "magit"
+    (define-key magit-status-mode-map (kbd "S-c") #'my-magit-kill-ring-save)
+    (define-key magit-status-mode-map (kbd "S-w") #'my-magit-kill-ring-save))
 
   (global-set-key (kbd "s-:") #'eval-expression)
   (global-set-key (kbd "s-;") #'eval-expression)
