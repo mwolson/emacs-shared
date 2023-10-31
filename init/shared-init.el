@@ -105,6 +105,26 @@
           (modus-themes-select my-modus-theme))
       (load-theme my-theme t))))
 
+;; Support for font ligatures
+(add-to-list 'load-path (concat my-emacs-path "elisp/ligature") t)
+
+(defun my-enable-ligatures (mode)
+  ;; Enable ligatures in programming modes
+  (interactive)
+  (require 'ligature)
+  (ligature-set-ligatures mode
+                          '("www" "**" "***" "**/" "*>" "*/" "\\\\" "\\\\\\" "{-" "::"
+                            ":::" ":=" "!!" "!=" "!==" "-}" "----" "-->" "->" "->>"
+                            "-<" "-<<" "-~" "#{" "#[" "##" "###" "####" "#(" "#?" "#_"
+                            "#_(" ".-" ".=" ".." "..<" "..." "?=" "??" ";;" "/*" "/**"
+                            "/=" "/==" "/>" "//" "///" "&&" "||" "||=" "|=" "|>" "^=" "$>"
+                            "++" "+++" "+>" "=:=" "==" "===" "==>" "=>" "=>>" "<="
+                            "=<<" "=/=" ">-" ">=" ">=>" ">>" ">>-" ">>=" ">>>" "<*"
+                            "<*>" "<|" "<|>" "<$" "<$>" "<!--" "<-" "<--" "<->" "<+"
+                            "<+>" "<=" "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<"
+                            "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
+  (global-ligature-mode t))
+
 ;; This function should be called on the emacsclient commandline in cases where no file is being passed on commandline.
 (defun my-init-client ()
   (interactive)
@@ -117,11 +137,13 @@
         (when (or (not my-frame-maximize-p) my-frame-maximize-if-pixel-width-lte)
           (add-to-list 'default-frame-alist (cons 'height my-frame-height))
           (add-to-list 'default-frame-alist (cons 'width my-frame-width)))
-        (when (eq window-system 'mac)
-          ;; redisplay slowness https://github.com/hlissner/doom-emacs/issues/2217
-          (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
-          (ignore-errors
-            (mac-auto-operator-composition-mode)))
+        (cond ((eq window-system 'mac)
+               ;; redisplay slowness https://github.com/hlissner/doom-emacs/issues/2217
+               (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
+               (ignore-errors
+                 (mac-auto-operator-composition-mode)))
+              ((memq window-system '(pgtk w32 x))
+               (my-enable-ligatures)))
         ;; Make sure DEL key does what I want
         (normal-erase-is-backspace-mode 1)
         ;; Show the menu if we are using X

@@ -344,6 +344,18 @@ git push upstream main
 popd
 ```
 
+## Add New Submodules
+
+Do this:
+
+```sh
+git submodule add --depth 1 https://github.com/path/to/module elisp/my-new-module
+```
+
+Ensure that the `shallow = true` line is present for that submodule in `.gitmodules` and sort the config.
+
+Update `bootstrap.sh` to initialize the submodule and `init/shared-init.el` to add the load path.
+
 ## Update Emacs Source Code
 
 Do this:

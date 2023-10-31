@@ -139,6 +139,11 @@ git submodule init
 git submodule update --depth 1
 qpopd
 
+qpushd extra/ligature
+git submodule init
+git submodule update --depth 1
+qpopd
+
 qpushd extra/tree-sitter-module
 git submodule init
 git submodule update --depth 1

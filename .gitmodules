@@ -6,6 +6,9 @@
 	path = elisp/libegit2
         shallow = true
 	url = https://github.com/magit/libegit2.git
+[submodule "elisp/ligature"]
+	path = elisp/ligature
+	url = https://github.com/mickeynp/ligature.el.git
 [submodule "elisp/magit"]
 	path = elisp/magit
         shallow = true
