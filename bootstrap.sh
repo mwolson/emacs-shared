@@ -134,12 +134,12 @@ git submodule update --depth 1
 emacs --batch -q --eval='(package-install-file default-directory)' 2>&1 | grep -v '^Loading '
 qpopd
 
-qpushd extra/emacs
+qpushd elisp/ligature
 git submodule init
 git submodule update --depth 1
 qpopd
 
-qpushd extra/ligature
+qpushd extra/emacs
 git submodule init
 git submodule update --depth 1
 qpopd

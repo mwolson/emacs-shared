@@ -108,11 +108,11 @@
 ;; Support for font ligatures
 (add-to-list 'load-path (concat my-emacs-path "elisp/ligature") t)
 
-(defun my-enable-ligatures (mode)
+(defun my-enable-ligatures ()
   ;; Enable ligatures in programming modes
   (interactive)
   (require 'ligature)
-  (ligature-set-ligatures mode
+  (ligature-set-ligatures 'prog-mode
                           '("www" "**" "***" "**/" "*>" "*/" "\\\\" "\\\\\\" "{-" "::"
                             ":::" ":=" "!!" "!=" "!==" "-}" "----" "-->" "->" "->>"
                             "-<" "-<<" "-~" "#{" "#[" "##" "###" "####" "#(" "#?" "#_"
