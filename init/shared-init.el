@@ -750,11 +750,16 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (setopt eglot-send-changes-idle-time 0.2)
 (add-hook 'c-mode-common-hook 'eglot-ensure)
 (add-hook 'my-ts-web-mode-hook 'eglot-ensure)
+(add-hook 'rust-mode-hook 'eglot-ensure)
 (add-to-list 'eglot-server-programs
-             `(my-ts-web-mode . ("typescript-language-server" "--stdio"
-                                 :initializationOptions
-                                 (:plugins [(:name "typescript-eslint-language-service"
-                                                   :location ,my-emacs-path)]))))
+             `((my-ts-web-mode) .
+               ("typescript-language-server" "--stdio"
+                :initializationOptions
+                (:plugins [(:name "typescript-eslint-language-service"
+                                  :location ,my-emacs-path)]))))
+(add-to-list 'eglot-server-programs
+             '((rust-ts-mode rust-mode) .
+               ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
 
 ;; Bind N and P in ediff so that I don't leave the control buffer
 (defun my-ediff-next-difference (&rest args)

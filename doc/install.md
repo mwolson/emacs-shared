@@ -31,7 +31,7 @@ pacman -Sy pacman
 pacman -Syu
 pacman -Su
 pacman -S --needed base-devel libssh2-devel msys/man-db xmlto
-pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,cmake,fd,gcc,gnutls,make,ninja,ripgrep}
+pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,cmake,fd,gcc,gnutls,make,ninja,ripgrep,rust}
 ```
 * Make sure you do not have git installed through MSYS2 (we want it to come from Git For Windows instead so we get caching) by running this and ignoring any "target not found" errors:
 ```sh
@@ -72,6 +72,10 @@ fnm use <version> # replace <version> with the version number that got installed
 ## Install ripgrep
 
 [ripgrep](https://github.com/BurntSushi/ripgrep) is the fastest project search command available. On Mac, install the `ripgrep` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
+
+## Install rust-analyzer
+
+You'll need to [install rust analyzer](https://rust-analyzer.github.io/manual.html#rust-analyzer-language-server-binary) in order to support language server features for Rust. On Mac, install the `rust` and `rust-analyzer` packages from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
 
 ## Install Emacs
 

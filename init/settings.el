@@ -89,7 +89,7 @@
      ("gnu" . "http://elpa.gnu.org/packages/")))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(add-node-modules-path amx apheleia archive-rpm atomic-chrome browse-kill-ring cider color-theme-sanityinc-tomorrow company company-statistics counsel csharp-mode diminish dockerfile-mode dotenv-mode dumb-jump editorconfig el-mock erlang flx hydra ivy js-comint lua-mode magit markdown-mode maxframe minions modus-themes package-utils poly-markdown polymode rg slime swift-mode swiper terraform-mode web-mode wgrep yaml-mode))
+   '(add-node-modules-path amx apheleia archive-rpm atomic-chrome browse-kill-ring cider color-theme-sanityinc-tomorrow company company-statistics counsel csharp-mode diminish dockerfile-mode dotenv-mode dumb-jump editorconfig el-mock erlang flx hydra ivy js-comint lua-mode magit markdown-mode maxframe minions modus-themes package-utils poly-markdown polymode rg rust-mode slime swift-mode swiper terraform-mode web-mode wgrep yaml-mode))
  '(post-jump-header nil)
  '(project-vc-merge-submodules nil)
  '(recentf-mode nil)
