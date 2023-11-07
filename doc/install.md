@@ -16,7 +16,7 @@ You may want to pick up [Homebrew](http://mxcl.github.io/homebrew/) for easier i
 
 ## (Windows only) Install chocolatey
 
-It's recommended to do an [individual install of Chocolatey](https://chocolatey.org/install#individual) to make it easier to install `fnm` for node.js installation later on.
+It's recommended to do an [individual install of Chocolatey](https://chocolatey.org/install#individual) to make it easier to install several other dependencies later on.
 
 ## (Windows only) Install MSYS2
 
@@ -68,6 +68,27 @@ It's recommended to do a [manual install of fnm](https://github.com/Schniz/fnm#m
 fnm install --lts
 fnm use <version> # replace <version> with the version number that got installed
 ```
+
+## Install Omnisharp
+
+*Windows*
+
+Run `choco install omnisharp`
+
+*Mac OS*
+
+Run:
+
+``` sh
+brew install omnisharp/omnisharp-roslyn/omnisharp-mono
+sudo mkdir -p /usr/local/opt                                                                                  sudo ln -s /opt/homebrew/opt/omnisharp-mono /usr/local/opt
+```
+
+Confirm that you can run `omnisharp --help` and get a help menu. If you get "assembly not found", make sure to create `/usr/local/opt` and set up the symlink as above.
+
+*Arch Linux*
+
+Run `yay install omnisharp-roslyn`
 
 ## Install ripgrep
 

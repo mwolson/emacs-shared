@@ -656,9 +656,9 @@ interactively.
 ;; ANSI colors in compile buffer
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
-  (toggle-read-only)
+  (read-only-mode 0)
   (ansi-color-apply-on-region (point-min) (point-max))
-  (toggle-read-only))
+  (read-only-mode 1))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer t)
 
 ;; Load amx, which makes M-x work better on Ivy
@@ -771,8 +771,10 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (require 'eglot)
 (setopt eglot-send-changes-idle-time 0.2)
 (add-hook 'c-mode-common-hook 'eglot-ensure)
+(add-hook 'csharp-mode-hook 'eglot-ensure)
 (add-hook 'my-ts-web-mode-hook 'eglot-ensure)
 (add-hook 'rust-mode-hook 'eglot-ensure)
+
 (add-to-list 'eglot-server-programs
              `((my-ts-web-mode) .
                ("typescript-language-server" "--stdio"
