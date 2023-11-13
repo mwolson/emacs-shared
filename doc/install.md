@@ -81,7 +81,8 @@ Run:
 
 ``` sh
 brew install omnisharp/omnisharp-roslyn/omnisharp-mono
-sudo mkdir -p /usr/local/opt                                                                                  sudo ln -s /opt/homebrew/opt/omnisharp-mono /usr/local/opt
+sudo mkdir -p /usr/local/opt
+sudo ln -s /opt/homebrew/opt/omnisharp-mono /usr/local/opt
 ```
 
 Confirm that you can run `omnisharp --help` and get a help menu. If you get "assembly not found", make sure to create `/usr/local/opt` and set up the symlink as above.
