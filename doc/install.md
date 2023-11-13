@@ -192,8 +192,6 @@ export PATH=~/emacs-shared/bin:~/bin:"$PATH"
 
 Restart your Terminal app to make the change take effect. Sourcing the file is not enough, since macOS seems to perform indexing of location on program name.
 
-To verify your work, run `emacs --version` and make sure it shows the version number you'd expect.
-
 *Linux*
 
 You'll want to make sure that your path includes the correct version of Emacs and some helper scripts. To do this, edit `~/.bashrc` and add:
@@ -203,8 +201,6 @@ export PATH=~/emacs-shared/bin:~/bin:"$PATH"
 ```
 
 Restart your Terminal program to make the change take effect, or source the file.
-
-To verify your work, run `emacs --version` and make sure it shows the version number you'd expect.
 
 *Windows*
 
@@ -233,6 +229,8 @@ Commands to run regardless of OS:
 cd ~/emacs-shared
 ./bootstrap.sh
 ```
+
+To verify that `PATH` now has the correct entries, run `emacs --version` and make sure it shows the version number you'd expect.
 
 ## Create a ~/.emacs.d/init.el file
 
