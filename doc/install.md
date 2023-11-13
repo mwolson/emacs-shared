@@ -309,11 +309,11 @@ cp -R man* /usr/local/share/man/
 
 ## (macOS only) Update man database
 
-After installing new packages, the <kbd>M-x man</kbd> command might not list the new manpages for those packages, because the `whatis` DB used by `man` gets updated weekly via a cron job. Further, any manpages for programs that are part of the XCode Commandline Tools will never get installed because the cron job inexplicably excludes them. To make force them to be generated, run the following:
+To force XCode manpages to be generated (may require granting your terminal program the ability to modify apps), along with the homebrew manpages, run the following:
 
 ```sh
-sudo /etc/periodic/weekly/320.whatis
 sudo /usr/libexec/makewhatis /Applications/Xcode.app/Contents/Developer/usr/share/man
+sudo /usr/libexec/makewhatis /opt/homebrew/share/man
 ```
 
 ## (macOS only) Enable keyboard autorepeat

@@ -43,6 +43,8 @@
          `(,(concat my-emacs-path "bin")
            ,(concat my-emacs-path "node_modules/.bin")
            "~/bin"
+           "/opt/homebrew/bin"
+           "/opt/homebrew/sbin"
            "/Applications/Xcode.app/Contents/Developer/usr/bin"
            "/usr/local/bin"))
         ((eq system-type 'windows-nt)
@@ -208,18 +210,17 @@ Limitations:
                   (replace-regexp-in-string "/" "\\\\" path-part)))))))
 
 (defun my-fnm-get-node-path ()
-  (when (and (executable-find "fnm") (executable-find "sh"))
+  (when (executable-find "fnm")
     (save-match-data
-      (let* ((fnm-env (shell-command-to-string "sh -c \"fnm env\""))
+      (let* ((fnm-env (shell-command-to-string "fnm env --shell bash"))
              (match-idx (string-match "PATH=\"\\(.+\\)\":\\$PATH" fnm-env))
              (path-part (and match-idx (match-string 1 fnm-env))))
         (and path-part (my-normalize-msys-path path-part))))))
 
-(when my-system-paths
-  (let ((node-path (my-fnm-get-node-path)))
-    (when node-path
-      (setq my-system-paths (append my-system-paths (list node-path)))))
-  (setq exec-path (append my-system-paths exec-path))
+(defvar my-original-exec-path exec-path)
+
+(defun my-install-system-paths ()
+  (setq exec-path (append my-system-paths my-original-exec-path))
   (setenv "PATH" (mapconcat (lambda (path)
                               (if (eq system-type 'windows-nt)
                                   (replace-regexp-in-string "/" "\\\\" path)
@@ -227,16 +228,28 @@ Limitations:
                             (append my-system-paths (list (getenv "PATH")))
                             (if (eq system-type 'windows-nt) ";" ":"))))
 
+(when my-system-paths
+  (my-install-system-paths)
+  (let ((node-path (my-fnm-get-node-path)))
+    (when node-path
+      (setq my-system-paths (append (list node-path) my-system-paths))
+      (my-install-system-paths))))
+
 (setq source-directory "~/emacs-shared/extra/emacs")
 
 ;; Setup manpage browsing
-(when (eq system-type 'windows-nt)
-  (setenv "MANPATH" (concat (expand-file-name "~/emacs-shared/share/man") ";"
-                            "C:\\msys64\\usr\\share\\man;"
-                            "C:\\msys64\\ucrt64\\share\\man;"
-                            "C:\\Program Files\\Emacs\\emacs-" emacs-version "\\share\\man"))
-  (require 'woman)
-  (defalias 'man 'woman))
+(cond ((eq system-type 'darwin)
+       (setenv "INFOPATH" (concat "/opt/homebrew/share/info:"
+                                  (or (getenv "INFOPATH") "")))
+       (setenv "MANPATH" (concat "/opt/homebrew/share/man:"
+                                 (or (getenv "MANPATH") ""))))
+      ((eq system-type 'windows-nt)
+       (setenv "MANPATH" (concat (expand-file-name "~/emacs-shared/share/man") ";"
+                                 "C:\\msys64\\usr\\share\\man;"
+                                 "C:\\msys64\\ucrt64\\share\\man;"
+                                 "C:\\Program Files\\Emacs\\emacs-" emacs-version "\\share\\man"))
+       (require 'woman)
+       (defalias 'man 'woman)))
 
 ;;; Customizations
 
