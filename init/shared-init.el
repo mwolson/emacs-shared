@@ -7,6 +7,12 @@
 
 (require 'cl-seq)
 
+;; Uncomment this to debug warnings
+;(require 'warnings)
+;(defun display-warning (type message)
+;  (setq debug-on-error t)
+;  (error message))
+
 ;;; Options that change behavior of this file
 
 (defvar my-default-font      (cond
@@ -252,12 +258,6 @@ Limitations:
        (defalias 'man 'woman)))
 
 ;;; Customizations
-
-;; Default values for some customization options
-
-(if (eq system-type 'windows-nt)
-    (setopt directory-free-space-args nil)
-  (setopt directory-free-space-args "-Pkl"))
 
 ;; Load customizations
 (setq custom-file (if my-settings-shared-p
