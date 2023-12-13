@@ -921,6 +921,19 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (autoload 'nsis-mode "nsis-mode" "NSIS mode" t)
 (setq auto-mode-alist (append '(("\\.[Nn][Ss][HhIi]\\'" . nsis-mode)) auto-mode-alist))
 
+;; Support for .plist files from https://www.emacswiki.org/emacs/MacOSXPlist
+(add-to-list 'jka-compr-compression-info-list
+             ["\\.plist$"
+              "converting text XML to binary plist"
+              "plutil"
+              ("-convert" "binary1" "-o" "-" "-")
+              "converting binary plist to text XML"
+              "plutil"
+              ("-convert" "xml1" "-o" "-" "-")
+              nil nil "bplist"])
+
+(jka-compr-update)
+
 ;; Profiling
 (require 'profiler)
 (cl-defmacro with-cpu-profiling (&rest body)
