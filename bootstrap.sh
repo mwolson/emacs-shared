@@ -27,7 +27,7 @@ if uname_grep 'MINGW' || uname_grep 'MSYS_NT'; then
     OS=Windows
     BIN_TPL=tpl/bin/windows
 elif uname_grep 'Darwin'; then
-    OS=OSX
+    OS=macOS
     BIN_TPL=tpl/bin/mac
 else
     OS=Linux
@@ -55,7 +55,11 @@ if [[ $OS == Windows ]]; then
     fi
 fi
 
-REQUIRED_EMACS_VERSION=29.1
+if [[ $OS == macOS ]]; then
+    REQUIRED_EMACS_VERSION=29.1
+else
+    REQUIRED_EMACS_VERSION=29.3
+fi
 
 # Set this environment variable to rebuild git-for-windows manpages; otherwise use pre-built ones
 : ${BUILD_GIT_MANPAGES:=}
@@ -69,7 +73,7 @@ if [[ $OS == Windows ]]; then
             exit 1
         fi
     fi
-elif [[ $OS == OSX ]]; then
+elif [[ $OS == macOS ]]; then
     if ! test -e /Applications/Emacs.app/Contents/MacOS/Emacs; then
         echo >&2 "Error: Emacs does not seem to be installed in Applications"
         exit 1

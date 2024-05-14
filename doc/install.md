@@ -101,25 +101,25 @@ You'll need to [install rust analyzer](https://rust-analyzer.github.io/manual.ht
 
 ## Install Emacs
 
-The recommended version is Emacs 29.1. The recommended ways to install Emacs for each OS are as follows.
+The recommended version is Emacs 29.3 (29.1 on macOS). The recommended ways to install Emacs for each OS are as follows.
 
 ### Install Emacs on Windows
 
-- [Download and install emacs](https://ftp.gnu.org/gnu/emacs/windows/emacs-29/emacs-29.1_2-installer.exe).
-- When done, you should verify that a file named `C:\Program Files\Emacs\emacs-29.1\bin\runemacs.exe` exists.
+- [Download and install emacs](https://ftp.gnu.org/gnu/emacs/windows/emacs-29/emacs-29.3-installer.exe).
+- When done, you should verify that a file named `C:\Program Files\Emacs\emacs-29.3\bin\runemacs.exe` exists.
 - If you change the location, you may want to update the `my-system-paths` option later.
 - Adjust some environment variables so that Emacs can be started successfully
   - Use the Start Menu to search for and open the task `Edit the System Environment Variables`. It may pop behind any open windows - if so, bring it to the front. Click `Environment Variables`.
   - Note: If any of the below variables aren't present, click on "Add" to add them
   - In User Variables, Inspect `HOME` and make sure it points to something like `C:\Users\You`.
   - In System Variables, double-click `Path` and make sure an entry for `%USERPROFILE%\emacs-shared\bin` is present at the very top.
-  - In System Variables, double-click `Path` and make sure an entry for `C:\Program Files\Emacs\emacs-29.1\bin` is present at the end. If you see an entry for a different version of Emacs, change it to have this content instead and remove any duplicates of it.
+  - In System Variables, double-click `Path` and make sure an entry for `C:\Program Files\Emacs\emacs-29.3\bin` is present at the end. If you see an entry for a different version of Emacs, change it to have this content instead and remove any duplicates of it.
   - Click OK
   - Relaunch any open Git Bash or MSYS2 windows
 
 If upgrading:
 - Unpin any pinned Emacs icons
-- Change any existing desktop icons to point to `C:\Program Files\Emacs\emacs-29.1\bin\runemacs.exe`.
+- Change any existing desktop icons to point to `C:\Program Files\Emacs\emacs-29.3\bin\runemacs.exe`.
 
 ### Install Emacs on macOS
 
@@ -128,7 +128,7 @@ If upgrading:
 
 ### Install Emacs on Arch Linux
 
-Install the `emacs` package.
+If you are on Wayland (the default window system), install the `emacs-wayland` package, otherwise install `emacs`.
 
 ### Install Emacs on Ubuntu
 
@@ -142,8 +142,8 @@ We'll build from scratch, since no PPAs have consistently had latest version rel
 sudo apt build-dep -y emacs
 sudo apt install libjansson4 libjansson-dev gnutls-bin
 cd build/emacs
-curl -o - https://ftp.gnu.org/gnu/emacs/emacs-29.1.tar.gz | tar -xzf -
-cd emacs-29.1
+curl -o - https://ftp.gnu.org/gnu/emacs/emacs-29.3.tar.gz | tar -xzf -
+cd emacs-29.3
 ./autogen.sh
 ./configure
 make -j$(proc)
@@ -214,13 +214,13 @@ On Windows:
 ```sh
 if uname | grep "MINGW64_NT" > /dev/null 2>&1; then
     # for MSYS2
-    export PATH="~/emacs-shared/bin":"/c/Windows/System32/OpenSSH":"/c/Program Files/Emacs/emacs-29.1/bin":/ucrt64/bin:"/c/Program Files/Git/bin":"$PATH"
+    export PATH="~/emacs-shared/bin":"/c/Windows/System32/OpenSSH":"/c/Program Files/Emacs/emacs-29.3/bin":/ucrt64/bin:"/c/Program Files/Git/bin":"$PATH"
 elif uname | grep "MSYS_NT" > /dev/null 2>&1; then
     # for Git Bash
     export PATH="/c/Windows/System32/OpenSSH":"$PATH"
 fi
 ```
-* Check `.bashrc` and update any `PATH` entries which have a different version of Emacs to instead point to `/c/Program Files/Emacs/emacs-29.1/bin` and restart Terminal.
+* Check `.bashrc` and update any `PATH` entries which have a different version of Emacs to instead point to `/c/Program Files/Emacs/emacs-29.3/bin` and restart Terminal.
 * You will want to open an "MSYS2 MinGW 64-bit" window (not Git Bash) and run the commands from there.
 
 Commands to run regardless of OS:
@@ -256,7 +256,7 @@ emacs -q init.el  # or other editing command
 
 *Windows*
 
-Open `Start Menu -> Emacs`. This should point to the file `C:\Program Files\Emacs\emacs-29.1\bin\runemacs.exe`.
+Open `Start Menu -> Emacs`. This should point to the file `C:\Program Files\Emacs\emacs-29.3\bin\runemacs.exe`.
 
 *Windows Taskbar*
 
@@ -265,7 +265,7 @@ To pin Emacs to the Taskbar / Quick Launch bar and have it behave correctly:
 - Run Emacs from Start menu or a desktop shortcut
 - Pin it
 - Then right-click its Taskbar button, right-click "Emacs", click "Properties"
-- Change "C:\Program Files\Emacs\emacs-29.1\bin\emacs.exe" to "C:\Program Files\Emacs\emacs-29.1\bin\runemacs.exe"
+- Change "C:\Program Files\Emacs\emacs-29.3\bin\emacs.exe" to "C:\Program Files\Emacs\emacs-29.3\bin\runemacs.exe"
 
 *macOS*
 
@@ -382,8 +382,8 @@ Do this:
 
 ```sh
 pushd extra/emacs
-git fetch --depth 1 origin tag emacs-29.1
-git checkout emacs-29.1
+git fetch --depth 1 origin tag emacs-29.3
+git checkout emacs-29.3
 popd
 ```
 

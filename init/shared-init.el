@@ -8,16 +8,18 @@
 (require 'cl-seq)
 
 ;; Uncomment this to debug warnings
-;(require 'warnings)
-;(defun display-warning (type message)
-;  (setq debug-on-error t)
-;  (error message))
+;;
+;; (require 'warnings)
+;; (defun display-warning (type message)
+;;   (setq debug-on-error t)
+;;   (error message))
 
 ;;; Options that change behavior of this file
 
 (defvar my-default-font      (cond
                               ((eq system-type 'darwin) "Fira Code Retina-18")
                               ((eq system-type 'windows-nt) "Fira Code-11")
+                              ((memq window-system '(pgtk x)) "Fira Code-14")
                               (t "Fira Code-17")))
 (defvar my-theme             nil)
 (defvar my-modus-theme       'modus-vivendi-deuteranopia)
@@ -96,7 +98,7 @@
   (let ((maximize-p my-frame-maximize-p))
     (when (and maximize-p my-frame-maximize-if-pixel-width-lte)
       (setq maximize-p (<= (display-pixel-width) my-frame-maximize-if-pixel-width-lte)))
-    (cond ((and maximize-p (memq window-system '(x w32)))
+    (cond ((and maximize-p (memq window-system '(pgtk x w32)))
            (set-frame-parameter nil 'fullscreen 'maximized))
           (maximize-p
            (maximize-frame))
@@ -178,9 +180,10 @@
 (add-hook 'server-visit-hook 'my-init-client)
 
 ;; Modeline theme
-; currently too large
-;(require 'spaceline-config)
-;(spaceline-emacs-theme)
+;; currently too large
+;;
+;; (require 'spaceline-config)
+;; (spaceline-emacs-theme)
 
 ;; Tasks that are run after initial startup for appearance of speed
 (defvar my-deferred-startup-hook '(display-startup-echo-area-message))
@@ -601,28 +604,28 @@ interactively.
         (mapcar 'symbol-name '(after afterEach before beforeEach describe expect it))))
 
 (with-eval-after-load "js2-mode"
-   ;; BUG: self is not a browser extern, just a convention that needs checking
-   (setq js2-browser-externs (delete "self" js2-browser-externs))
+  ;; BUG: self is not a browser extern, just a convention that needs checking
+  (setq js2-browser-externs (delete "self" js2-browser-externs))
 
-   ;; Consider the chai 'expect()' statement to have side-effects, so we don't warn about it
-   (defun js2-add-strict-warning (msg-id &optional msg-arg beg end)
-     (if (and js2-compiler-strict-mode
-              (not (and (string= msg-id "msg.no.side.effects")
-                        (string= (buffer-substring-no-properties beg (+ beg 7)) "expect("))))
-         (js2-report-warning msg-id msg-arg beg
-                             (and beg end (- end beg)))))
+  ;; Consider the chai 'expect()' statement to have side-effects, so we don't warn about it
+  (defun js2-add-strict-warning (msg-id &optional msg-arg beg end)
+    (if (and js2-compiler-strict-mode
+             (not (and (string= msg-id "msg.no.side.effects")
+                       (string= (buffer-substring-no-properties beg (+ beg 7)) "expect("))))
+        (js2-report-warning msg-id msg-arg beg
+                            (and beg end (- end beg)))))
 
-   ;; Add support for some mocha testing externs
-   (add-hook 'js2-init-hook #'my-set-js2-mocha-externs t))
+  ;; Add support for some mocha testing externs
+  (add-hook 'js2-init-hook #'my-set-js2-mocha-externs t))
 
 ;; Highlight node.js stacktraces in *compile* buffers
 (defvar my-nodejs-compilation-regexp
   '("^[ \t]+at +\\(?:.+(\\)?\\([^()\n]+\\):\\([0-9]+\\):\\([0-9]+\\))?$" 1 2 3))
 
 (with-eval-after-load "compile"
-   (add-to-list 'compilation-error-regexp-alist-alist
-                (cons 'nodejs my-nodejs-compilation-regexp))
-   (add-to-list 'compilation-error-regexp-alist 'nodejs))
+  (add-to-list 'compilation-error-regexp-alist-alist
+               (cons 'nodejs my-nodejs-compilation-regexp))
+  (add-to-list 'compilation-error-regexp-alist 'nodejs))
 
 ;; Highlight current line
 (require 'hl-line-plus)
@@ -697,8 +700,9 @@ interactively.
 
 ;; Tell fd to ignore any other .gitignore files that it finds in subdirectories,
 ;; mostly for submodule purposes, and only use the one in the top-level git repo
-;(setq sample-git-fd-args
-;      (concat sample-git-fd-args " --no-ignore-vcs --ignore-file .gitignore"))
+;;
+;; (setq sample-git-fd-args
+;;       (concat sample-git-fd-args " --no-ignore-vcs --ignore-file .gitignore"))
 
 ;; Set up project.el
 (defun my-project-root ()
@@ -853,8 +857,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (defalias 'my-edit-list 'edit-list)
 
 ;; Tree-sitter
-; disabling until wider adoption is reached
-;(add-to-list 'treesit-extra-load-path (concat my-emacs-path "extra/tree-sitter-module/dist"))
+;; disabling until wider adoption is reached
+;;
+;; (add-to-list 'treesit-extra-load-path (concat my-emacs-path "extra/tree-sitter-module/dist"))
 
 ;; All programming modes
 (defun my-turn-on-display-line-numbers-mode ()
@@ -870,8 +875,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 ;; Markdown support
 
-;(add-to-list 'auto-mode-alist '("\\.md\\'" . poly-markdown-mode))
-;(add-to-list 'auto-mode-alist '("\\.mdx\\'" . poly-markdown-mode))
+;; (add-to-list 'auto-mode-alist '("\\.md\\'" . poly-markdown-mode))
+;; (add-to-list 'auto-mode-alist '("\\.mdx\\'" . poly-markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . gfm-mode))
 (add-to-list 'auto-mode-alist '("\\.mdx\\'" . gfm-mode))
 
@@ -898,15 +903,15 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
     (add-to-list 'polymode-mode-name-aliases (cons file-ext mode-name-alias))))
 
 (with-eval-after-load "polymode-core"
-   ;; Commented out since the font-locking tends to bleed into other areas
-   ;; of the file.
-   ;(dolist (file-ext '(hbs html json))
-   ;  (my-define-web-polymode file-ext))
-   ;(dolist (file-ext '(js jsx))
-   ;  (my-define-ts-web-polymode file-ext))
-   (add-to-list 'polymode-mode-name-aliases '(bash . sh))
-   ;(add-to-list 'polymode-mode-name-aliases '(javascript . my-js))
-   (add-to-list 'polymode-mode-name-aliases '(javascript . js)))
+  ;; Commented out since the font-locking tends to bleed into other areas
+  ;; of the file.
+  ;; (dolist (file-ext '(hbs html json))
+  ;;   (my-define-web-polymode file-ext))
+  ;; (dolist (file-ext '(js jsx))
+  ;;   (my-define-ts-web-polymode file-ext))
+  (add-to-list 'polymode-mode-name-aliases '(bash . sh))
+  ;; (add-to-list 'polymode-mode-name-aliases '(javascript . my-js))
+  (add-to-list 'polymode-mode-name-aliases '(javascript . js)))
 
 ;; Prefer Github-flavored Markdown
 (my-replace-cdrs-in-alist 'markdown-link-face 'gfm-mode 'auto-mode-alist)
@@ -1125,7 +1130,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (global-set-key (kbd "C-s-p") #'backward-list)
   (global-set-key (kbd "C-s-x") #'eval-defun))
 
-(when (and my-remap-cmd-key-p (or (eq window-system 'x) (eq system-type 'darwin)))
+(when (and my-remap-cmd-key-p (memq window-system '(darwin pgtk x)))
   (my-set-super-bindings))
 
 ;; Change to home dir
