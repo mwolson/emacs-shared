@@ -87,7 +87,7 @@
       (cond
        ((eq system-type 'darwin) "Fira Code Retina-18")
        ((eq system-type 'windows-nt) "Fira Code-11")
-       ((memq window-system '(pgtk x)) "Fira Code-14")
+       ((memq window-system '(pgtk x)) "Fira Code-13")
        (t "Fira Code-17"))))
 
 (defun my-reset-font ()
