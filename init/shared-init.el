@@ -1050,12 +1050,13 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (global-set-key (kbd "C-c p") my-project-command-map)
 (global-set-key (kbd "C-c C-p") my-project-command-map)
-
-(global-set-key "\C-xg" 'goto-line)
+(global-set-key (kbd "C-x g") 'goto-line)
 
 (defun my-kill-emacs ()
   (interactive)
-  (call-interactively 'save-buffers-kill-emacs t))
+  (let ((confirm-kill-emacs 'y-or-n-p))
+    (call-interactively 'save-buffers-kill-emacs t)))
+(global-set-key (kbd "C-x C-c") #'my-kill-emacs)
 (global-set-key (kbd "C-x C-M-s") #'my-kill-emacs)
 
 ;; Make adding entries to debian/changelog easy

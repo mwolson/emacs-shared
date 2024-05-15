@@ -18,7 +18,6 @@
  '(calendar-mark-diary-entries-flag t)
  '(case-replace nil)
  '(column-number-mode t)
- '(confirm-kill-emacs 'y-or-n-p)
  '(cperl-close-paren-offset -4)
  '(cperl-indent-level 4)
  '(cperl-indent-parens-as-block t)
