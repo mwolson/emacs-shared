@@ -151,6 +151,8 @@ qpopd
 qpushd extra/tree-sitter-module
 git submodule init
 git submodule update --depth 1
+./build.sh go
+./build.sh gomod
 # disabling until wider adoption is reached
 # JOBS=4 ./batch.sh
 qpopd

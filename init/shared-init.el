@@ -16,11 +16,7 @@
 
 ;;; Options that change behavior of this file
 
-(defvar my-default-font      (cond
-                              ((eq system-type 'darwin) "Fira Code Retina-18")
-                              ((eq system-type 'windows-nt) "Fira Code-11")
-                              ((memq window-system '(pgtk x)) "Fira Code-14")
-                              (t "Fira Code-17")))
+(defvar my-default-font      nil)
 (defvar my-theme             nil)
 (defvar my-modus-theme       'modus-vivendi-deuteranopia)
 (defvar my-modus-theme-overrides
@@ -86,11 +82,19 @@
 (when my-frame-pad-height
   (setq mf-max-height (- (display-pixel-height) my-frame-pad-height)))
 
+(defun my-default-font ()
+  (or my-default-font
+      (cond
+       ((eq system-type 'darwin) "Fira Code Retina-18")
+       ((eq system-type 'windows-nt) "Fira Code-11")
+       ((memq window-system '(pgtk x)) "Fira Code-14")
+       (t "Fira Code-17"))))
+
 (defun my-reset-font ()
   (interactive)
-  (when my-default-font
-    (set-frame-font my-default-font nil t)
-    (set-face-attribute 'fixed-pitch nil :font my-default-font)))
+  (let ((font (my-default-font)))
+    (set-frame-font font nil t)
+    (set-face-attribute 'fixed-pitch nil :font font)))
 
 (defun my-reset-frame-size ()
   "Reset the size of the current frame according to `default-frame-alist'."
@@ -141,9 +145,8 @@
   (if window-system
       (progn
         (my-reset-font)
-        (when my-default-font
-          (add-to-list 'default-frame-alist
-                       (cons 'font (cdr (assq 'font (frame-parameters))))))
+        (add-to-list 'default-frame-alist
+                     (cons 'font (cdr (assq 'font (frame-parameters)))))
         (when (or (not my-frame-maximize-p) my-frame-maximize-if-pixel-width-lte)
           (add-to-list 'default-frame-alist (cons 'height my-frame-height))
           (add-to-list 'default-frame-alist (cons 'width my-frame-width)))
@@ -177,7 +180,7 @@
 ;; Give people something to look at while we load
 (display-startup-screen)
 (redisplay t)
-(add-hook 'server-visit-hook 'my-init-client)
+(add-hook 'server-after-make-frame-hook 'my-init-client t)
 
 ;; Modeline theme
 ;; currently too large
@@ -735,6 +738,10 @@ interactively.
         (cl-remove-if #'(lambda (item) (memq (car item) to-remove))
                       project-switch-commands)))
 
+(defun my-project-find-go-module (dir)
+  (when-let ((root (locate-dominating-file dir "go.mod")))
+    (cons 'go-module root)))
+
 (with-eval-after-load "project"
   (my-remove-project-switch-bindings '(project-eshell
                                        project-find-dir
@@ -748,7 +755,13 @@ interactively.
   (define-key project-prefix-map "s" #'my-counsel-ripgrep)
   (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
   (define-key project-prefix-map (kbd "RET") #'magit-project-status)
-  (define-key project-prefix-map "m" #'magit-project-status))
+  (define-key project-prefix-map "m" #'magit-project-status)
+
+  ;; from https://github.com/golang/tools/blob/master/gopls/doc/emacs.md#configuring-project-for-go-modules-in-emacs
+  (cl-defmethod project-root ((project (head go-module)))
+    (cdr project))
+
+  (add-hook 'project-find-functions #'my-project-find-go-module))
 
 ;; Insinuate with ripgrep
 (defvar my-default-ripgrep-args "--hidden -i --no-ignore-vcs --ignore-file=.gitignore --glob=!.git/")
@@ -791,6 +804,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (add-hook 'csharp-mode-hook 'eglot-ensure)
 (add-hook 'my-ts-web-mode-hook 'eglot-ensure)
 (add-hook 'rust-mode-hook 'eglot-ensure)
+(add-hook 'go-ts-mode-hook 'eglot-ensure)
+(add-hook 'go-mod-ts-mode-hook 'eglot-ensure)
 
 (add-to-list 'eglot-server-programs
              `((my-ts-web-mode) .
@@ -857,9 +872,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (defalias 'my-edit-list 'edit-list)
 
 ;; Tree-sitter
-;; disabling until wider adoption is reached
-;;
-;; (add-to-list 'treesit-extra-load-path (concat my-emacs-path "extra/tree-sitter-module/dist"))
+(add-to-list 'treesit-extra-load-path (concat my-emacs-path "extra/tree-sitter-module/dist"))
+(require 'go-ts-mode)
 
 ;; All programming modes
 (defun my-turn-on-display-line-numbers-mode ()
