@@ -105,7 +105,7 @@ You'll need to [install rust analyzer](https://rust-analyzer.github.io/manual.ht
 
 ## Install Emacs
 
-The recommended version is Emacs 29.4 (29.1 on macOS). The recommended ways to install Emacs for each OS are as follows.
+The recommended version is Emacs 29.4. The recommended ways to install Emacs for each OS are as follows.
 
 ### Install Emacs on Windows
 
@@ -127,8 +127,13 @@ If upgrading:
 
 ### Install Emacs on macOS
 
-- Download the non-Spacemacs build from [the Mitsuharu Yamamoto Emacs Mac Port](https://github.com/railwaycat/homebrew-emacsmacport/releases/tag/emacs-29.1-mac-10.0).
-- Open the zip file and drag the Emacs icon over to the Applications folder.
+We'll install the [emacs-plus version from Homebrew](https://github.com/d12frosted/homebrew-emacs-plus):
+
+```sh
+brew tap d12frosted/emacs-plus
+brew install emacs-plus@29
+osascript -e 'tell application "Finder" to make alias file to posix file "/opt/homebrew/opt/emacs-plus@29/Emacs.app" at POSIX file "/Applications" with properties {name:"Emacs.app"}'
+```
 
 ### Install Emacs on Arch Linux
 

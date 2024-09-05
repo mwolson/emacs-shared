@@ -55,11 +55,7 @@ if [[ $OS == Windows ]]; then
     fi
 fi
 
-if [[ $OS == macOS ]]; then
-    REQUIRED_EMACS_VERSION=29.1
-else
-    REQUIRED_EMACS_VERSION=29.4
-fi
+REQUIRED_EMACS_VERSION=29.4
 
 # Set this environment variable to rebuild git-for-windows manpages; otherwise use pre-built ones
 : ${BUILD_GIT_MANPAGES:=}
@@ -74,8 +70,12 @@ if [[ $OS == Windows ]]; then
         fi
     fi
 elif [[ $OS == macOS ]]; then
-    if ! test -e /Applications/Emacs.app/Contents/MacOS/Emacs; then
+    if ! test -e /Applications/Emacs.app; then
         echo >&2 "Error: Emacs does not seem to be installed in Applications"
+        exit 1
+    fi
+    if ! test -e /opt/homebrew/opt/emacs-plus@29/Emacs.app/Contents/MacOS/Emacs; then
+        echo >&2 "Error: Could not find Emacs Homebrew installation"
         exit 1
     fi
 elif [[ $OS_VARIANT == Ubuntu ]]; then
