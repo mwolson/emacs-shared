@@ -1,5 +1,11 @@
 ;;; Customizations
 
+;; Tell package.el that transient is already provided as a built-in with a specific version
+;; Note: May need to update this when Emacs 29.4 is updated
+(with-eval-after-load "finder-inf"
+  (push '(transient 0 4 3) package--builtin-versions)
+  (aset (cdr (assq 'transient package--builtins)) 0 '(0 4 3)))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

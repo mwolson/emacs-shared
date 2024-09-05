@@ -65,13 +65,13 @@
 ;; Add shared elisp directory (but prefer system libs)
 (add-to-list 'load-path (concat my-emacs-path "elisp") t)
 
-;; Support for libgit
-(if (eq system-type 'windows-nt)
-    (setq libgit--module-file (concat my-emacs-path "elisp/libegit2/build/libegit2.dll"))
-  (setq libgit--module-file (concat my-emacs-path "elisp/libegit2/build/libegit2.so")))
-
-(when (file-exists-p libgit--module-file)
-  (add-to-list 'load-path (concat my-emacs-path "elisp/libegit2") t))
+;; Remove buggy version of transient that doesn't work with Emacs 29.4
+(let ((new-load-path nil))
+  (mapc #'(lambda (el)
+            (when (eq nil (string-search ".emacs.d/elpa/transient" el))
+              (setq new-load-path (append (list el) new-load-path))))
+        load-path)
+  (setq load-path new-load-path))
 
 ;;; Display
 

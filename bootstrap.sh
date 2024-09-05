@@ -50,7 +50,7 @@ if [[ $OS == Windows ]]; then
 
     if ! uname_grep 'MINGW64_NT'; then
         # Symptom of building in Git Bash is that Emacs will crash when trying to use magit
-        echo >&2 "Warning: Cannot build libgit unless you are in an MSYS2 MinGW 64-bit terminal, skipping compilation"
+        echo >&2 "Warning: Cannot compile binaries unless you are in an MSYS2 MinGW 64-bit terminal, skipping compilation"
         BUILD=
     fi
 fi
@@ -58,7 +58,7 @@ fi
 if [[ $OS == macOS ]]; then
     REQUIRED_EMACS_VERSION=29.1
 else
-    REQUIRED_EMACS_VERSION=29.3
+    REQUIRED_EMACS_VERSION=29.4
 fi
 
 # Set this environment variable to rebuild git-for-windows manpages; otherwise use pre-built ones
@@ -157,33 +157,9 @@ git submodule update --depth 1
 # JOBS=4 ./batch.sh
 qpopd
 
-if test -n "$BUILD"; then
-    npm ci
-
-    qpushd elisp/libegit2
-    git submodule init
-    git submodule update --depth 1
-    rm -fr build
-    mkdir -p build
-    cd build
-
-    if [[ $OS == Windows ]]; then
-        cmake -G Ninja ..
-        ninja
-        echo
-    else
-        cmake ..
-        make
-    fi
-
-    qpopd
-
-    # install manually, since they reference the wrong "libgit" package
-    cp elisp/magit/lisp/magit-libgit.el elisp/
-else
-    rm -fr elisp/libegit2/build
-    rm -f elisp/magit-libgit.el*
-fi
+# clean up previous libegit2 builds that might still be around
+rm -fr elisp/libegit2/build
+rm -f elisp/magit-libgit.el*
 
 emacs --batch -q -l install-packages.el 2>&1 | grep -v '^Loading '
 

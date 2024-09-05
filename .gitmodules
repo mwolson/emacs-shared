@@ -2,10 +2,6 @@
 	path = elisp/archive-rpm
         shallow = true
 	url = https://github.com/nbarrientos/archive-rpm.git
-[submodule "elisp/libegit2"]
-	path = elisp/libegit2
-        shallow = true
-	url = https://github.com/magit/libegit2.git
 [submodule "elisp/ligature"]
 	path = elisp/ligature
 	url = https://github.com/mickeynp/ligature.el.git
