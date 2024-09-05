@@ -1107,8 +1107,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 ;; Bind Apple-<key> to Alt-<key> for some Mac keys
 (when (and my-remap-cmd-key-p (eq system-type 'darwin))
-  (setopt mac-option-modifier 'meta)
-  (setopt mac-command-modifier 'super))
+  (setopt ns-alternate-modifier 'meta)
+  (setopt ns-command-modifier 'super))
 
 (defun my-set-super-bindings ()
   (interactive)
@@ -1145,7 +1145,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (global-set-key (kbd "C-s-p") #'backward-list)
   (global-set-key (kbd "C-s-x") #'eval-defun))
 
-(when (and my-remap-cmd-key-p (memq window-system '(darwin pgtk x)))
+(when (and my-remap-cmd-key-p (memq window-system '(ns pgtk x)))
   (my-set-super-bindings))
 
 ;; Change to home dir
