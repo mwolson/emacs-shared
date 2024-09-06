@@ -1,7 +1,6 @@
 /bin
 /build/emacs
 /elisp/archive-rpm/*
-/elisp/magit/*
 /extra/emacs/*
 /extra/git/*
 /node_modules
