@@ -65,12 +65,6 @@
 ;; Add shared elisp directory (but prefer system libs)
 (add-to-list 'load-path (concat my-emacs-path "elisp") t)
 
-;; Remove buggy version of transient that doesn't work with Emacs 29.4
-(setq load-path
-      (cl-remove-if-not #'(lambda (el)
-                            (eq nil (string-search ".emacs.d/elpa/transient" el)))
-                        load-path))
-
 ;;; Display
 
 ;; Allow maximizing frame
@@ -118,8 +112,6 @@
       (load-theme my-theme t))))
 
 ;; Support for font ligatures
-(add-to-list 'load-path (concat my-emacs-path "elisp/ligature") t)
-
 (defun my-enable-ligatures ()
   ;; Enable ligatures in programming modes
   (interactive)
@@ -262,6 +254,9 @@ Limitations:
        (defalias 'man 'woman)))
 
 ;;; Customizations
+
+;; Fix bug in Emacs 29.4 where built-in transient doesn't have a version number
+(load-file (concat my-emacs-path "init/transient-overrides.el"))
 
 ;; Load customizations
 (setq custom-file (if my-settings-shared-p
@@ -706,17 +701,15 @@ interactively.
 ;;       (concat sample-git-fd-args " --no-ignore-vcs --ignore-file .gitignore"))
 
 ;; Set up gptel
-(defvar my-gptel--openai)
-(with-eval-after-load "gptel"
-  ;; add gpt-4o model from latest master
-  (setq my-gptel--openai
-        (gptel-make-openai "my-ChatGPT"
-          :key 'gptel-api-key
-          :stream t
-          :models '("gpt-3.5-turbo" "gpt-3.5-turbo-16k" "gpt-4o-mini"
-                    "gpt-4" "gpt-4o" "gpt-4-turbo" "gpt-4-turbo-preview"
-                    "gpt-4-32k" "gpt-4-1106-preview" "gpt-4-0125-preview")))
-  (setopt gptel-backend my-gptel--openai))
+(defun my-gptel-start ()
+  "Start gptel with a default buffer name."
+  (interactive)
+  (require 'gptel)
+  (let* ((backend (default-value 'gptel-backend))
+         (backend-name
+          (format "*%s*" (gptel-backend-name backend))))
+    (with-suppressed-warnings ((obsolete warning-level-aliases))
+      (gptel backend-name nil nil t))))
 
 ;; Set up project.el
 (defun my-project-root ()
@@ -1047,6 +1040,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
     (define-key map (kbd "a") #'project-remember-projects-under)
     (define-key map (kbd "c") #'project-compile)
     (define-key map (kbd "f") #'project-find-file)
+    (define-key map (kbd "g g") #'my-gptel-start)
+    (define-key map (kbd "g p") #'gptel-menu)
     (define-key map (kbd "k") #'project-kill-buffers)
     (define-key map (kbd "n") #'my-org-find-notes-file)
     (define-key map (kbd "p") #'project-switch-project)

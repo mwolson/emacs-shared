@@ -132,16 +132,30 @@ git submodule sync
 git submodule update --depth 1
 echo
 
+# dependency for gptel
+qpushd elisp/transient
+git submodule init
+git submodule update --depth 1
+qpopd
+emacs --script byte-compile-local.el "transient" "elisp/transient/lisp" 2>&1 | grep -v '^Loading '
+
 qpushd elisp/archive-rpm
 git submodule init
 git submodule update --depth 1
-emacs --batch -q --eval='(package-install-file default-directory)' 2>&1 | grep -v '^Loading '
 qpopd
+emacs --script byte-compile-local.el "archive-rpm" "elisp/archive-rpm" 2>&1 | grep -v '^Loading '
+
+qpushd elisp/gptel
+git submodule init
+git submodule update --depth 1
+qpopd
+emacs --script byte-compile-local.el "gptel" "elisp/gptel" 2>&1 | grep -v '^Loading '
 
 qpushd elisp/ligature
 git submodule init
 git submodule update --depth 1
 qpopd
+emacs --script byte-compile-local.el "ligature" "elisp/ligature" 2>&1 | grep -v '^Loading '
 
 qpushd extra/emacs
 git submodule init
@@ -161,7 +175,7 @@ qpopd
 rm -fr elisp/libegit2/build
 rm -f elisp/magit-libgit.el*
 
-emacs --batch -q -l install-packages.el 2>&1 | grep -v '^Loading '
+emacs --script install-packages.el 2>&1 | grep -v '^Loading '
 
 qpushd share/man
 git submodule init

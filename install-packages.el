@@ -1,3 +1,4 @@
+(load-file (concat default-directory "init/transient-overrides.el"))
 (load-file (concat default-directory "init/settings.el"))
 
 (require 'package)
@@ -14,7 +15,7 @@
   (let ((removable (package--removable-packages)))
     (if removable
         (mapc (lambda (p)
-                (package-delete (cadr (assq p package-alist)) t))
+                (package-delete (cadr (assq p (package--alist))) t))
               removable)
       (message "Nothing to autoremove"))))
 

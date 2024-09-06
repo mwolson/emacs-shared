@@ -2,9 +2,15 @@
 	path = elisp/archive-rpm
         shallow = true
 	url = https://github.com/nbarrientos/archive-rpm.git
+[submodule "elisp/gptel"]
+	path = elisp/gptel
+	url = https://github.com/karthink/gptel.git
 [submodule "elisp/ligature"]
 	path = elisp/ligature
 	url = https://github.com/mickeynp/ligature.el.git
+[submodule "elisp/transient"]
+	path = elisp/transient
+	url = https://github.com/magit/transient.git
 [submodule "extra/emacs"]
 	path = extra/emacs
         shallow = true
