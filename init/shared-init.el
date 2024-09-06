@@ -66,12 +66,10 @@
 (add-to-list 'load-path (concat my-emacs-path "elisp") t)
 
 ;; Remove buggy version of transient that doesn't work with Emacs 29.4
-(let ((new-load-path nil))
-  (mapc #'(lambda (el)
-            (when (eq nil (string-search ".emacs.d/elpa/transient" el))
-              (setq new-load-path (append (list el) new-load-path))))
-        load-path)
-  (setq load-path new-load-path))
+(setq load-path
+      (cl-remove-if-not #'(lambda (el)
+                            (eq nil (string-search ".emacs.d/elpa/transient" el)))
+                        load-path))
 
 ;;; Display
 
@@ -706,6 +704,19 @@ interactively.
 ;;
 ;; (setq sample-git-fd-args
 ;;       (concat sample-git-fd-args " --no-ignore-vcs --ignore-file .gitignore"))
+
+;; Set up gptel
+(defvar my-gptel--openai)
+(with-eval-after-load "gptel"
+  ;; add gpt-4o model from latest master
+  (setq my-gptel--openai
+        (gptel-make-openai "my-ChatGPT"
+          :key 'gptel-api-key
+          :stream t
+          :models '("gpt-3.5-turbo" "gpt-3.5-turbo-16k" "gpt-4o-mini"
+                    "gpt-4" "gpt-4o" "gpt-4-turbo" "gpt-4-turbo-preview"
+                    "gpt-4-32k" "gpt-4-1106-preview" "gpt-4-0125-preview")))
+  (setopt gptel-backend my-gptel--openai))
 
 ;; Set up project.el
 (defun my-project-root ()
