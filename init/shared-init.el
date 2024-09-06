@@ -1146,7 +1146,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (global-set-key (kbd "s-c") #'kill-ring-save)
   (global-set-key (kbd "s-m") (lambda () (interactive)))
   (global-set-key (kbd "s-p") #'project-find-file)
-  (global-set-key (kbd "s-q") #'save-buffers-kill-terminal)
+  (global-set-key (kbd "s-q") #'my-kill-emacs)
   (global-set-key (kbd "s-w") #'kill-ring-save)
   (global-set-key (kbd "s-v") #'yank)
   (global-set-key (kbd "s-x") #'counsel-M-x)
