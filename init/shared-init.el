@@ -31,6 +31,8 @@
 (defvar my-frame-maximize-p  t)
 (defvar my-frame-pad-width   (if (eq system-type 'darwin) 65 nil))
 (defvar my-frame-pad-height  (if (eq system-type 'darwin) 15 nil))
+(defvar my-gptel-backend     'my-gptel--claude)
+(defvar my-gptel-model       nil)
 (defvar my-remap-cmd-key-p   t)
 (defvar my-default-directory "~/")
 (defvar my-changelog-address "user@example.com")
@@ -701,13 +703,21 @@ interactively.
 ;;       (concat sample-git-fd-args " --no-ignore-vcs --ignore-file .gitignore"))
 
 ;; Set up gptel
+(defvar my-gptel--claude
+  (gptel-make-anthropic "Claude"
+    :stream t
+    :key #'gptel-api-key-from-auth-source))
+
 (defun my-gptel-start ()
   "Start gptel with a default buffer name."
   (interactive)
   (require 'gptel)
-  (let* ((backend (default-value 'gptel-backend))
+  (let* ((backend (symbol-value my-gptel-backend))
          (backend-name
-          (format "*%s*" (gptel-backend-name backend))))
+          (format "*%s*" (gptel-backend-name backend)))
+         (model (or my-gptel-model (car (gptel-backend-models backend)))))
+    (setq-default gptel-backend backend
+                  gptel-model model)
     (with-suppressed-warnings ((obsolete warning-level-aliases))
       (gptel backend-name nil nil t))))
 

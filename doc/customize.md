@@ -12,7 +12,7 @@ These can be customized using `(setq ...)`. For example:
 
 Most of the settings are optional, except for `my-emacs-path`.
 
-## Display
+## Display Settings
 
 * `my-default-font`: This will be a font name and size, for example: `"Fira Code-17"`
 * `my-modus-theme`: Which [modus color theme](https://protesilaos.com/emacs/modus-themes-pictures) to apply; set this to `nil` if using `my-theme`
@@ -24,10 +24,12 @@ Most of the settings are optional, except for `my-emacs-path`.
 * `my-frame-height`: If the window is not fullscreen, it will be resized to have this many rows on startup
 * `my-frame-width`: If the window is not fullscreen, it will be resized to have this many columns on startup
 
-## Other
+## Other Settings
 
 * `my-default-directory`: After Emacs starts up, switch to this directory
 * `my-emacs-path`: Location of your checkout of the `emacs-shared` repo
+* `my-gptel-backend`: The `gptel` backend to use, as a symbol; examples are `'my--gptel-claude` and `'gptel--openai` . Make sure to set an appropriate value for `my-gptel-model` as well.
+* `my-gptel-model`: The `gptel` model to use; if not specified, the first valid value for the backend will be used.
 * `my-remap-cmd-key-p`: Whether to remap the <kbd>Command</kbd> key on macOS (or Windows key on Linux) to be mostly a clone of <kbd>Alt</kbd>, with some exceptions
 * `my-settings-shared-p`: Whether to save customization settings into a personal file at `~/.emacs.d/settings.el` or use the ones that come with `emacs-shared` - a default is chosen based on whether that personal settings file is found
 * `my-server-start-p`: Whether to start a server process that can be reused in multiple editing sessions
@@ -35,7 +37,7 @@ Most of the settings are optional, except for `my-emacs-path`.
 * `my-system-paths`: A list of directories to use when Emacs wants to find an executable program like `grep` - a large list of defaults is already provided based on OS
 * `my-default-ripgrep-args`: A string containing arguments that are passed by default to ripgrep.
 
-## Convenience functions
+## Convenience Functions
 
 * <kbd>M-x my-reset-font RET</kbd>: Call this to manually reset the font after you've changed `my-default-font`
 * <kbd>M-x my-reset-frame-size RET</kbd>: Call this to manually reset the size of the window
