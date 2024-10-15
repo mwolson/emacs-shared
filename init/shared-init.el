@@ -224,7 +224,9 @@
 (defun my-asdf-vm-init ()
   (interactive)
   (let ((paths (cons asdf-vm-shims-path (asdf-vm--tool-bin-path-listing (asdf-vm-tool-versions)))))
-    (my-update-system-paths paths)))
+    (my-update-system-paths paths))
+  (when (called-interactively-p 'interactive)
+    (message "Updated Emacs system paths with asdf")))
 
 (my-asdf-vm-init)
 
@@ -1034,7 +1036,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 ;;; Key customizations
 (defvar my-project-command-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "a") #'project-remember-projects-under)
+    (define-key map (kbd "a a") #'project-remember-projects-under)
+    (define-key map (kbd "a s") #'my-asdf-vm-init)
     (define-key map (kbd "c") #'project-compile)
     (define-key map (kbd "f") #'project-find-file)
     (define-key map (kbd "g g") #'my-gptel-start)

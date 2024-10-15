@@ -7,11 +7,17 @@
 
 ## Browsing Projects
 
-* <kbd>C-c p a</kbd> to locate projects under the given directory
+* <kbd>C-c p a a</kbd> to locate projects under the given directory
+* <kbd>C-c p a s</kbd> to switch Emacs to a local asdf-managed version of node.js or other development program
 * <kbd>C-c p c</kbd> to start a compilation at the top of the current project
-* <kbd>C-c p p</kbd> to visit a known project in Magit, which is a git status browser and git shell
 * <kbd>C-c p f</kbd> to find a file within the current project
+* <kbd>C-c p g g</kbd> to start a Claude AI interaction buffer
+* <kbd>C-c p g p</kbd> to bring up a gptel menu for taking different AI actions
 * <kbd>C-c p k</kbd> to close all files in the current project
+* <kbd>C-c p p</kbd> to visit a known project in Magit, which is a git status browser and git shell
+* <kbd>C-c p t</kbd> to switch to a different open buffer within the project
+* <kbd>C-c p s r</kbd> to search content within a project non-interactively
+* <kbd>C-c p s s</kbd> to search content within a project interactively
 * <kbd>C-c p w p</kbd> to copy the part of the file path relative to the project root
 * <kbd>C-c p w w</kbd> to copy the file path of the current buffer
 * <kbd>C-c p !</kbd> to run a shell command at the top of the current project
