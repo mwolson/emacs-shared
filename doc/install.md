@@ -66,11 +66,11 @@ You'll need to [install ninja](https://ninja-build.org/) in order to support fas
 
 ## Install node.js
 
-It's recommended to do a [manual install of fnm](https://github.com/Schniz/fnm#manually), configure your shell to work with it, restart any open terminals, and then install the latest LTS node.js version with:
+It's recommended to do a [manual install of asdf](https://asdf-vm.com/guide/getting-started.html), add the `nodejs` plugin, configure your shell to work with it, restart any open terminals, and then install the latest LTS node.js version with:
 
 ```sh
-fnm install --lts
-fnm use <version> # replace <version> with the version number that got installed
+asdf install nodejs $(asdf nodejs resolve lts --latest-available)
+asdf global nodejs $(asdf nodejs resolve lts --latest-installed)
 ```
 
 ## Install Omnisharp
