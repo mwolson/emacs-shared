@@ -224,8 +224,8 @@ qpushd extra/tree-sitter-module
 # JOBS=4 ./batch.sh
 qpopd
 
-for note in ${NOTICES[@]}; do
-    echo -e >&2 "\n$note"
+for idx in ${!NOTICES[@]}; do
+    echo -e >&2 "\n${NOTICES[$idx]}"
 done
 
 echo -e >&2 "\nBootstrap complete! Your Emacs is ready for use."
