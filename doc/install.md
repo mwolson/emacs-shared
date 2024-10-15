@@ -31,7 +31,7 @@ pacman -Sy pacman
 pacman -Syu
 pacman -Su
 pacman -S --needed base-devel libssh2-devel msys/man-db xmlto
-pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,cmake,fd,gcc,gnutls,gopls,make,ninja,ripgrep,rust}
+pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,cmake,fd,gcc,gnutls,go,gopls,make,ninja,ripgrep,rust}
 ```
 * Make sure you do not have git installed through MSYS2 (we want it to come from Git For Windows instead so we get caching) by running this and ignoring any "target not found" errors:
 ```sh
@@ -58,7 +58,7 @@ You'll need to [install cmake](https://cmake.org/) in order to support fast exec
 
 ## Install gopls
 
-You'll need to [install gopls](https://github.com/golang/tools/blob/master/gopls/README.md#installation) in order to support language server features for C/C++. On Mac, install the `gopls` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
+You'll need to [install gopls](https://github.com/golang/tools/blob/master/gopls/README.md#installation) in order to support language server features for C/C++. On Mac, install the `go` and `gopls` packages from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
 
 ## Install ninja
 
@@ -133,6 +133,13 @@ We'll install the [emacs-plus version from Homebrew](https://github.com/d12frost
 brew tap d12frosted/emacs-plus
 brew install emacs-plus@29
 osascript -e 'tell application "Finder" to make alias file to posix file "/opt/homebrew/opt/emacs-plus@29/Emacs.app" at POSIX file "/Applications" with properties {name:"Emacs.app"}'
+```
+
+If you get an error when starting Emacs like `"dyld[48068]: Library not loaded: /opt/homebrew/opt/tree-sitter/lib/libtree-sitter.0.23.dylib"`, when you may need to update the tree-sitter library location, changing the last argument to `ln` to match the version shown in the error message:
+
+```sh
+cd /opt/homebrew/opt/tree-sitter/lib
+sudo ln -s $(readlink libtree-sitter.0.dylib) libtree-sitter.0.23.dylib
 ```
 
 ### Install Emacs on Arch Linux

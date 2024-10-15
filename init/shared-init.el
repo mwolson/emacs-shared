@@ -46,13 +46,17 @@
 (defvar my-settings-shared-p (not (file-exists-p (locate-user-emacs-file "settings.el"))))
 (defvar my-system-paths
   (cond ((eq system-type 'darwin)
+         ;; see also https://taonaw.com/2024/10/06/emacsplus-path-in.html
          `(,(concat my-emacs-path "bin")
            ,(concat my-emacs-path "node_modules/.bin")
            "~/bin"
            "/opt/homebrew/bin"
            "/opt/homebrew/sbin"
-           "/Applications/Xcode.app/Contents/Developer/usr/bin"
-           "/usr/local/bin"))
+           "/usr/local/bin"
+           "/System/Cryptexes/App/usr/bin"
+           "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin"
+           "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin"
+           "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin"))
         ((eq system-type 'windows-nt)
          `(,(concat "C:/Program Files/Emacs/emacs-" emacs-version "/bin")
            "C:/Program Files/Git/bin"
@@ -193,53 +197,36 @@
 
 ;;; OS Setup
 
+(setq source-directory "~/emacs-shared/extra/emacs")
+
 ;; Make it easier to use find-library to get to this file
 (add-to-list 'load-path (concat my-emacs-path "init"))
 
-(defun my-normalize-msys-path (in-path)
-  "Attempt to convert IN-PATH from \"/c/foo\" to \"C:/foo\".
-
-Limitations:
-- IN-PATH must contain at least a drive element and a path element
-- IN-PATH must not have quoted elements such as the \"\\\" character in folder names"
-  (if (not (eq system-type 'windows-nt))
-      in-path
-    (save-match-data
-      (let* ((match-idx (string-match "^/\\([a-z]\\)/\\(.+\\)$" in-path))
-             (drive-part (and match-idx (match-string 1 in-path)))
-             (path-part (and match-idx (match-string 2 in-path))))
-        (if (not match-idx)
-            in-path
-          (concat (upcase drive-part) ":\\"
-                  (replace-regexp-in-string "/" "\\\\" path-part)))))))
-
-(defun my-fnm-get-node-path ()
-  (when (executable-find "fnm")
-    (save-match-data
-      (let* ((fnm-env (shell-command-to-string "fnm env --shell bash"))
-             (match-idx (string-match "PATH=\"\\(.+\\)\":\\$PATH" fnm-env))
-             (path-part (and match-idx (match-string 1 fnm-env))))
-        (and path-part (my-normalize-msys-path path-part))))))
-
+;; Install additional system paths
 (defvar my-original-exec-path exec-path)
+(defvar my-original-env-path (getenv "PATH"))
 
-(defun my-install-system-paths ()
-  (setq exec-path (append my-system-paths my-original-exec-path))
+(defun my-update-system-paths (&optional extra-paths)
+  (setq exec-path (append extra-paths my-system-paths my-original-exec-path))
   (setenv "PATH" (mapconcat (lambda (path)
                               (if (eq system-type 'windows-nt)
                                   (replace-regexp-in-string "/" "\\\\" path)
                                 path))
-                            (append my-system-paths (list (getenv "PATH")))
+                            (append extra-paths my-system-paths (list my-original-env-path))
                             (if (eq system-type 'windows-nt) ";" ":"))))
 
-(when my-system-paths
-  (my-install-system-paths)
-  (let ((node-path (my-fnm-get-node-path)))
-    (when node-path
-      (setq my-system-paths (append (list node-path) my-system-paths))
-      (my-install-system-paths))))
+(my-update-system-paths)
 
-(setq source-directory "~/emacs-shared/extra/emacs")
+;; Setup asdf, a version manager for node.js and other software
+(add-to-list 'load-path (concat my-emacs-path "elisp/asdf-vm"))
+(require 'asdf-vm)
+
+(defun my-asdf-vm-init ()
+  (interactive)
+  (let ((paths (cons asdf-vm-shims-path (asdf-vm--tool-bin-path-listing (asdf-vm-tool-versions)))))
+    (my-update-system-paths paths)))
+
+(my-asdf-vm-init)
 
 ;; Setup manpage browsing
 (cond ((eq system-type 'darwin)

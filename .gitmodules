@@ -2,6 +2,9 @@
 	path = elisp/archive-rpm
         shallow = true
 	url = https://github.com/nbarrientos/archive-rpm.git
+[submodule "elisp/asdf-vm"]
+	path = elisp/asdf-vm
+	url = https://github.com/delonnewman/asdf-vm.el.git
 [submodule "elisp/gptel"]
 	path = elisp/gptel
 	url = https://github.com/karthink/gptel.git

@@ -6,9 +6,12 @@
 
 (defun my-byte-compile-local-package (lib-name lib-path)
   (let* ((lib-sym (intern lib-name))
-         (pkg (cadr (assq lib-sym (package--alist)))))
+         (pkg (cadr (assq lib-sym (package--alist))))
+         (dir-or-file (file-name-concat default-directory lib-path)))
     (when pkg
-      (package-delete pkg t)))
-  (package-install-file (concat default-directory lib-path)))
+      (package-delete pkg t))
+    (if (string-match-p "\\.el\\'" dir-or-file)
+        (byte-compile-file dir-or-file)
+      (package-install-file dir-or-file))))
 
 (apply #'my-byte-compile-local-package argv)

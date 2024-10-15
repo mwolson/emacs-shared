@@ -1,5 +1,7 @@
 #!/bin/bash
 
+NOTICES=()
+
 function qpopd() {
     popd > /dev/null
 }
@@ -16,11 +18,34 @@ function uname_grep() {
     uname | grep "$1" > /dev/null 2>&1
 }
 
+function notify() {
+    local text="$1"
+
+    NOTICES+=("$1")
+}
+
 function compile_check() {
     if ! qwhich "$1"; then
-        echo >&2 "Warning: Could not find \"$1\" in your path, skipping compilation"
+        notify "Warning: Could not find \"$1\" in your path, skipped compilation"
         BUILD=
     fi
+}
+
+function update_submodule () {
+    local subdir="$1"
+
+    qpushd "$subdir"
+    git submodule init
+    git submodule update --depth 1
+    qpopd
+}
+
+function byte_compile() {
+    local module="$1"
+    local subdir="$2"
+
+    emacs --script byte-compile-local.el "$module" "$subdir" 2>&1 | \
+        grep -v '^Loading '
 }
 
 if uname_grep 'MINGW' || uname_grep 'MSYS_NT'; then
@@ -50,7 +75,7 @@ if [[ $OS == Windows ]]; then
 
     if ! uname_grep 'MINGW64_NT'; then
         # Symptom of building in Git Bash is that Emacs will crash when trying to use magit
-        echo >&2 "Warning: Cannot compile binaries unless you are in an MSYS2 MinGW 64-bit terminal, skipping compilation"
+        notify "Warning: Cannot compile binaries unless you are in an MSYS2 MinGW 64-bit terminal, skipped compilation"
         BUILD=
     fi
 fi
@@ -106,16 +131,16 @@ if [[ z$EMACS_VERSION != z${REQUIRED_EMACS_VERSION}* ]]; then
 fi
 
 if ! qwhich cmake; then
-    echo >&2 "Warning: Could not find \"cmake\" in your path, skipping compilation"
+    notify "Warning: Could not find \"cmake\" in your path, skipped compilation"
 fi
 
 if ! qwhich make; then
-    echo >&2 "Warning: Could not find \"make\" in your path, skipping compilation"
+    notify "Warning: Could not find \"make\" in your path, skipped compilation"
 fi
 
 if [[ $OS == Windows ]]; then
     if ! qwhich ninja; then
-        echo >&2 "Warning: Could not find \"ninja\" in your path, skipping compilation"
+        notify "Warning: Could not find \"ninja\" in your path, skipped compilation"
     fi
 fi
 
@@ -131,45 +156,6 @@ git submodule init
 git submodule sync
 git submodule update --depth 1
 echo
-
-# dependency for gptel
-qpushd elisp/transient
-git submodule init
-git submodule update --depth 1
-qpopd
-emacs --script byte-compile-local.el "transient" "elisp/transient/lisp" 2>&1 | grep -v '^Loading '
-
-qpushd elisp/archive-rpm
-git submodule init
-git submodule update --depth 1
-qpopd
-emacs --script byte-compile-local.el "archive-rpm" "elisp/archive-rpm" 2>&1 | grep -v '^Loading '
-
-qpushd elisp/gptel
-git submodule init
-git submodule update --depth 1
-qpopd
-emacs --script byte-compile-local.el "gptel" "elisp/gptel" 2>&1 | grep -v '^Loading '
-
-qpushd elisp/ligature
-git submodule init
-git submodule update --depth 1
-qpopd
-emacs --script byte-compile-local.el "ligature" "elisp/ligature" 2>&1 | grep -v '^Loading '
-
-qpushd extra/emacs
-git submodule init
-git submodule update --depth 1
-qpopd
-
-qpushd extra/tree-sitter-module
-git submodule init
-git submodule update --depth 1
-./build.sh go
-./build.sh gomod
-# disabling until wider adoption is reached
-# JOBS=4 ./batch.sh
-qpopd
 
 # clean up previous libegit2 builds that might still be around
 rm -fr elisp/libegit2/build
@@ -211,9 +197,35 @@ if test -n "$BUILD_GIT_MANPAGES"; then
     # see also end of INSTALL doc at https://github.com/git-for-windows/git/blob/main/INSTALL#L229
     make prefix=$DESTDIR install-man
 
-    echo >&2 "Built manpages, make sure to check them in"
+    notify "Built manpages, make sure to check them in"
     qpopd
 fi
 
-echo >&2
-echo >&2 "Bootstrap complete! Your Emacs is ready for use."
+# dependency for gptel
+update_submodule elisp/transient
+byte_compile transient elisp/transient/lisp
+
+update_submodule elisp/asdf-vm
+byte_compile asdf-vm elisp/asdf-vm/asdf-vm.el
+
+elisp_submodules="archive-rpm gptel ligature"
+for mod in $elisp_submodules; do
+    update_submodule elisp/"$mod"
+    byte_compile "$mod" elisp/"$mod"
+done
+
+update_submodule extra/emacs
+
+update_submodule extra/tree-sitter-module
+qpushd extra/tree-sitter-module
+./build.sh go
+./build.sh gomod
+# disabling until wider adoption is reached
+# JOBS=4 ./batch.sh
+qpopd
+
+for note in ${NOTICES[@]}; do
+    echo -e >&2 "\n$note"
+done
+
+echo -e >&2 "\nBootstrap complete! Your Emacs is ready for use."
