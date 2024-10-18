@@ -961,6 +961,14 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (jka-compr-update)
 
+;; YAML changes
+(defun my-run-prog-mode-hooks ()
+  (run-hooks 'prog-mode-hook))
+
+;; YAML mode should be treated like a programming mode, such as showing
+;; line numbers and applying editorconfig standards
+(add-hook 'yaml-mode-hook #'my-run-prog-mode-hooks t)
+
 ;; Profiling
 (require 'profiler)
 (cl-defmacro with-cpu-profiling (&rest body)
@@ -1038,7 +1046,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (define-key org-mode-map (kbd "<M-left>") #'left-word)
   (define-key org-mode-map (kbd "<M-right>") #'right-word))
 
-;;; Key customizations
+;; Project settings
 (defvar my-project-command-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "a a") #'project-remember-projects-under)
