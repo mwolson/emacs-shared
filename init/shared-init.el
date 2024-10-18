@@ -420,6 +420,11 @@
         (message "Could not load docker changes, output:\n%s" out)
       (message "Loaded Docker env for machine: %s" machine))))
 
+;; Support for s6-overlay containers: https://github.com/just-containers/s6-overlay
+(setq auto-mode-interpreter-regexp
+      (replace-regexp-in-string "/bin/env" "/bin/\\(?:with-cont\\)env"
+                                auto-mode-interpreter-regexp t t))
+
 ;; .env file support
 (add-to-list 'auto-mode-alist '("\\.env\\..*\\'" . dotenv-mode))
 
