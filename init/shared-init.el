@@ -459,6 +459,9 @@
 ;; Use plain old js-mode since it doesn't freeze when loading ES7 code with decorators
 ;; (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js-mode))
 
+;; MariaDB/MySQL conf files
+(add-to-list 'auto-mode-alist '("\\.cnf\\'" . conf-mode))
+
 ;; Flymake setup
 
 (require 'flymake-stylelint)
