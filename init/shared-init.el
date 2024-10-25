@@ -818,12 +818,25 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (add-hook 'go-ts-mode-hook 'eglot-ensure)
 (add-hook 'go-mod-ts-mode-hook 'eglot-ensure)
 
-(add-to-list 'eglot-server-programs
-             `((my-ts-web-mode) .
-               ("typescript-language-server" "--stdio"
-                :initializationOptions
-                (:plugins [(:name "typescript-eslint-language-service"
-                                  :location ,my-emacs-path)]))))
+(defclass eglot-deno (eglot-lsp-server) ()
+  :documentation "A custom class for deno lsp.")
+
+(cl-defmethod eglot-initialization-options ((server eglot-deno))
+  "Passes through required deno initialization options"
+  (list :enable t
+        :lint t))
+
+(if (executable-find "deno")
+    (add-to-list 'eglot-server-programs
+                 '((my-ts-web-mode) .
+                   (eglot-deno "deno" "lsp")))
+  (add-to-list 'eglot-server-programs
+               `((my-ts-web-mode) .
+                 ("typescript-language-server" "--stdio"
+                  :initializationOptions
+                  (:plugins [(:name "typescript-eslint-language-service"
+                                    :location ,my-emacs-path)])))))
+
 (add-to-list 'eglot-server-programs
              '((rust-ts-mode rust-mode) .
                ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
