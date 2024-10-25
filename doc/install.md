@@ -135,12 +135,7 @@ brew install emacs-plus@29
 osascript -e 'tell application "Finder" to make alias file to posix file "/opt/homebrew/opt/emacs-plus@29/Emacs.app" at POSIX file "/Applications" with properties {name:"Emacs.app"}'
 ```
 
-If you get an error when starting Emacs like `"dyld[48068]: Library not loaded: /opt/homebrew/opt/tree-sitter/lib/libtree-sitter.0.23.dylib"`, when you may need to update the tree-sitter library location, changing the last argument to `ln` to match the version shown in the error message:
-
-```sh
-cd /opt/homebrew/opt/tree-sitter/lib
-sudo ln -s $(readlink libtree-sitter.0.dylib) libtree-sitter.0.23.dylib
-```
+If you get an error when starting Emacs like `"dyld[48068]: Library not loaded: /opt/homebrew/opt/tree-sitter/lib/libtree-sitter.0.23.dylib"`, when you may need to reinstall the XCode Commandline Tools, then check System Update for any updates to it, and then reboot to make the changes take effect. After that, try installing `emacs-plus` again per the above instructions.
 
 ### Install Emacs on Arch Linux
 
