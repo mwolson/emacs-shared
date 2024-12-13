@@ -137,6 +137,8 @@ osascript -e 'tell application "Finder" to make alias file to posix file "/opt/h
 
 If you get an error when starting Emacs like `"dyld[48068]: Library not loaded: /opt/homebrew/opt/tree-sitter/lib/libtree-sitter.0.23.dylib"`, when you may need to reinstall the XCode Commandline Tools, then check System Update for any updates to it, and then reboot to make the changes take effect. After that, try installing `emacs-plus` again per the above instructions.
 
+You'll also probably want to go into System Settings -> Privacy & Security -> Full Disk Acccess and add Emacs, so that it can open files from any location.
+
 ### Install Emacs on Arch Linux
 
 If you are on Wayland (the default window system), install the `emacs-wayland` package, otherwise install `emacs`.
