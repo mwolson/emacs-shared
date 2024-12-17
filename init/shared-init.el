@@ -462,6 +462,9 @@
 ;; MariaDB/MySQL conf files
 (add-to-list 'auto-mode-alist '("\\.cnf\\'" . conf-mode))
 
+;; SystemD conf files
+(add-to-list 'auto-mode-alist '("\\.service\\'" . conf-mode))
+
 ;; Flymake setup
 
 (require 'flymake-stylelint)
