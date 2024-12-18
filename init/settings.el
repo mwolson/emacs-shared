@@ -18,6 +18,7 @@
  '(calendar-mark-diary-entries-flag t)
  '(case-replace nil)
  '(column-number-mode t)
+ '(compilation-scroll-output 'first-error)
  '(cperl-close-paren-offset -4)
  '(cperl-indent-level 4)
  '(cperl-indent-parens-as-block t)
