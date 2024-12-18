@@ -716,10 +716,10 @@ interactively.
          (backend-name
           (format "*%s*" (gptel-backend-name backend)))
          (model (or my-gptel-model (car (gptel-backend-models backend)))))
-    (setq-default gptel-backend backend
-                  gptel-model model)
+    (setq gptel-backend backend
+          gptel-model model)
     (with-suppressed-warnings ((obsolete warning-level-aliases))
-      (gptel backend-name nil nil t))))
+      (switch-to-buffer (gptel backend-name)))))
 
 ;; Set up project.el
 (defun my-project-root ()
