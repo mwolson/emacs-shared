@@ -67,7 +67,6 @@ fi
 BUILD=y
 compile_check which
 compile_check make
-compile_check cmake
 compile_check node
 compile_check npm
 if [[ $OS == Windows ]]; then
@@ -128,10 +127,6 @@ EMACS_VERSION=$(emacs --batch -q --no-site-file --eval "(message \"%s\" emacs-ve
 if [[ z$EMACS_VERSION != z${REQUIRED_EMACS_VERSION}* ]]; then
     echo >&2 "Error: Your version of Emacs is \"$EMACS_VERSION\", but should be \"${REQUIRED_EMACS_VERSION}.x\""
     exit 1
-fi
-
-if ! qwhich cmake; then
-    notify "Warning: Could not find \"cmake\" in your path, skipped compilation"
 fi
 
 if ! qwhich make; then

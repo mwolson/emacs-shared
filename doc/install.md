@@ -31,7 +31,7 @@ pacman -Sy pacman
 pacman -Syu
 pacman -Su
 pacman -S --needed base-devel libssh2-devel msys/man-db xmlto
-pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,cmake,fd,gcc,gnutls,go,gopls,make,ninja,ripgrep,rust}
+pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,fd,gcc,gnutls,go,gopls,make,ninja,ripgrep,rust}
 ```
 * Make sure you do not have git installed through MSYS2 (we want it to come from Git For Windows instead so we get caching) by running this and ignoring any "target not found" errors:
 ```sh
@@ -41,16 +41,12 @@ pacman -R git
 ## (Arch Linux only) Install utilities
 
 ```sh
-sudo pacman -S aspell-en base-devel cmake fd gnutls gopls libssh2-devel make man-db man-pages ninja openssh ripgrep
+sudo pacman -S aspell-en base-devel fd gnutls gopls libssh2-devel make man-db man-pages ninja openssh ripgrep
 ```
 
 ## Install clangd
 
 You'll need to [install clangd](https://clangd.llvm.org/installation) in order to support language server features for C/C++. On Mac, install the `llvm` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
-
-## Install cmake
-
-You'll need to [install cmake](https://cmake.org/) in order to support fast execution of Magit. On Mac, install the `cmake` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
 
 ## Install fd
 
