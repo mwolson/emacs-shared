@@ -84,6 +84,7 @@
       "* %?" :prepend t :empty-lines-after 1)))
  '(org-default-notes-file "~/Documents/notes.org")
  '(org-startup-folded nil)
+ '(org-startup-truncated nil)
  '(package-archives
    '(("melpa-stable" . "http://stable.melpa.org/packages/")
      ("gnu" . "http://elpa.gnu.org/packages/")))

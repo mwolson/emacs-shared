@@ -1186,6 +1186,16 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (when (and my-remap-cmd-key-p (memq window-system '(ns pgtk x)))
   (my-set-super-bindings))
 
+(defun my-set-mac-bindings ()
+  (interactive)
+  (global-set-key (kbd "<home>") #'beginning-of-line)
+  (global-set-key (kbd "<end>") #'end-of-line)
+  (global-set-key (kbd "s-<left>") #'beginning-of-line)
+  (global-set-key (kbd "s-<right>") #'end-of-line))
+
+(when (and my-remap-cmd-key-p (eq window-system 'ns))
+  (my-set-mac-bindings))
+
 ;; Change to home dir
 (defun my-change-to-default-dir ()
   (interactive)
