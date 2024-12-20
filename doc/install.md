@@ -251,7 +251,7 @@ emacs -q init.el  # or other editing command
 
 `init.el` contents, change these as appropriate:
 
-```lisp
+```elisp
 ;; Configure emacs-shared
 (setq my-email-address "you@example.com")
 (setq my-full-name     "Your Name")
