@@ -1190,6 +1190,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (interactive)
   (global-set-key (kbd "<home>") #'beginning-of-line)
   (global-set-key (kbd "<end>") #'end-of-line)
+  (global-set-key (kbd "s-<up>") #'scroll-down-command)
+  (global-set-key (kbd "s-<down>") #'scroll-up-command)
   (global-set-key (kbd "s-<left>") #'beginning-of-line)
   (global-set-key (kbd "s-<right>") #'end-of-line))
 
