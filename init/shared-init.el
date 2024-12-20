@@ -916,10 +916,11 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 ;; Markdown support
 
-;; (add-to-list 'auto-mode-alist '("\\.md\\'" . poly-markdown-mode))
-;; (add-to-list 'auto-mode-alist '("\\.mdx\\'" . poly-markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.md\\'" . gfm-mode))
-(add-to-list 'auto-mode-alist '("\\.mdx\\'" . gfm-mode))
+(add-to-list 'load-path (concat my-emacs-path "elisp/poly-markdown"))
+(autoload #'poly-gfm-mode "poly-markdown")
+
+(add-to-list 'auto-mode-alist '("\\.md\\'" . poly-gfm-mode))
+(add-to-list 'auto-mode-alist '("\\.mdx\\'" . poly-gfm-mode))
 
 (defun my-define-web-polymode (file-ext)
   (let* ((sym-name (symbol-name file-ext))
@@ -944,18 +945,20 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
     (add-to-list 'polymode-mode-name-aliases (cons file-ext mode-name-alias))))
 
 (with-eval-after-load "polymode-core"
-  ;; Commented out since the font-locking tends to bleed into other areas
+  ;; Commented out since the font-locking for Web mode tends to bleed into other areas
   ;; of the file.
   ;; (dolist (file-ext '(hbs html json))
   ;;   (my-define-web-polymode file-ext))
   ;; (dolist (file-ext '(js jsx))
   ;;   (my-define-ts-web-polymode file-ext))
-  (add-to-list 'polymode-mode-name-aliases '(bash . sh))
   ;; (add-to-list 'polymode-mode-name-aliases '(javascript . my-js))
   (add-to-list 'polymode-mode-name-aliases '(javascript . js)))
 
+(with-eval-after-load "poly-markdown"
+  (my-replace-cdrs-in-alist 'poly-markdown-mode 'poly-gfm-mode 'auto-mode-alist))
+
 ;; Prefer Github-flavored Markdown
-(my-replace-cdrs-in-alist 'markdown-link-face 'gfm-mode 'auto-mode-alist)
+(my-replace-cdrs-in-alist 'markdown-mode 'poly-gfm-mode 'auto-mode-alist)
 
 ;; Don't mess with keys that I'm used to
 (defun my-markdown-mode-keys ()

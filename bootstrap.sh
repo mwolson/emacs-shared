@@ -203,11 +203,14 @@ byte_compile transient elisp/transient/lisp
 update_submodule elisp/asdf-vm
 byte_compile asdf-vm elisp/asdf-vm/asdf-vm.el
 
-elisp_submodules="archive-rpm gptel ligature"
+elisp_submodules="archive-rpm gptel ligature polymode"
 for mod in $elisp_submodules; do
     update_submodule elisp/"$mod"
     byte_compile "$mod" elisp/"$mod"
 done
+
+update_submodule elisp/poly-markdown
+byte_compile poly-markdown elisp/poly-markdown/poly-markdown.el
 
 update_submodule extra/emacs
 

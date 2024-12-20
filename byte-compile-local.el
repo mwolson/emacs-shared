@@ -11,7 +11,9 @@
     (when pkg
       (package-delete pkg t))
     (if (string-match-p "\\.el\\'" dir-or-file)
-        (byte-compile-file dir-or-file)
+        (progn
+          (message "Compiling %s..." (expand-file-name dir-or-file))
+          (byte-compile-file dir-or-file))
       (package-install-file dir-or-file))))
 
 (apply #'my-byte-compile-local-package argv)
