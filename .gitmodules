@@ -23,9 +23,6 @@
 [submodule "elisp/tmux-mode"]
 	path = elisp/tmux-mode
 	url = https://github.com/nverno/tmux-mode.git
-[submodule "elisp/transient"]
-	path = elisp/transient
-	url = https://github.com/magit/transient.git
 [submodule "extra/emacs"]
 	path = extra/emacs
         shallow = true

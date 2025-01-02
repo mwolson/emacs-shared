@@ -246,9 +246,6 @@
 
 ;;; Customizations
 
-;; Fix bug in Emacs 29.4 where built-in transient doesn't have a version number
-(load-file (concat my-emacs-path "init/transient-overrides.el"))
-
 ;; Load customizations
 (setq custom-file (if my-settings-shared-p
                       (concat my-emacs-path "init/settings.el")
@@ -1038,6 +1035,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (with-eval-after-load "magit"
   (setopt magit-completing-read-function 'ivy-completing-read)
+  ;; magit-log currently has some kind of transient bug, so don't show transient menu
+  (define-key magit-mode-map (kbd "l") #'magit-log-current)
   (define-key magit-mode-map (kbd "M-w") #'my-magit-kill-ring-save))
 
 (defun my-preload-magit ()

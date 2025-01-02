@@ -196,10 +196,6 @@ if test -n "$BUILD_GIT_MANPAGES"; then
     qpopd
 fi
 
-# dependency for gptel
-update_submodule elisp/transient
-byte_compile transient elisp/transient/lisp
-
 dir_elisp_submodules="archive-rpm gptel ligature polymode"
 for mod in $dir_elisp_submodules; do
     update_submodule elisp/"$mod"

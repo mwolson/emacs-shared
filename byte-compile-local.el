@@ -1,4 +1,3 @@
-(load-file (concat default-directory "init/transient-overrides.el"))
 (load-file (concat default-directory "init/settings.el"))
 
 (require 'package)
