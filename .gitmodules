@@ -5,6 +5,9 @@
 [submodule "elisp/asdf-vm"]
 	path = elisp/asdf-vm
 	url = https://github.com/delonnewman/asdf-vm.el.git
+[submodule "elisp/elysium"]
+	path = elisp/elysium
+	url = https://github.com/lanceberge/elysium.git
 [submodule "elisp/gptel"]
 	path = elisp/gptel
 	url = https://github.com/karthink/gptel.git
@@ -17,6 +20,9 @@
 [submodule "elisp/poly-markdown"]
 	path = elisp/poly-markdown
 	url = https://github.com/polymode/poly-markdown
+[submodule "elisp/tmux-mode"]
+	path = elisp/tmux-mode
+	url = https://github.com/nverno/tmux-mode.git
 [submodule "elisp/transient"]
 	path = elisp/transient
 	url = https://github.com/magit/transient.git

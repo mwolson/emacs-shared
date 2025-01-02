@@ -661,7 +661,7 @@ interactively.
 
 ;; Kotlin
 (add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-mode) t)
-(autoload 'kotlin-mode "kotlin-mode" "Major mode for editing Kotlin." t nil)
+(autoload #'kotlin-mode "kotlin-mode" "Major mode for editing Kotlin." t nil)
 
 ;; C#
 (with-eval-after-load "csharp-mode"
@@ -720,6 +720,11 @@ interactively.
           gptel-model model)
     (with-suppressed-warnings ((obsolete warning-level-aliases))
       (switch-to-buffer (gptel backend-name)))))
+
+;; Elysium for AI queries in code
+(add-to-list 'load-path (concat my-emacs-path "elisp/elysium"))
+(autoload #'elysium-query "elysium" "send query to elysium" t)
+(add-hook 'prog-mode-hook 'smerge-mode t)
 
 ;; Set up project.el
 (defun my-project-root ()
@@ -917,7 +922,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 ;; Markdown support
 
 (add-to-list 'load-path (concat my-emacs-path "elisp/poly-markdown"))
-(autoload #'poly-gfm-mode "poly-markdown")
+(autoload #'poly-gfm-mode "poly-markdown" t)
 
 (add-to-list 'auto-mode-alist '("\\.md\\'" . poly-gfm-mode))
 (add-to-list 'auto-mode-alist '("\\.mdx\\'" . poly-gfm-mode))
@@ -967,7 +972,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (add-hook 'markdown-mode-hook #'my-markdown-mode-keys t)
 
 ;; Support for .nsh files
-(autoload 'nsis-mode "nsis-mode" "NSIS mode" t)
+(autoload #'nsis-mode "nsis-mode" "NSIS mode" t)
 (setq auto-mode-alist (append '(("\\.[Nn][Ss][HhIi]\\'" . nsis-mode)) auto-mode-alist))
 
 ;; Support for .plist files from https://www.emacswiki.org/emacs/MacOSXPlist
@@ -982,6 +987,11 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
               nil nil "bplist"])
 
 (jka-compr-update)
+
+;; tmux support
+(add-to-list 'load-path (concat my-emacs-path "elisp/tmux-mode"))
+(autoload #'tmux-mode "tmux-mode" "tmux mode" t)
+(add-to-list 'auto-mode-alist '("\\.?tmux\\.conf\\(\\.[^.]+\\)?\\'" . tmux-mode))
 
 ;; YAML changes
 (defun my-run-prog-mode-hooks ()
@@ -1077,6 +1087,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
     (define-key map (kbd "f") #'project-find-file)
     (define-key map (kbd "g g") #'my-gptel-start)
     (define-key map (kbd "g p") #'gptel-menu)
+    (define-key map (kbd "g q") #'elysium-query)
+    (define-key map (kbd "g r") #'gptel-rewrite)
+    (define-key map (kbd "g s") #'gptel-send)
     (define-key map (kbd "k") #'project-kill-buffers)
     (define-key map (kbd "n") #'my-org-find-notes-file)
     (define-key map (kbd "p") #'project-switch-project)
