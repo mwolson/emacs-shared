@@ -1104,6 +1104,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (global-set-key (kbd "C-c p") my-project-command-map)
 (global-set-key (kbd "C-c C-p") my-project-command-map)
 (global-set-key (kbd "C-x g") 'goto-line)
+(global-set-key (kbd "C-x r r") 'rectangle-mark-mode)
 
 (defun my-kill-emacs ()
   (interactive)
