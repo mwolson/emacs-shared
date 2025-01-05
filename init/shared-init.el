@@ -419,7 +419,7 @@
 
 ;; Support for s6-overlay containers: https://github.com/just-containers/s6-overlay
 (setq auto-mode-interpreter-regexp
-      (replace-regexp-in-string "/bin/env" "/bin/\\(?:with-cont\\)env"
+      (replace-regexp-in-string "/bin/env" "/\\(?:usr/\\)?bin/\\(?:with-cont\\)?env"
                                 auto-mode-interpreter-regexp t t))
 
 ;; .env file support
