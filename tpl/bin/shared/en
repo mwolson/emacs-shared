@@ -1,0 +1,5 @@
+#!/bin/sh
+
+. ~/emacs-shared/bin/emacs.defs
+
+exec "$CLIENT" -n "$@"

@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec ~/emacs-shared/bin/ew "$@"
