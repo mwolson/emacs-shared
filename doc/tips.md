@@ -13,6 +13,7 @@
 * <kbd>C-c p f</kbd> to find a file within the current project
 * <kbd>C-c p g g</kbd> to start a Claude AI interaction buffer
 * <kbd>C-c p g p</kbd> to bring up a gptel menu for taking different AI actions
+* <kbd>C-c p g q</kbd> to bring up a Claude AI query about a selected region
 * <kbd>C-c p k</kbd> to close all files in the current project
 * <kbd>C-c p p</kbd> to visit a known project in Magit, which is a git status browser and git shell
 * <kbd>C-c p t</kbd> to switch to a different open buffer within the project
@@ -57,6 +58,14 @@ the cursor is at.
   * <kbd>C-c ESC</kbd> removes the changes and takes you back to Dired
 * <kbd>C</kbd> when in Dired, will copy the file
 * <kbd>R</kbd> when in Dired, will rename the file or move it to a different directory
+
+## Binaries
+
+The following shortcuts are added to `~/emacs-shared/bin` which can be added to your `$PATH`:
+
+* `en`: Open the provided file in the existing Emacs window, and return right away
+* `et`: Open the provided file in terminal Emacs, and wait until done editing
+* `ew`: Open the provided file in a new Emacs window, and wait until done editing
 
 ---
 
