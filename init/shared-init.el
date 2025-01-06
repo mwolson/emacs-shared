@@ -491,6 +491,9 @@
 ;; SystemD conf files
 (add-to-list 'auto-mode-alist '("\\.service\\'" . conf-mode))
 
+;; SSH conf files
+(add-to-list 'auto-mode-alist '("_config\\'" . conf-mode))
+
 ;; Flymake setup
 
 (require 'flymake-stylelint)
