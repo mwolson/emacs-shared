@@ -68,6 +68,45 @@
              "/opt/maven/bin"))))
 (setq my-system-paths (cl-remove-if-not #'file-exists-p my-system-paths))
 
+(let* ((after- "<~|")
+       (after-> (concat after- ">"))
+       (after--> (concat after-> "-"))
+       (-2+ "\\(-\\{2,\\}\\)")
+       (-3+ "\\(-\\{3,\\}\\)")
+       (after< "<>~|=")
+       (after<- (concat after< "-"))
+       (after>- "<>~|=-")
+       (after= "<>~|=!"))
+
+  (defvar my-prog-mode-ligatures
+    ;; see https://github.com/mickeynp/ligature.el/wiki#cascadia--fira-code
+    ;; some of the more obnoxious ones are removed
+    `(("-" ,(format "[%s]+" after-->))
+      ("<" ,(format "[%s]+" after<-))
+      (">" ,(format "[%s]+" after>-))
+      ("=" ,(format "[%s]+" after=))
+      "www" "**" "***" "**/" "*/" "\\\\" "\\\\\\" "::"
+      ":::" ":=" "!!" "!=" "!=="
+      "##" "###" "####"
+      ".-" ".=" ".." "..<" "..." "??" ";;" ";;;" "/*" "/**"
+      "//" "///" "&&" "||" "||=" "|=" "|>"
+      "++" "+++" "+>"
+      "~>" "~~" "~~>" "%%"))
+
+  (defvar my-web-mode-ligatures
+    (mapcar (lambda (el)
+              (cond ((stringp el) el)
+                    ((string= (car el) "-")
+                     `("-" ,(format "\\(-*[%s][%s]*\\|%s[%s]+\\|%s\\)"
+                                    after- after-->
+                                    -2+ after-->
+                                    -2+)))
+                    ((string= (car el) "<")
+                     `("<" ,(format "\\(-*[%s][%s]*\\|%s\\)"
+                                    after< after<- -3+)))
+                    (t el)))
+            my-prog-mode-ligatures)))
+
 ;; Add shared elisp directory (but prefer system libs)
 (add-to-list 'load-path (concat my-emacs-path "elisp") t)
 
@@ -122,17 +161,7 @@
   ;; Enable ligatures in programming modes
   (interactive)
   (require 'ligature)
-  (ligature-set-ligatures 'prog-mode
-                          '("www" "**" "***" "**/" "*>" "*/" "\\\\" "\\\\\\" "{-" "::"
-                            ":::" ":=" "!!" "!=" "!==" "-}" "----" "-->" "->" "->>"
-                            "-<" "-<<" "-~" "#{" "#[" "##" "###" "####" "#(" "#?" "#_"
-                            "#_(" ".-" ".=" ".." "..<" "..." "?=" "??" ";;" "/*" "/**"
-                            "/=" "/==" "/>" "//" "///" "&&" "||" "||=" "|=" "|>" "^=" "$>"
-                            "++" "+++" "+>" "=:=" "==" "===" "==>" "=>" "=>>" "<="
-                            "=<<" "=/=" ">-" ">=" ">=>" ">>" ">>-" ">>=" ">>>" "<*"
-                            "<*>" "<|" "<|>" "<$" "<$>" "<!--" "<-" "<--" "<->" "<+"
-                            "<+>" "<=" "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<"
-                            "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
+  (ligature-set-ligatures 'prog-mode my-prog-mode-ligatures)
   (global-ligature-mode t))
 
 ;; This function should be called on the emacsclient commandline in cases where no file is being passed on commandline.
@@ -589,7 +618,13 @@ interactively.
   (flymake-mode nil)
   (set (make-local-variable 'my-eslint-fix-enabled-p) nil))
 
+(defun my-setup-web-ligatures ()
+  (interactive)
+  (setq-local ligature-composition-table nil)
+  (ligature-set-ligatures 'web-mode my-web-mode-ligatures))
+
 (add-hook 'web-mode-hook #'add-node-modules-path t)
+(add-hook 'web-mode-hook #'my-setup-web-ligatures t)
 (add-hook 'my-ts-web-mode-hook #'my-ts-init t)
 
 ;; JS2 Mode setup (disabled)
