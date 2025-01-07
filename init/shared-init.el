@@ -1257,6 +1257,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
     (my-set-mac-bindings)))
 
 (add-hook 'server-after-make-frame-hook 'my-init-client-keys t)
+(my-init-client-keys)
 
 ;; Change to home dir
 (defun my-change-to-default-dir ()
@@ -1278,6 +1279,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (let ((buf (get-buffer "*GNU Emacs*")))
     (when (and buf (buffer-live-p buf))
       (kill-buffer buf))))
+
 (add-hook 'after-init-hook #'my-kill-splash-screen t)
 
 (provide 'shared-init)
