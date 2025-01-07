@@ -165,7 +165,7 @@
   (global-ligature-mode t))
 
 ;; This function should be called on the emacsclient commandline in cases where no file is being passed on commandline.
-(defun my-init-client ()
+(defun my-init-client-display ()
   (interactive)
   (if window-system
       (progn
@@ -182,10 +182,6 @@
                  (mac-auto-operator-composition-mode)))
               ((memq window-system '(pgtk w32 x))
                (my-enable-ligatures)))
-        (when (and my-remap-cmd-key-p (memq window-system '(ns pgtk x)))
-          (my-set-super-bindings))
-        (when (and my-remap-cmd-key-p (eq window-system 'ns))
-          (my-set-mac-bindings))
         ;; Make sure DEL key does what I want
         (normal-erase-is-backspace-mode 1)
         ;; Show the menu if we are using X
@@ -204,12 +200,12 @@
     (my-reset-frame-size)))
 
 ;; Initialize display settings on startup
-(my-init-client)
+(my-init-client-display)
 
 ;; Give people something to look at while we load
 (display-startup-screen)
 (redisplay t)
-(add-hook 'server-after-make-frame-hook 'my-init-client t)
+(add-hook 'server-after-make-frame-hook 'my-init-client-display t)
 
 ;; Modeline theme
 ;; currently too large
@@ -1253,11 +1249,21 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (global-set-key (kbd "s-<left>") #'beginning-of-line)
   (global-set-key (kbd "s-<right>") #'end-of-line))
 
+(defun my-init-client-keys ()
+  (interactive)
+  (when (and my-remap-cmd-key-p (memq window-system '(ns pgtk x)))
+    (my-set-super-bindings))
+  (when (and my-remap-cmd-key-p (eq window-system 'ns))
+    (my-set-mac-bindings)))
+
+(add-hook 'server-after-make-frame-hook 'my-init-client-keys t)
+
 ;; Change to home dir
 (defun my-change-to-default-dir ()
   (interactive)
   (setq-default default-directory (expand-file-name my-default-directory))
   (setq default-directory (expand-file-name my-default-directory)))
+
 (add-hook 'after-init-hook #'my-change-to-default-dir t)
 
 ;; Start server
