@@ -182,6 +182,10 @@
                  (mac-auto-operator-composition-mode)))
               ((memq window-system '(pgtk w32 x))
                (my-enable-ligatures)))
+        (when (and my-remap-cmd-key-p (memq window-system '(ns pgtk x)))
+          (my-set-super-bindings))
+        (when (and my-remap-cmd-key-p (eq window-system 'ns))
+          (my-set-mac-bindings))
         ;; Make sure DEL key does what I want
         (normal-erase-is-backspace-mode 1)
         ;; Show the menu if we are using X
@@ -493,6 +497,9 @@
 
 ;; SSH conf files
 (add-to-list 'auto-mode-alist '("_config\\'" . conf-mode))
+
+;; Python uv lock files
+(add-to-list 'auto-mode-alist '("/uv\\.lock\\'" . conf-toml-mode))
 
 ;; Flymake setup
 
@@ -1237,9 +1244,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (global-set-key (kbd "C-s-p") #'backward-list)
   (global-set-key (kbd "C-s-x") #'eval-defun))
 
-(when (and my-remap-cmd-key-p (memq window-system '(ns pgtk x)))
-  (my-set-super-bindings))
-
 (defun my-set-mac-bindings ()
   (interactive)
   (global-set-key (kbd "<home>") #'beginning-of-line)
@@ -1248,9 +1252,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (global-set-key (kbd "s-<down>") #'scroll-up-command)
   (global-set-key (kbd "s-<left>") #'beginning-of-line)
   (global-set-key (kbd "s-<right>") #'end-of-line))
-
-(when (and my-remap-cmd-key-p (eq window-system 'ns))
-  (my-set-mac-bindings))
 
 ;; Change to home dir
 (defun my-change-to-default-dir ()
