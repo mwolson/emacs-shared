@@ -1210,9 +1210,12 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (with-eval-after-load "cider-repl"
     (define-key cider-repl-mode-map (kbd "s-n") #'cider-repl-next-input)
     (define-key cider-repl-mode-map (kbd "s-p") #'cider-repl-previous-input))
+
   (with-eval-after-load "magit"
-    (define-key magit-status-mode-map (kbd "S-c") #'my-magit-kill-ring-save)
-    (define-key magit-status-mode-map (kbd "S-w") #'my-magit-kill-ring-save))
+    (define-key magit-mode-map (kbd "s-2") #'magit-section-show-level-2)
+    (define-key magit-mode-map (kbd "s-4") #'magit-section-show-level-4)
+    (define-key magit-status-mode-map (kbd "s-c") #'my-magit-kill-ring-save)
+    (define-key magit-status-mode-map (kbd "s-w") #'my-magit-kill-ring-save))
 
   (global-set-key (kbd "s-:") #'eval-expression)
   (global-set-key (kbd "s-;") #'eval-expression)
@@ -1224,7 +1227,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (global-set-key (kbd "<s-right>") #'right-word)
   (global-set-key (kbd "s-1") #'shell-command)
   (global-set-key (kbd "s-!") #'shell-command)
-  (global-set-key (kbd "s-4") #'ispell-word)
   (global-set-key (kbd "s-$") #'ispell-word)
   (global-set-key (kbd "s-a") #'mark-whole-buffer)
   (global-set-key (kbd "s-c") #'kill-ring-save)
