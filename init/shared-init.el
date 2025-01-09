@@ -164,15 +164,6 @@
   (ligature-set-ligatures 'prog-mode my-prog-mode-ligatures)
   (global-ligature-mode t))
 
-;; Smoother scrolling
-(defun my-enable-smooth-scrolling ()
-  (interactive)
-  (add-to-list 'load-path (concat my-emacs-path "elisp/ultra-scroll"))
-  (require 'ultra-scroll)
-  (setq scroll-conservatively 101
-        scroll-margin 0)
-  (ultra-scroll-mode 1))
-
 ;; This function should be called on the emacsclient commandline in cases where no file is being passed on commandline.
 (defun my-init-client-display ()
   (interactive)
@@ -189,10 +180,6 @@
           (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
           (ignore-errors
             (mac-auto-operator-composition-mode)))
-        ;; disable since it currently prevents arrow keys at beg/end from
-        ;; showing a half-window of the new screen contents
-        ;; (when (eq window-system 'ns)
-        ;;  (my-enable-smooth-scrolling))
         (when (memq window-system '(pgtk w32 x))
           (my-enable-ligatures))
         ;; Make sure DEL key does what I want
