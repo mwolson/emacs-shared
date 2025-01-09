@@ -207,6 +207,13 @@
 (redisplay t)
 (add-hook 'server-after-make-frame-hook 'my-init-client-display t)
 
+;; Smoother scrolling
+(add-to-list 'load-path (concat my-emacs-path "elisp/ultra-scroll"))
+(require 'ultra-scroll)
+(setq scroll-conservatively 101
+      scroll-margin 0)
+(ultra-scroll-mode 1)
+
 ;; Modeline theme
 ;; currently too large
 ;;

@@ -23,6 +23,9 @@
 [submodule "elisp/tmux-mode"]
 	path = elisp/tmux-mode
 	url = https://github.com/nverno/tmux-mode.git
+[submodule "elisp/ultra-scroll"]
+	path = elisp/ultra-scroll
+	url = https://github.com/jdtsmith/ultra-scroll.git
 [submodule "extra/emacs"]
 	path = extra/emacs
         shallow = true
