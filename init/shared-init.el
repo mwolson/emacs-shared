@@ -164,6 +164,15 @@
   (ligature-set-ligatures 'prog-mode my-prog-mode-ligatures)
   (global-ligature-mode t))
 
+;; Smoother scrolling
+(defun my-enable-smooth-scrolling ()
+  (interactive)
+  (add-to-list 'load-path (concat my-emacs-path "elisp/ultra-scroll"))
+  (require 'ultra-scroll)
+  (setq scroll-conservatively 101
+        scroll-margin 0)
+  (ultra-scroll-mode 1))
+
 ;; This function should be called on the emacsclient commandline in cases where no file is being passed on commandline.
 (defun my-init-client-display ()
   (interactive)
@@ -175,13 +184,17 @@
         (when (or (not my-frame-maximize-p) my-frame-maximize-if-pixel-width-lte)
           (add-to-list 'default-frame-alist (cons 'height my-frame-height))
           (add-to-list 'default-frame-alist (cons 'width my-frame-width)))
-        (cond ((eq window-system 'mac)
-               ;; redisplay slowness https://github.com/hlissner/doom-emacs/issues/2217
-               (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
-               (ignore-errors
-                 (mac-auto-operator-composition-mode)))
-              ((memq window-system '(pgtk w32 x))
-               (my-enable-ligatures)))
+        (when (eq window-system 'mac)
+          ;; redisplay slowness https://github.com/hlissner/doom-emacs/issues/2217
+          (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
+          (ignore-errors
+            (mac-auto-operator-composition-mode)))
+        ;; disable since it currently prevents arrow keys at beg/end from
+        ;; showing a half-window of the new screen contents
+        ;; (when (eq window-system 'ns)
+        ;;  (my-enable-smooth-scrolling))
+        (when (memq window-system '(pgtk w32 x))
+          (my-enable-ligatures))
         ;; Make sure DEL key does what I want
         (normal-erase-is-backspace-mode 1)
         ;; Show the menu if we are using X
@@ -206,13 +219,6 @@
 (display-startup-screen)
 (redisplay t)
 (add-hook 'server-after-make-frame-hook 'my-init-client-display t)
-
-;; Smoother scrolling
-(add-to-list 'load-path (concat my-emacs-path "elisp/ultra-scroll"))
-(require 'ultra-scroll)
-(setq scroll-conservatively 101
-      scroll-margin 0)
-(ultra-scroll-mode 1)
 
 ;; Modeline theme
 ;; currently too large
@@ -1219,8 +1225,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
     (define-key cider-repl-mode-map (kbd "s-p") #'cider-repl-previous-input))
 
   (with-eval-after-load "magit"
-    (define-key magit-mode-map (kbd "s-2") #'magit-section-show-level-2)
-    (define-key magit-mode-map (kbd "s-4") #'magit-section-show-level-4)
+    (define-key magit-mode-map (kbd "s-2") #'magit-section-show-level-2-all)
+    (define-key magit-mode-map (kbd "s-4") #'magit-section-show-level-4-all)
     (define-key magit-status-mode-map (kbd "s-c") #'my-magit-kill-ring-save)
     (define-key magit-status-mode-map (kbd "s-w") #'my-magit-kill-ring-save))
 
@@ -1243,11 +1249,13 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (global-set-key (kbd "s-w") #'kill-ring-save)
   (global-set-key (kbd "s-v") #'yank)
   (global-set-key (kbd "s-x") #'counsel-M-x)
+  (global-set-key (kbd "s-y") #'counsel-yank-pop)
   (global-set-key (kbd "<C-s-left>") #'backward-sexp)
   (global-set-key (kbd "<C-s-right>") #'forward-sexp)
   (global-set-key (kbd "C-s-n") #'forward-list)
   (global-set-key (kbd "C-s-p") #'backward-list)
-  (global-set-key (kbd "C-s-x") #'eval-defun))
+  (global-set-key (kbd "C-s-x") #'eval-defun)
+  (global-set-key (kbd "C-s-\\") #'indent-region))
 
 (defun my-set-mac-bindings ()
   (interactive)
