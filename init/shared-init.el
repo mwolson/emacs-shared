@@ -881,6 +881,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (add-hook 'rust-mode-hook 'eglot-ensure)
 (add-hook 'go-ts-mode-hook 'eglot-ensure)
 (add-hook 'go-mod-ts-mode-hook 'eglot-ensure)
+(add-hook 'zig-mode-hook 'eglot-ensure)
 
 (defclass eglot-deno (eglot-lsp-server) ()
   :documentation "A custom class for deno lsp.")
@@ -904,6 +905,10 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (add-to-list 'eglot-server-programs
              '((rust-ts-mode rust-mode) .
                ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
+
+(add-to-list 'eglot-server-programs
+             '((zig-mode) .
+               ("zls" :initializationOptions ())))
 
 ;; Bind N and P in ediff so that I don't leave the control buffer
 (defun my-ediff-next-difference (&rest args)
@@ -962,6 +967,11 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 ;; Tree-sitter
 (add-to-list 'treesit-extra-load-path (concat my-emacs-path "extra/tree-sitter-module/dist"))
 (require 'go-ts-mode)
+
+;; Zig programming language
+(add-to-list 'load-path (concat my-emacs-path "elisp/zig-mode"))
+(autoload 'zig-mode "zig-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-mode))
 
 ;; All programming modes
 (defun my-turn-on-display-line-numbers-mode ()
