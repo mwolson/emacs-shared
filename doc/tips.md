@@ -13,7 +13,6 @@
 * <kbd>C-c p f</kbd> to find a file within the current project
 * <kbd>C-c p g g</kbd> to start a Claude AI interaction buffer
 * <kbd>C-c p g p</kbd> to bring up a gptel menu for taking different AI actions
-* <kbd>C-c p g q</kbd> to bring up a Claude AI query about a selected region
 * <kbd>C-c p k</kbd> to close all files in the current project
 * <kbd>C-c p p</kbd> to visit a known project in Magit, which is a git status browser and git shell
 * <kbd>C-c p t</kbd> to switch to a different open buffer within the project
@@ -47,6 +46,8 @@ the cursor is at.
 * <kbd>C-c . .</kbd> to visit the definition
 * <kbd>C-c . ,</kbd> to return to the original point
 * <kbd>C-c . /</kbd> to find references
+* <kbd>C-c . q</kbd> to bring up a Claude AI query about the current function or region
+* <kbd>C-c . r</kbd> to rewrite the current function or region using Claude AI
 
 ## Editing Directories
 

@@ -691,6 +691,51 @@ interactively.
 (hl-line-when-idle-interval 0.3)
 (toggle-hl-line-when-idle 1)
 
+;; Set up gptel
+(defvar my-gptel--claude
+  (gptel-make-anthropic "Claude"
+    :stream t
+    :key #'gptel-api-key-from-auth-source))
+
+(defun my-gptel-start ()
+  "Start gptel with a default buffer name."
+  (interactive)
+  (require 'gptel)
+  (let* ((backend (symbol-value my-gptel-backend))
+         (backend-name
+          (format "*%s*" (gptel-backend-name backend)))
+         (model (or my-gptel-model (car (gptel-backend-models backend)))))
+    (setq gptel-backend backend
+          gptel-model model)
+    (with-suppressed-warnings ((obsolete warning-level-aliases))
+      (switch-to-buffer (gptel backend-name)))))
+
+(defun my-gptel-rewrite-function ()
+  "Rewrite or refactor the current function using an LLM.
+
+Rewrite the region instead if one is selected."
+  (interactive)
+  (unless (use-region-p)
+    (call-interactively #'mark-defun))
+  (call-interactively #'gptel-rewrite))
+
+;; Elysium for AI queries in code
+(defun my-elysium-query-function ()
+  "Send the current function to elysium to query an LLM.
+
+Use the region instead if one is selected."
+  (interactive)
+  (unless (use-region-p)
+    (call-interactively #'mark-defun))
+  (call-interactively #'elysium-query))
+
+(with-eval-after-load "elysium"
+  (add-hook 'elysium-apply-changes-hook #'smerge-ediff t))
+
+(add-to-list 'load-path (concat my-emacs-path "elisp/elysium"))
+(autoload #'elysium-query "elysium" "send query to elysium" t)
+(add-hook 'prog-mode-hook 'smerge-mode t)
+
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
 (require 'dumb-jump)
 (setopt dumb-jump-selector 'ivy)
@@ -698,6 +743,8 @@ interactively.
 
 (defvar my-xref-map
   (let ((map (make-sparse-keymap)))
+    (define-key map "q" #'my-elysium-query-function)
+    (define-key map "r" #'my-gptel-rewrite-function)
     (define-key map "." #'xref-find-definitions)
     (define-key map "," #'xref-go-back)
     (define-key map "/" #'xref-find-references)
@@ -758,30 +805,6 @@ interactively.
 ;;
 ;; (setq sample-git-fd-args
 ;;       (concat sample-git-fd-args " --no-ignore-vcs --ignore-file .gitignore"))
-
-;; Set up gptel
-(defvar my-gptel--claude
-  (gptel-make-anthropic "Claude"
-    :stream t
-    :key #'gptel-api-key-from-auth-source))
-
-(defun my-gptel-start ()
-  "Start gptel with a default buffer name."
-  (interactive)
-  (require 'gptel)
-  (let* ((backend (symbol-value my-gptel-backend))
-         (backend-name
-          (format "*%s*" (gptel-backend-name backend)))
-         (model (or my-gptel-model (car (gptel-backend-models backend)))))
-    (setq gptel-backend backend
-          gptel-model model)
-    (with-suppressed-warnings ((obsolete warning-level-aliases))
-      (switch-to-buffer (gptel backend-name)))))
-
-;; Elysium for AI queries in code
-(add-to-list 'load-path (concat my-emacs-path "elisp/elysium"))
-(autoload #'elysium-query "elysium" "send query to elysium" t)
-(add-hook 'prog-mode-hook 'smerge-mode t)
 
 ;; Set up project.el
 (defun my-project-root ()
@@ -1157,8 +1180,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
     (define-key map (kbd "f") #'project-find-file)
     (define-key map (kbd "g g") #'my-gptel-start)
     (define-key map (kbd "g p") #'gptel-menu)
-    (define-key map (kbd "g q") #'elysium-query)
-    (define-key map (kbd "g r") #'gptel-rewrite)
     (define-key map (kbd "g s") #'gptel-send)
     (define-key map (kbd "k") #'project-kill-buffers)
     (define-key map (kbd "n") #'my-org-find-notes-file)
