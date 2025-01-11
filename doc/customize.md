@@ -16,7 +16,7 @@ Most of the settings are optional, except for `my-emacs-path`.
 
 * `my-default-font`: This will be a font name and size, for example: `"Fira Code-17"`
 * `my-default-emoji-font`: This will be a font name, for example: `"Noto Color Emoji"`
-* `my-default-emoji-size`: This will be a font size, for example: `21` (it's recommended to be about 4 points higher than the normal font size)
+* `my-default-emoji-size`: This will be a font size, for example: `21` (it's recommended to be about 4 points higher than the normal font size on Linux, and same as the default font size for any other OS)
 * `my-modus-theme`: Which [modus color theme](https://protesilaos.com/emacs/modus-themes-pictures) to apply; set this to `nil` if using `my-theme`
 * `my-modus-theme-overrides`: Pallette overrides for `modus-themes-common-palette-overrides`
 * `my-theme`: Which color theme to apply; set this to `nil` if using `my-modus-theme`

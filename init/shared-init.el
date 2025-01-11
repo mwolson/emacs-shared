@@ -132,6 +132,8 @@
 (defun my-default-emoji-font ()
   (or my-default-emoji-font
       (cond
+       ((eq system-type 'darwin) "Apple Color Emoji")
+       ((eq system-type 'windows-nt) "Segoe UI Emoji")
        ((memq window-system '(pgtk x)) "Noto Color Emoji")
        (t "Noto Color Emoji"))))
 
