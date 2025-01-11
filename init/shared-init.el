@@ -17,6 +17,8 @@
 ;;; Options that change behavior of this file
 
 (defvar my-default-font      nil)
+(defvar my-default-emoji-font nil)
+(defvar my-default-emoji-size nil)
 (defvar my-theme             nil)
 (defvar my-modus-theme       'modus-vivendi-deuteranopia)
 (defvar my-modus-theme-overrides
@@ -127,11 +129,28 @@
        ((memq window-system '(pgtk x)) "Fira Code-13")
        (t "Fira Code-17"))))
 
+(defun my-default-emoji-font ()
+  (or my-default-emoji-font
+      (cond
+       ((memq window-system '(pgtk x)) "Noto Color Emoji")
+       (t "Noto Color Emoji"))))
+
+(defun my-default-emoji-size ()
+  (or my-default-emoji-size
+      (cond
+       ((eq system-type 'darwin) 18)
+       ((eq system-type 'windows-nt) 11)
+       ((memq window-system '(pgtk x)) 17)
+       (t 21))))
+
 (defun my-reset-font ()
   (interactive)
-  (let ((font (my-default-font)))
-    (set-frame-font font nil t)
-    (set-face-attribute 'fixed-pitch nil :font font)))
+  (let ((default-font (my-default-font))
+        (emoji-font (my-default-emoji-font))
+        (emoji-size (my-default-emoji-size)))
+    (set-frame-font default-font nil t)
+    (set-face-attribute 'fixed-pitch nil :font default-font)
+    (set-fontset-font t nil (font-spec :size emoji-size :name emoji-font))))
 
 (defun my-reset-frame-size ()
   "Reset the size of the current frame according to `default-frame-alist'."
