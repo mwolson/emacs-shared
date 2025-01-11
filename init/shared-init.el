@@ -43,7 +43,9 @@
 (defvar my-emacs-path)
 (setq my-emacs-path          (file-name-as-directory (expand-file-name my-emacs-path)))
 
-(defvar my-server-start-p    t)
+(defvar my-server-start-p    (cond ((eq system-type 'darwin) t)
+                                   ((memq window-system '(pgtk x w32)) t)
+                                   (t nil)))
 (defvar my-recent-files      nil)
 (defvar my-settings-shared-p (not (file-exists-p (locate-user-emacs-file "settings.el"))))
 (defvar my-system-paths
