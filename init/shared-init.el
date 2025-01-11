@@ -1107,7 +1107,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (setopt magit-completing-read-function 'ivy-completing-read)
   ;; magit-log currently has some kind of transient bug, so don't show transient menu
   (define-key magit-mode-map (kbd "l") #'magit-log-current)
-  (define-key magit-mode-map (kbd "M-w") #'my-magit-kill-ring-save))
+  (define-key magit-mode-map (kbd "M-w") #'my-magit-kill-ring-save)
+  (define-key magit-hunk-section-map (kbd "RET") #'magit-diff-visit-worktree-file))
 
 (defun my-preload-magit ()
   (require 'magit)
@@ -1116,11 +1117,11 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (my-defer-startup #'my-preload-magit)
 
 ;; Map some magit keys globally
-(global-set-key "\C-xV" nil)
-(global-set-key "\C-xVa" 'magit-blame)
-(global-set-key "\C-xVb" 'magit-show-refs-current)
-(global-set-key "\C-xVl" 'magit-log-head)
-(global-set-key "\C-xVs" 'magit-status)
+(global-set-key (kbd "C-x V") nil)
+(global-set-key (kbd "C-x V a") 'magit-blame)
+(global-set-key (kbd "C-x V b") 'magit-show-refs-current)
+(global-set-key (kbd "C-x V l") 'magit-log-head)
+(global-set-key (kbd "C-x V s") 'magit-status)
 
 ;; Don't display any minor modes on the mode-line
 (require 'minions)
@@ -1173,8 +1174,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (global-set-key (kbd "C-c p") my-project-command-map)
 (global-set-key (kbd "C-c C-p") my-project-command-map)
-(global-set-key (kbd "C-x g") 'goto-line)
-(global-set-key (kbd "C-x r r") 'rectangle-mark-mode)
+(global-set-key (kbd "C-x g") #'goto-line)
+(global-set-key (kbd "C-x r r") #'rectangle-mark-mode)
+(global-set-key (kbd "<f2>") #'eglot-rename)
 
 (defun my-kill-emacs ()
   (interactive)
@@ -1182,10 +1184,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
     (call-interactively 'save-buffers-kill-emacs t)))
 (global-set-key (kbd "C-x C-c") #'my-kill-emacs)
 (global-set-key (kbd "C-x C-M-s") #'my-kill-emacs)
-
-;; Make adding entries to debian/changelog easy
-(global-set-key "\C-xD" nil)
-(global-set-key "\C-xDa" 'debian-changelog-add-entry)
 
 ;; Map some keys to find-function/find-variable
 (defvar my-find-things-map
@@ -1197,8 +1195,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
     map)
   "My key customizations for find-function and related things.")
 
-(global-set-key "\C-xF" my-find-things-map)
-(global-set-key "\C-xf" my-find-things-map)
+(global-set-key (kbd "C-x F") my-find-things-map)
+(global-set-key (kbd "C-x f") my-find-things-map)
 
 (with-eval-after-load "view"
   ;; Make the `q' key bury the current buffer when viewing help
@@ -1218,14 +1216,14 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (define-key cider-repl-mode-map (kbd "C-d") #'cider-quit))
 
 ;; Use Ivy instead of the buffer list when I typo it
-(global-set-key "\C-x\C-b" 'ivy-switch-buffer)
+(global-set-key (kbd "C-x C-b") 'ivy-switch-buffer)
 
 ;; Disable some keybinds to avoid typos
 (global-set-key [insert] (lambda () (interactive)))
 (global-set-key [insertchar] (lambda () (interactive)))
-(global-set-key "\C-t" (lambda () (interactive)))
-(global-set-key "\C-z" (lambda () (interactive)))
-(global-set-key "\C-x\C-z" (lambda () (interactive)))
+(global-set-key (kbd "C-t") (lambda () (interactive)))
+(global-set-key (kbd "C-z") (lambda () (interactive)))
+(global-set-key (kbd "C-x C-z") (lambda () (interactive)))
 (global-set-key (kbd "<mouse-2>") (lambda () (interactive)))
 (global-set-key (kbd "<mouse-3>") (lambda () (interactive)))
 
