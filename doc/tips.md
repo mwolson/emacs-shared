@@ -46,7 +46,7 @@ the cursor is at.
 
 * <kbd>C-c . .</kbd> to visit the definition
 * <kbd>C-c . ,</kbd> to return to the original point
-* <kbd>C-c . /</kbd> to get a quick view of the definition
+* <kbd>C-c . /</kbd> to find references
 
 ## Editing Directories
 

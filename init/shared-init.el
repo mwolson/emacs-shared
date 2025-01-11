@@ -700,6 +700,7 @@ interactively.
   (let ((map (make-sparse-keymap)))
     (define-key map "." #'xref-find-definitions)
     (define-key map "," #'xref-go-back)
+    (define-key map "/" #'xref-find-references)
     map)
   "My key customizations for dumb-jump.")
 
