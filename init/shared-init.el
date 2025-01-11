@@ -729,12 +729,7 @@ interactively.
   (define-key csharp-mode-map (kbd "C-c .") nil))
 
 ;; ANSI colors in compile buffer
-(require 'ansi-color)
-(defun colorize-compilation-buffer ()
-  (read-only-mode 0)
-  (ansi-color-apply-on-region (point-min) (point-max))
-  (read-only-mode 1))
-(add-hook 'compilation-filter-hook 'colorize-compilation-buffer t)
+(add-hook 'compilation-filter-hook 'ansi-color-compilation-filter t)
 
 ;; Load amx, which makes M-x work better on Ivy
 (add-hook 'after-init-hook 'amx-mode t)
