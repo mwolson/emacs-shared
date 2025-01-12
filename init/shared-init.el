@@ -729,9 +729,6 @@ Use the region instead if one is selected."
     (call-interactively #'mark-defun))
   (call-interactively #'elysium-query))
 
-(with-eval-after-load "elysium"
-  (add-hook 'elysium-apply-changes-hook #'smerge-ediff t))
-
 (add-to-list 'load-path (concat my-emacs-path "elisp/elysium"))
 (autoload #'elysium-query "elysium" "send query to elysium" t)
 (add-hook 'prog-mode-hook 'smerge-mode t)
