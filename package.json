@@ -14,8 +14,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "prettier": "^3.0.3",
+    "prettier": "^3.4.2",
+    "tree-sitter-prisma": "^1.4.0",
     "typescript-eslint-language-service": "^5.0.5",
-    "typescript-language-server": "^4.0.0"
+    "typescript-language-server": "^4.3.3"
   }
 }

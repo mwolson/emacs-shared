@@ -17,6 +17,9 @@
 [submodule "elisp/polymode"]
 	path = elisp/polymode
 	url = https://github.com/polymode/polymode
+[submodule "elisp/prisma-ts-mode"]
+	path = elisp/prisma-ts-mode
+	url = https://github.com/nverno/prisma-ts-mode.git
 [submodule "elisp/poly-markdown"]
 	path = elisp/poly-markdown
 	url = https://github.com/polymode/poly-markdown

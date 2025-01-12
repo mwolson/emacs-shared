@@ -656,6 +656,11 @@ interactively.
 (add-hook 'web-mode-hook #'my-setup-web-ligatures t)
 (add-hook 'my-ts-web-mode-hook #'my-ts-init t)
 
+;; Prisma support for JS
+(add-to-list 'load-path (concat my-emacs-path "elisp/prisma-ts-mode"))
+(autoload #'prisma-ts-mode "prisma-ts-mode" "Major mode for editing prisma source code." t)
+(add-to-list 'auto-mode-alist '("\\.prisma\\'" . prisma-ts-mode))
+
 ;; JS2 Mode setup (disabled)
 
 (defun my-set-js2-mocha-externs ()

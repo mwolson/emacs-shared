@@ -1,6 +1,7 @@
 #!/bin/bash
 
 NOTICES=()
+TOPDIR=$PWD
 
 function qpopd() {
     popd > /dev/null
@@ -152,9 +153,18 @@ git submodule sync
 git submodule update --depth 1
 echo
 
-# clean up previous libegit2 builds that might still be around
-rm -fr elisp/libegit2/build
-rm -f elisp/magit-libgit.el*
+# tree-sitter setup
+npm ci
+
+qpushd build
+rm -fr tree-sitter-prisma
+cp -r "$TOPDIR"/node_modules/tree-sitter-prisma .
+qpushd tree-sitter-prisma
+git init >/dev/null
+git add . >/dev/null
+git commit -m "workaround" >/dev/null
+qpopd
+qpopd
 
 emacs --script install-packages.el 2>&1 | grep -v '^Loading '
 
@@ -202,7 +212,7 @@ for mod in $dir_elisp_submodules; do
     byte_compile "$mod" elisp/"$mod"
 done
 
-file_elisp_submodules="asdf-vm elysium poly-markdown tmux-mode zig-mode"
+file_elisp_submodules="asdf-vm elysium poly-markdown prisma-ts-mode tmux-mode zig-mode"
 for mod in $file_elisp_submodules; do
     update_submodule elisp/"$mod"
     byte_compile "$mod" elisp/"$mod"/"$mod".el

@@ -19,3 +19,13 @@
       (message "Nothing to autoremove"))))
 
 (my-package-autoremove)
+
+(defun my-install-tree-sitter-prisma ()
+  (require 'treesit)
+  (add-to-list 'treesit-language-source-alist
+               `(prisma ,(expand-file-name "build/tree-sitter-prisma")))
+  (message "")
+  (treesit-install-language-grammar 'prisma)
+  (message ""))
+
+(my-install-tree-sitter-prisma)
