@@ -715,13 +715,32 @@ interactively.
     (with-suppressed-warnings ((obsolete warning-level-aliases))
       (switch-to-buffer (gptel backend-name)))))
 
+(defun my-gptel-add-function ()
+  "Add the current function to the LLM context.
+
+Use the region instead if one is selected."
+  (interactive)
+  (unless (use-region-p)
+    (call-interactively #'mark-paragraph))
+  (call-interactively #'gptel-add))
+
+(defun my-gptel-add-current-file ()
+  "Add the current file to the LLM context."
+  (interactive)
+  (gptel-context-add-file (buffer-file-name)))
+
+(defun my-gptel-view-context ()
+  (interactive)
+  (require 'gptel-context)
+  (gptel-context--buffer-setup))
+
 (defun my-gptel-rewrite-function ()
   "Rewrite or refactor the current function using an LLM.
 
 Rewrite the region instead if one is selected."
   (interactive)
   (unless (use-region-p)
-    (call-interactively #'mark-defun))
+    (call-interactively #'mark-paragraph))
   (call-interactively #'gptel-rewrite))
 
 ;; Elysium for AI queries in code
@@ -731,7 +750,7 @@ Rewrite the region instead if one is selected."
 Use the region instead if one is selected."
   (interactive)
   (unless (use-region-p)
-    (call-interactively #'mark-defun))
+    (call-interactively #'mark-paragraph))
   (call-interactively #'elysium-query))
 
 (add-to-list 'load-path (concat my-emacs-path "elisp/elysium"))
@@ -745,11 +764,14 @@ Use the region instead if one is selected."
 
 (defvar my-xref-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "q" #'my-elysium-query-function)
-    (define-key map "r" #'my-gptel-rewrite-function)
-    (define-key map "." #'xref-find-definitions)
-    (define-key map "," #'xref-go-back)
-    (define-key map "/" #'xref-find-references)
+    (define-key map (kbd "a a") #'my-gptel-add-function)
+    (define-key map (kbd "a f") #'my-gptel-add-current-file)
+    (define-key map (kbd "q") #'my-elysium-query-function)
+    (define-key map (kbd "r") #'my-gptel-rewrite-function)
+    (define-key map (kbd "v") #'my-gptel-view-context)
+    (define-key map (kbd ".") #'xref-find-definitions)
+    (define-key map (kbd ",") #'xref-go-back)
+    (define-key map (kbd "/") #'xref-find-references)
     map)
   "My key customizations for dumb-jump.")
 
