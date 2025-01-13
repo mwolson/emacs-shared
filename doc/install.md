@@ -99,6 +99,10 @@ Run `yay install omnisharp-roslyn`
 
 You'll need to [install rust analyzer](https://rust-analyzer.github.io/manual.html#rust-analyzer-language-server-binary) in order to support language server features for Rust. On Mac, install the `rust` and `rust-analyzer` packages from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
 
+## Install zls
+
+You'll need to install ZLS in order to support language server features for Zig. On Mac, install the `zls` package from homebrew.
+
 ## Install Emacs
 
 The recommended version is Emacs 29.4. The recommended ways to install Emacs for each OS are as follows.
