@@ -228,7 +228,7 @@
 ;; Give people something to look at while we load
 (display-startup-screen)
 (redisplay t)
-(add-hook 'server-after-make-frame-hook 'my-init-client-display t)
+(add-hook 'server-after-make-frame-hook #'my-init-client-display t)
 
 ;; Modeline theme
 ;; currently too large
@@ -866,6 +866,9 @@ Use the region instead if one is selected."
 (add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-mode) t)
 (autoload #'kotlin-mode "kotlin-mode" "Major mode for editing Kotlin." t nil)
 
+;; Nix
+(add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
+
 ;; C#
 (with-eval-after-load "csharp-mode"
   (define-key csharp-mode-map (kbd "C-c .") nil))
@@ -999,7 +1002,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (add-hook 'rust-mode-hook 'eglot-ensure)
 (add-hook 'go-ts-mode-hook 'eglot-ensure)
 (add-hook 'go-mod-ts-mode-hook 'eglot-ensure)
-(add-hook 'zig-mode-hook 'eglot-ensure)
+(add-hook 'zig-ts-mode-hook 'eglot-ensure)
 
 (defclass eglot-deno (eglot-lsp-server) ()
   :documentation "A custom class for deno lsp.")
@@ -1025,7 +1028,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
                ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
 
 (add-to-list 'eglot-server-programs
-             '((zig-mode) .
+             '((zig-ts-mode) .
                ("zls" :initializationOptions ())))
 
 ;; Bind N and P in ediff so that I don't leave the control buffer
@@ -1087,9 +1090,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (require 'go-ts-mode)
 
 ;; Zig programming language
-(add-to-list 'load-path (concat my-emacs-path "elisp/zig-mode"))
-(autoload 'zig-mode "zig-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-mode))
+(add-to-list 'load-path (concat my-emacs-path "elisp/zig-ts-mode"))
+(autoload 'zig-ts-mode "zig-ts-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-ts-mode))
 
 ;; All programming modes
 (defun my-turn-on-display-line-numbers-mode ()
@@ -1293,6 +1296,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (global-set-key (kbd "C-c C-p") my-project-command-map)
 (global-set-key (kbd "C-x g") #'goto-line)
 (global-set-key (kbd "C-x r r") #'rectangle-mark-mode)
+(global-set-key (kbd "C-x p") #'other-window)
 (global-set-key (kbd "<f2>") #'eglot-rename)
 
 (defun my-kill-emacs ()
@@ -1404,7 +1408,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (when (and my-remap-cmd-key-p (eq window-system 'ns))
     (my-set-mac-bindings)))
 
-(add-hook 'server-after-make-frame-hook 'my-init-client-keys t)
+(add-hook 'server-after-make-frame-hook #'my-init-client-keys t)
 (my-init-client-keys)
 
 ;; Change to home dir
