@@ -696,7 +696,17 @@ interactively.
 (hl-line-when-idle-interval 0.3)
 (toggle-hl-line-when-idle 1)
 
+;; SMerge mode, for editing files with inline diffs
+(add-hook 'prog-mode-hook 'smerge-mode t)
+
+(with-eval-after-load "transient"
+  (transient-bind-q-to-quit))
+
 ;; Set up gptel
+(with-eval-after-load "gptel-context"
+  (let ((map gptel-context-buffer-mode-map))
+    (define-key map (kbd "q") #'my-gptel-context-save-and-quit)))
+
 (defvar my-gptel--claude
   (gptel-make-anthropic "Claude"
     :stream t
@@ -715,13 +725,66 @@ interactively.
     (with-suppressed-warnings ((obsolete warning-level-aliases))
       (switch-to-buffer (gptel backend-name)))))
 
+(defun my-gptel-context-save-and-quit ()
+  "Apply gptel context changes and quit."
+  (interactive)
+  (cl-letf (((symbol-function 'gptel-context-quit) (lambda () (quit-window))))
+    (gptel-context-confirm)))
+
+(defun my-mark-function-1-default (&optional steps)
+  (let ((pt-min nil)
+        (pt-max nil))
+    (save-mark-and-excursion
+      (mark-defun steps)
+      (setq pt-min (region-beginning)
+            pt-max (region-end)))
+    (save-mark-and-excursion
+      (mark-paragraph steps)
+      (when (< (region-beginning) pt-min)
+        (setq pt-min (region-beginning)
+              pt-max (region-end))))
+    (set-mark pt-min)
+    (goto-char pt-max)))
+
+(defun my-mark-function-1-treesit (&optional steps)
+  (treesit-end-of-defun)
+  (let ((pt-max (point)))
+    (treesit-beginning-of-defun)
+    (setq steps (1- (- 0 (or steps 0))))
+    (while (> steps 0)
+      (treesit-beginning-of-defun)
+      (cl-decf steps))
+    (set-mark (point))
+    (goto-char pt-max)))
+
+(defun my-mark-function (&optional steps)
+  "Put mark at end of this function, point at beginning.
+
+If STEPS is negative, mark `- arg - 1` extra functions backward."
+  (interactive)
+  (let ((pt-min nil)
+        (pt-max nil))
+    (save-mark-and-excursion
+      (if (treesit-parser-list)
+          (my-mark-function-1-treesit steps)
+        (my-mark-function-1-default steps))
+      (setq pt-min (region-beginning)
+            pt-max (region-end)))
+    (goto-char pt-min)
+    (while (and (looking-at-p "[[:space:]\r\n]")
+                (< (point) pt-max))
+      (forward-char))
+    (setq pt-min (point))
+    (goto-char (1- pt-max))
+    (push-mark pt-min nil t)))
+
 (defun my-gptel-add-function ()
   "Add the current function to the LLM context.
 
 Use the region instead if one is selected."
   (interactive)
   (unless (use-region-p)
-    (call-interactively #'mark-paragraph))
+    (my-mark-function))
   (call-interactively #'gptel-add))
 
 (defun my-gptel-add-current-file ()
@@ -740,22 +803,26 @@ Use the region instead if one is selected."
 Rewrite the region instead if one is selected."
   (interactive)
   (unless (use-region-p)
-    (call-interactively #'mark-paragraph))
+    (my-mark-function))
   (call-interactively #'gptel-rewrite))
 
-;; Elysium for AI queries in code
-(defun my-elysium-query-function ()
-  "Send the current function to elysium to query an LLM.
+(defun my-gptel-query-function ()
+  "Add the current function to gptel context and query an LLM.
 
 Use the region instead if one is selected."
   (interactive)
-  (unless (use-region-p)
-    (call-interactively #'mark-paragraph))
-  (call-interactively #'elysium-query))
+  (my-gptel-add-function)
+  (let ((buf (current-buffer)))
+    (split-window-right)
+    (other-window 1)
+    (call-interactively #'my-gptel-start)))
 
-(add-to-list 'load-path (concat my-emacs-path "elisp/elysium"))
-(autoload #'elysium-query "elysium" "send query to elysium" t)
-(add-hook 'prog-mode-hook 'smerge-mode t)
+(defun my-gptel-context-remove-all ()
+  (interactive)
+  (require 'gptel-context)
+  (gptel-context-remove-all))
+
+(autoload #'gptel-manual-complete "gptel-manual-complete" t)
 
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
 (require 'dumb-jump)
@@ -766,7 +833,9 @@ Use the region instead if one is selected."
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "a a") #'my-gptel-add-function)
     (define-key map (kbd "a f") #'my-gptel-add-current-file)
-    (define-key map (kbd "q") #'my-elysium-query-function)
+    (define-key map (kbd "c") #'gptel-manual-complete)
+    (define-key map (kbd "k") #'my-gptel-context-remove-all)
+    (define-key map (kbd "q") #'my-gptel-query-function)
     (define-key map (kbd "r") #'my-gptel-rewrite-function)
     (define-key map (kbd "v") #'my-gptel-view-context)
     (define-key map (kbd ".") #'xref-find-definitions)
@@ -776,6 +845,7 @@ Use the region instead if one is selected."
   "My key customizations for dumb-jump.")
 
 (global-set-key (kbd "C-c .") my-xref-map)
+(global-set-key (kbd "C-x .") my-xref-map)
 
 (defvar my-xref-minor-mode-map
   (let ((map (make-sparse-keymap)))
@@ -1036,10 +1106,12 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 ;; Markdown support
 
 (add-to-list 'load-path (concat my-emacs-path "elisp/poly-markdown"))
+(autoload #'poly-markdown-mode "poly-markdown" t)
 (autoload #'poly-gfm-mode "poly-markdown" t)
 
 (add-to-list 'auto-mode-alist '("\\.md\\'" . poly-gfm-mode))
 (add-to-list 'auto-mode-alist '("\\.mdx\\'" . poly-gfm-mode))
+(setopt gptel-default-mode #'poly-markdown-mode)
 
 (defun my-define-web-polymode (file-ext)
   (let* ((sym-name (symbol-name file-ext))

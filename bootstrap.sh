@@ -212,7 +212,7 @@ for mod in $dir_elisp_submodules; do
     byte_compile "$mod" elisp/"$mod"
 done
 
-file_elisp_submodules="asdf-vm elysium poly-markdown prisma-ts-mode tmux-mode zig-mode"
+file_elisp_submodules="asdf-vm poly-markdown prisma-ts-mode tmux-mode zig-mode"
 for mod in $file_elisp_submodules; do
     update_submodule elisp/"$mod"
     byte_compile "$mod" elisp/"$mod"/"$mod".el

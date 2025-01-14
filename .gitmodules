@@ -5,9 +5,6 @@
 [submodule "elisp/asdf-vm"]
 	path = elisp/asdf-vm
 	url = https://github.com/delonnewman/asdf-vm.el.git
-[submodule "elisp/elysium"]
-	path = elisp/elysium
-	url = https://github.com/lanceberge/elysium.git
 [submodule "elisp/gptel"]
 	path = elisp/gptel
 	url = https://github.com/karthink/gptel.git

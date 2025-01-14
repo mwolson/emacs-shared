@@ -38,16 +38,21 @@
   * <kbd>g</kbd> to refresh the buffer, which is useful for refactoring, if you've changed any files
 * <kbd>C-c p r</kbd> to search and replace a phrase throughout an entire project, asking you what to do with each match
 
-## Finding Definitions
+## Using AI and Finding Definitions
 
 When you're visiting a source code file, you can use these commands to navigate to the definition of the function that
 the cursor is at.
 
+* <kbd>C-c . a a</kbd> to add the current function as context for a later AI query
+* <kbd>C-c . a f</kbd> to add the current file as context for a later AI query
+* <kbd>C-c . c</kbd> to complete the code at point using Claude AI; if you have a comment near the end, that will better inform the completion
+* <kbd>C-c . k</kbd> to fully clear the AI context
+* <kbd>C-c . q</kbd> to bring up a Claude AI query on the side with the current function or region added to the AI context
+* <kbd>C-c . r</kbd> to rewrite the current function or region using Claude AI
+* <kbd>C-c . v</kbd> to pop up a menu that allows viewing and pruning the AI context; hit <kbd>q</kbd> when done to apply the changes
 * <kbd>C-c . .</kbd> to visit the definition
 * <kbd>C-c . ,</kbd> to return to the original point
 * <kbd>C-c . /</kbd> to find references
-* <kbd>C-c . q</kbd> to bring up a Claude AI query about the current function or region
-* <kbd>C-c . r</kbd> to rewrite the current function or region using Claude AI
 
 ## Editing Directories
 
