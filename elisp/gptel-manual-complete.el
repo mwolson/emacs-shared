@@ -1,6 +1,7 @@
 ;;; gptel-manual-complete.el --- Manual completion for gptel  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025  Michael Olson
+;; Copyright (C) 2024  Karthik Chikmagalur
 
 ;; Author: Michael Olson <mwolson@gnu.org>
 ;; Keywords: hypermedia, convenience, tools
