@@ -49,6 +49,14 @@ function byte_compile() {
         grep -v '^Loading '
 }
 
+function install_treesit_grammar() {
+    local lang="$1"
+    local url="$2"
+
+    emacs --script install-treesit-grammar.el "$lang" "$url" 2>&1 | \
+        grep -v '^Loading '
+}
+
 if uname_grep 'MINGW' || uname_grep 'MSYS_NT'; then
     OS=Windows
     BIN_TPL=tpl/bin/windows
@@ -153,18 +161,7 @@ git submodule sync
 git submodule update --depth 1
 echo
 
-# tree-sitter setup
-npm ci
-
-qpushd build
-rm -fr tree-sitter-prisma
-cp -r "$TOPDIR"/node_modules/tree-sitter-prisma .
-qpushd tree-sitter-prisma
-git init >/dev/null
-git add . >/dev/null
-git commit -m "workaround" >/dev/null
-qpopd
-qpopd
+pnpm i
 
 emacs --script install-packages.el 2>&1 | grep -v '^Loading '
 
@@ -219,6 +216,8 @@ for mod in $file_elisp_submodules; do
 done
 
 update_submodule extra/emacs
+
+install_treesit_grammar prisma "https://github.com/victorhqc/tree-sitter-prisma"
 
 update_submodule extra/tree-sitter-module
 qpushd extra/tree-sitter-module
