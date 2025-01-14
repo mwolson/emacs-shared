@@ -842,7 +842,7 @@ Use the region instead if one is selected."
     (define-key map (kbd ",") #'xref-go-back)
     (define-key map (kbd "/") #'xref-find-references)
     map)
-  "My key customizations for dumb-jump.")
+  "My key customizations for AI and xref.")
 
 (global-set-key (kbd "C-c .") my-xref-map)
 (global-set-key (kbd "C-x .") my-xref-map)
