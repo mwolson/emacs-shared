@@ -1,29 +1,9 @@
 #!/bin/bash
 
+. "$(dirname $0)/include.sh"
+
 NOTICES=()
-TOPDIR=$PWD
-
-function qpopd() {
-    popd > /dev/null
-}
-
-function qpushd() {
-    pushd "$1" > /dev/null
-}
-
-function qwhich() {
-    which "$1" > /dev/null 2>&1
-}
-
-function uname_grep() {
-    uname | grep "$1" > /dev/null 2>&1
-}
-
-function notify() {
-    local text="$1"
-
-    NOTICES+=("$1")
-}
+OS="$(get_os)"
 
 function compile_check() {
     if ! qwhich "$1"; then
@@ -32,38 +12,17 @@ function compile_check() {
     fi
 }
 
-function update_submodule () {
-    local subdir="$1"
+function notify() {
+    local text="$1"
 
-    qpushd "$subdir"
-    git submodule init
-    git submodule update --depth 1
-    qpopd
+    NOTICES+=("$1")
 }
 
-function byte_compile() {
-    emacs --script "$TOPDIR"/byte-compile-local.el "$@" 2>&1 | \
-        grep -v '^Loading '
-}
-
-function get_treesit_dir() {
-    emacs --script "$TOPDIR"/get-treesit-dir.el "$@" 2>&1 | \
-        grep -v '^Loading '
-}
-
-function install_treesit_grammar() {
-    emacs --script "$TOPDIR"/install-treesit-grammar.el "$@" 2>&1 | \
-        grep -v '^Loading '
-}
-
-if uname_grep 'MINGW' || uname_grep 'MSYS_NT'; then
-    OS=Windows
+if [[ "$OS" == Windows ]]; then
     BIN_TPL=tpl/bin/windows
-elif uname_grep 'Darwin'; then
-    OS=macOS
+elif [[ "$OS" == macOS ]]; then
     BIN_TPL=tpl/bin/mac
 else
-    OS=Linux
     if grep "^Ubuntu" < /etc/issue > /dev/null 2>&1; then
         OS_VARIANT=Ubuntu
         BIN_TPL=tpl/bin/ubuntu
@@ -88,7 +47,6 @@ if [[ $OS == Windows ]]; then
 fi
 
 REQUIRED_EMACS_VERSION=29.4
-SOEXT="so"
 
 # Set this environment variable to rebuild git-for-windows manpages; otherwise use pre-built ones
 : ${BUILD_GIT_MANPAGES:=}
@@ -102,7 +60,6 @@ if [[ $OS == Windows ]]; then
             exit 1
         fi
     fi
-    SOEXT="dll"
 elif [[ $OS == macOS ]]; then
     if ! test -e /Applications/Emacs.app; then
         echo >&2 "Error: Emacs does not seem to be installed in Applications"
@@ -112,7 +69,6 @@ elif [[ $OS == macOS ]]; then
         echo >&2 "Error: Could not find Emacs Homebrew installation"
         exit 1
     fi
-    SOEXT="dylib"
 elif [[ $OS_VARIANT == Ubuntu ]]; then
     if ! test -x /usr/local/bin/emacs; then
         echo >&2 "Error: /usr/local/bin/emacs does not exist"
@@ -167,7 +123,9 @@ if test -n "$BUILD"; then
     pnpm i
 fi
 
-emacs --script install-packages.el 2>&1 | grep -v '^Loading '
+emacs --script "$(get_topdir)"/install-packages.el 2>&1 | grep -v '^Loading '
+
+set_treesit_dir
 
 qpushd share/man
 git submodule init
@@ -225,39 +183,17 @@ done
 update_submodule extra/emacs
 
 if test -n "$BUILD"; then
-    TREESIT_DIR="$(get_treesit_dir)/"
+    "$(get_topdir)"/install-treesit-grammar.sh \
+        markdown_inline markdown \
+        "tree-sitter-markdown-inline/src"
 
-    install_treesit_grammar \
-        markdown_inline \
-        "https://github.com/tree-sitter-grammars/tree-sitter-markdown" \
-        split_parser "tree-sitter-markdown-inline/src"
+    tree_sitter_modules="
+        bash clojure dockerfile erlang go gomod kotlin nix prisma python rust
+        yaml zig
+    "
+    <<< $tree_sitter_modules xargs -P4 -n1 "$(get_topdir)"/install-treesit-grammar.sh
 
-    install_treesit_grammar \
-        prisma \
-        "https://github.com/victorhqc/tree-sitter-prisma"
-
-    update_submodule extra/tree-sitter-module
-    qpushd extra/tree-sitter-module
-    tree_sitter_modules="bash clojure dockerfile erlang go gomod kotlin nix python rust yaml zig"
-    rm -fr dist
-    <<< $tree_sitter_modules xargs rm -fr
-    <<< $tree_sitter_modules xargs -P4 -n1 ./build.sh
-    cp -f dist/* "$TREESIT_DIR"
-    qpopd
-
-    update_submodule extra/tree-sitter-swift
-    qpushd extra/tree-sitter-swift
-    echo "Installing Swift tree-sitter dependencies..."
-    npm install --no-audit --no-fund
-    npx tree-sitter generate --no-bindings
-    qpushd src
-    cc -fPIC -c -I. parser.c
-    cc -fPIC -c -I. scanner.c
-    cc -fPIC -shared *.o -o "libtree-sitter-swift.${SOEXT}"
-    cp "libtree-sitter-swift.${SOEXT}" "$TREESIT_DIR"
-    echo "Copying libtree-sitter-swift.${SOEXT} to $TREESIT_DIR"
-    qpopd
-    qpopd
+    "$(get_topdir)"/install-treesit-grammar.sh swift "" "" npm
 else
     notify "Warning: tree-sitter modules will not be built, some major modes will not work"
 fi

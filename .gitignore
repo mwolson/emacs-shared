@@ -1,6 +1,6 @@
 /bin
 /build/emacs
-/build/tree-sitter-prisma
+/build/.treesit-dir
 /elisp/archive-rpm/*
 /extra/emacs/*
 /extra/git/*
