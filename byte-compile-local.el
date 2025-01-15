@@ -1,4 +1,4 @@
-(load-file (concat default-directory "init/settings.el"))
+(load-file (concat (file-name-directory load-file-name) "init/settings.el"))
 
 (require 'package)
 (package-initialize)

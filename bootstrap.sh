@@ -42,12 +42,17 @@ function update_submodule () {
 }
 
 function byte_compile() {
-    emacs --script byte-compile-local.el "$@" 2>&1 | \
+    emacs --script "$TOPDIR"/byte-compile-local.el "$@" 2>&1 | \
+        grep -v '^Loading '
+}
+
+function get_treesit_dir() {
+    emacs --script "$TOPDIR"/get-treesit-dir.el "$@" 2>&1 | \
         grep -v '^Loading '
 }
 
 function install_treesit_grammar() {
-    emacs --script install-treesit-grammar.el "$@" 2>&1 | \
+    emacs --script "$TOPDIR"/install-treesit-grammar.el "$@" 2>&1 | \
         grep -v '^Loading '
 }
 
@@ -222,8 +227,11 @@ install_treesit_grammar \
 
 update_submodule extra/tree-sitter-module
 qpushd extra/tree-sitter-module
-tree_sitter_modules="bash clojure erlang go gomod nix python zig"
+tree_sitter_modules="bash clojure dockerfile erlang go gomod nix python yaml zig"
+rm -fr dist
+<<< $tree_sitter_modules xargs rm -fr
 <<< $tree_sitter_modules xargs -P4 -n1 ./build.sh
+cp -f dist/* "$(get_treesit_dir)/"
 qpopd
 
 for idx in ${!NOTICES[@]}; do

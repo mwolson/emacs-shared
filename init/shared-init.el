@@ -469,14 +469,16 @@
         (message "Could not load docker changes, output:\n%s" out)
       (message "Loaded Docker env for machine: %s" machine))))
 
+(add-to-list 'auto-mode-alist
+             '("\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"
+               . dockerfile-ts-mode))
+
 ;; Support for s6-overlay containers: https://github.com/just-containers/s6-overlay
 (setq auto-mode-interpreter-regexp
       (replace-regexp-in-string "/bin/env" "/\\(?:usr/\\)?bin/\\(?:with-cont\\)?env"
                                 auto-mode-interpreter-regexp t t))
 
 ;; Tree-sitter
-(add-to-list 'treesit-extra-load-path (concat my-emacs-path "extra/tree-sitter-module/dist"))
-
 (defun my-treesit-remap (from-mode to-mode)
   "Remap one major mode to another, mostly for tree-sitter support."
   (add-to-list 'major-mode-remap-alist `(,from-mode . ,to-mode)))
@@ -1228,7 +1230,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 ;; YAML mode should be treated like a programming mode, such as showing
 ;; line numbers and applying editorconfig standards
-(add-hook 'yaml-mode-hook #'my-run-prog-mode-hooks t)
+(add-hook 'yaml-ts-mode-hook #'my-run-prog-mode-hooks t)
+(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
 
 ;; Profiling
 (require 'profiler)
