@@ -222,7 +222,7 @@ install_treesit_grammar \
 
 update_submodule extra/tree-sitter-module
 qpushd extra/tree-sitter-module
-tree_sitter_modules="clojure go gomod nix zig"
+tree_sitter_modules="bash clojure go gomod nix python zig"
 <<< $tree_sitter_modules xargs -P4 -n1 ./build.sh
 qpopd
 

@@ -474,8 +474,10 @@
       (replace-regexp-in-string "/bin/env" "/\\(?:usr/\\)?bin/\\(?:with-cont\\)?env"
                                 auto-mode-interpreter-regexp t t))
 
-;; .env file support
-(add-to-list 'auto-mode-alist '("\\.env\\..*\\'" . dotenv-mode))
+;; shell script and .env support
+(add-to-list 'major-mode-remap-alist '(sh-mode . bash-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.env\\..*\\'" . bash-ts-mode))
+(setopt sh-shell-file "/bin/bash")
 
 ;; Editorconfig support
 (editorconfig-mode 1)
@@ -517,8 +519,9 @@
 ;; SSH conf files
 (add-to-list 'auto-mode-alist '("_config\\'" . conf-mode))
 
-;; Python uv lock files
+;; Python setup
 (add-to-list 'auto-mode-alist '("/uv\\.lock\\'" . conf-toml-mode))
+(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
 
 ;; Flymake setup
 
@@ -1103,6 +1106,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (interactive)
   (display-line-numbers-mode -1))
 
+(add-hook 'conf-mode-hook 'my-turn-on-display-line-numbers-mode t)
 (add-hook 'prog-mode-hook 'my-turn-on-display-line-numbers-mode t)
 (add-hook 'lisp-interaction-mode-hook 'my-turn-off-display-line-numbers-mode t)
 
