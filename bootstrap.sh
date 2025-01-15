@@ -42,18 +42,12 @@ function update_submodule () {
 }
 
 function byte_compile() {
-    local module="$1"
-    local subdir="$2"
-
-    emacs --script byte-compile-local.el "$module" "$subdir" 2>&1 | \
+    emacs --script byte-compile-local.el "$@" 2>&1 | \
         grep -v '^Loading '
 }
 
 function install_treesit_grammar() {
-    local lang="$1"
-    local url="$2"
-
-    emacs --script install-treesit-grammar.el "$lang" "$url" 2>&1 | \
+    emacs --script install-treesit-grammar.el "$@" 2>&1 | \
         grep -v '^Loading '
 }
 
@@ -217,11 +211,18 @@ done
 
 update_submodule extra/emacs
 
-install_treesit_grammar prisma "https://github.com/victorhqc/tree-sitter-prisma"
+install_treesit_grammar \
+    markdown_inline \
+    "https://github.com/tree-sitter-grammars/tree-sitter-markdown" \
+    split_parser "tree-sitter-markdown-inline/src"
+
+install_treesit_grammar \
+    prisma \
+    "https://github.com/victorhqc/tree-sitter-prisma"
 
 update_submodule extra/tree-sitter-module
 qpushd extra/tree-sitter-module
-tree_sitter_modules="go gomod nix zig"
+tree_sitter_modules="clojure go gomod nix zig"
 <<< $tree_sitter_modules xargs -P4 -n1 ./build.sh
 qpopd
 

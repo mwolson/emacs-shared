@@ -1146,6 +1146,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   ;; (dolist (file-ext '(js jsx))
   ;;   (my-define-ts-web-polymode file-ext))
   ;; (add-to-list 'polymode-mode-name-aliases '(javascript . my-js))
+  (add-to-list 'polymode-mode-name-aliases '(clojure . clojure-ts-mode))
   (add-to-list 'polymode-mode-name-aliases '(javascript . js)))
 
 (with-eval-after-load "poly-markdown"
@@ -1252,8 +1253,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (minions-mode 1)
 
 ;; Clojure mode settings
-(with-eval-after-load "clojure-mode"
+(with-eval-after-load "clojure-ts-mode"
   (require 'cider))
+(add-to-list 'major-mode-remap-alist '(clojure-mode . clojure-ts-mode))
 
 ;; Org Mode settings
 (defun my-org-find-notes-file ()
