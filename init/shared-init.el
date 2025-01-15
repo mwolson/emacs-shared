@@ -483,6 +483,8 @@
   "Remap one major mode to another, mostly for tree-sitter support."
   (add-to-list 'major-mode-remap-alist `(,from-mode . ,to-mode)))
 
+(defvar my-polymode-aliases '((javascript . js)))
+
 ;; shell script and .env support
 (my-treesit-remap 'sh-mode 'bash-ts-mode)
 (add-to-list 'auto-mode-alist '("\\.env\\(\\..*\\)?\\'" . bash-ts-mode))
@@ -886,6 +888,7 @@ Use the region instead if one is selected."
 ;; Go
 (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
 (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))
+(add-to-list 'my-polymode-aliases '(go . go-ts-mode))
 
 ;; Java
 (require 'java-mode-indent-annotations)
@@ -899,15 +902,21 @@ Use the region instead if one is selected."
 
 ;; Nix
 (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
+(add-to-list 'my-polymode-aliases '(nix . nix-ts-mode))
 
 ;; Python
 (add-to-list 'auto-mode-alist '("/uv\\.lock\\'" . conf-toml-mode))
 (my-treesit-remap 'python-mode 'python-ts-mode)
 
+;; Rust
+(add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
+(add-to-list 'my-polymode-aliases '(rust . rust-ts-mode))
+
 ;; Zig
 (add-to-list 'load-path (concat my-emacs-path "elisp/zig-ts-mode"))
 (autoload 'zig-ts-mode "zig-ts-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-ts-mode))
+(add-to-list 'my-polymode-aliases '(zig . zig-ts-mode))
 
 ;; ANSI colors in compile buffer
 (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter t)
@@ -1030,15 +1039,20 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   "Keymap active in Eglot-backed Flymake diagnostic overlays.")
 (setq eglot-diagnostics-map my-eglot-diagnostics-map)
 
+(defun my-eglot-ensure ()
+  "Ensure that eglot is running, except when in an active polymode."
+  (unless (bound-and-true-p polymode-mode)
+    (eglot-ensure)))
+
 (require 'eglot)
 (setopt eglot-send-changes-idle-time 0.2)
-(add-hook 'c-mode-common-hook 'eglot-ensure)
-(add-hook 'csharp-mode-hook 'eglot-ensure)
-(add-hook 'my-ts-web-mode-hook 'eglot-ensure)
-(add-hook 'rust-mode-hook 'eglot-ensure)
-(add-hook 'go-ts-mode-hook 'eglot-ensure)
-(add-hook 'go-mod-ts-mode-hook 'eglot-ensure)
-(add-hook 'zig-ts-mode-hook 'eglot-ensure)
+(add-hook 'c-mode-common-hook 'my-eglot-ensure)
+(add-hook 'csharp-mode-hook 'my-eglot-ensure)
+(add-hook 'my-ts-web-mode-hook 'my-eglot-ensure)
+(add-hook 'rust-ts-mode-hook 'my-eglot-ensure)
+(add-hook 'go-ts-mode-hook 'my-eglot-ensure)
+(add-hook 'go-mod-ts-mode-hook 'my-eglot-ensure)
+(add-hook 'zig-ts-mode-hook 'my-eglot-ensure)
 
 (defclass eglot-deno (eglot-lsp-server) ()
   :documentation "A custom class for deno lsp.")
@@ -1175,7 +1189,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (dolist (to-remap major-mode-remap-alist)
     (let ((from (my-replace-mode-in-symbol (car to-remap)))
           (to (cdr to-remap)))
-      (add-to-list 'polymode-mode-name-aliases (cons from to)))))
+      (add-to-list 'polymode-mode-name-aliases (cons from to))))
+  (dolist (alias my-polymode-aliases)
+    (add-to-list 'polymode-mode-name-aliases alias)))
 
 (with-eval-after-load "polymode-core"
   ;; Commented out since the font-locking for Web mode tends to bleed into other areas
@@ -1187,8 +1203,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   ;; (add-to-list 'polymode-mode-name-aliases '(javascript . my-js))
   (my-polymode-install-aliases)
   (my-replace-cdrs-in-alist 'sh-mode 'bash-ts-mode 'polymode-mode-name-aliases)
-  (my-replace-cdrs-in-alist 'shell-script-mode 'bash-ts-mode 'polymode-mode-name-aliases)
-  (add-to-list 'polymode-mode-name-aliases '(javascript . js)))
+  (my-replace-cdrs-in-alist 'shell-script-mode 'bash-ts-mode 'polymode-mode-name-aliases))
 
 (with-eval-after-load "poly-markdown"
   (my-replace-cdrs-in-alist 'poly-markdown-mode 'poly-gfm-mode 'auto-mode-alist))

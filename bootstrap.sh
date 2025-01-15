@@ -227,7 +227,7 @@ install_treesit_grammar \
 
 update_submodule extra/tree-sitter-module
 qpushd extra/tree-sitter-module
-tree_sitter_modules="bash clojure dockerfile erlang go gomod nix python yaml zig"
+tree_sitter_modules="bash clojure dockerfile erlang go gomod nix python rust yaml zig"
 rm -fr dist
 <<< $tree_sitter_modules xargs rm -fr
 <<< $tree_sitter_modules xargs -P4 -n1 ./build.sh
