@@ -474,9 +474,16 @@
       (replace-regexp-in-string "/bin/env" "/\\(?:usr/\\)?bin/\\(?:with-cont\\)?env"
                                 auto-mode-interpreter-regexp t t))
 
+;; Tree-sitter
+(add-to-list 'treesit-extra-load-path (concat my-emacs-path "extra/tree-sitter-module/dist"))
+
+(defun my-treesit-remap (from-mode to-mode)
+  "Remap one major mode to another, mostly for tree-sitter support."
+  (add-to-list 'major-mode-remap-alist `(,from-mode . ,to-mode)))
+
 ;; shell script and .env support
-(add-to-list 'major-mode-remap-alist '(sh-mode . bash-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.env\\..*\\'" . bash-ts-mode))
+(my-treesit-remap 'sh-mode 'bash-ts-mode)
+(add-to-list 'auto-mode-alist '("\\.env\\(\\..*\\)?\\'" . bash-ts-mode))
 (setopt sh-shell-file "/bin/bash")
 
 ;; Editorconfig support
@@ -518,10 +525,6 @@
 
 ;; SSH conf files
 (add-to-list 'auto-mode-alist '("_config\\'" . conf-mode))
-
-;; Python setup
-(add-to-list 'auto-mode-alist '("/uv\\.lock\\'" . conf-toml-mode))
-(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
 
 ;; Flymake setup
 
@@ -859,6 +862,29 @@ Use the region instead if one is selected."
   "Minor mode for jumping to variable and function definitions"
   :keymap my-xref-minor-mode-map)
 
+;; C#
+(with-eval-after-load "csharp-mode"
+  (define-key csharp-mode-map (kbd "C-c .") nil))
+
+;; Clojure
+(with-eval-after-load "clojure-ts-mode"
+  (require 'cider))
+
+(with-eval-after-load "cider-repl"
+  (define-key cider-repl-mode-map (kbd "C-d") #'cider-quit))
+
+(my-treesit-remap 'clojure-mode 'clojure-ts-mode)
+
+;; Erlang
+(add-to-list 'load-path (concat my-emacs-path "elisp/erlang-ts"))
+(my-treesit-remap 'erlang-mode 'erlang-ts-mode)
+(autoload #'erlang-ts-mode "erlang-ts"
+  "Major mode for editing erlang with tree-sitter." t nil)
+
+;; Go
+(add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
+(add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))
+
 ;; Java
 (require 'java-mode-indent-annotations)
 (require 'google-c-style)
@@ -872,9 +898,14 @@ Use the region instead if one is selected."
 ;; Nix
 (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
 
-;; C#
-(with-eval-after-load "csharp-mode"
-  (define-key csharp-mode-map (kbd "C-c .") nil))
+;; Python
+(add-to-list 'auto-mode-alist '("/uv\\.lock\\'" . conf-toml-mode))
+(my-treesit-remap 'python-mode 'python-ts-mode)
+
+;; Zig
+(add-to-list 'load-path (concat my-emacs-path "elisp/zig-ts-mode"))
+(autoload 'zig-ts-mode "zig-ts-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-ts-mode))
 
 ;; ANSI colors in compile buffer
 (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter t)
@@ -1088,15 +1119,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (require 'edit-list)
 (defalias 'my-edit-list 'edit-list)
 
-;; Tree-sitter
-(add-to-list 'treesit-extra-load-path (concat my-emacs-path "extra/tree-sitter-module/dist"))
-(require 'go-ts-mode)
-
-;; Zig programming language
-(add-to-list 'load-path (concat my-emacs-path "elisp/zig-ts-mode"))
-(autoload 'zig-ts-mode "zig-ts-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-ts-mode))
-
 ;; All programming modes
 (defun my-turn-on-display-line-numbers-mode ()
   (interactive)
@@ -1142,6 +1164,17 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
                (apply #'my-ts-web-mode mode-args))))
     (add-to-list 'polymode-mode-name-aliases (cons file-ext mode-name-alias))))
 
+(defun my-replace-mode-in-symbol (mode-sym)
+  (intern
+   (replace-regexp-in-string "-mode\\'" ""
+                             (symbol-name mode-sym))))
+
+(defun my-polymode-install-aliases ()
+  (dolist (to-remap major-mode-remap-alist)
+    (let ((from (my-replace-mode-in-symbol (car to-remap)))
+          (to (cdr to-remap)))
+      (add-to-list 'polymode-mode-name-aliases (cons from to)))))
+
 (with-eval-after-load "polymode-core"
   ;; Commented out since the font-locking for Web mode tends to bleed into other areas
   ;; of the file.
@@ -1150,7 +1183,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   ;; (dolist (file-ext '(js jsx))
   ;;   (my-define-ts-web-polymode file-ext))
   ;; (add-to-list 'polymode-mode-name-aliases '(javascript . my-js))
-  (add-to-list 'polymode-mode-name-aliases '(clojure . clojure-ts-mode))
+  (my-polymode-install-aliases)
+  (my-replace-cdrs-in-alist 'sh-mode 'bash-ts-mode 'polymode-mode-name-aliases)
+  (my-replace-cdrs-in-alist 'shell-script-mode 'bash-ts-mode 'polymode-mode-name-aliases)
   (add-to-list 'polymode-mode-name-aliases '(javascript . js)))
 
 (with-eval-after-load "poly-markdown"
@@ -1256,11 +1291,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (setopt minions-mode-line-lighter " ")
 (minions-mode 1)
 
-;; Clojure mode settings
-(with-eval-after-load "clojure-ts-mode"
-  (require 'cider))
-(add-to-list 'major-mode-remap-alist '(clojure-mode . clojure-ts-mode))
-
 ;; Org Mode settings
 (defun my-org-find-notes-file ()
   (interactive)
@@ -1338,9 +1368,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 ;; diff-mode: Don't mess with M-q
 (with-eval-after-load "diff-mode"
   (define-key diff-mode-map (kbd "M-q") 'fill-paragraph))
-
-(with-eval-after-load "cider-repl"
-  (define-key cider-repl-mode-map (kbd "C-d") #'cider-quit))
 
 ;; Use Ivy instead of the buffer list when I typo it
 (global-set-key (kbd "C-x C-b") 'ivy-switch-buffer)

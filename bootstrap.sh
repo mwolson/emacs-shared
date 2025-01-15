@@ -203,7 +203,7 @@ for mod in $dir_elisp_submodules; do
     byte_compile "$mod" elisp/"$mod"
 done
 
-file_elisp_submodules="asdf-vm poly-markdown prisma-ts-mode tmux-mode zig-ts-mode"
+file_elisp_submodules="asdf-vm erlang-ts poly-markdown prisma-ts-mode tmux-mode zig-ts-mode"
 for mod in $file_elisp_submodules; do
     update_submodule elisp/"$mod"
     byte_compile "$mod" elisp/"$mod"/"$mod".el
@@ -222,7 +222,7 @@ install_treesit_grammar \
 
 update_submodule extra/tree-sitter-module
 qpushd extra/tree-sitter-module
-tree_sitter_modules="bash clojure go gomod nix python zig"
+tree_sitter_modules="bash clojure erlang go gomod nix python zig"
 <<< $tree_sitter_modules xargs -P4 -n1 ./build.sh
 qpopd
 
