@@ -883,7 +883,7 @@ Use the region instead if one is selected."
 (add-to-list 'load-path (concat my-emacs-path "elisp/erlang-ts"))
 (my-treesit-remap 'erlang-mode 'erlang-ts-mode)
 (autoload #'erlang-ts-mode "erlang-ts"
-  "Major mode for editing erlang with tree-sitter." t nil)
+  "Major mode for editing erlang with tree-sitter." t)
 
 ;; Go
 (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
@@ -897,8 +897,10 @@ Use the region instead if one is selected."
 (add-hook 'c-mode-common-hook 'my-xref-minor-mode t)
 
 ;; Kotlin
-(add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-mode) t)
-(autoload #'kotlin-mode "kotlin-mode" "Major mode for editing Kotlin." t nil)
+(add-to-list 'load-path (concat my-emacs-path "elisp/kotlin-ts-mode"))
+(add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-ts-mode) t)
+(autoload #'kotlin-ts-mode "kotlin-ts-mode" "Major mode for editing Kotlin." t)
+(add-to-list 'my-polymode-aliases '(kotlin . kotlin-ts-mode))
 
 ;; Nix
 (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
@@ -912,9 +914,15 @@ Use the region instead if one is selected."
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
 (add-to-list 'my-polymode-aliases '(rust . rust-ts-mode))
 
+;; Swift
+(add-to-list 'load-path (concat my-emacs-path "elisp/swift-ts-mode"))
+(autoload #'swift-ts-mode "swift-ts-mode" "Major mode for editing Swift." t)
+(add-to-list 'auto-mode-alist '("\\.swift\\(interface\\)?\\'" . swift-ts-mode))
+(add-to-list 'my-polymode-aliases '(swift . swift-ts-mode))
+
 ;; Zig
 (add-to-list 'load-path (concat my-emacs-path "elisp/zig-ts-mode"))
-(autoload 'zig-ts-mode "zig-ts-mode" nil t)
+(autoload #'zig-ts-mode "zig-ts-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-ts-mode))
 (add-to-list 'my-polymode-aliases '(zig . zig-ts-mode))
 

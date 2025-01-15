@@ -11,6 +11,9 @@
 [submodule "elisp/gptel"]
 	path = elisp/gptel
 	url = https://github.com/karthink/gptel.git
+[submodule "elisp/kotlin-ts-mode"]
+	path = elisp/kotlin-ts-mode
+	url = https://gitlab.com/bricka/emacs-kotlin-ts-mode.git
 [submodule "elisp/ligature"]
 	path = elisp/ligature
 	url = https://github.com/mickeynp/ligature.el.git
@@ -23,6 +26,9 @@
 [submodule "elisp/poly-markdown"]
 	path = elisp/poly-markdown
 	url = https://github.com/polymode/poly-markdown
+[submodule "elisp/swift-ts-mode"]
+	path = elisp/swift-ts-mode
+	url = https://github.com/rechsteiner/swift-ts-mode.git
 [submodule "elisp/tmux-mode"]
 	path = elisp/tmux-mode
 	url = https://github.com/nverno/tmux-mode.git
@@ -41,6 +47,9 @@
 	path = extra/tree-sitter-module
         shallow = true
 	url = https://github.com/casouri/tree-sitter-module.git
+[submodule "extra/tree-sitter-swift"]
+	path = extra/tree-sitter-swift
+	url = https://github.com/alex-pinkus/tree-sitter-swift
 [submodule "share/man"]
 	path = share/man
         shallow = true

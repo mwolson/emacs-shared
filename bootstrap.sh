@@ -88,6 +88,7 @@ if [[ $OS == Windows ]]; then
 fi
 
 REQUIRED_EMACS_VERSION=29.4
+SOEXT="so"
 
 # Set this environment variable to rebuild git-for-windows manpages; otherwise use pre-built ones
 : ${BUILD_GIT_MANPAGES:=}
@@ -101,6 +102,7 @@ if [[ $OS == Windows ]]; then
             exit 1
         fi
     fi
+    SOEXT="dll"
 elif [[ $OS == macOS ]]; then
     if ! test -e /Applications/Emacs.app; then
         echo >&2 "Error: Emacs does not seem to be installed in Applications"
@@ -110,6 +112,7 @@ elif [[ $OS == macOS ]]; then
         echo >&2 "Error: Could not find Emacs Homebrew installation"
         exit 1
     fi
+    SOEXT="dylib"
 elif [[ $OS_VARIANT == Ubuntu ]]; then
     if ! test -x /usr/local/bin/emacs; then
         echo >&2 "Error: /usr/local/bin/emacs does not exist"
@@ -160,7 +163,9 @@ git submodule sync
 git submodule update --depth 1
 echo
 
-pnpm i
+if test -n "$BUILD"; then
+    pnpm i
+fi
 
 emacs --script install-packages.el 2>&1 | grep -v '^Loading '
 
@@ -208,7 +213,10 @@ for mod in $dir_elisp_submodules; do
     byte_compile "$mod" elisp/"$mod"
 done
 
-file_elisp_submodules="asdf-vm erlang-ts poly-markdown prisma-ts-mode tmux-mode zig-ts-mode"
+file_elisp_submodules="
+    asdf-vm erlang-ts kotlin-ts-mode poly-markdown prisma-ts-mode swift-ts-mode
+    tmux-mode zig-ts-mode
+"
 for mod in $file_elisp_submodules; do
     update_submodule elisp/"$mod"
     byte_compile "$mod" elisp/"$mod"/"$mod".el
@@ -216,23 +224,43 @@ done
 
 update_submodule extra/emacs
 
-install_treesit_grammar \
-    markdown_inline \
-    "https://github.com/tree-sitter-grammars/tree-sitter-markdown" \
-    split_parser "tree-sitter-markdown-inline/src"
+if test -n "$BUILD"; then
+    TREESIT_DIR="$(get_treesit_dir)/"
 
-install_treesit_grammar \
-    prisma \
-    "https://github.com/victorhqc/tree-sitter-prisma"
+    install_treesit_grammar \
+        markdown_inline \
+        "https://github.com/tree-sitter-grammars/tree-sitter-markdown" \
+        split_parser "tree-sitter-markdown-inline/src"
 
-update_submodule extra/tree-sitter-module
-qpushd extra/tree-sitter-module
-tree_sitter_modules="bash clojure dockerfile erlang go gomod nix python rust yaml zig"
-rm -fr dist
-<<< $tree_sitter_modules xargs rm -fr
-<<< $tree_sitter_modules xargs -P4 -n1 ./build.sh
-cp -f dist/* "$(get_treesit_dir)/"
-qpopd
+    install_treesit_grammar \
+        prisma \
+        "https://github.com/victorhqc/tree-sitter-prisma"
+
+    update_submodule extra/tree-sitter-module
+    qpushd extra/tree-sitter-module
+    tree_sitter_modules="bash clojure dockerfile erlang go gomod kotlin nix python rust yaml zig"
+    rm -fr dist
+    <<< $tree_sitter_modules xargs rm -fr
+    <<< $tree_sitter_modules xargs -P4 -n1 ./build.sh
+    cp -f dist/* "$TREESIT_DIR"
+    qpopd
+
+    update_submodule extra/tree-sitter-swift
+    qpushd extra/tree-sitter-swift
+    echo "Installing Swift tree-sitter dependencies..."
+    npm install --no-audit --no-fund
+    npx tree-sitter generate --no-bindings
+    qpushd src
+    cc -fPIC -c -I. parser.c
+    cc -fPIC -c -I. scanner.c
+    cc -fPIC -shared *.o -o "libtree-sitter-swift.${SOEXT}"
+    cp "libtree-sitter-swift.${SOEXT}" "$TREESIT_DIR"
+    echo "Copying libtree-sitter-swift.${SOEXT} to $TREESIT_DIR"
+    qpopd
+    qpopd
+else
+    notify "Warning: tree-sitter modules will not be built, some major modes will not work"
+fi
 
 for idx in ${!NOTICES[@]}; do
     echo -e >&2 "\n${NOTICES[$idx]}"
