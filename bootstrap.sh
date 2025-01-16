@@ -193,8 +193,8 @@ if [[ -n "$BUILD" ]]; then
         typescript "" "typescript/src"
 
     tree_sitter_modules="
-        bash clojure dockerfile erlang go gomod javascript jsdoc kotlin nix
-        prisma python rust yaml zig
+        bash clojure cpp dockerfile erlang go gomod java javascript jsdoc kotlin
+        nix prisma python rust yaml zig
     "
     <<< $tree_sitter_modules xargs -P4 -n1 "$(get_topdir)"/install-treesit-grammar.sh
 

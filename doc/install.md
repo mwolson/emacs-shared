@@ -56,6 +56,12 @@ You'll need to [install clangd](https://clangd.llvm.org/installation) in order t
 
 You'll need to [install gopls](https://github.com/golang/tools/blob/master/gopls/README.md#installation) in order to support language server features for C/C++. On Mac, install the `go` and `gopls` packages from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
 
+## Install jdtls (optional)
+
+You'll need to install both a v21 or higher JDK/JRE and a JD-TLS in order to support language server features for Java. On Mac, install the `jdtls` package from homebrew. Since this requires a JDK/JRE, and is extremely slow, it can be skipped if you don't need these features for Java code.
+
+Note that the first time you visit a Java file in a large project, JD-TLS might take a minute to initialize.
+
 ## Install ninja
 
 You'll need to [install ninja](https://ninja-build.org/) in order to support fast execution of Magit. On Mac, install the `ninja` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.

@@ -58,6 +58,10 @@
 	path = extra/tree-sitter-clojure
         shallow = true
 	url = https://github.com/sogaiu/tree-sitter-clojure.git
+[submodule "extra/tree-sitter-cpp"]
+	path = extra/tree-sitter-cpp
+        shallow = true
+	url = https://github.com/tree-sitter/tree-sitter-cpp.git
 [submodule "extra/tree-sitter-dockerfile"]
 	path = extra/tree-sitter-dockerfile
         shallow = true
@@ -74,6 +78,10 @@
 	path = extra/tree-sitter-gomod
         shallow = true
 	url = https://github.com/camdencheek/tree-sitter-go-mod.git
+[submodule "extra/tree-sitter-java"]
+	path = extra/tree-sitter-java
+        shallow = true
+	url = https://github.com/tree-sitter/tree-sitter-java.git
 [submodule "extra/tree-sitter-javascript"]
 	path = extra/tree-sitter-javascript
         shallow = true

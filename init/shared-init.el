@@ -793,7 +793,11 @@ Use the region instead if one is selected."
 (setopt sh-shell-file "/bin/bash")
 
 ;; C/C++
-(add-hook 'c-mode-common-hook #'my-eglot-ensure)
+(my-remap-major-mode 'c-mode 'c-ts-mode)
+(my-remap-major-mode 'c++-mode 'c++-ts-mode)
+(my-remap-major-mode 'c-or-c++-mode 'c-or-c++-ts-mode)
+(add-hook 'c-ts-base-mode-hook #'my-eglot-ensure)
+(add-hook 'c-ts-base-mode-hook #'my-xref-minor-mode t)
 
 ;; C#
 (with-eval-after-load "csharp-mode"
@@ -824,10 +828,17 @@ Use the region instead if one is selected."
 (add-hook 'go-mod-ts-mode-hook #'my-eglot-ensure)
 
 ;; Java
-(require 'java-mode-indent-annotations)
-(require 'google-c-style)
-(add-hook 'c-mode-common-hook 'google-set-c-style t)
-(add-hook 'c-mode-common-hook 'my-xref-minor-mode t)
+(my-remap-major-mode 'java-mode 'java-ts-mode)
+(add-hook 'java-ts-mode-hook #'my-xref-minor-mode t)
+(when (executable-find "jdtls")
+  ;; see https://gist.github.com/rosholger/e519c04243ae7ccb5bbf7ebef3f1cec2
+  ;; and the eglot-java package for more options / alternatives
+  (add-to-list 'eglot-server-programs
+               '((java-ts-mode java-mode) .
+                 ("jdtls" :initializationOptions
+                  (:extendedClientCapabilities
+                   (:classFileContentsSupport t :skipProjectConfiguration t)))))
+  (add-hook 'java-ts-mode-hook #'my-eglot-ensure))
 
 ;; JTSX (Javascript, Typescript, and JSX support)
 (defvar my-jtsx-major-modes '(jtsx-jsx-mode jtsx-tsx-mode jtsx-typescript-mode))
@@ -846,11 +857,10 @@ Use the region instead if one is selected."
 (autoload #'jtsx-jsx-mode "jtsx" "Major mode extending `js-ts-mode'." t)
 (autoload #'jtsx-tsx-mode "jtsx" "Major mode extending `tsx-ts-mode'." t)
 (autoload #'jtsx-typescript-mode "jtsx" "Major mode extending `typescript-ts-mode'." t)
-(add-to-list 'my-polymode-aliases '(js . jtsx-jsx-mode))
 (add-to-list 'my-polymode-aliases '(javascript . jtsx-jsx-mode))
-(add-to-list 'my-polymode-aliases '(ts . jtsx-tsx-mode))
 (add-to-list 'my-polymode-aliases '(typescript . jtsx-tsx-mode))
 (my-remap-major-mode 'js-mode 'jtsx-jsx-mode)
+(my-remap-major-mode 'ts-mode 'jtsx-tsx-mode)
 
 (dolist (mode my-jtsx-major-modes)
   (let ((hook (intern (concat (symbol-name mode) "-hook"))))
