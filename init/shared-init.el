@@ -380,7 +380,7 @@
 (with-eval-after-load "add-log"
   (setopt add-log-mailing-address my-changelog-address))
 
-;;; Programs and features
+;;; Base Programs and Features
 
 ;; Load `dired' itself, with `tramp' extension
 (require 'dired)
@@ -393,6 +393,10 @@
 
 ;; List directories first in dired
 (require 'ls-lisp)
+
+;; Long lines support
+(global-so-long-mode 1)
+(add-to-list 'so-long-target-modes 'fundamental-mode)
 
 ;; Don't slow down ls and don't make dired output too wide on w32 systems
 (setq w32-get-true-file-attributes nil)
@@ -479,47 +483,42 @@
                                 auto-mode-interpreter-regexp t t))
 
 ;; Tree-sitter
-(defun my-treesit-remap (from-mode to-mode)
+(defun my-remap-major-mode (from-mode to-mode)
   "Remap one major mode to another, mostly for tree-sitter support."
   (add-to-list 'major-mode-remap-alist `(,from-mode . ,to-mode)))
 
-(defvar my-polymode-aliases '((javascript . js)))
+;;; Programming Modes and Features
 
-;; shell script and .env support
-(my-treesit-remap 'sh-mode 'bash-ts-mode)
-(add-to-list 'auto-mode-alist '("\\.env\\(\\..*\\)?\\'" . bash-ts-mode))
-(setopt sh-shell-file "/bin/bash")
+(defvar my-polymode-aliases '())
+
+;; Apheleia for automatic running of prettier
+(apheleia-global-mode 1)
+
+;; ANSI colors in compile buffer
+(add-hook 'compilation-filter-hook #'ansi-color-compilation-filter t)
+
+;; Atomic Chrome: Edit Server support for launching Emacs from browsers
+(when my-server-start-p
+  (my-defer-startup #'atomic-chrome-start-server))
 
 ;; Editorconfig support
 (editorconfig-mode 1)
 
-;; Edit Server support through Atomic Chrome / GhostText
-(defun my-start-atomic-chrome ()
-  (require 'atomic-chrome)
-  (atomic-chrome-start-server))
+;; Set up eglot for LSP features
+(require 'eglot)
 
-(when my-server-start-p
-  (my-defer-startup #'my-start-atomic-chrome))
+(defun my-eglot-ensure ()
+  "Ensure that eglot is running, except when in an active polymode."
+  (unless (bound-and-true-p polymode-mode)
+    (eglot-ensure)))
 
-;; Long lines support
-(global-so-long-mode 1)
-(add-to-list 'so-long-target-modes 'fundamental-mode)
-(add-to-list 'so-long-target-modes 'web-mode)
-
-;; Lisp REPL using SLIME
-(require 'slime)
-(slime-setup '(slime-repl))
-(setopt slime-auto-connect 'always)
-(setopt slime-kill-without-query-p t)
-(setopt slime-protocol-version 'ignore)
-
-;; Improved JSX support (disabled)
-;;
-;; (my-replace-cdrs-in-alist 'js-mode 'rjsx-mode 'interpreter-mode-alist)
-;; (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . rjsx-mode))
-;;
-;; Use plain old js-mode since it doesn't freeze when loading ES7 code with decorators
-;; (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js-mode))
+(with-eval-after-load "eglot"
+  (setq eglot-diagnostics-map
+        (let ((map (make-sparse-keymap)))
+          (define-key map (kbd "<mouse-3>") #'eglot-code-actions-at-mouse)
+          map))
+  (define-key eglot-mode-map (kbd "<f2>") #'eglot-rename)
+  (setopt eglot-send-changes-idle-time 0.2))
 
 ;; MariaDB/MySQL conf files
 (add-to-list 'auto-mode-alist '("\\.cnf\\'" . conf-mode))
@@ -533,16 +532,33 @@
 ;; SSH conf files
 (add-to-list 'auto-mode-alist '("_config\\'" . conf-mode))
 
-;; Flymake setup
+;; Eslint
+(defun eslint-fix-file ()
+  (interactive)
+  (message "Running eslint --fix")
+  (redisplay t)
+  (call-process "eslint" nil nil nil "--fix" (buffer-file-name))
+  (message "Running eslint --fix...done"))
 
-(require 'flymake-stylelint)
-(add-hook 'scss-mode-hook 'add-node-modules-path t)
-(add-hook 'scss-mode-hook 'flymake-stylelint-enable t)
+(defun eslint-fix-file-and-revert-maybe ()
+  (interactive)
+  (when (and my-eslint-fix-enabled-p (fboundp #'flymake-diagnostics))
+    (eslint-fix-file)
+    (revert-buffer t t)))
 
-;; NodeJS REPL setup
+(defun my-eslint-disable-in-current-buffer ()
+  (interactive)
+  (flymake-mode nil)
+  (set (make-local-variable 'my-eslint-fix-enabled-p) nil))
 
-(require 'js-comint)
+(defun my-eslint-setup ()
+  (unless (bound-and-true-p polymode-mode)
+    (node-repl-interaction-mode 1)
+    (when (and (not (string-match-p "/node_modules/" default-directory))
+               (executable-find "eslint"))
+      (add-hook 'after-save-hook #'eslint-fix-file-and-revert-maybe t t))))
 
+;; NodeJS REPL
 (defun my-js-comint-send-last-sexp ()
   "Send the previous sexp to the inferior Javascript process."
   (interactive)
@@ -593,116 +609,18 @@ interactively.
 \\{node-repl-interaction-mode-map}"
   :keymap node-repl-interaction-mode-map
   (cond
-   (node-repl-interaction-mode nil)
+   (node-repl-interaction-mode
+    (require 'js-comint))
    (t nil)))
 
-;; (when (eq system-type 'windows-nt)
-;;   (setopt js-comint-program-command "C:/Program Files/nodejs/node.exe"))
+(defun my-node-repl-setup ()
+  (unless (bound-and-true-p polymode-mode)
+    (node-repl-interaction-mode 1)))
 
 (defun inferior-js-mode-hook-setup ()
   (add-hook 'comint-output-filter-functions 'js-comint-process-output))
 
 (add-hook 'inferior-js-mode-hook 'inferior-js-mode-hook-setup t)
-
-;; Web Mode setup
-
-(defvar my--js-files-regex "\\.\\([jt]sx?\\|mjs\\)\\'")
-
-(add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.json\\'" . web-mode))
-
-(define-derived-mode my-ts-web-mode web-mode "Web"
-  "Variant of Web Mode that allows JS/TS-specific hooks to be executed.")
-
-(add-to-list 'auto-mode-alist `(,my--js-files-regex . my-ts-web-mode))
-
-(setq web-mode-content-types-alist `(("jsx" . ,my--js-files-regex)))
-
-(defun my-define-web-mode (file-ext)
-  (let* ((sym-name (symbol-name file-ext))
-         (filename (concat "." sym-name))
-         (mode-sym (intern (concat "my-" sym-name "-mode")))
-         (mode-name-alias (intern (concat "my-" sym-name))))
-    (eval `(defun ,mode-sym (&rest mode-args)
-             (cl-letf (((symbol-function 'buffer-file-name)
-                        (lambda () ,filename)))
-               (apply #'my-ts-web-mode mode-args))))))
-
-(my-define-web-mode 'js)
-(my-replace-cdrs-in-alist 'js-mode 'my-js-mode 'interpreter-mode-alist)
-
-;; (with-eval-after-load "web-mode"
-;;   (define-key web-mode-map (kbd "C-c C-j") nil))
-
-(defun eslint-fix-file ()
-  (interactive)
-  (message "Running eslint --fix")
-  (redisplay t)
-  (call-process "eslint" nil nil nil "--fix" (buffer-file-name))
-  (message "Running eslint --fix...done"))
-
-(defun eslint-fix-file-and-revert-maybe ()
-  (interactive)
-  (when (and my-eslint-fix-enabled-p (fboundp #'flymake-diagnostics))
-    (eslint-fix-file)
-    (revert-buffer t t)))
-
-(defun my-ts-init ()
-  "Hooks for Web mode JS/TS files."
-  (node-repl-interaction-mode 1)
-  (when (and (not (string-match-p "/node_modules/" default-directory))
-             (executable-find "eslint"))
-    (add-hook 'after-save-hook #'eslint-fix-file-and-revert-maybe t t)))
-
-(defun my-eslint-disable-in-current-buffer ()
-  (interactive)
-  (flymake-mode nil)
-  (set (make-local-variable 'my-eslint-fix-enabled-p) nil))
-
-(defun my-setup-web-ligatures ()
-  (interactive)
-  (setq-local ligature-composition-table nil)
-  (ligature-set-ligatures 'web-mode my-web-mode-ligatures))
-
-(add-hook 'web-mode-hook #'add-node-modules-path t)
-(add-hook 'web-mode-hook #'my-setup-web-ligatures t)
-(add-hook 'my-ts-web-mode-hook #'my-ts-init t)
-
-;; Prisma support for JS
-(add-to-list 'load-path (concat my-emacs-path "elisp/prisma-ts-mode"))
-(autoload #'prisma-ts-mode "prisma-ts-mode" "Major mode for editing prisma source code." t)
-(add-to-list 'auto-mode-alist '("\\.prisma\\'" . prisma-ts-mode))
-
-;; JS2 Mode setup (disabled)
-
-(defun my-set-js2-mocha-externs ()
-  (setq js2-additional-externs
-        (mapcar 'symbol-name '(after afterEach before beforeEach describe expect it))))
-
-(with-eval-after-load "js2-mode"
-  ;; BUG: self is not a browser extern, just a convention that needs checking
-  (setq js2-browser-externs (delete "self" js2-browser-externs))
-
-  ;; Consider the chai 'expect()' statement to have side-effects, so we don't warn about it
-  (defun js2-add-strict-warning (msg-id &optional msg-arg beg end)
-    (if (and js2-compiler-strict-mode
-             (not (and (string= msg-id "msg.no.side.effects")
-                       (string= (buffer-substring-no-properties beg (+ beg 7)) "expect("))))
-        (js2-report-warning msg-id msg-arg beg
-                            (and beg end (- end beg)))))
-
-  ;; Add support for some mocha testing externs
-  (add-hook 'js2-init-hook #'my-set-js2-mocha-externs t))
-
-;; Highlight node.js stacktraces in *compile* buffers
-(defvar my-nodejs-compilation-regexp
-  '("^[ \t]+at +\\(?:.+(\\)?\\([^()\n]+\\):\\([0-9]+\\):\\([0-9]+\\))?$" 1 2 3))
-
-(with-eval-after-load "compile"
-  (add-to-list 'compilation-error-regexp-alist-alist
-               (cons 'nodejs my-nodejs-compilation-regexp))
-  (add-to-list 'compilation-error-regexp-alist 'nodejs))
 
 ;; Highlight current line
 (require 'hl-line-plus)
@@ -869,9 +787,19 @@ Use the region instead if one is selected."
   "Minor mode for jumping to variable and function definitions"
   :keymap my-xref-minor-mode-map)
 
+;; Bash shell script and .env support
+(my-remap-major-mode 'sh-mode 'bash-ts-mode)
+(add-to-list 'auto-mode-alist '("\\.env\\(\\..*\\)?\\'" . bash-ts-mode))
+(setopt sh-shell-file "/bin/bash")
+
+;; C/C++
+(add-hook 'c-mode-common-hook #'my-eglot-ensure)
+
 ;; C#
 (with-eval-after-load "csharp-mode"
   (define-key csharp-mode-map (kbd "C-c .") nil))
+
+(add-hook 'csharp-mode-hook #'my-eglot-ensure)
 
 ;; Clojure
 (with-eval-after-load "clojure-ts-mode"
@@ -880,11 +808,11 @@ Use the region instead if one is selected."
 (with-eval-after-load "cider-repl"
   (define-key cider-repl-mode-map (kbd "C-d") #'cider-quit))
 
-(my-treesit-remap 'clojure-mode 'clojure-ts-mode)
+(my-remap-major-mode 'clojure-mode 'clojure-ts-mode)
 
 ;; Erlang
 (add-to-list 'load-path (concat my-emacs-path "elisp/erlang-ts"))
-(my-treesit-remap 'erlang-mode 'erlang-ts-mode)
+(my-remap-major-mode 'erlang-mode 'erlang-ts-mode)
 (autoload #'erlang-ts-mode "erlang-ts"
   "Major mode for editing erlang with tree-sitter." t)
 
@@ -892,6 +820,8 @@ Use the region instead if one is selected."
 (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
 (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))
 (add-to-list 'my-polymode-aliases '(go . go-ts-mode))
+(add-hook 'go-ts-mode-hook #'my-eglot-ensure)
+(add-hook 'go-mod-ts-mode-hook #'my-eglot-ensure)
 
 ;; Java
 (require 'java-mode-indent-annotations)
@@ -899,23 +829,104 @@ Use the region instead if one is selected."
 (add-hook 'c-mode-common-hook 'google-set-c-style t)
 (add-hook 'c-mode-common-hook 'my-xref-minor-mode t)
 
+;; JTSX (Javascript, Typescript, and JSX support)
+(defvar my-jtsx-major-modes '(jtsx-jsx-mode jtsx-tsx-mode jtsx-typescript-mode))
+(defvar my-jtsx-ts-major-modes '(jtsx-tsx-mode jtsx-typescript-mode))
+
+(defun my-setup-jtsx-ligatures ()
+  (interactive)
+  (setq-local ligature-composition-table nil)
+  (dolist (mode my-jtsx-major-modes)
+    (ligature-set-ligatures mode my-web-mode-ligatures)))
+
+(add-to-list 'load-path (concat my-emacs-path "elisp/jtsx"))
+(add-to-list 'auto-mode-alist '("\\.jsx?\\'" . jtsx-jsx-mode))
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . jtsx-typescript-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . jtsx-tsx-mode))
+(autoload #'jtsx-jsx-mode "jtsx" "Major mode extending `js-ts-mode'." t)
+(autoload #'jtsx-tsx-mode "jtsx" "Major mode extending `tsx-ts-mode'." t)
+(autoload #'jtsx-typescript-mode "jtsx" "Major mode extending `typescript-ts-mode'." t)
+(add-to-list 'my-polymode-aliases '(js . jtsx-jsx-mode))
+(add-to-list 'my-polymode-aliases '(javascript . jtsx-jsx-mode))
+(add-to-list 'my-polymode-aliases '(ts . jtsx-tsx-mode))
+(add-to-list 'my-polymode-aliases '(typescript . jtsx-tsx-mode))
+(my-remap-major-mode 'js-mode 'jtsx-jsx-mode)
+
+(dolist (mode my-jtsx-major-modes)
+  (let ((hook (intern (concat (symbol-name mode) "-hook"))))
+    (add-hook hook #'add-node-modules-path t)
+    (add-hook hook #'my-eglot-ensure t)
+    (add-hook hook #'my-node-repl-setup t)
+    (add-hook hook #'my-eslint-setup t)
+    (add-hook hook #'my-setup-jtsx-ligatures t)))
+
+(defclass eglot-deno (eglot-lsp-server) ()
+  :documentation "A custom class for deno lsp.")
+
+(cl-defmethod eglot-initialization-options ((server eglot-deno))
+  "Passes through required deno initialization options"
+  (list :enable t
+        :lint t))
+
+(if (executable-find "deno")
+    (add-to-list 'eglot-server-programs
+                 `(,my-jtsx-ts-major-modes
+                   . (eglot-deno "deno" "lsp")))
+  (add-to-list 'eglot-server-programs
+               `(,my-jtsx-ts-major-modes
+                 . ("typescript-language-server" "--stdio"
+                    :initializationOptions
+                    (:plugins [(:name "typescript-eslint-language-service"
+                                      :location ,my-emacs-path)])))))
+
 ;; Kotlin
 (add-to-list 'load-path (concat my-emacs-path "elisp/kotlin-ts-mode"))
-(add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-ts-mode) t)
+(add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-ts-mode))
 (autoload #'kotlin-ts-mode "kotlin-ts-mode" "Major mode for editing Kotlin." t)
 (add-to-list 'my-polymode-aliases '(kotlin . kotlin-ts-mode))
+
+;; Lisp REPL using SLIME
+(require 'slime)
+(slime-setup '(slime-repl))
+(setopt slime-auto-connect 'always)
+(setopt slime-kill-without-query-p t)
+(setopt slime-protocol-version 'ignore)
 
 ;; Nix
 (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
 (add-to-list 'my-polymode-aliases '(nix . nix-ts-mode))
 
+;; Node.js
+(defvar my-nodejs-compilation-regexp
+  '("^[ \t]+at +\\(?:.+(\\)?\\([^()\n]+\\):\\([0-9]+\\):\\([0-9]+\\))?$" 1 2 3)
+  "Highlight node.js stacktraces in *compile* buffers.")
+
+(with-eval-after-load "compile"
+  (add-to-list 'compilation-error-regexp-alist-alist
+               (cons 'nodejs my-nodejs-compilation-regexp))
+  (add-to-list 'compilation-error-regexp-alist 'nodejs))
+
+;; Prisma support (a JS DB framework)
+(add-to-list 'load-path (concat my-emacs-path "elisp/prisma-ts-mode"))
+(autoload #'prisma-ts-mode "prisma-ts-mode" "Major mode for editing prisma source code." t)
+(add-to-list 'auto-mode-alist '("\\.prisma\\'" . prisma-ts-mode))
+
 ;; Python
 (add-to-list 'auto-mode-alist '("/uv\\.lock\\'" . conf-toml-mode))
-(my-treesit-remap 'python-mode 'python-ts-mode)
+(my-remap-major-mode 'python-mode 'python-ts-mode)
 
 ;; Rust
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
 (add-to-list 'my-polymode-aliases '(rust . rust-ts-mode))
+(add-to-list 'eglot-server-programs
+             '((rust-ts-mode rust-mode)
+               . ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
+(add-hook 'rust-ts-mode-hook #'my-eglot-ensure)
+
+;; SCSS
+(require 'flymake-stylelint)
+(add-hook 'scss-mode-hook 'add-node-modules-path t)
+(add-hook 'scss-mode-hook 'flymake-stylelint-enable t)
 
 ;; Swift
 (add-to-list 'load-path (concat my-emacs-path "elisp/swift-ts-mode"))
@@ -923,14 +934,27 @@ Use the region instead if one is selected."
 (add-to-list 'auto-mode-alist '("\\.swift\\(interface\\)?\\'" . swift-ts-mode))
 (add-to-list 'my-polymode-aliases '(swift . swift-ts-mode))
 
+;; Web Mode
+(defun my-setup-web-mode-ligatures ()
+  (interactive)
+  (setq-local ligature-composition-table nil)
+  (ligature-set-ligatures 'web-mode my-web-mode-ligatures))
+
+(add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.json\\'" . web-mode))
+(add-hook 'web-mode-hook #'add-node-modules-path t)
+(add-hook 'web-mode-hook #'my-setup-web-ligatures t)
+
 ;; Zig
 (add-to-list 'load-path (concat my-emacs-path "elisp/zig-ts-mode"))
 (autoload #'zig-ts-mode "zig-ts-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-ts-mode))
 (add-to-list 'my-polymode-aliases '(zig . zig-ts-mode))
-
-;; ANSI colors in compile buffer
-(add-hook 'compilation-filter-hook 'ansi-color-compilation-filter t)
+(add-to-list 'eglot-server-programs
+             '((zig-ts-mode) .
+               ("zls" :initializationOptions ())))
+(add-hook 'zig-ts-mode-hook #'my-eglot-ensure)
 
 ;; Load amx, which makes M-x work better on Ivy
 (add-hook 'after-init-hook 'amx-mode t)
@@ -1039,59 +1063,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (let ((counsel-rg-base-command "rg --no-heading --line-number %s ."))
     (counsel-rg regexp (my-project-root) rg-args)))
 
-;; Set up apheleia for automatic running of prettier
-(apheleia-global-mode 1)
-
-;; Set up eglot for LSP features
-(defvar my-eglot-diagnostics-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "<mouse-3>") 'eglot-code-actions-at-mouse)
-    map)
-  "Keymap active in Eglot-backed Flymake diagnostic overlays.")
-(setq eglot-diagnostics-map my-eglot-diagnostics-map)
-
-(defun my-eglot-ensure ()
-  "Ensure that eglot is running, except when in an active polymode."
-  (unless (bound-and-true-p polymode-mode)
-    (eglot-ensure)))
-
-(require 'eglot)
-(setopt eglot-send-changes-idle-time 0.2)
-(add-hook 'c-mode-common-hook 'my-eglot-ensure)
-(add-hook 'csharp-mode-hook 'my-eglot-ensure)
-(add-hook 'my-ts-web-mode-hook 'my-eglot-ensure)
-(add-hook 'rust-ts-mode-hook 'my-eglot-ensure)
-(add-hook 'go-ts-mode-hook 'my-eglot-ensure)
-(add-hook 'go-mod-ts-mode-hook 'my-eglot-ensure)
-(add-hook 'zig-ts-mode-hook 'my-eglot-ensure)
-
-(defclass eglot-deno (eglot-lsp-server) ()
-  :documentation "A custom class for deno lsp.")
-
-(cl-defmethod eglot-initialization-options ((server eglot-deno))
-  "Passes through required deno initialization options"
-  (list :enable t
-        :lint t))
-
-(if (executable-find "deno")
-    (add-to-list 'eglot-server-programs
-                 '((my-ts-web-mode) .
-                   (eglot-deno "deno" "lsp")))
-  (add-to-list 'eglot-server-programs
-               `((my-ts-web-mode) .
-                 ("typescript-language-server" "--stdio"
-                  :initializationOptions
-                  (:plugins [(:name "typescript-eslint-language-service"
-                                    :location ,my-emacs-path)])))))
-
-(add-to-list 'eglot-server-programs
-             '((rust-ts-mode rust-mode) .
-               ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
-
-(add-to-list 'eglot-server-programs
-             '((zig-ts-mode) .
-               ("zls" :initializationOptions ())))
-
 ;; Bind N and P in ediff so that I don't leave the control buffer
 (defun my-ediff-next-difference (&rest args)
   (interactive)
@@ -1169,28 +1140,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (add-to-list 'auto-mode-alist '("\\.mdx\\'" . poly-gfm-mode))
 (setopt gptel-default-mode #'poly-markdown-mode)
 
-(defun my-define-web-polymode (file-ext)
-  (let* ((sym-name (symbol-name file-ext))
-         (filename (concat "." sym-name))
-         (mode-sym (intern (concat "my-" sym-name "-mode")))
-         (mode-name-alias (intern (concat "my-" sym-name))))
-    (eval `(defun ,mode-sym (&rest mode-args)
-             (cl-letf (((symbol-function 'buffer-file-name)
-                        (lambda () ,filename)))
-               (apply #'web-mode mode-args))))
-    (add-to-list 'polymode-mode-name-aliases (cons file-ext mode-name-alias))))
-
-(defun my-define-ts-web-polymode (file-ext)
-  (let* ((sym-name (symbol-name file-ext))
-         (filename (concat "." sym-name))
-         (mode-sym (intern (concat "my-" sym-name "-mode")))
-         (mode-name-alias (intern (concat "my-" sym-name))))
-    (eval `(defun ,mode-sym (&rest mode-args)
-             (cl-letf (((symbol-function 'buffer-file-name)
-                        (lambda () ,filename)))
-               (apply #'my-ts-web-mode mode-args))))
-    (add-to-list 'polymode-mode-name-aliases (cons file-ext mode-name-alias))))
-
 (defun my-replace-mode-in-symbol (mode-sym)
   (intern
    (replace-regexp-in-string "-mode\\'" ""
@@ -1205,13 +1154,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
     (add-to-list 'polymode-mode-name-aliases alias)))
 
 (with-eval-after-load "polymode-core"
-  ;; Commented out since the font-locking for Web mode tends to bleed into other areas
-  ;; of the file.
-  ;; (dolist (file-ext '(hbs html json))
-  ;;   (my-define-web-polymode file-ext))
-  ;; (dolist (file-ext '(js jsx))
-  ;;   (my-define-ts-web-polymode file-ext))
-  ;; (add-to-list 'polymode-mode-name-aliases '(javascript . my-js))
   (my-polymode-install-aliases)
   (my-replace-cdrs-in-alist 'sh-mode 'bash-ts-mode 'polymode-mode-name-aliases)
   (my-replace-cdrs-in-alist 'shell-script-mode 'bash-ts-mode 'polymode-mode-name-aliases))
@@ -1362,7 +1304,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (global-set-key (kbd "C-x g") #'goto-line)
 (global-set-key (kbd "C-x r r") #'rectangle-mark-mode)
 (global-set-key (kbd "C-x p") #'other-window)
-(global-set-key (kbd "<f2>") #'eglot-rename)
 
 (defun my-kill-emacs ()
   (interactive)
