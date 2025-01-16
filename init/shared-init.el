@@ -645,6 +645,24 @@ interactively.
     :stream t
     :key #'gptel-api-key-from-auth-source))
 
+(defvar my-gptel--mistral
+  (gptel-make-openai "Mistral"
+    :stream t
+    :host "api.mistral.ai"
+    :key #'gptel-api-key-from-auth-source
+    :models '((codestral-latest
+               :description "Official codestral Mistral AI model"
+               :capabilities (tool json url)
+               :context-window 256)
+              (open-codestral-mamba
+               :description "Official codestral-mamba Mistral AI model"
+               :capabilities (tool json url)
+               :context-window 256)
+              (open-mistral-nemo
+               :description "Official open-mistral-nemo Mistral AI model"
+               :capabilities (tool json url)
+               :context-window 131))))
+
 (defun my-gptel-start ()
   "Start gptel with a default buffer name."
   (interactive)
@@ -1356,6 +1374,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 ;; Use Ivy instead of the buffer list when I typo it
 (global-set-key (kbd "C-x C-b") 'ivy-switch-buffer)
+
+;; Typo prevention
+(global-set-key (kbd "C-x C-d") #'counsel-find-file)
 
 ;; Disable some keybinds to avoid typos
 (global-set-key [insert] (lambda () (interactive)))
