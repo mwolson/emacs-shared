@@ -959,7 +959,7 @@ Use the region instead if one is selected."
 (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.json\\'" . web-mode))
 (add-hook 'web-mode-hook #'add-node-modules-path t)
-(add-hook 'web-mode-hook #'my-setup-web-ligatures t)
+(add-hook 'web-mode-hook #'my-setup-web-mode-ligatures t)
 
 ;; Zig
 (add-to-list 'load-path (concat my-emacs-path "elisp/zig-ts-mode"))
