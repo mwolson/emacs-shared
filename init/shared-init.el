@@ -825,6 +825,8 @@ Use the region instead if one is selected."
 (add-hook 'c-ts-base-mode-hook #'my-xref-minor-mode t)
 
 ;; C# - requires exactly v0.20.0 of its treesit grammar
+;; `C-c . .` doesn't currently work, see this for ideas:
+;; https://github.com/theschmocker/dotfiles/blob/33944638a5a59ddba01b64066daf50d46e5f0c3a/emacs/.doom.d/config.el#L807
 (with-eval-after-load "csharp-ts-mode"
   (define-key csharp-mode-map (kbd "C-c .") nil))
 
