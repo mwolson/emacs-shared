@@ -645,6 +645,11 @@ interactively.
     :stream t
     :key #'gptel-api-key-from-auth-source))
 
+(defvar my-gptel--gemini
+  (gptel-make-gemini "Gemini"
+    :stream t
+    :key #'gptel-api-key-from-auth-source))
+
 (defvar my-gptel--mistral
   (gptel-make-openai "Mistral"
     :stream t
