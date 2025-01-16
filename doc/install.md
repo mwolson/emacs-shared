@@ -81,7 +81,11 @@ asdf install pnpm latest
 asdf global pnpm latest
 ```
 
-## Install Omnisharp
+## Install Omnisharp (optional)
+
+Since this requires installing a .NET SDK, it's optional.
+
+Note: `C-c . .` currently doesn't work as of Emacs 29.4.
 
 *Windows*
 
@@ -101,7 +105,7 @@ Confirm that you can run `omnisharp --help` and get a help menu. If you get "ass
 
 *Arch Linux*
 
-Run `yay install omnisharp-roslyn`
+Run `paru -S omnisharp-roslyn-bin`
 
 ## Install ripgrep
 

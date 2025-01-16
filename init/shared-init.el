@@ -477,6 +477,8 @@
              '("\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"
                . dockerfile-ts-mode))
 
+(add-to-list 'auto-mode-alist '("/.dockerignore\\'" . gitignore-mode))
+
 ;; Support for s6-overlay containers: https://github.com/just-containers/s6-overlay
 (setq auto-mode-interpreter-regexp
       (replace-regexp-in-string "/bin/env" "/\\(?:usr/\\)?bin/\\(?:with-cont\\)?env"
@@ -799,11 +801,14 @@ Use the region instead if one is selected."
 (add-hook 'c-ts-base-mode-hook #'my-eglot-ensure)
 (add-hook 'c-ts-base-mode-hook #'my-xref-minor-mode t)
 
-;; C#
-(with-eval-after-load "csharp-mode"
+;; C# - requires exactly v0.20.0 of its treesit grammar
+(with-eval-after-load "csharp-ts-mode"
   (define-key csharp-mode-map (kbd "C-c .") nil))
 
-(add-hook 'csharp-mode-hook #'my-eglot-ensure)
+(my-remap-major-mode 'csharp-mode 'csharp-ts-mode)
+(add-hook 'csharp-ts-mode-hook #'my-xref-minor-mode t)
+(when (executable-find "omnisharp")
+  (add-hook 'csharp-ts-mode-hook #'my-eglot-ensure))
 
 ;; Clojure
 (with-eval-after-load "clojure-ts-mode"
