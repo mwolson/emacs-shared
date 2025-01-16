@@ -41,16 +41,16 @@ function install_grammar() {
     local lang=$1
     local repo=${2:-"$1"}
     local subdir=${3:-src}
-    local needs_npm=$4
+    local needs_pnpm=$4
     local soext="$(get_so_ext)"
 
     update_submodule extra/"tree-sitter-${repo}"
     qpushd "$(get_topdir)"/extra/tree-sitter-"${repo}"
 
-    if [[ -n "${needs_npm}" ]]; then
+    if [[ -n "${needs_pnpm}" ]]; then
         echo "Installing ${lang} tree-sitter dependencies..."
-        npm install --no-audit --no-fund
-        npx tree-sitter generate --no-bindings
+        pnpm import --quiet
+        pnpm install --prod --quiet
     fi
 
     qpushd "$subdir"

@@ -524,6 +524,9 @@
 ;; MariaDB/MySQL conf files
 (add-to-list 'auto-mode-alist '("\\.cnf\\'" . conf-mode))
 
+;; npmrc conf files
+(add-to-list 'auto-mode-alist '("\\.npmrc\\'" . conf-mode))
+
 ;; SystemD conf files
 (add-to-list 'auto-mode-alist '("\\.service\\'" . conf-mode))
 

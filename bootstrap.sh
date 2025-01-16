@@ -35,7 +35,7 @@ BUILD=y
 compile_check which
 compile_check make
 compile_check node
-compile_check npm
+compile_check pnpm
 if [[ $OS == Windows ]]; then
     compile_check ninja
 
@@ -61,16 +61,16 @@ if [[ $OS == Windows ]]; then
         fi
     fi
 elif [[ $OS == macOS ]]; then
-    if ! test -e /Applications/Emacs.app; then
+    if [[ !  -e /Applications/Emacs.app ]]; then
         echo >&2 "Error: Emacs does not seem to be installed in Applications"
         exit 1
     fi
-    if ! test -e /opt/homebrew/opt/emacs-plus@29/Emacs.app/Contents/MacOS/Emacs; then
+    if [[ ! -e /opt/homebrew/opt/emacs-plus@29/Emacs.app/Contents/MacOS/Emacs ]]; then
         echo >&2 "Error: Could not find Emacs Homebrew installation"
         exit 1
     fi
 elif [[ $OS_VARIANT == Ubuntu ]]; then
-    if ! test -x /usr/local/bin/emacs; then
+    if [[ ! -x /usr/local/bin/emacs ]]; then
         echo >&2 "Error: /usr/local/bin/emacs does not exist"
         exit 1
     fi
@@ -119,8 +119,8 @@ git submodule sync
 git submodule update --depth 1
 echo
 
-if test -n "$BUILD"; then
-    pnpm i
+if [[ -n "$BUILD" ]]; then
+    pnpm install --quiet
 fi
 
 emacs --script "$(get_topdir)"/install-packages.el 2>&1 | grep -v '^Loading '
@@ -132,7 +132,7 @@ git submodule init
 git submodule update --depth 1
 qpopd
 
-if test -n "$BUILD_GIT_MANPAGES"; then
+if [[ -n "$BUILD_GIT_MANPAGES" ]]; then
     qpushd extra/git
     git submodule init
     git submodule update --depth 1
@@ -182,7 +182,7 @@ done
 
 update_submodule extra/emacs
 
-if test -n "$BUILD"; then
+if [[ -n "$BUILD" ]]; then
     "$(get_topdir)"/install-treesit-grammar.sh \
         markdown_inline markdown \
         "tree-sitter-markdown-inline/src"
@@ -193,7 +193,7 @@ if test -n "$BUILD"; then
     "
     <<< $tree_sitter_modules xargs -P4 -n1 "$(get_topdir)"/install-treesit-grammar.sh
 
-    "$(get_topdir)"/install-treesit-grammar.sh swift "" "" npm
+    "$(get_topdir)"/install-treesit-grammar.sh swift "" "" pnpm
 else
     notify "Warning: tree-sitter modules will not be built, some major modes will not work"
 fi
