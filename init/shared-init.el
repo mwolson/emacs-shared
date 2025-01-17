@@ -496,12 +496,16 @@
 ;; Apheleia for automatic running of prettier
 (apheleia-global-mode 1)
 
-;; ANSI colors in compile buffer
-(add-hook 'compilation-filter-hook #'ansi-color-compilation-filter t)
-
 ;; Atomic Chrome: Edit Server support for launching Emacs from browsers
 (when my-server-start-p
   (my-defer-startup #'atomic-chrome-start-server))
+
+;; Compile buffers
+(with-eval-after-load "compile"
+  (define-key compilation-mode-map (kbd "M-g") #'recompile)
+  (define-key compilation-shell-minor-mode-map (kbd "M-g") #'recompile))
+
+(add-hook 'compilation-filter-hook #'ansi-color-compilation-filter t)
 
 ;; Editorconfig support
 (editorconfig-mode 1)
