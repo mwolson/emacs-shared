@@ -912,16 +912,17 @@ Use the region instead if one is selected."
   (list :enable t
         :lint t))
 
-(if (executable-find "deno")
-    (add-to-list 'eglot-server-programs
-                 `(,my-jtsx-ts-major-modes
-                   . (eglot-deno "deno" "lsp")))
-  (add-to-list 'eglot-server-programs
-               `(,my-jtsx-ts-major-modes
-                 . ("typescript-language-server" "--stdio"
-                    :initializationOptions
-                    (:plugins [(:name "typescript-eslint-language-service"
-                                      :location ,my-emacs-path)])))))
+;; (if (executable-find "deno")
+;;     (add-to-list 'eglot-server-programs
+;;                  `(,my-jtsx-ts-major-modes
+;;                    . (eglot-deno "deno" "lsp")))
+(add-to-list 'eglot-server-programs
+             `(,my-jtsx-ts-major-modes
+               . ("typescript-language-server" "--stdio"
+                  :initializationOptions
+                  (:plugins [(:name "typescript-eslint-language-service"
+                                    :location ,my-emacs-path)]))))
+;;)
 
 ;; Kotlin
 (add-to-list 'load-path (concat my-emacs-path "elisp/kotlin-ts-mode"))
