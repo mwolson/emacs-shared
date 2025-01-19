@@ -847,6 +847,7 @@ Use the region instead if one is selected."
   (my-minuet-sync-options-from-gptel 'claude my-gptel--claude)
   (my-minuet-sync-options-from-gptel 'codestral my-gptel--codestral)
   (my-minuet-sync-options-from-gptel 'openai gptel--openai)
+  (setopt minuet-auto-suggestion-debounce-delay 1.0)
   (setopt minuet-context-window 1384)
   (setopt minuet-provider 'codestral)
   (define-key minuet-active-mode-map (kbd "C-c C-a") #'minuet-accept-suggestion)
@@ -858,6 +859,10 @@ Use the region instead if one is selected."
 ;;   (autoload #'company-minuet-setup "company-minuet" "`company-mode' completion for minuet." t)
 ;;   (add-hook 'prog-mode-hook #'company-minuet-setup))
 
+;; (autoload #'minuet-capf-setup "minuet-capf" "Setup completion-at-point for minuet." t)
+
+;; (add-hook 'prog-mode-hook #'minuet-auto-suggestion-mode)
+
 (add-to-list 'load-path (concat my-emacs-path "elisp/minuet"))
 (autoload #'minuet-auto-suggestion-mode "minuet" "Toggle automatic code suggestions." t)
 (autoload #'minuet-complete-with-minibuffer "minuet" "Complete using minibuffer interface." t)
@@ -866,7 +871,7 @@ Use the region instead if one is selected."
 (defvar my-minuet-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "a") #'my-minuet-auto-suggestion-mode)
-    (define-key map (kbd "c") #'my-minuet-complete)
+    (define-key map (kbd "c") #'company-complete)
     (define-key map (kbd "m") #'minuet-complete-with-minibuffer)
     map)
   "My key customizations for minuet.")

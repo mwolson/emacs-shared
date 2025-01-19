@@ -40,7 +40,7 @@
   "Company backend for minuet."
   :group 'company)
 
-(defcustom company-minuet-idle-delay 0.5
+(defcustom company-minuet-idle-delay 1
   "Delay in seconds before minuet completion starts automatically."
   :type 'number
   :group 'company-minuet)
@@ -57,10 +57,7 @@
 (defun company-minuet--candidates-callback (candidates)
   "Store CANDIDATES in cache and trigger company completion."
   (setq candidates (list (cl-reduce #'company-minuet--get-longest candidates)))
-  (setq company-minuet--cached-candidates candidates)
-  candidates)
-;; (when company-minuet--cached-candidates
-;;   (company-complete)))
+  (setq company-minuet--cached-candidates candidates))
 
 (defun company-minuet (command &optional arg &rest _ignored)
   "Company backend for minuet completion.
