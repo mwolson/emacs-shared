@@ -761,6 +761,7 @@ Use the region instead if one is selected."
 (defun my-gptel-add-current-file ()
   "Add the current file to the LLM context."
   (interactive)
+  (require 'gptel-context)
   (gptel-context-add-file (buffer-file-name)))
 
 (defun my-gptel-view-context ()
@@ -834,6 +835,7 @@ Use the region instead if one is selected."
 
 (defun my-minuet-complete ()
   (interactive)
+  (require 'minuet)
   (let ((minuet-n-completions 1)
         (minuet-add-single-line-entry nil))
     ;; note - `minuet-completion-in-region` doesn't actually work with a region
@@ -851,6 +853,10 @@ Use the region instead if one is selected."
   (define-key minuet-active-mode-map (kbd "C-c C-k") #'minuet-dismiss-suggestion)
   (define-key minuet-active-mode-map (kbd "C-c C-n") #'minuet-next-suggestion)
   (define-key minuet-active-mode-map (kbd "C-c C-p") #'minuet-previous-suggestion))
+
+;; (with-eval-after-load "company"
+;;   (autoload #'company-minuet-setup "company-minuet" "`company-mode' completion for minuet." t)
+;;   (add-hook 'prog-mode-hook #'company-minuet-setup))
 
 (add-to-list 'load-path (concat my-emacs-path "elisp/minuet"))
 (autoload #'minuet-auto-suggestion-mode "minuet" "Toggle automatic code suggestions." t)
