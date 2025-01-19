@@ -90,11 +90,15 @@
      ("gnu" . "http://elpa.gnu.org/packages/")))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(add-node-modules-path amx apheleia archive-rpm atomic-chrome browse-kill-ring cider clojure-ts-mode color-theme-sanityinc-tomorrow company company-statistics counsel diminish dumb-jump editorconfig el-mock erlang fish-mode flx git-modes gptel hydra ivy js-comint ligature lua-mode magit markdown-mode maxframe minions modus-themes nix-ts-mode package-utils polymode reformatter rg slime swiper terraform-mode transient web-mode wgrep))
+   '(add-node-modules-path amx apheleia archive-rpm atomic-chrome browse-kill-ring cider clojure-ts-mode color-theme-sanityinc-tomorrow company company-statistics counsel diminish dumb-jump editorconfig el-mock erlang fish-mode flx git-modes gptel hydra ivy js-comint ligature lua-mode magit markdown-mode maxframe minions modus-themes nix-ts-mode package-utils plz polymode reformatter rg slime swiper terraform-mode transient web-mode wgrep))
  '(post-jump-header nil)
  '(project-vc-merge-submodules nil)
  '(recentf-mode nil)
  '(require-final-newline nil)
+ '(safe-local-variable-values
+   '((allout-layout . (lambda () t))
+     (editorconfig-lisp-use-default-indent . t)
+     (emacs-lisp-docstring-fill-column . (lambda () t))))
  '(save-place t nil (saveplace))
  '(save-place-limit 20)
  '(select-enable-clipboard t)

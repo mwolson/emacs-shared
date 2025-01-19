@@ -20,6 +20,9 @@
 [submodule "elisp/ligature"]
         path = elisp/ligature
         url = https://github.com/mickeynp/ligature.el.git
+[submodule "elisp/minuet"]
+	path = elisp/minuet
+	url = https://github.com/milanglacier/minuet-ai.el.git
 [submodule "elisp/polymode"]
         path = elisp/polymode
         url = https://github.com/polymode/polymode.git

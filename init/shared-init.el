@@ -649,6 +649,17 @@ interactively.
     :stream t
     :key #'gptel-api-key-from-auth-source))
 
+(defvar my-gptel--codestral
+  ;; Note - codestral doesn't yet define a chat API for their latest beta
+  (gptel-make-openai "Codestral"
+    :stream t
+    :host "codestral.mistral.ai"
+    :key #'gptel-api-key-from-auth-source
+    :models '((codestral-latest
+               :description "Official codestral Mistral AI model"
+               :capabilities (tool json)
+               :context-window 256))))
+
 (defvar my-gptel--gemini
   (gptel-make-gemini "Gemini"
     :stream t
@@ -783,6 +794,78 @@ Use the region instead if one is selected."
   (gptel-context-remove-all))
 
 (autoload #'gptel-manual-complete "gptel-manual-complete" t)
+
+;; Minuet for AI completion
+(defun my-minuet-get-api-key (backend)
+  (let ((gptel-backend backend))
+    (gptel-api-key-from-auth-source)))
+
+(defun my-minuet-sync-options-from-gptel (m-backend g-backend)
+  (let* ((options-name (format "minuet-%s-options" (symbol-name m-backend)))
+         (options (symbol-value (intern options-name))))
+    (plist-put options :api-key `(lambda () (my-minuet-get-api-key ,g-backend)))
+    (plist-put options :model (symbol-name (car (gptel-backend-models g-backend))))))
+
+(defun my-minuet-get-longest (it1 it2)
+  (if (< (length it1) (length it2)) it2 it1))
+
+(defun my-minuet-complete-2 (items)
+  (setq items (list (-reduce #'my-minuet-get-longest items)))
+  ;; close current minibuffer session, if any
+  (when (active-minibuffer-window)
+    (abort-recursive-edit))
+  (completion-in-region (point) (point) items))
+
+(defun my-minuet-complete-1 ()
+  "Complete code in region with LLM."
+  (interactive)
+  (let ((current-buffer (current-buffer))
+        (available-p-fn (intern (format "minuet--%s-available-p" minuet-provider)))
+        (complete-fn (intern (format "minuet--%s-complete" minuet-provider)))
+        (context (minuet--get-context)))
+    (unless (funcall available-p-fn)
+      (minuet--log (format "Minuet provider %s is not available" minuet-provider))
+      (error "Minuet provider %s is not available" minuet-provider))
+    (funcall complete-fn
+             context
+             `(lambda (items)
+                (with-current-buffer ,current-buffer
+                  (my-minuet-complete-2 items))))))
+
+(defun my-minuet-complete ()
+  (interactive)
+  (let ((minuet-n-completions 1)
+        (minuet-add-single-line-entry nil))
+    ;; note - `minuet-completion-in-region` doesn't actually work with a region
+    ;; and prefers having multiple completions where I just want one
+    ;; (minuet-completion-in-region)
+    (my-minuet-complete-1)))
+
+(with-eval-after-load "minuet"
+  (my-minuet-sync-options-from-gptel 'claude my-gptel--claude)
+  (my-minuet-sync-options-from-gptel 'codestral my-gptel--codestral)
+  (my-minuet-sync-options-from-gptel 'openai gptel--openai)
+  (setopt minuet-context-window 1384)
+  (setopt minuet-provider 'codestral)
+  (define-key minuet-active-mode-map (kbd "C-c C-a") #'minuet-accept-suggestion)
+  (define-key minuet-active-mode-map (kbd "C-c C-k") #'minuet-dismiss-suggestion)
+  (define-key minuet-active-mode-map (kbd "C-c C-n") #'minuet-next-suggestion)
+  (define-key minuet-active-mode-map (kbd "C-c C-p") #'minuet-previous-suggestion))
+
+(add-to-list 'load-path (concat my-emacs-path "elisp/minuet"))
+(autoload #'minuet-auto-suggestion-mode "minuet" "Toggle automatic code suggestions." t)
+(autoload #'minuet-completion-in-region "minuet" "Complete code in region with LLM." t)
+(autoload #'minuet-show-suggestion "minuet" "Show code suggestion using overlay at point." t)
+
+(defvar my-minuet-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "a") #'my-minuet-auto-suggestion-mode)
+    (define-key map (kbd "c") #'my-minuet-complete)
+    (define-key map (kbd "s") #'minuet-completion-in-region))
+  "My key customizations for minuet.")
+
+(global-set-key (kbd "C-c m") my-minuet-map)
+(global-set-key (kbd "C-x m") my-minuet-map)
 
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
 (require 'dumb-jump)

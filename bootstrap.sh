@@ -172,7 +172,7 @@ for mod in $dir_elisp_submodules; do
 done
 
 file_elisp_submodules="
-    asdf-vm erlang-ts jtsx kotlin-ts-mode poly-markdown prisma-ts-mode
+    asdf-vm erlang-ts jtsx kotlin-ts-mode minuet poly-markdown prisma-ts-mode
     swift-ts-mode tmux-mode zig-ts-mode
 "
 for mod in $file_elisp_submodules; do
