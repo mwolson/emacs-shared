@@ -854,14 +854,15 @@ Use the region instead if one is selected."
 
 (add-to-list 'load-path (concat my-emacs-path "elisp/minuet"))
 (autoload #'minuet-auto-suggestion-mode "minuet" "Toggle automatic code suggestions." t)
-(autoload #'minuet-completion-in-region "minuet" "Complete code in region with LLM." t)
+(autoload #'minuet-complete-with-minibuffer "minuet" "Complete using minibuffer interface." t)
 (autoload #'minuet-show-suggestion "minuet" "Show code suggestion using overlay at point." t)
 
 (defvar my-minuet-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "a") #'my-minuet-auto-suggestion-mode)
     (define-key map (kbd "c") #'my-minuet-complete)
-    (define-key map (kbd "s") #'minuet-completion-in-region))
+    (define-key map (kbd "m") #'minuet-complete-with-minibuffer)
+    map)
   "My key customizations for minuet.")
 
 (global-set-key (kbd "C-c m") my-minuet-map)
