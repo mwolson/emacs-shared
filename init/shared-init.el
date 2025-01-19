@@ -847,9 +847,15 @@ Use the region instead if one is selected."
   (my-minuet-sync-options-from-gptel 'claude my-gptel--claude)
   (my-minuet-sync-options-from-gptel 'codestral my-gptel--codestral)
   (my-minuet-sync-options-from-gptel 'openai gptel--openai)
+
+  ;; per minuet's README.md, prevent request timeout from too many tokens
+  (minuet-set-optional-options minuet-codestral-options :stop ["\n\n"])
+  (minuet-set-optional-options minuet-codestral-options :max_tokens 256)
+
   (setopt minuet-auto-suggestion-debounce-delay 1.0)
   (setopt minuet-context-window 1384)
   (setopt minuet-provider 'codestral)
+
   (define-key minuet-active-mode-map (kbd "C-c C-a") #'minuet-accept-suggestion)
   (define-key minuet-active-mode-map (kbd "C-c C-k") #'minuet-dismiss-suggestion)
   (define-key minuet-active-mode-map (kbd "C-c C-n") #'minuet-next-suggestion)
