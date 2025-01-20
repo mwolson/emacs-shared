@@ -650,7 +650,6 @@ interactively.
     :key #'gptel-api-key-from-auth-source))
 
 (defvar my-gptel--codestral
-  ;; Note - codestral doesn't yet define a chat API for their latest beta
   (gptel-make-openai "Codestral"
     :stream t
     :host "codestral.mistral.ai"
@@ -714,12 +713,10 @@ Use the region instead if one is selected."
 (defun my-gptel-add-current-file ()
   "Add the current file to the LLM context."
   (interactive)
-  (require 'gptel-context)
   (gptel-context-add-file (buffer-file-name)))
 
 (defun my-gptel-view-context ()
   (interactive)
-  (require 'gptel-context)
   (gptel-context--buffer-setup))
 
 (defun my-gptel-rewrite-function ()
@@ -744,11 +741,18 @@ Use the region instead if one is selected."
 
 (defun my-gptel-context-remove-all ()
   (interactive)
-  (require 'gptel-context)
   (gptel-context-remove-all))
 
-(autoload #'gptel-manual-complete--mark-function "gptel-manual-complete" t)
-(autoload #'gptel-manual-complete "gptel-manual-complete" t)
+(autoload #'gptel-context-add-file "gptel-context"
+  "Add the file at PATH to the gptel context." t)
+(autoload #'gptel-context--buffer-setup "gptel-context"
+  "Set up the gptel context buffer." t)
+(autoload #'gptel-context-remove-all "gptel-context"
+  "gptel-context-remove-all" t)
+(autoload #'gptel-manual-complete "gptel-manual-complete"
+  "Complete using an LLM." t)
+(autoload #'gptel-manual-complete--mark-function "gptel-manual-complete"
+  "Put mark at end of this function, point at beginning." t)
 
 ;; Minuet for AI completion
 (defun my-minuet-get-api-key (backend)
@@ -860,7 +864,9 @@ Use the region instead if one is selected."
   "My key customizations for AI and xref.")
 
 (global-set-key (kbd "C-c .") my-xref-map)
+(global-set-key (kbd "C-c C-.") my-xref-map)
 (global-set-key (kbd "C-x .") my-xref-map)
+(global-set-key (kbd "C-x C-.") my-xref-map)
 
 (defvar my-xref-minor-mode-map
   (let ((map (make-sparse-keymap)))
