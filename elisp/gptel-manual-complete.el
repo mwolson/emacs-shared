@@ -94,7 +94,8 @@ Either the last function or the current region will be used for context."
          (prompt (list (or (get-char-property (point) 'gptel-rewrite)
                            (buffer-substring-no-properties (region-beginning) (region-end)))
                        "What is the required change?"
-                       gptel-manual-complete-directive)))
+                       gptel-manual-complete-directive))
+         (buffer (current-buffer)))
     (deactivate-mark)
     (when nosystem
       (setcar prompt (concat (car-safe (gptel--parse-directive
@@ -110,7 +111,10 @@ Either the last function or the current region will be used for context."
         (overlay-put ov 'category 'gptel)
         (overlay-put ov 'evaporate t)
         (cons ov (generate-new-buffer "*gptel-manual-complete*")))
-      :callback #'gptel--rewrite-callback)))
+      :callback `(lambda (&rest args)
+                   (apply #'gptel--rewrite-callback args)
+                   (with-current-buffer ,buffer
+                     (backward-char))))))
 
 (provide 'gptel-manual-complete)
 ;;; gptel-manual-complete.el ends here
