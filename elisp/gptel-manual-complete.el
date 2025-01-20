@@ -30,17 +30,24 @@
 (defvar gptel-manual-complete-directive "Complete at end: ")
 
 (defun gptel-manual-complete--mark-function-default (&optional steps)
-  (let ((pt-min nil)
-        (pt-max nil))
+  (let ((pt-min (point))
+        (pt-mid (point))
+        (pt-max (point)))
     (save-mark-and-excursion
-      (mark-defun steps)
-      (setq pt-min (region-beginning)
-            pt-max (region-end)))
-    (save-mark-and-excursion
-      (mark-paragraph steps)
-      (when (< (region-beginning) pt-min)
+      (ignore-errors
+        (mark-defun steps)
         (setq pt-min (region-beginning)
               pt-max (region-end))))
+    (save-mark-and-excursion
+      (mark-paragraph steps)
+      (when (<= (region-beginning) pt-min)
+        (when (save-excursion
+                (goto-char pt-mid)
+                (beginning-of-line)
+                (looking-at-p "[[:space:]]*$"))
+          (forward-paragraph 1))
+        (setq pt-min (region-beginning)
+              pt-max (max pt-max (region-end)))))
     (set-mark pt-min)
     (goto-char pt-max)))
 
@@ -58,14 +65,19 @@
 (defun gptel-manual-complete--mark-function (&optional steps)
   "Put mark at end of this function, point at beginning.
 
-If STEPS is negative, mark `- arg - 1` extra functions backward."
+If STEPS is negative, mark `- arg - 1` extra functions backward.
+The behavior for when STEPS is positive is not currently well-defined."
   (interactive)
-  (let ((pt-min nil)
+  (let ((pt-min (point))
         (pt-max nil))
-    (save-mark-and-excursion
-      (if (treesit-parser-list)
-          (gptel-manual-complete--mark-function-treesit steps)
-        (gptel-manual-complete--mark-function-default steps))
+    (when (null steps) (setq steps -1))
+    (when (treesit-parser-list)
+      (save-mark-and-excursion
+        (gptel-manual-complete--mark-function-treesit steps)
+        (setq pt-min (region-beginning)
+              pt-max (region-end))))
+    (gptel-manual-complete--mark-function-default steps)
+    (when (< (region-beginning) pt-min)
       (setq pt-min (region-beginning)
             pt-max (region-end)))
     (goto-char pt-min)
