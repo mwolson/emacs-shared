@@ -702,60 +702,13 @@ interactively.
   (cl-letf (((symbol-function 'gptel-context-quit) (lambda () (quit-window))))
     (gptel-context-confirm)))
 
-(defun my-mark-function-1-default (&optional steps)
-  (let ((pt-min nil)
-        (pt-max nil))
-    (save-mark-and-excursion
-      (mark-defun steps)
-      (setq pt-min (region-beginning)
-            pt-max (region-end)))
-    (save-mark-and-excursion
-      (mark-paragraph steps)
-      (when (< (region-beginning) pt-min)
-        (setq pt-min (region-beginning)
-              pt-max (region-end))))
-    (set-mark pt-min)
-    (goto-char pt-max)))
-
-(defun my-mark-function-1-treesit (&optional steps)
-  (treesit-end-of-defun)
-  (let ((pt-max (point)))
-    (treesit-beginning-of-defun)
-    (setq steps (1- (- 0 (or steps 0))))
-    (while (> steps 0)
-      (treesit-beginning-of-defun)
-      (cl-decf steps))
-    (set-mark (point))
-    (goto-char pt-max)))
-
-(defun my-mark-function (&optional steps)
-  "Put mark at end of this function, point at beginning.
-
-If STEPS is negative, mark `- arg - 1` extra functions backward."
-  (interactive)
-  (let ((pt-min nil)
-        (pt-max nil))
-    (save-mark-and-excursion
-      (if (treesit-parser-list)
-          (my-mark-function-1-treesit steps)
-        (my-mark-function-1-default steps))
-      (setq pt-min (region-beginning)
-            pt-max (region-end)))
-    (goto-char pt-min)
-    (while (and (looking-at-p "[[:space:]\r\n]")
-                (< (point) pt-max))
-      (forward-char))
-    (setq pt-min (point))
-    (goto-char (1- pt-max))
-    (push-mark pt-min nil t)))
-
 (defun my-gptel-add-function ()
   "Add the current function to the LLM context.
 
 Use the region instead if one is selected."
   (interactive)
   (unless (use-region-p)
-    (my-mark-function))
+    (gptel-manual-complete--mark-function))
   (call-interactively #'gptel-add))
 
 (defun my-gptel-add-current-file ()
@@ -775,7 +728,7 @@ Use the region instead if one is selected."
 Rewrite the region instead if one is selected."
   (interactive)
   (unless (use-region-p)
-    (my-mark-function))
+    (gptel-manual-complete--mark-function))
   (call-interactively #'gptel-rewrite))
 
 (defun my-gptel-query-function ()
@@ -794,6 +747,7 @@ Use the region instead if one is selected."
   (require 'gptel-context)
   (gptel-context-remove-all))
 
+(autoload #'gptel-manual-complete--mark-function "gptel-manual-complete" t)
 (autoload #'gptel-manual-complete "gptel-manual-complete" t)
 
 ;; Minuet for AI completion
