@@ -664,6 +664,13 @@ interactively.
     :stream t
     :key #'gptel-api-key-from-auth-source))
 
+(defvar my-gptel--local-jan
+  (gptel-make-privategpt "Local AI on Jan"
+    :stream t
+    :host "localhost:1337"
+    :protocol "http"
+    :models '(phi-4-Q5_K_M)))
+
 (defvar my-gptel--mistral
   (gptel-make-openai "Mistral"
     :stream t
