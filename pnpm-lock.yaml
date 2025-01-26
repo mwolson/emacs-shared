@@ -11,9 +11,6 @@ importers:
       prettier:
         specifier: ^3.4.2
         version: 3.4.2
-      pyright:
-        specifier: ^1.1.392
-        version: 1.1.392
       typescript-eslint-language-service:
         specifier: ^5.0.5
         version: 5.0.5(@typescript-eslint/parser@8.20.0(eslint@9.18.0)(typescript@5.7.3))(eslint@9.18.0)(typescript@5.7.3)
@@ -268,11 +265,6 @@ packages:
   flatted@3.3.2:
     resolution: {integrity: sha512-AiwGJM8YcNOaobumgtng+6NHuOqC3A7MixFeDafM3X9cIUM+xUXoS5Vfgf+OihAYe20fxqNM9yPBXJzRtZ/4eA==}
 
-  fsevents@2.3.3:
-    resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
-    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
-    os: [darwin]
-
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
     engines: {node: '>= 6'}
@@ -404,11 +396,6 @@ packages:
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
-
-  pyright@1.1.392:
-    resolution: {integrity: sha512-ilLW65Qh7h+PxxDY5M7REv8fPw2of9RRlTLEKUJnovxD9pVoImf1Q8h4nUoHNkxOLTurvTRA/HGcZhwAB9L5IA==}
-    engines: {node: '>=14.0.0'}
-    hasBin: true
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
@@ -784,9 +771,6 @@ snapshots:
 
   flatted@3.3.2: {}
 
-  fsevents@2.3.3:
-    optional: true
-
   glob-parent@5.1.2:
     dependencies:
       is-glob: 4.0.3
@@ -894,10 +878,6 @@ snapshots:
   prettier@3.4.2: {}
 
   punycode@2.3.1: {}
-
-  pyright@1.1.392:
-    optionalDependencies:
-      fsevents: 2.3.3
 
   queue-microtask@1.2.3: {}
 

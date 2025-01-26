@@ -15,7 +15,6 @@
   "license": "ISC",
   "dependencies": {
     "prettier": "^3.4.2",
-    "pyright": "^1.1.392",
     "typescript-eslint-language-service": "^5.0.5",
     "typescript-language-server": "^4.3.3"
   }

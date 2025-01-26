@@ -40,9 +40,32 @@ pacman -R git
 
 ## (Arch Linux only) Install utilities
 
+It's assumed that you have installed `paru` already. If you haven't yet, do this:
+
 ```sh
-sudo pacman -S aspell-en base-devel fd gnutls gopls libssh2-devel make man-db man-pages ninja openssh ripgrep
+sudo pacman -Sy --needed base-devel
+mkdir -p ~/pkgbuilds
+cd ~/pkgbuilds
+git clone https://aur.archlinux.org/paru-bin.git
+cd paru-bin
+makepkg -si
 ```
+
+Minimal install:
+
+```sh
+sudo paru -S asdf-vm aspell-en base-devel basedpyright clang fd gnutls gopls libssh2-devel make man-db man-pages ninja openssh ripgrep rust-analyzer zls
+```
+
+For a full install, in addition to the above also run:
+
+```sh
+sudo paru -S jdtls omnisharp-roslyn-bin
+```
+
+## Install basedpyright
+
+You'll need to [install basedpyright](https://docs.basedpyright.com/latest/installation/command-line-and-language-server/) in order to support language server features for Python. On Mac, install the `basedpyright` package from homebrew.
 
 ## Install clangd
 
@@ -194,7 +217,7 @@ Download [Fira Code](https://github.com/tonsky/FiraCode#download--install) and f
 *Arch Linux*
 
 ```sh
-pacman -S ttf-fira-code
+paru -S ttf-fira-code
 ```
 
 *Ubuntu*

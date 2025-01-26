@@ -1091,7 +1091,10 @@ Use the region instead if one is selected."
 ;; Python
 (add-to-list 'auto-mode-alist '("/uv\\.lock\\'" . conf-toml-mode))
 (my-remap-major-mode 'python-mode 'python-ts-mode)
-(add-hook 'python-mode-hook #'my-eglot-ensure) ; uses pyright
+(add-to-list 'eglot-server-programs
+             '((python-ts-mode python-mode)
+               "basedpyright-langserver" "--stdio"))
+(add-hook 'python-ts-mode-hook #'my-eglot-ensure) ; uses pyright
 
 ;; Rust
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
