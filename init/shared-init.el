@@ -648,7 +648,8 @@ interactively.
 
 ;; Set up gptel
 (with-eval-after-load "gptel"
-  (setopt gptel-temperature my-gptel-temperature)
+  (setopt gptel-backend my-gptel-backend
+          gptel-temperature my-gptel-temperature)
 
   (defvar my-gptel--claude
     (gptel-make-anthropic "Claude"
