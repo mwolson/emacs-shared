@@ -34,7 +34,14 @@
 (defvar my-frame-pad-width   (if (eq system-type 'darwin) 65 nil))
 (defvar my-frame-pad-height  (if (eq system-type 'darwin) 15 nil))
 (defvar my-gptel-backend     'my-gptel--claude)
+(defvar my-gptel-backend-local 'my-gptel--local-ai)
+(defvar my-gptel-backend-remote 'my-gptel--claude)
 (defvar my-gptel-model       nil)
+(defvar my-gptel-model-local 'Sky-T1-32B-Flash-Q4_K_S)
+(defvar my-gptel-model-remote nil)
+(defvar my-gptel-temperature 0.7)
+(defvar my-minuet-provider   'codestral)
+(defvar my-minuet-provider-remote 'codestral)
 (defvar my-remap-cmd-key-p   t)
 (defvar my-default-directory "~/")
 (defvar my-changelog-address "user@example.com")
@@ -640,54 +647,75 @@ interactively.
   (transient-bind-q-to-quit))
 
 ;; Set up gptel
+(with-eval-after-load "gptel"
+  (setopt gptel-temperature my-gptel-temperature)
+
+  (defvar my-gptel--claude
+    (gptel-make-anthropic "Claude"
+      :stream t
+      :key #'gptel-api-key-from-auth-source))
+
+  (defvar my-gptel--codestral
+    (gptel-make-openai "Codestral"
+      :stream t
+      :host "codestral.mistral.ai"
+      :key #'gptel-api-key-from-auth-source
+      :models '((codestral-latest
+                 :description "Official codestral Mistral AI model"
+                 :capabilities (tool json)
+                 :context-window 256))))
+
+  (defvar my-gptel--gemini
+    (gptel-make-gemini "Gemini"
+      :stream t
+      :key #'gptel-api-key-from-auth-source))
+
+  (defvar my-gptel-local-models
+    '((Sky-T1-32B-Flash-Q4_K_S
+       :description "Sky-T1-32B-Flash-Q4_K_S model"
+       :capabilities (media tool json url)
+       :context-window 256)
+      (FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS
+       :description "FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS model"
+       :capabilities (media json url)
+       :context-window 256)
+      (DeepSeek-R1-Distill-Qwen-7B-Q5_K_M
+       :description "DeepSeek-R1-Distill-Qwen-7B-Q5_K_M model"
+       :capabilities (media json url)
+       :context-window 256)
+      (phi-4-Q5_K_M
+       :description "phi-4-Q5_K_M model"
+       :capabilities (media json url)
+       :context-window 256)))
+
+  (defvar my-gptel--local-ai
+    (gptel-make-openai "Local AI Server"
+      :stream t
+      :host "localhost:1337"
+      :protocol "http"
+      :models my-gptel-local-models))
+
+  (defvar my-gptel--mistral
+    (gptel-make-openai "Mistral"
+      :stream t
+      :host "api.mistral.ai"
+      :key #'gptel-api-key-from-auth-source
+      :models '((codestral-latest
+                 :description "Official codestral Mistral AI model"
+                 :capabilities (tool json url)
+                 :context-window 256)
+                (open-codestral-mamba
+                 :description "Official codestral-mamba Mistral AI model"
+                 :capabilities (tool json url)
+                 :context-window 256)
+                (open-mistral-nemo
+                 :description "Official open-mistral-nemo Mistral AI model"
+                 :capabilities (tool json url)
+                 :context-window 131)))))
+
 (with-eval-after-load "gptel-context"
   (let ((map gptel-context-buffer-mode-map))
     (define-key map (kbd "q") #'my-gptel-context-save-and-quit)))
-
-(defvar my-gptel--claude
-  (gptel-make-anthropic "Claude"
-    :stream t
-    :key #'gptel-api-key-from-auth-source))
-
-(defvar my-gptel--codestral
-  (gptel-make-openai "Codestral"
-    :stream t
-    :host "codestral.mistral.ai"
-    :key #'gptel-api-key-from-auth-source
-    :models '((codestral-latest
-               :description "Official codestral Mistral AI model"
-               :capabilities (tool json)
-               :context-window 256))))
-
-(defvar my-gptel--gemini
-  (gptel-make-gemini "Gemini"
-    :stream t
-    :key #'gptel-api-key-from-auth-source))
-
-(defvar my-gptel--local-jan
-  (gptel-make-privategpt "Local AI on Jan"
-    :stream t
-    :host "localhost:1337"
-    :protocol "http"
-    :models '(phi-4-Q5_K_M)))
-
-(defvar my-gptel--mistral
-  (gptel-make-openai "Mistral"
-    :stream t
-    :host "api.mistral.ai"
-    :key #'gptel-api-key-from-auth-source
-    :models '((codestral-latest
-               :description "Official codestral Mistral AI model"
-               :capabilities (tool json url)
-               :context-window 256)
-              (open-codestral-mamba
-               :description "Official codestral-mamba Mistral AI model"
-               :capabilities (tool json url)
-               :context-window 256)
-              (open-mistral-nemo
-               :description "Official open-mistral-nemo Mistral AI model"
-               :capabilities (tool json url)
-               :context-window 131))))
 
 (defun my-gptel-start ()
   "Start gptel with a default buffer name."
@@ -701,6 +729,34 @@ interactively.
           gptel-model model)
     (with-suppressed-warnings ((obsolete warning-level-aliases))
       (switch-to-buffer (gptel backend-name)))))
+
+(defun my-gptel-toggle-local ()
+  "Start gptel with a default buffer name."
+  (interactive)
+  (require 'gptel)
+  (let* ((use-local (cond ((eq gptel-backend (symbol-value my-gptel-backend-local))
+                           nil)
+                          ((eq gptel-backend (symbol-value my-gptel-backend-remote))
+                           t)
+                          (t t)))
+         (backend-sym
+          (if use-local my-gptel-backend-local my-gptel-backend-remote))
+         (backend (symbol-value backend-sym))
+         (backend-name
+          (format "*%s*" (gptel-backend-name backend)))
+         (model (or (if use-local my-gptel-model-local my-gptel-model-remote)
+                    (car (gptel-backend-models backend)))))
+    (setq gptel-backend backend
+          my-gptel-backend backend-sym
+          gptel-model model
+          my-gptel-model model)
+    (if use-local
+        (setq minuet-provider 'openai-fim-compatible
+              my-minuet-provider 'openai-fim-compatible)
+      (setq minuet-provider my-minuet-provider-remote
+            my-minuet-provider my-minuet-provider-remote))
+    (message "gptel backend is now %s and minuet provider is now %s"
+             backend-sym minuet-provider)))
 
 (defun my-gptel-context-save-and-quit ()
   "Apply gptel context changes and quit."
@@ -750,28 +806,22 @@ Use the region instead if one is selected."
   (interactive)
   (gptel-context-remove-all))
 
+(autoload #'gptel-backend-name "gptel-openai"
+  "Access slot \"name\" of ‘gptel-backend’ struct." nil)
 (autoload #'gptel-context-add-file "gptel-context"
   "Add the file at PATH to the gptel context." t)
 (autoload #'gptel-context--buffer-setup "gptel-context"
   "Set up the gptel context buffer." t)
+(autoload #'gptel-context-confirm "gptel-context"
+  "Confirm pending operations and return to gptel's menu." t)
 (autoload #'gptel-context-remove-all "gptel-context"
-  "gptel-context-remove-all" t)
+  "Remove all gptel context." t)
 (autoload #'gptel-manual-complete "gptel-manual-complete"
   "Complete using an LLM." t)
 (autoload #'gptel-manual-complete--mark-function "gptel-manual-complete"
   "Put mark at end of this function, point at beginning." t)
 
 ;; Minuet for AI completion
-(defun my-minuet-get-api-key (backend)
-  (let ((gptel-backend backend))
-    (gptel-api-key-from-auth-source)))
-
-(defun my-minuet-sync-options-from-gptel (m-backend g-backend)
-  (let* ((options-name (format "minuet-%s-options" (symbol-name m-backend)))
-         (options (symbol-value (intern options-name))))
-    (plist-put options :api-key `(lambda () (my-minuet-get-api-key ,g-backend)))
-    (plist-put options :model (symbol-name (car (gptel-backend-models g-backend))))))
-
 (defun my-minuet-get-longest (it1 it2)
   (if (< (length it1) (length it2)) it2 it1))
 
@@ -803,23 +853,35 @@ Use the region instead if one is selected."
   (require 'minuet)
   (let ((minuet-n-completions 1)
         (minuet-add-single-line-entry nil))
-    ;; note - `minuet-completion-in-region` doesn't actually work with a region
-    ;; and prefers having multiple completions where I just want one
     ;; (minuet-completion-in-region)
     (my-minuet-complete-1)))
 
+(defun my-minuet-get-api-key (backend)
+  (let ((gptel-backend backend))
+    (gptel-api-key-from-auth-source)))
+
+(defun my-minuet-sync-options-from-gptel (m-backend g-backend)
+  (let* ((options-name (format "minuet-%s-options" (symbol-name m-backend)))
+         (options (symbol-value (intern options-name))))
+    (plist-put options :api-key `(lambda () (my-minuet-get-api-key ,g-backend)))
+    (plist-put options :model (symbol-name (car (gptel-backend-models g-backend))))))
+
 (with-eval-after-load "minuet"
+  (require 'gptel)
   (my-minuet-sync-options-from-gptel 'claude my-gptel--claude)
   (my-minuet-sync-options-from-gptel 'codestral my-gptel--codestral)
   (my-minuet-sync-options-from-gptel 'openai gptel--openai)
+  (my-minuet-sync-options-from-gptel 'openai-fim-compatible my-gptel--local-ai)
 
   ;; per minuet's README.md, prevent request timeout from too many tokens
   (minuet-set-optional-options minuet-codestral-options :stop ["\n\n"])
   (minuet-set-optional-options minuet-codestral-options :max_tokens 256)
 
-  (setopt minuet-auto-suggestion-debounce-delay 1.0)
-  (setopt minuet-context-window 1384)
-  (setopt minuet-provider 'codestral)
+  (setopt minuet-add-single-line-entry nil
+          minuet-auto-suggestion-debounce-delay 1.0
+          minuet-context-window 1384
+          minuet-provider my-minuet-provider
+          minuet-n-completions 1)
 
   (define-key minuet-active-mode-map (kbd "C-c C-a") #'minuet-accept-suggestion)
   (define-key minuet-active-mode-map (kbd "C-c C-k") #'minuet-dismiss-suggestion)
@@ -842,7 +904,7 @@ Use the region instead if one is selected."
 (defvar my-minuet-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "a") #'my-minuet-auto-suggestion-mode)
-    (define-key map (kbd "c") #'company-complete)
+    (define-key map (kbd "c") #'my-minuet-complete)
     (define-key map (kbd "m") #'minuet-complete-with-minibuffer)
     map)
   "My key customizations for minuet.")
@@ -861,6 +923,7 @@ Use the region instead if one is selected."
     (define-key map (kbd "a f") #'my-gptel-add-current-file)
     (define-key map (kbd "c") #'gptel-manual-complete)
     (define-key map (kbd "k") #'my-gptel-context-remove-all)
+    (define-key map (kbd "l") #'my-gptel-toggle-local)
     (define-key map (kbd "q") #'my-gptel-query-function)
     (define-key map (kbd "r") #'my-gptel-rewrite-function)
     (define-key map (kbd "v") #'my-gptel-view-context)

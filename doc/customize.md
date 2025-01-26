@@ -26,12 +26,21 @@ Most of the settings are optional, except for `my-emacs-path`.
 * `my-frame-height`: If the window is not fullscreen, it will be resized to have this many rows on startup
 * `my-frame-width`: If the window is not fullscreen, it will be resized to have this many columns on startup
 
+## AI Settings
+
+* `my-gptel-backend`: The default `gptel` backend to use, as a symbol; examples are `'my-gptel--claude`, `'my-gptel--codestral`, `'my-gptel--gemini`, `'my-gptel--local-ai`, `'my-gptel--mistral`, and `'gptel--openai` . Make sure to set an appropriate value for `my-gptel-model` as well.
+* `my-gptel-backend-local`: The `gptel` backend to use for local AI, as a symbol; this defaults to `my-gptel-local-ai`.
+* `my-gptel-backend-remote`: The `gptel` backend to use for remote AI, as a symbol; examples are `'my-gptel--claude`, `'my-gptel--codestral`, `'my-gptel--gemini`, `'my-gptel--mistral`, and `'gptel--openai` . Make sure to set an appropriate value for `my-gptel-model` as well.
+* `my-gptel-model`: The default `gptel` model to use; if not specified, the first valid value for the backend will be used.
+* `my-gptel-model-local`: The `gptel` backend to use for local AI, as a symbol; this defaults to `my-gptel-local-ai`.
+* `my-gptel-model-remote`: The `gptel` backend to use for remote AI, as a symbol; this defaults to unspecified.
+* `my-minuet-provider`: The `minuet` provider to use, as a symbol; this defaults to `'codestral`.
+* `my-minuet-provider-remote`: The `minuet` provider to use for remote AI, as a symbol; this defaults to `'codestral`.
+
 ## Other Settings
 
 * `my-default-directory`: After Emacs starts up, switch to this directory
 * `my-emacs-path`: Location of your checkout of the `emacs-shared` repo
-* `my-gptel-backend`: The `gptel` backend to use, as a symbol; examples are `'my--gptel-claude` and `'gptel--openai` . Make sure to set an appropriate value for `my-gptel-model` as well.
-* `my-gptel-model`: The `gptel` model to use; if not specified, the first valid value for the backend will be used.
 * `my-remap-cmd-key-p`: Whether to remap the <kbd>Command</kbd> key on macOS (or Windows key on Linux) to be mostly a clone of <kbd>Alt</kbd>, with some exceptions
 * `my-settings-shared-p`: Whether to save customization settings into a personal file at `~/.emacs.d/settings.el` or use the ones that come with `emacs-shared` - a default is chosen based on whether that personal settings file is found
 * `my-server-start-p`: Whether to start a server process that can be reused in multiple editing sessions

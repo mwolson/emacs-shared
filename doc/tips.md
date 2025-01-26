@@ -47,6 +47,7 @@ the cursor is at.
 * <kbd>C-c . a f</kbd> to add the current file as context for a later AI query
 * <kbd>C-c . c</kbd> to complete the code at point using Claude AI; if you have a comment near the end, that will better inform the completion
 * <kbd>C-c . k</kbd> to fully clear the AI context
+* <kbd>C-c . l</kbd> to switch from Claude to a local AI server or vice versa
 * <kbd>C-c . q</kbd> to bring up a Claude AI query on the side with the current function or region added to the AI context
 * <kbd>C-c . r</kbd> to rewrite the current function or region using Claude AI
 * <kbd>C-c . v</kbd> to pop up a menu that allows viewing and pruning the AI context; hit <kbd>q</kbd> when done to apply the changes
