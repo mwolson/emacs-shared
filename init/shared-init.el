@@ -666,8 +666,8 @@ interactively.
      :description "DeepSeek-R1-Distill-Qwen-7B-Q5_K_M model"
      :capabilities (media json url)
      :context-window 256)
-    (phi-4-Q5_K_M
-     :description "phi-4-Q5_K_M model"
+    (phi-4-Q4_K_M
+     :description "phi-4-Q4_K_M model"
      :capabilities (media json url)
      :context-window 256)))
 
