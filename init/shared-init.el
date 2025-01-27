@@ -763,8 +763,8 @@ interactively.
           gptel-model model
           my-gptel-model model)
     (if use-local
-        (setq minuet-provider 'openai-fim-compatible
-              my-minuet-provider 'openai-fim-compatible)
+        (setq minuet-provider 'openai-compatible
+              my-minuet-provider 'openai-compatible)
       (setq minuet-provider my-minuet-provider-remote
             my-minuet-provider my-minuet-provider-remote))
     (message "gptel backend is now %s and minuet provider is now %s"
@@ -876,16 +876,24 @@ Use the region instead if one is selected."
 (defun my-minuet-sync-options-from-gptel (m-backend g-backend)
   (let* ((options-name (format "minuet-%s-options" (symbol-name m-backend)))
          (options (symbol-value (intern options-name))))
-    (if (eq m-backend 'openai-fim-compatible)
-        (progn
-          (plist-put options :api-key #'(lambda () "local-ai"))
-          (plist-put options :end-point
-                     (format "%s://%s%s"
-                             (gptel-backend-protocol g-backend)
-                             (gptel-backend-host g-backend)
-                             (gptel-backend-endpoint g-backend)))
-          (plist-put options :name (gptel-backend-name g-backend)))
-      (plist-put options :api-key `(lambda () (my-minuet-get-api-key ,g-backend))))
+    (cond ((eq m-backend 'openai-fim-compatible)
+           (plist-put options :api-key #'(lambda () "local-ai"))
+           (plist-put options :end-point
+                      (format "%s://%s%s"
+                              (gptel-backend-protocol g-backend)
+                              (gptel-backend-host g-backend)
+                              "/infill"))
+           (plist-put options :name (gptel-backend-name g-backend)))
+          ((eq m-backend 'openai-compatible)
+           (plist-put options :api-key #'(lambda () "local-ai"))
+           (plist-put options :end-point
+                      (format "%s://%s%s"
+                              (gptel-backend-protocol g-backend)
+                              (gptel-backend-host g-backend)
+                              (gptel-backend-endpoint g-backend)))
+           (plist-put options :name (gptel-backend-name g-backend)))
+          (t
+           (plist-put options :api-key `(lambda () (my-minuet-get-api-key ,g-backend)))))
     (plist-put options :model (symbol-name (car (gptel-backend-models g-backend))))))
 
 (with-eval-after-load "minuet"
@@ -893,7 +901,7 @@ Use the region instead if one is selected."
   (my-minuet-sync-options-from-gptel 'claude my-gptel--claude)
   (my-minuet-sync-options-from-gptel 'codestral my-gptel--codestral)
   (my-minuet-sync-options-from-gptel 'openai gptel--openai)
-  (my-minuet-sync-options-from-gptel 'openai-fim-compatible my-gptel--local-ai)
+  (my-minuet-sync-options-from-gptel 'openai-compatible my-gptel--local-ai)
 
   ;; per minuet's README.md, prevent request timeout from too many tokens
   (minuet-set-optional-options minuet-codestral-options :stop ["\n\n"])
@@ -908,7 +916,10 @@ Use the region instead if one is selected."
   (define-key minuet-active-mode-map (kbd "C-c C-a") #'minuet-accept-suggestion)
   (define-key minuet-active-mode-map (kbd "C-c C-k") #'minuet-dismiss-suggestion)
   (define-key minuet-active-mode-map (kbd "C-c C-n") #'minuet-next-suggestion)
-  (define-key minuet-active-mode-map (kbd "C-c C-p") #'minuet-previous-suggestion))
+  (define-key minuet-active-mode-map (kbd "C-c C-p") #'minuet-previous-suggestion)
+  (define-key minuet-active-mode-map (kbd "<backtab>") #'minuet-previous-suggestion)
+  (define-key minuet-active-mode-map (kbd "<tab>") #'minuet-next-suggestion)
+  (define-key minuet-active-mode-map (kbd "<return>") #'minuet-accept-suggestion))
 
 ;; (with-eval-after-load "company"
 ;;   (autoload #'company-minuet-setup "company-minuet" "`company-mode' completion for minuet." t)
@@ -925,7 +936,7 @@ Use the region instead if one is selected."
 
 (defvar my-minuet-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "a") #'my-minuet-auto-suggestion-mode)
+    (define-key map (kbd "a") #'minuet-auto-suggestion-mode)
     (define-key map (kbd "c") #'my-minuet-complete)
     (define-key map (kbd "m") #'minuet-complete-with-minibuffer)
     map)
