@@ -647,72 +647,83 @@ interactively.
   (transient-bind-q-to-quit))
 
 ;; Set up gptel
+(defvar my-gptel--backends-defined nil)
+(defvar my-gptel--claude nil)
+(defvar my-gptel--codestral nil)
+(defvar my-gptel--gemini nil)
+(defvar my-gptel--local-ai nil)
+(defvar my-gptel--mistral nil)
+(defvar my-gptel-local-models
+  '((Sky-T1-32B-Flash-Q4_K_S
+     :description "Sky-T1-32B-Flash-Q4_K_S model"
+     :capabilities (media tool json url)
+     :context-window 256)
+    (FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS
+     :description "FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS model"
+     :capabilities (media json url)
+     :context-window 256)
+    (DeepSeek-R1-Distill-Qwen-7B-Q5_K_M
+     :description "DeepSeek-R1-Distill-Qwen-7B-Q5_K_M model"
+     :capabilities (media json url)
+     :context-window 256)
+    (phi-4-Q5_K_M
+     :description "phi-4-Q5_K_M model"
+     :capabilities (media json url)
+     :context-window 256)))
+
+(defun my-gptel-ensure-backends ()
+  (unless my-gptel--backends-defined
+    (setq my-gptel--backends-defined t)
+
+    (setq my-gptel--claude
+          (gptel-make-anthropic "Claude"
+            :stream t
+            :key #'gptel-api-key-from-auth-source))
+
+    (setq my-gptel--codestral
+          (gptel-make-openai "Codestral"
+            :stream t
+            :host "codestral.mistral.ai"
+            :key #'gptel-api-key-from-auth-source
+            :models '((codestral-latest
+                       :description "Official codestral Mistral AI model"
+                       :capabilities (tool json)
+                       :context-window 256))))
+
+    (setq my-gptel--gemini
+          (gptel-make-gemini "Gemini"
+            :stream t
+            :key #'gptel-api-key-from-auth-source))
+
+    (setq my-gptel--local-ai
+          (gptel-make-openai "Local AI Server"
+            :stream t
+            :host "localhost:1337"
+            :protocol "http"
+            :models my-gptel-local-models))
+
+    (setq my-gptel--mistral
+          (gptel-make-openai "Mistral"
+            :stream t
+            :host "api.mistral.ai"
+            :key #'gptel-api-key-from-auth-source
+            :models '((codestral-latest
+                       :description "Official codestral Mistral AI model"
+                       :capabilities (tool json url)
+                       :context-window 256)
+                      (open-codestral-mamba
+                       :description "Official codestral-mamba Mistral AI model"
+                       :capabilities (tool json url)
+                       :context-window 256)
+                      (open-mistral-nemo
+                       :description "Official open-mistral-nemo Mistral AI model"
+                       :capabilities (tool json url)
+                       :context-window 131))))))
+
 (with-eval-after-load "gptel"
+  (my-gptel-ensure-backends)
   (setopt gptel-backend (symbol-value my-gptel-backend)
-          gptel-temperature my-gptel-temperature)
-
-  (defvar my-gptel--claude
-    (gptel-make-anthropic "Claude"
-      :stream t
-      :key #'gptel-api-key-from-auth-source))
-
-  (defvar my-gptel--codestral
-    (gptel-make-openai "Codestral"
-      :stream t
-      :host "codestral.mistral.ai"
-      :key #'gptel-api-key-from-auth-source
-      :models '((codestral-latest
-                 :description "Official codestral Mistral AI model"
-                 :capabilities (tool json)
-                 :context-window 256))))
-
-  (defvar my-gptel--gemini
-    (gptel-make-gemini "Gemini"
-      :stream t
-      :key #'gptel-api-key-from-auth-source))
-
-  (defvar my-gptel-local-models
-    '((Sky-T1-32B-Flash-Q4_K_S
-       :description "Sky-T1-32B-Flash-Q4_K_S model"
-       :capabilities (media tool json url)
-       :context-window 256)
-      (FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS
-       :description "FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS model"
-       :capabilities (media json url)
-       :context-window 256)
-      (DeepSeek-R1-Distill-Qwen-7B-Q5_K_M
-       :description "DeepSeek-R1-Distill-Qwen-7B-Q5_K_M model"
-       :capabilities (media json url)
-       :context-window 256)
-      (phi-4-Q5_K_M
-       :description "phi-4-Q5_K_M model"
-       :capabilities (media json url)
-       :context-window 256)))
-
-  (defvar my-gptel--local-ai
-    (gptel-make-openai "Local AI Server"
-      :stream t
-      :host "localhost:1337"
-      :protocol "http"
-      :models my-gptel-local-models))
-
-  (defvar my-gptel--mistral
-    (gptel-make-openai "Mistral"
-      :stream t
-      :host "api.mistral.ai"
-      :key #'gptel-api-key-from-auth-source
-      :models '((codestral-latest
-                 :description "Official codestral Mistral AI model"
-                 :capabilities (tool json url)
-                 :context-window 256)
-                (open-codestral-mamba
-                 :description "Official codestral-mamba Mistral AI model"
-                 :capabilities (tool json url)
-                 :context-window 256)
-                (open-mistral-nemo
-                 :description "Official open-mistral-nemo Mistral AI model"
-                 :capabilities (tool json url)
-                 :context-window 131)))))
+          gptel-temperature my-gptel-temperature))
 
 (with-eval-after-load "gptel-context"
   (let ((map gptel-context-buffer-mode-map))
@@ -827,7 +838,8 @@ Use the region instead if one is selected."
   (if (< (length it1) (length it2)) it2 it1))
 
 (defun my-minuet-complete-2 (items)
-  (setq items (list (-reduce #'my-minuet-get-longest items)))
+  (when items
+    (setq items (list (-reduce #'my-minuet-get-longest items))))
   ;; close current minibuffer session, if any
   (when (active-minibuffer-window)
     (abort-recursive-edit))
@@ -864,11 +876,20 @@ Use the region instead if one is selected."
 (defun my-minuet-sync-options-from-gptel (m-backend g-backend)
   (let* ((options-name (format "minuet-%s-options" (symbol-name m-backend)))
          (options (symbol-value (intern options-name))))
-    (plist-put options :api-key `(lambda () (my-minuet-get-api-key ,g-backend)))
+    (if (eq m-backend 'openai-fim-compatible)
+        (progn
+          (plist-put options :api-key #'(lambda () "local-ai"))
+          (plist-put options :end-point
+                     (format "%s://%s%s"
+                             (gptel-backend-protocol g-backend)
+                             (gptel-backend-host g-backend)
+                             (gptel-backend-endpoint g-backend)))
+          (plist-put options :name (gptel-backend-name g-backend)))
+      (plist-put options :api-key `(lambda () (my-minuet-get-api-key ,g-backend))))
     (plist-put options :model (symbol-name (car (gptel-backend-models g-backend))))))
 
 (with-eval-after-load "minuet"
-  (require 'gptel)
+  (my-gptel-ensure-backends)
   (my-minuet-sync-options-from-gptel 'claude my-gptel--claude)
   (my-minuet-sync-options-from-gptel 'codestral my-gptel--codestral)
   (my-minuet-sync-options-from-gptel 'openai gptel--openai)
