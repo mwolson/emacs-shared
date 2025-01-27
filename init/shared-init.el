@@ -39,7 +39,7 @@
 (defvar my-gptel-model       nil)
 (defvar my-gptel-model-local 'Sky-T1-32B-Flash-Q4_K_S)
 (defvar my-gptel-model-remote nil)
-(defvar my-gptel-temperature 0.7)
+(defvar my-gptel-temperature 0.5)
 (defvar my-minuet-provider   'codestral)
 (defvar my-minuet-provider-remote 'codestral)
 (defvar my-remap-cmd-key-p   t)
@@ -648,7 +648,7 @@ interactively.
 
 ;; Set up gptel
 (with-eval-after-load "gptel"
-  (setopt gptel-backend my-gptel-backend
+  (setopt gptel-backend (symbol-value my-gptel-backend)
           gptel-temperature my-gptel-temperature)
 
   (defvar my-gptel--claude
