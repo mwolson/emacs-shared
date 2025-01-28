@@ -659,22 +659,22 @@ interactively.
      :description "Sky-T1-32B-Flash-Q4_K_S model"
      :capabilities (media tool json url)
      :context-window 256
-     :request-params (:temperature 0.3))
+     :request-params (:temperature 0.3 :top_p 0.8 :top_k 20))
     (FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS
      :description "FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS model"
      :capabilities (media json url)
      :context-window 256
-     :request-params (:temperature 0.5))
-    (DeepSeek-R1-Distill-Qwen-7B-Q5_K_M
-     :description "DeepSeek-R1-Distill-Qwen-7B-Q5_K_M model"
+     :request-params (:temperature 0.5 :top_p 0.75 :top_k 20))
+    (DeepSeek-R1-Distill-Qwen-7B-Q2_K_L
+     :description "DeepSeek-R1-Distill-Qwen-7B-Q2_K_L model"
      :capabilities (media json url)
      :context-window 256
-     :request-params (:temperature 0.3))
+     :request-params (:temperature 0.3 :top_p 0.75 :top_k 25))
     (phi-4-Q4_K_M
      :description "phi-4-Q4_K_M model"
      :capabilities (media json url)
      :context-window 256
-     :request-params (:temperature 0.5))))
+     :request-params (:temperature 0.5 :top_p 0.75 :top_k 20))))
 
 (defun my-gptel-ensure-backends ()
   (unless my-gptel--backends-defined
@@ -726,6 +726,7 @@ interactively.
                        :context-window 131)))))
 
   (setopt gptel-backend (symbol-value my-gptel-backend)
+          gptel-model (or my-gptel-model (car (gptel-backend-models gptel-backend)))
           gptel-expert-commands t
           gptel-temperature my-gptel-temperature))
 
@@ -770,8 +771,11 @@ interactively.
           gptel-model model
           my-gptel-model model)
     (if use-local
-        (setq minuet-provider 'openai-compatible
-              my-minuet-provider 'openai-compatible)
+        (progn
+          (setq minuet-provider 'openai-compatible
+                my-minuet-provider 'openai-compatible)
+          (setf (plist-get minuet-openai-compatible-options :optional)
+                (gptel--model-request-params gptel-model)))
       (setq minuet-provider my-minuet-provider-remote
             my-minuet-provider my-minuet-provider-remote))
     (message "gptel backend is now %s and minuet provider is now %s"
@@ -884,22 +888,22 @@ Use the region instead if one is selected."
 (defun my-minuet-sync-options-from-gptel (m-backend g-backend)
   (let* ((options-name (format "minuet-%s-options" (symbol-name m-backend)))
          (options (symbol-value (intern options-name))))
+    (when (memq m-backend '(openai-fim-compatible openai-compatible))
+      (plist-put options :api-key #'(lambda () "local-ai"))
+      (plist-put options :name (gptel-backend-name g-backend))
+      (setf (plist-get options :optional) (gptel--model-request-params gptel-model)))
     (cond ((eq m-backend 'openai-fim-compatible)
-           (plist-put options :api-key #'(lambda () "local-ai"))
            (plist-put options :end-point
                       (format "%s://%s%s"
                               (gptel-backend-protocol g-backend)
                               (gptel-backend-host g-backend)
-                              "/infill"))
-           (plist-put options :name (gptel-backend-name g-backend)))
+                              "/infill")))
           ((eq m-backend 'openai-compatible)
-           (plist-put options :api-key #'(lambda () "local-ai"))
            (plist-put options :end-point
                       (format "%s://%s%s"
                               (gptel-backend-protocol g-backend)
                               (gptel-backend-host g-backend)
-                              (gptel-backend-endpoint g-backend)))
-           (plist-put options :name (gptel-backend-name g-backend)))
+                              (gptel-backend-endpoint g-backend))))
           (t
            (plist-put options :api-key `(lambda () (my-minuet-get-api-key ,g-backend)))))
     (plist-put options :model (symbol-name (car (gptel-backend-models g-backend))))))
