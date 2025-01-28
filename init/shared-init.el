@@ -233,6 +233,7 @@
 (my-init-client-display)
 
 ;; Give people something to look at while we load
+(setq native-comp-async-report-warnings-errors 'silent)
 (display-startup-screen)
 (redisplay t)
 (add-hook 'server-after-make-frame-hook #'my-init-client-display t)
