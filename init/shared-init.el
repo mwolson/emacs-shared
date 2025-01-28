@@ -665,8 +665,8 @@ interactively.
      :capabilities (media json url)
      :context-window 256
      :request-params (:temperature 0.5 :top_p 0.75 :top_k 20))
-    (DeepSeek-R1-Distill-Qwen-7B-Q2_K_L
-     :description "DeepSeek-R1-Distill-Qwen-7B-Q2_K_L model"
+    (DeepSeek-R1-Distill-Qwen-32B-Q2_K_L
+     :description "DeepSeek-R1-Distill-Qwen-32B-Q2_K_L model"
      :capabilities (media json url)
      :context-window 256
      :request-params (:temperature 0.3 :top_p 0.75 :top_k 25))
@@ -1382,9 +1382,10 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (save-excursion
     (unless (buffer-narrowed-p)
       (polymode-toggle-chunk-narrowing))
-    (mark-whole-buffer)
+    (set-mark (point-min))
+    (goto-char (point-max))
     (call-interactively #'kill-ring-save)
-    (polymode-toggle-chunk-narrowing)))
+    (widen)))
 
 (with-eval-after-load "polymode"
   (define-key polymode-map (kbd "k") #'polymode-kill-chunk)
