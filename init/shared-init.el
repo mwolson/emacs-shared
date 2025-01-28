@@ -659,12 +659,16 @@ interactively.
      :description "Sky-T1-32B-Flash-Q4_K_S model"
      :capabilities (media tool json url)
      :context-window 256
+     ;; temperature can go up to 0.3 for more creativity but higher chance of
+     ;; syntax errors
      :request-params (:temperature 0.0 :top_p 0.80 :top_k 20))
     (FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS
      :description "FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS model"
      :capabilities (media json url)
      :context-window 256
-     :request-params (:temperature 0.5 :top_p 0.75 :top_k 20))
+     ;; temperature can go up to 0.5 for more creativity but higher chance of
+     ;; syntax errors
+     :request-params (:temperature 0.0 :top_p 0.75 :top_k 20))
     (DeepSeek-R1-Distill-Qwen-32B-Q2_K_L
      :description "DeepSeek-R1-Distill-Qwen-32B-Q2_K_L model"
      :capabilities (media json url)
