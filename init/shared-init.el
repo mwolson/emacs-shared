@@ -1379,11 +1379,12 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (defun my-polymode-yank-chunk ()
   (interactive)
-  (unless (buffer-narrowed-p)
-    (polymode-toggle-chunk-narrowing))
-  (mark-whole-buffer)
-  (call-interactively #'kill-ring-save)
-  (polymode-toggle-chunk-narrowing))
+  (save-excursion
+    (unless (buffer-narrowed-p)
+      (polymode-toggle-chunk-narrowing))
+    (mark-whole-buffer)
+    (call-interactively #'kill-ring-save)
+    (polymode-toggle-chunk-narrowing)))
 
 (with-eval-after-load "polymode"
   (define-key polymode-map (kbd "k") #'polymode-kill-chunk)
