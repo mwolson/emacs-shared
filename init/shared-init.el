@@ -659,7 +659,7 @@ interactively.
      :description "Sky-T1-32B-Flash-Q4_K_S model"
      :capabilities (media tool json url)
      :context-window 256
-     :request-params (:temperature 0.3 :top_p 0.8 :top_k 20))
+     :request-params (:temperature 0.0 :top_p 0.80 :top_k 20))
     (FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS
      :description "FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS model"
      :capabilities (media json url)
