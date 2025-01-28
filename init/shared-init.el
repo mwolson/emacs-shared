@@ -719,12 +719,13 @@ interactively.
                       (open-mistral-nemo
                        :description "Official open-mistral-nemo Mistral AI model"
                        :capabilities (tool json url)
-                       :context-window 131))))))
+                       :context-window 131)))))
 
-(with-eval-after-load "gptel"
-  (my-gptel-ensure-backends)
   (setopt gptel-backend (symbol-value my-gptel-backend)
           gptel-temperature my-gptel-temperature))
+
+(with-eval-after-load "gptel"
+  (my-gptel-ensure-backends))
 
 (with-eval-after-load "gptel-context"
   (let ((map gptel-context-buffer-mode-map))
@@ -744,7 +745,7 @@ interactively.
       (switch-to-buffer (gptel backend-name)))))
 
 (defun my-gptel-toggle-local ()
-  "Start gptel with a default buffer name."
+  "Toggle between local AI and remote AI."
   (interactive)
   (require 'gptel)
   (let* ((use-local (cond ((eq gptel-backend (symbol-value my-gptel-backend-local))
@@ -839,8 +840,8 @@ Use the region instead if one is selected."
   (if (< (length it1) (length it2)) it2 it1))
 
 (defun my-minuet-complete-2 (items)
-  (when items
-    (setq items (list (-reduce #'my-minuet-get-longest items))))
+  (minuet--cleanup-suggestion t)
+  (setq items (list (-reduce #'my-minuet-get-longest items)))
   ;; close current minibuffer session, if any
   (when (active-minibuffer-window)
     (abort-recursive-edit))
@@ -860,14 +861,15 @@ Use the region instead if one is selected."
              context
              `(lambda (items)
                 (with-current-buffer ,current-buffer
-                  (my-minuet-complete-2 items))))))
+                  (when (and items (not (minuet--cursor-moved-p)))
+                    (my-minuet-complete-2 items)))))))
 
 (defun my-minuet-complete ()
   (interactive)
   (require 'minuet)
   (let ((minuet-n-completions 1)
         (minuet-add-single-line-entry nil))
-    ;; (minuet-completion-in-region)
+    ;; (minuet-complete-with-minibuffer)
     (my-minuet-complete-1)))
 
 (defun my-minuet-get-api-key (backend)
@@ -909,7 +911,7 @@ Use the region instead if one is selected."
   (minuet-set-optional-options minuet-codestral-options :max_tokens 256)
 
   (setopt minuet-add-single-line-entry nil
-          minuet-auto-suggestion-debounce-delay 1.0
+          minuet-auto-suggestion-debounce-delay 0.5
           minuet-context-window 1384
           minuet-provider my-minuet-provider
           minuet-n-completions 1)
