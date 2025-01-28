@@ -658,19 +658,23 @@ interactively.
   '((Sky-T1-32B-Flash-Q4_K_S
      :description "Sky-T1-32B-Flash-Q4_K_S model"
      :capabilities (media tool json url)
-     :context-window 256)
+     :context-window 256
+     :request-params (:temperature 0.3))
     (FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS
      :description "FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS model"
      :capabilities (media json url)
-     :context-window 256)
+     :context-window 256
+     :request-params (:temperature 0.5))
     (DeepSeek-R1-Distill-Qwen-7B-Q5_K_M
      :description "DeepSeek-R1-Distill-Qwen-7B-Q5_K_M model"
      :capabilities (media json url)
-     :context-window 256)
+     :context-window 256
+     :request-params (:temperature 0.3))
     (phi-4-Q4_K_M
      :description "phi-4-Q4_K_M model"
      :capabilities (media json url)
-     :context-window 256)))
+     :context-window 256
+     :request-params (:temperature 0.5))))
 
 (defun my-gptel-ensure-backends ()
   (unless my-gptel--backends-defined
@@ -722,6 +726,7 @@ interactively.
                        :context-window 131)))))
 
   (setopt gptel-backend (symbol-value my-gptel-backend)
+          gptel-expert-commands t
           gptel-temperature my-gptel-temperature))
 
 (with-eval-after-load "gptel"
