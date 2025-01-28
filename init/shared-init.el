@@ -1356,7 +1356,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (add-hook 'lisp-interaction-mode-hook 'my-turn-off-display-line-numbers-mode t)
 
 ;; Markdown support
-
 (add-to-list 'load-path (concat my-emacs-path "elisp/poly-markdown"))
 (autoload #'poly-markdown-mode "poly-markdown" t)
 (autoload #'poly-gfm-mode "poly-markdown" t)
@@ -1378,6 +1377,24 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (dolist (alias my-polymode-aliases)
     (add-to-list 'polymode-mode-name-aliases alias)))
 
+(defun my-polymode-yank-chunk ()
+  (interactive)
+  (unless (buffer-narrowed-p)
+    (polymode-toggle-chunk-narrowing))
+  (mark-whole-buffer)
+  (call-interactively #'kill-ring-save)
+  (polymode-toggle-chunk-narrowing))
+
+(with-eval-after-load "polymode"
+  (define-key polymode-map (kbd "k") #'polymode-kill-chunk)
+  (define-key polymode-map (kbd "w") #'my-polymode-yank-chunk)
+  (define-key polymode-map (kbd "C-w") #'my-polymode-yank-chunk)
+  (define-key polymode-minor-mode-map (kbd "C-c n") polymode-map)
+  (easy-menu-add-item polymode-menu
+                      nil
+                      '["Yank chunk" my-polymode-yank-chunk]
+                      "--"))
+
 (with-eval-after-load "polymode-core"
   (my-polymode-install-aliases)
   (my-replace-cdrs-in-alist 'sh-mode 'bash-ts-mode 'polymode-mode-name-aliases)
@@ -1386,7 +1403,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (with-eval-after-load "poly-markdown"
   (my-replace-cdrs-in-alist 'poly-markdown-mode 'poly-gfm-mode 'auto-mode-alist))
 
-;; Prefer Github-flavored Markdown
 (my-replace-cdrs-in-alist 'markdown-mode 'poly-gfm-mode 'auto-mode-alist)
 
 ;; Don't mess with keys that I'm used to
@@ -1595,6 +1611,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
     (define-key magit-mode-map (kbd "s-4") #'magit-section-show-level-4-all)
     (define-key magit-status-mode-map (kbd "s-c") #'my-magit-kill-ring-save)
     (define-key magit-status-mode-map (kbd "s-w") #'my-magit-kill-ring-save))
+
+  (with-eval-after-load "polymode"
+    (define-key polymode-minor-mode-map (kbd "s-n") 'polymode-map))
 
   (global-set-key (kbd "s-:") #'eval-expression)
   (global-set-key (kbd "s-;") #'eval-expression)
