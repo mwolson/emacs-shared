@@ -39,6 +39,7 @@
 (defvar my-gptel-model       nil)
 (defvar my-gptel-model-local 'Sky-T1-32B-Flash-Q4_K_S)
 (defvar my-gptel-model-remote nil)
+(defvar my-gptel-system-prompt nil)
 (defvar my-gptel-temperature 0.5)
 (defvar my-minuet-provider   'codestral)
 (defvar my-minuet-provider-remote 'codestral)
@@ -676,6 +677,11 @@ interactively.
      ;; temperature can go up to 0.3 for more creativity but higher chance of
      ;; syntax errors
      :request-params (:temperature 0.0 :top_p 0.80 :top_k 20))
+    (Sky-T1-32B-Flash-IQ2_XXS
+     :description "Sky-T1-32B-Flash-IQ2_XXS model"
+     :capabilities (media tool json url)
+     :context-window 256
+     :request-params (:temperature 0.025 :top_p 0.80 :top_k 25))
     (FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS
      :description "FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS model"
      :capabilities (media json url)
@@ -746,7 +752,10 @@ interactively.
   (setopt gptel-backend (symbol-value my-gptel-backend)
           gptel-model (or my-gptel-model (car (gptel-backend-models gptel-backend)))
           gptel-expert-commands t
-          gptel-temperature my-gptel-temperature))
+          gptel-temperature my-gptel-temperature)
+
+  (when my-gptel-system-prompt
+    (setq gptel--system-message my-gptel-system-prompt)))
 
 (with-eval-after-load "gptel"
   (my-gptel-ensure-backends))
