@@ -572,6 +572,20 @@
                (executable-find "eslint"))
       (add-hook 'after-save-hook #'eslint-fix-file-and-revert-maybe t t))))
 
+;; Flymake
+(defvar my-flymake-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "c") #'flymake-start)
+    (define-key map (kbd "l") #'flymake-show-buffer-diagnostics)
+    (define-key map (kbd "L") #'flymake-switch-to-log-buffer)
+    (define-key map (kbd "n") #'flymake-goto-next-error)
+    (define-key map (kbd "p") #'flymake-goto-prev-error)
+    map)
+  "My key customizations for flymake.")
+
+(with-eval-after-load "flymake"
+  (define-key flymake-mode-map (kbd "C-c f") my-flymake-mode-map))
+
 ;; NodeJS REPL
 (defun my-js-comint-send-last-sexp ()
   "Send the previous sexp to the inferior Javascript process."
