@@ -758,6 +758,7 @@ interactively.
   "Toggle between local AI and remote AI."
   (interactive)
   (require 'gptel)
+  (require 'minuet)
   (let* ((use-local (cond ((eq gptel-backend (symbol-value my-gptel-backend-local))
                            nil)
                           ((eq gptel-backend (symbol-value my-gptel-backend-remote))
@@ -892,7 +893,7 @@ Use the region instead if one is selected."
 (defun my-minuet-sync-options-from-gptel (m-backend g-backend)
   (let* ((options-name (format "minuet-%s-options" (symbol-name m-backend)))
          (options (symbol-value (intern options-name))))
-    (when (memq m-backend '(openai-fim-compatible openai-compatible))
+    (when (memq m-backend '(openai-compatible openai-fim-compatible))
       (plist-put options :api-key #'(lambda () "local-ai"))
       (plist-put options :name (gptel-backend-name g-backend))
       (setf (plist-get options :optional) (gptel--model-request-params gptel-model)))
@@ -901,7 +902,9 @@ Use the region instead if one is selected."
                       (format "%s://%s%s"
                               (gptel-backend-protocol g-backend)
                               (gptel-backend-host g-backend)
-                              "/infill")))
+                              "/infill"))
+           (plist-put options :template '(:prompt minuet--default-fim-prompt-function
+                                          :suffix minuet--default-fim-suffix-function)))
           ((eq m-backend 'openai-compatible)
            (plist-put options :end-point
                       (format "%s://%s%s"
@@ -918,6 +921,7 @@ Use the region instead if one is selected."
   (my-minuet-sync-options-from-gptel 'codestral my-gptel--codestral)
   (my-minuet-sync-options-from-gptel 'openai gptel--openai)
   (my-minuet-sync-options-from-gptel 'openai-compatible my-gptel--local-ai)
+  (my-minuet-sync-options-from-gptel 'openai-fim-compatible my-gptel--local-ai)
 
   ;; per minuet's README.md, prevent request timeout from too many tokens
   (minuet-set-optional-options minuet-codestral-options :stop ["\n\n"])
