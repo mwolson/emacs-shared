@@ -1028,6 +1028,13 @@ Use the region instead if one is selected."
 
 (my-remap-major-mode 'clojure-mode 'clojure-ts-mode)
 
+;; Emacs Lisp
+(autoload #'plist-lisp-indent-install "plist-lisp-indent"
+  "Use `plist-lisp-indent-function' to indent in the current Lisp buffer." nil)
+
+(with-eval-after-load "elisp-mode"
+  (add-hook 'emacs-lisp-mode-hook #'plist-lisp-indent-install t))
+
 ;; Erlang
 (add-to-list 'load-path (concat my-emacs-path "elisp/erlang-ts"))
 (my-remap-major-mode 'erlang-mode 'erlang-ts-mode)
@@ -1101,7 +1108,7 @@ Use the region instead if one is selected."
                . ("typescript-language-server" "--stdio"
                   :initializationOptions
                   (:plugins [(:name "typescript-eslint-language-service"
-                                    :location ,my-emacs-path)]))))
+                              :location ,my-emacs-path)]))))
 ;;)
 
 ;; Kotlin
