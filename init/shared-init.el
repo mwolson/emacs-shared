@@ -527,13 +527,19 @@
   (unless (bound-and-true-p polymode-mode)
     (eglot-ensure)))
 
+(defvar my-debug-jsonrpc nil
+  "Whether to enable log messages for jsonrpc.")
+
 (with-eval-after-load "eglot"
   (setq eglot-diagnostics-map
         (let ((map (make-sparse-keymap)))
           (define-key map (kbd "<mouse-3>") #'eglot-code-actions-at-mouse)
           map))
   (define-key eglot-mode-map (kbd "<f2>") #'eglot-rename)
-  (setopt eglot-send-changes-idle-time 0.2))
+  (unless my-debug-jsonrpc
+    (fset #'jsonrpc--log-event #'(lambda (&rest args) nil)))
+  (setopt eglot-extend-to-xref t
+          eglot-send-changes-idle-time 0.2))
 
 ;; MariaDB/MySQL conf files
 (add-to-list 'auto-mode-alist '("\\.cnf\\'" . conf-mode))
