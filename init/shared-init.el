@@ -517,6 +517,9 @@
 (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter t)
 
 ;; Editorconfig support
+(with-eval-after-load "editorconfig"
+  (put 'editorconfig-lisp-use-default-indent 'safe-local-variable #'always))
+
 (editorconfig-mode 1)
 
 ;; Set up eglot for LSP features
@@ -1508,6 +1511,11 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (with-eval-after-load "company"
   (define-key company-active-map (kbd "<tab>") 'company-complete-selection))
+
+;; Consult: completion in minbuffers for minuet and other modes
+(with-eval-after-load "consult"
+  (with-eval-after-load "minuet"
+    (consult-customize minuet-complete-with-minibuffer)))
 
 ;; Setup info for manually compiled packages
 (add-to-list 'Info-default-directory-list (concat my-emacs-path "share/info"))
