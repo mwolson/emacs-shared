@@ -170,7 +170,7 @@
   (let ((maximize-p my-frame-maximize-p))
     (when (and maximize-p my-frame-maximize-if-pixel-width-lte)
       (setq maximize-p (<= (display-pixel-width) my-frame-maximize-if-pixel-width-lte)))
-    (cond ((and maximize-p (memq window-system '(pgtk x w32)))
+    (cond ((and maximize-p (memq window-system '(pgtk ns x w32)))
            (set-frame-parameter nil 'fullscreen 'maximized))
           (maximize-p
            (maximize-frame))
