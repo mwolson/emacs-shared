@@ -1113,6 +1113,7 @@ Use the region instead if one is selected."
   (ligature-set-ligatures major-mode my-web-mode-ligatures))
 
 (add-to-list 'load-path (concat my-emacs-path "elisp/jtsx"))
+(add-to-list 'auto-mode-alist '("\\.mjs\\'" . jtsx-jsx-mode))
 (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . jtsx-jsx-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . jtsx-typescript-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . jtsx-tsx-mode))
@@ -1608,7 +1609,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (global-set-key (kbd "C-c p") my-project-command-map)
 (global-set-key (kbd "C-c C-p") my-project-command-map)
-(global-set-key (kbd "C-x g") #'goto-line)
+(global-set-key (kbd "C-x g") #'mark-whole-buffer)
 (global-set-key (kbd "C-x r r") #'rectangle-mark-mode)
 (global-set-key (kbd "C-x p") #'other-window)
 
