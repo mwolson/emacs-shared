@@ -668,8 +668,13 @@ interactively.
 ;; SMerge mode, for editing files with inline diffs
 (add-hook 'prog-mode-hook 'smerge-mode t)
 
+;; Transient
 (with-eval-after-load "transient"
   (transient-bind-q-to-quit))
+
+;; Tree-sitter
+(with-eval-after-load "treesit"
+  (setopt treesit-font-lock-level 4))
 
 ;; Set up gptel
 (defvar my-gptel--backends-defined nil)
