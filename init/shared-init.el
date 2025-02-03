@@ -524,6 +524,7 @@
 
 ;; Set up eglot for LSP features
 (require 'eglot)
+(setopt eglot-sync-connect nil)
 
 (defun my-eglot-ensure ()
   "Ensure that eglot is running, except when in an active polymode."
@@ -1103,14 +1104,13 @@ Use the region instead if one is selected."
   (add-hook 'java-ts-mode-hook #'my-eglot-ensure))
 
 ;; JTSX (Javascript, Typescript, and JSX support)
-(defvar my-jtsx-major-modes '(jtsx-jsx-mode jtsx-tsx-mode jtsx-typescript-mode))
+(defvar my-jtsx-major-modes '(astro-mode jtsx-jsx-mode jtsx-tsx-mode jtsx-typescript-mode))
 (defvar my-jtsx-ts-major-modes '(jtsx-tsx-mode jtsx-typescript-mode))
 
 (defun my-setup-jtsx-ligatures ()
   (interactive)
   (setq-local ligature-composition-table nil)
-  (dolist (mode my-jtsx-major-modes)
-    (ligature-set-ligatures mode my-web-mode-ligatures)))
+  (ligature-set-ligatures major-mode my-web-mode-ligatures))
 
 (add-to-list 'load-path (concat my-emacs-path "elisp/jtsx"))
 (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . jtsx-jsx-mode))
@@ -1123,6 +1123,13 @@ Use the region instead if one is selected."
 (add-to-list 'my-polymode-aliases '(typescript . jtsx-tsx-mode))
 (my-remap-major-mode 'js-mode 'jtsx-jsx-mode)
 (my-remap-major-mode 'ts-mode 'jtsx-tsx-mode)
+
+(define-derived-mode astro-mode web-mode "astro")
+(add-to-list 'auto-mode-alist '(".*\\.astro\\'" . astro-mode))
+(add-to-list 'eglot-server-programs
+             `(astro-mode . ("astro-ls" "--stdio"
+                             :initializationOptions
+                             (:typescript (:tsdk ,(concat my-emacs-path "node_modules/typescript/lib"))))))
 
 (dolist (mode my-jtsx-major-modes)
   (let ((hook (intern (concat (symbol-name mode) "-hook"))))
@@ -1215,7 +1222,7 @@ Use the region instead if one is selected."
 (defun my-setup-web-mode-ligatures ()
   (interactive)
   (setq-local ligature-composition-table nil)
-  (ligature-set-ligatures 'web-mode my-web-mode-ligatures))
+  (ligature-set-ligatures major-mode my-web-mode-ligatures))
 
 (add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
