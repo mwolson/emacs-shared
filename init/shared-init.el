@@ -41,6 +41,7 @@
 (defvar my-gptel-model-remote nil)
 (defvar my-gptel-system-prompt nil)
 (defvar my-gptel-temperature 0.5)
+(defvar my-minuet-auto-suggest-p nil)
 (defvar my-minuet-provider   'codestral)
 (defvar my-minuet-provider-remote 'codestral)
 (defvar my-remap-cmd-key-p   t)
@@ -888,6 +889,10 @@ Use the region instead if one is selected."
   "Put mark at end of this function, point at beginning." t)
 
 ;; Minuet for AI completion
+(defun my-minuet-maybe-turn-on-auto-suggest ()
+  (when my-minuet-auto-suggest-p
+    (minuet-auto-suggestion-mode 1)))
+
 (defun my-minuet-get-longest (it1 it2)
   (if (< (length it1) (length it2)) it2 it1))
 
@@ -991,6 +996,7 @@ Use the region instead if one is selected."
 (autoload #'minuet-auto-suggestion-mode "minuet" "Toggle automatic code suggestions." t)
 (autoload #'minuet-complete-with-minibuffer "minuet" "Complete using minibuffer interface." t)
 (autoload #'minuet-show-suggestion "minuet" "Show code suggestion using overlay at point." t)
+(add-hook 'prog-mode-hook #'my-minuet-maybe-turn-on-auto-suggest t)
 
 (defvar my-minuet-map
   (let ((map (make-sparse-keymap)))
@@ -1113,7 +1119,7 @@ Use the region instead if one is selected."
   (ligature-set-ligatures major-mode my-web-mode-ligatures))
 
 (add-to-list 'load-path (concat my-emacs-path "elisp/jtsx"))
-(add-to-list 'auto-mode-alist '("\\.mjs\\'" . jtsx-jsx-mode))
+(add-to-list 'auto-mode-alist '("\\.[cm]js\\'" . jtsx-jsx-mode))
 (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . jtsx-jsx-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . jtsx-typescript-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . jtsx-tsx-mode))
