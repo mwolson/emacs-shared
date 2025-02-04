@@ -172,8 +172,8 @@ for mod in $dir_elisp_submodules; do
 done
 
 file_elisp_submodules="
-    asdf-vm erlang-ts jtsx kotlin-ts-mode minuet poly-markdown prisma-ts-mode
-    swift-ts-mode tmux-mode zig-ts-mode
+    asdf-vm erlang-ts jtsx kotlin-ts-mode mermaid-ts-mode minuet poly-markdown
+    prisma-ts-mode swift-ts-mode tmux-mode zig-ts-mode
 "
 for mod in $file_elisp_submodules; do
     update_submodule elisp/"$mod"
@@ -194,7 +194,7 @@ if [[ -n "$BUILD" ]]; then
 
     tree_sitter_modules="
         bash c-sharp clojure cpp dockerfile erlang go gomod java javascript
-        jsdoc kotlin nix prisma python rust yaml zig
+        jsdoc kotlin mermaid nix prisma python rust yaml zig
     "
     <<< $tree_sitter_modules xargs -P4 -n1 "$(get_topdir)"/install-treesit-grammar.sh
 

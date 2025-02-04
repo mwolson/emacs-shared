@@ -549,6 +549,11 @@
 ;; MariaDB/MySQL conf files
 (add-to-list 'auto-mode-alist '("\\.cnf\\'" . conf-mode))
 
+;; Mermaid diagrams
+(add-to-list 'load-path (concat my-emacs-path "elisp/mermaid-ts-mode"))
+(autoload #'mermaid-ts-mode "mermaid-ts-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.mmd\\'" . mermaid-ts-mode))
+
 ;; npmrc conf files
 (add-to-list 'auto-mode-alist '("\\.npmrc\\'" . conf-mode))
 

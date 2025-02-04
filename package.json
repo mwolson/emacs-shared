@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "@astrojs/language-server": "^2.15.4",
+    "@mermaid-js/mermaid-cli": "^11.4.2",
     "prettier": "^3.4.2",
     "typescript-eslint-language-service": "^5.0.5",
     "typescript-language-server": "^4.3.3"
