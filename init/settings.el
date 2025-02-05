@@ -68,7 +68,7 @@
  '(ls-lisp-support-shell-wildcards nil)
  '(ls-lisp-use-insert-directory-program nil)
  '(ls-lisp-verbosity '(uid gid))
- '(magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
+ '(magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1)
  '(magit-log-section-commit-count 1)
  '(magit-prefer-remote-upstream t)
  '(mail-interactive t)
