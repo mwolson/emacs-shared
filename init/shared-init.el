@@ -1658,12 +1658,11 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (with-eval-after-load "diff-mode"
   (define-key diff-mode-map (kbd "M-q") 'fill-paragraph))
 
-;; Use Ivy instead of the buffer list when I typo it
-(global-set-key (kbd "C-x C-b") 'ivy-switch-buffer)
-
 ;; Typo prevention
 (global-set-key (kbd "C-x 4") #'split-window-right)
+(global-set-key (kbd "C-x C-b") #'ivy-switch-buffer)
 (global-set-key (kbd "C-x C-d") #'counsel-find-file)
+(global-set-key (kbd "C-x n") #'ivy-switch-buffer)
 
 ;; Disable some keybinds to avoid typos
 (global-set-key [insert] (lambda () (interactive)))
