@@ -1662,6 +1662,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (global-set-key (kbd "C-x C-b") 'ivy-switch-buffer)
 
 ;; Typo prevention
+(global-set-key (kbd "C-x 4") #'split-window-right)
 (global-set-key (kbd "C-x C-d") #'counsel-find-file)
 
 ;; Disable some keybinds to avoid typos
