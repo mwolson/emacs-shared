@@ -40,7 +40,7 @@
 (defvar my-gptel-model-local 'Sky-T1-32B-Flash-Q4_K_S)
 (defvar my-gptel-model-remote nil)
 (defvar my-gptel-system-prompt nil)
-(defvar my-gptel-temperature 0.5)
+(defvar my-gptel-temperature 0.0)
 (defvar my-minuet-auto-suggest-p nil)
 (defvar my-minuet-provider   'codestral)
 (defvar my-minuet-provider-remote 'codestral)
@@ -601,7 +601,8 @@
   "My key customizations for flymake.")
 
 (with-eval-after-load "flymake"
-  (define-key flymake-mode-map (kbd "C-c f") my-flymake-mode-map))
+  (define-key flymake-mode-map (kbd "C-c f") my-flymake-mode-map)
+  (define-key flymake-mode-map (kbd "C-x f") my-flymake-mode-map))
 
 ;; NodeJS REPL
 (defun my-js-comint-send-last-sexp ()
@@ -688,6 +689,7 @@ interactively.
 (defvar my-gptel--claude nil)
 (defvar my-gptel--codestral nil)
 (defvar my-gptel--gemini nil)
+(defvar my-gptel--groq nil)
 (defvar my-gptel--local-ai nil)
 (defvar my-gptel--mistral nil)
 (defvar my-gptel-local-models
@@ -745,6 +747,15 @@ interactively.
             :stream t
             :key #'gptel-api-key-from-auth-source))
 
+    (setq my-gptel--groq
+          (gptel-make-openai "Groq"
+            :host "api.groq.com"
+            :endpoint "/openai/v1/chat/completions"
+            :stream t
+            :key #'gptel-api-key-from-auth-source
+            :models '(deepseek-r1-distill-llama-70b
+                      llama-3.3-70b-versatile)))
+
     (setq my-gptel--local-ai
           (gptel-make-openai "Local AI Server"
             :stream t
@@ -796,7 +807,7 @@ interactively.
     (setq gptel-backend backend
           gptel-model model)
     (with-suppressed-warnings ((obsolete warning-level-aliases))
-      (switch-to-buffer (gptel backend-name)))))
+      (switch-to-buffer (gptel backend-name nil "### ")))))
 
 (defun my-gptel-toggle-local ()
   "Toggle between local AI and remote AI."
@@ -963,10 +974,44 @@ Use the region instead if one is selected."
            (plist-put options :api-key `(lambda () (my-minuet-get-api-key ,g-backend)))))
     (plist-put options :model (symbol-name (car (gptel-backend-models g-backend))))))
 
+(defvar minuet-groq-options nil)
+
+(defun minuet--groq-available-p ()
+  "Check if Groq is available."
+  (when-let* ((options minuet-groq-options)
+              (env-var (plist-get options :api-key))
+              (end-point (plist-get options :end-point))
+              (model (plist-get options :model)))
+    (minuet--get-api-key env-var)))
+
+(defun minuet--groq-complete (context callback)
+  "Complete code with Groq.
+CONTEXT and CALLBACK will be passed to the base function."
+  (minuet--openai-complete-base
+   (copy-tree minuet-groq-options) context callback))
+
 (with-eval-after-load "minuet"
   (my-gptel-ensure-backends)
+  (setq minuet-groq-options
+        `(:end-point "https://api.groq.com/openai/v1/chat/completions"
+          :api-key "GROQ_API_KEY"
+          :model "llama-3.3-70b-versatile"
+          :system
+          (:template minuet-default-system-template
+           :prompt minuet-default-prompt
+           :guidelines minuet-default-guidelines
+           :n-completions-template minuet-default-n-completion-template)
+          :fewshots minuet-default-fewshots
+          :chat-input
+          (:template minuet-default-chat-input-template
+           :language-and-tab minuet--default-chat-input-language-and-tab-function
+           :context-before-cursor minuet--default-chat-input-before-cursor-function
+           :context-after-cursor minuet--default-chat-input-after-cursor-function)
+          :optional nil))
+
   (my-minuet-sync-options-from-gptel 'claude my-gptel--claude)
   (my-minuet-sync-options-from-gptel 'codestral my-gptel--codestral)
+  (my-minuet-sync-options-from-gptel 'groq my-gptel--groq)
   (my-minuet-sync-options-from-gptel 'openai gptel--openai)
   (my-minuet-sync-options-from-gptel 'openai-compatible my-gptel--local-ai)
   (my-minuet-sync-options-from-gptel 'openai-fim-compatible my-gptel--local-ai)
@@ -978,8 +1023,8 @@ Use the region instead if one is selected."
   (setopt minuet-add-single-line-entry nil
           minuet-auto-suggestion-debounce-delay 0.5
           minuet-context-window 1384
-          minuet-provider my-minuet-provider
           minuet-n-completions 1)
+  (setq minuet-provider my-minuet-provider)
 
   (define-key minuet-active-mode-map (kbd "C-c C-a") #'minuet-accept-suggestion)
   (define-key minuet-active-mode-map (kbd "C-c C-k") #'minuet-dismiss-suggestion)
@@ -1433,7 +1478,10 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (add-to-list 'auto-mode-alist '("\\.md\\'" . poly-gfm-mode))
 (add-to-list 'auto-mode-alist '("\\.mdx\\'" . poly-gfm-mode))
-(setopt gptel-default-mode #'poly-markdown-mode)
+
+(with-eval-after-load "gptel"
+  (setopt gptel-default-mode #'poly-gfm-mode)
+  (add-to-list 'gptel-prompt-prefix-alist '(poly-gfm-mode . "### ")))
 
 (defun my-replace-mode-in-symbol (mode-sym)
   (intern
@@ -1473,9 +1521,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (my-replace-cdrs-in-alist 'sh-mode 'bash-ts-mode 'polymode-mode-name-aliases)
   (my-replace-cdrs-in-alist 'shell-script-mode 'bash-ts-mode 'polymode-mode-name-aliases))
 
-(with-eval-after-load "poly-markdown"
-  (my-replace-cdrs-in-alist 'poly-markdown-mode 'poly-gfm-mode 'auto-mode-alist))
-
+(my-replace-cdrs-in-alist 'poly-markdown-mode 'poly-gfm-mode 'auto-mode-alist)
 (my-replace-cdrs-in-alist 'markdown-mode 'poly-gfm-mode 'auto-mode-alist)
 
 ;; Don't mess with keys that I'm used to
