@@ -742,6 +742,16 @@ interactively.
                        :capabilities (tool json)
                        :context-window 256))))
 
+    (unless (alist-get 'gemini-2.0-flash gptel--gemini-models)
+      (add-to-list 'gptel--gemini-models
+                   '(gemini-2.0-flash
+                     :description "Next generation features, superior speed, native tool use"
+                     :capabilities (tool-use json media)
+                     :mime-types ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
+                                  "application/pdf" "text/plain" "text/csv" "text/html")
+                     :context-window 1000
+                     :cutoff-date "2024-12")))
+
     (setq my-gptel--gemini
           (gptel-make-gemini "Gemini"
             :stream t
