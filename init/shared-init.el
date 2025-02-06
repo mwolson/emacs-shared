@@ -742,6 +742,7 @@ interactively.
                        :capabilities (tool json)
                        :context-window 256))))
 
+    (require 'gptel-gemini)
     (unless (alist-get 'gemini-2.0-flash gptel--gemini-models)
       (add-to-list 'gptel--gemini-models
                    '(gemini-2.0-flash
