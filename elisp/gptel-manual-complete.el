@@ -27,7 +27,52 @@
 (require 'gptel)
 (require 'gptel-rewrite)
 
-(defvar gptel-manual-complete-directive "Complete at end: ")
+(defvar gptel-manual-complete-extra-directive "Complete at end:\n\n%s")
+(defvar gptel-manual-complete-directive 'gptel-manual-complete-directive-default)
+
+(defun gptel-manual-complete-directive-default ()
+  "Generic directive for rewriting or refactoring.
+
+These are instructions not specific to any particular required
+change.
+
+The returned string is interpreted as the system message for the
+rewrite request.  To use your own, add a different directive to
+`gptel-directives', or add to `gptel-rewrite-directives-hook',
+which see."
+  (or (save-mark-and-excursion
+        (run-hook-with-args-until-success
+         'gptel-rewrite-directives-hook))
+      (let* ((lang (downcase (gptel--strip-mode-suffix major-mode)))
+             (article (if (and lang (not (string-empty-p lang))
+                               (memq (aref lang 0) '(?a ?e ?i ?o ?u)))
+                          "an" "a")))
+        (if (derived-mode-p 'prog-mode)
+            (format (concat "You are %s %s programmer.  "
+                            "Follow my instructions and refactor %s code I provide.\n"
+                            "- Generate ONLY %s code as output, without any explanation.\n"
+                            "- Do not abbreviate or omit code.\n"
+                            "- Write only a single function.\n"
+                            "- It is acceptable to slightly adjust the existing "
+                            "function for readability.\n"
+                            "- Give me the final and best answer only.\n"
+                            "- Do not ask for further clarification, and make "
+                            "any assumptions you need to follow instructions."
+                            "- Never include markdown code fences like \"```\" in "
+                            "the output.")
+                    article lang lang lang)
+          (concat
+           (if (string-empty-p lang)
+               "You are an editor."
+             (format "You are %s %s editor." article lang))
+           "  Follow my instructions and improve or rewrite the text I provide."
+           "  Generate ONLY the replacement text,"
+           " without any explanation."
+           "  Write only a single paragraph or function."
+           "  It is acceptable to slightly adjust the existing"
+           " function for readability."
+           "  Never include markdown code fences like \"```\" in"
+           " the output.")))))
 
 (defun gptel-manual-complete--mark-function-default (&optional steps)
   (let ((pt-min (point))
@@ -103,19 +148,19 @@ Either the last function or the current region will be used for context."
          ;; Try to send context with system message
          (gptel-use-context
           (and gptel-use-context (if nosystem 'user 'system)))
-         (prompt (list (or (get-char-property (point) 'gptel-rewrite)
-                           (buffer-substring-no-properties (region-beginning) (region-end)))
+         (prompt (list ""
                        "What is the required change?"
-                       gptel-manual-complete-directive))
+                       (format gptel-manual-complete-extra-directive
+                               (or (get-char-property (point) 'gptel-rewrite)
+                                   (buffer-substring-no-properties (region-beginning) (region-end))))))
          (buffer (current-buffer)))
     (deactivate-mark)
     (when nosystem
       (setcar prompt (concat (car-safe (gptel--parse-directive
-                                        gptel--rewrite-directive 'raw))
-                             "\n\n" (car prompt))))
+                                        #'gptel-manual-complete-directive-default 'raw)))))
     (gptel-request prompt
       :dry-run nil
-      :system gptel--rewrite-directive
+      :system #'gptel-manual-complete-directive-default
       :stream gptel-stream
       :context
       (let ((ov (or (cdr-safe (get-char-property-and-overlay (point) 'gptel-rewrite))
