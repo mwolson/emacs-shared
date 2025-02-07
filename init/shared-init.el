@@ -707,14 +707,21 @@ interactively.
      :request-params (:temperature 0.025 :top_p 0.80 :top_k 25))
     (FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS
      :description "FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS model"
-     :capabilities (media json url)
+     :capabilities (media reasoning json url)
      :context-window 256
      ;; temperature can go up to 0.5 for more creativity but higher chance of
      ;; syntax errors
      :request-params (:temperature 0.0 :top_p 0.75 :top_k 20))
+    (simplescaling-S1-32B-Q4_K_S
+     :description "simplescaling-S1-32B-Q4_K_S model"
+     :capabilities (media reasoning tool json url)
+     :context-window 256
+     ;; temperature can go up to 0.3 for more creativity but higher chance of
+     ;; syntax errors
+     :request-params (:temperature 0.3 :top_p 0.80 :top_k 25))
     (DeepSeek-R1-Distill-Qwen-32B-Q2_K_L
      :description "DeepSeek-R1-Distill-Qwen-32B-Q2_K_L model"
-     :capabilities (media json url)
+     :capabilities (media reasoning json url)
      :context-window 256
      :request-params (:temperature 0.3 :top_p 0.75 :top_k 25))
     (phi-4-Q4_K_M
@@ -796,6 +803,9 @@ interactively.
           gptel-model (or my-gptel-model (car (gptel-backend-models gptel-backend)))
           gptel-expert-commands t
           gptel-temperature my-gptel-temperature)
+
+  ;; uncomment to debug gptel:
+  ;; (setq gptel-log-level 'info)
 
   (when my-gptel-system-prompt
     (setq gptel--system-message my-gptel-system-prompt)))
