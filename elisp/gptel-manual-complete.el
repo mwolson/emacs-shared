@@ -57,7 +57,7 @@ which see."
                             "function for readability.\n"
                             "- Give me the final and best answer only.\n"
                             "- Do not ask for further clarification, and make "
-                            "any assumptions you need to follow instructions."
+                            "any assumptions you need to follow instructions.\n"
                             "- Never include markdown code fences like \"```\" in "
                             "the output.")
                     article lang lang lang)
