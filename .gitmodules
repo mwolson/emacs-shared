@@ -11,6 +11,9 @@
 [submodule "elisp/gptel"]
         path = elisp/gptel
         url = https://github.com/karthink/gptel.git
+[submodule "elisp/gptel-fn-complete"]
+	path = elisp/gptel-fn-complete
+	url = https://github.com/mwolson/gptel-fn-complete.git
 [submodule "elisp/jtsx"]
         path = elisp/jtsx
         url = https://github.com/llemaitre19/jtsx.git
@@ -115,6 +118,7 @@
         url = https://github.com/nix-community/tree-sitter-nix.git
 [submodule "extra/tree-sitter-prisma"]
         path = extra/tree-sitter-prisma
+        shallow = true
         url = https://github.com/victorhqc/tree-sitter-prisma.git
 [submodule "extra/tree-sitter-python"]
         path = extra/tree-sitter-python
@@ -146,4 +150,5 @@
         url = https://github.com/mwolson/git-for-windows-manpages.git
 [submodule "extra/tree-sitter-mermaid"]
 	path = extra/tree-sitter-mermaid
+        shallow = true
 	url = https://github.com/monaqa/tree-sitter-mermaid

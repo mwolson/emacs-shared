@@ -874,7 +874,7 @@ interactively.
 Use the region instead if one is selected."
   (interactive)
   (unless (use-region-p)
-    (gptel-manual-complete--mark-function))
+    (gptel-fn-complete--mark-function))
   (call-interactively #'gptel-add))
 
 (defun my-gptel-add-current-file ()
@@ -892,7 +892,7 @@ Use the region instead if one is selected."
 Rewrite the region instead if one is selected."
   (interactive)
   (unless (use-region-p)
-    (gptel-manual-complete--mark-function))
+    (gptel-fn-complete--mark-function))
   (call-interactively #'gptel-rewrite))
 
 (defun my-gptel-query-function ()
@@ -920,9 +920,11 @@ Use the region instead if one is selected."
   "Confirm pending operations and return to gptel's menu." t)
 (autoload #'gptel-context-remove-all "gptel-context"
   "Remove all gptel context." t)
-(autoload #'gptel-manual-complete "gptel-manual-complete"
-  "Complete using an LLM." t)
-(autoload #'gptel-manual-complete--mark-function "gptel-manual-complete"
+
+(add-to-list 'load-path (concat my-emacs-path "elisp/gptel-fn-complete"))
+(autoload #'gptel-fn-complete "gptel-fn-complete"
+  "Complete function at point using an LLM." t)
+(autoload #'gptel-fn-complete--mark-function "gptel-fn-complete"
   "Put mark at end of this function, point at beginning." t)
 
 ;; Minuet for AI completion
@@ -1089,7 +1091,7 @@ CONTEXT and CALLBACK will be passed to the base function."
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "a a") #'my-gptel-add-function)
     (define-key map (kbd "a f") #'my-gptel-add-current-file)
-    (define-key map (kbd "c") #'gptel-manual-complete)
+    (define-key map (kbd "c") #'gptel-fn-complete)
     (define-key map (kbd "k") #'my-gptel-context-remove-all)
     (define-key map (kbd "l") #'my-gptel-toggle-local)
     (define-key map (kbd "q") #'my-gptel-query-function)
