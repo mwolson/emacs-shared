@@ -802,6 +802,7 @@ interactively.
   (setopt gptel-backend (symbol-value my-gptel-backend)
           gptel-model (or my-gptel-model (car (gptel-backend-models gptel-backend)))
           gptel-expert-commands t
+          gptel-rewrite-default-action 'accept
           gptel-temperature my-gptel-temperature)
 
   ;; uncomment to debug gptel:
@@ -821,14 +822,8 @@ interactively.
   "Start gptel with a default buffer name."
   (interactive)
   (require 'gptel)
-  (let* ((backend (symbol-value my-gptel-backend))
-         (backend-name
-          (format "*%s*" (gptel-backend-name backend)))
-         (model (or my-gptel-model (car (gptel-backend-models backend)))))
-    (setq gptel-backend backend
-          gptel-model model)
-    (with-suppressed-warnings ((obsolete warning-level-aliases))
-      (switch-to-buffer (gptel backend-name nil "### ")))))
+  (let ((backend-name (format "*%s*" (gptel-backend-name gptel-backend))))
+    (switch-to-buffer (gptel backend-name nil "### "))))
 
 (defun my-gptel-toggle-local ()
   "Toggle between local AI and remote AI."
