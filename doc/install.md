@@ -284,6 +284,26 @@ cd ~/emacs-shared
 
 To verify that `PATH` now has the correct entries, run `emacs --version` and make sure it shows the version number you'd expect.
 
+## Create a ~/.emacs.d/early-init.el file
+
+```sh
+mkdir -p ~/.emacs.d
+cd ~/.emacs.d
+emacs -q early-init.el  # or other editing command
+```
+
+`early-init.el` contents, change these as appropriate:
+
+```elisp
+;; Configure emacs-shared
+(setq my-email-address "you@example.com")
+(setq my-full-name     "Your Name")
+(setq my-emacs-path    "~/emacs-shared/")
+
+;; Load shared early init file
+(load-file (concat my-emacs-path "init/early-shared-init.el"))
+```
+
 ## Create a ~/.emacs.d/init.el file
 
 ```sh
@@ -295,11 +315,6 @@ emacs -q init.el  # or other editing command
 `init.el` contents, change these as appropriate:
 
 ```elisp
-;; Configure emacs-shared
-(setq my-email-address "you@example.com")
-(setq my-full-name     "Your Name")
-(setq my-emacs-path    "~/emacs-shared/")
-
 ;; Load shared init file
 (load-file (concat my-emacs-path "init/shared-init.el"))
 ```
