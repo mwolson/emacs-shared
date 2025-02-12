@@ -228,7 +228,18 @@
     (my-reset-frame-size)))
 
 ;; Initialize display settings
+(defun my-populate-scratch-buffer ()
+  (interactive)
+  (get-scratch-buffer-create)
+  (get-buffer "*scratch*")
+  (with-current-buffer "*scratch*"
+    (when (zerop (buffer-size))
+      (insert (substitute-command-keys initial-scratch-message))
+      (set-buffer-modified-p nil))))
+
 ;;(my-reset-theme)
+(pop-to-buffer-same-window (messages-buffer))
+(my-populate-scratch-buffer)
 (my-init-client-display)
 (add-hook 'server-after-make-frame-hook #'my-init-client-display t)
 (setq native-comp-async-report-warnings-errors 'silent)

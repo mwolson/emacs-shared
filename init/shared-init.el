@@ -16,10 +16,8 @@
 (add-to-list 'load-path (concat my-emacs-path "elisp") t)
 
 ;; Display initial screen quickly
-;;(display-startup-screen)
-;;(redisplay t)
-(scratch-buffer)
 (my-init-client-display)
+(pop-to-buffer-same-window (scratch-buffer))
 
 ;; Tasks that are run after initial startup for appearance of speed
 (defvar my-deferred-startup-hook '(display-startup-echo-area-message))
