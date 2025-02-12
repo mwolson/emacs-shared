@@ -206,8 +206,6 @@
           (add-to-list 'default-frame-alist (cons 'height my-frame-height))
           (add-to-list 'default-frame-alist (cons 'width my-frame-width)))
         (when (eq window-system 'mac)
-          ;; redisplay slowness https://github.com/hlissner/doom-emacs/issues/2217
-          (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
           (ignore-errors
             (mac-auto-operator-composition-mode)))
         (when (memq window-system '(pgtk w32 x))
@@ -230,12 +228,10 @@
     (my-reset-frame-size)))
 
 ;; Initialize display settings
+;;(my-reset-theme)
 (my-init-client-display)
 (add-hook 'server-after-make-frame-hook #'my-init-client-display t)
-
-;; Display startup screen
 (setq native-comp-async-report-warnings-errors 'silent)
-(display-startup-screen)
 
 (provide 'early-shared-init)
 ;;; early-shared-init.el ends here

@@ -15,9 +15,11 @@
 ;; Add shared elisp directory (but prefer system libs)
 (add-to-list 'load-path (concat my-emacs-path "elisp") t)
 
-;; Make sure startup screen is displayed
+;; Display initial screen quickly
+;;(display-startup-screen)
+;;(redisplay t)
+(scratch-buffer)
 (my-init-client-display)
-(redisplay t)
 
 ;; Tasks that are run after initial startup for appearance of speed
 (defvar my-deferred-startup-hook '(display-startup-echo-area-message))
