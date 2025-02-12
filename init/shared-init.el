@@ -869,7 +869,7 @@ interactively.
 Use the region instead if one is selected."
   (interactive)
   (unless (use-region-p)
-    (gptel-fn-complete--mark-function))
+    (gptel-fn-complete-mark-function))
   (call-interactively #'gptel-add))
 
 (defun my-gptel-add-current-file ()
@@ -887,7 +887,7 @@ Use the region instead if one is selected."
 Rewrite the region instead if one is selected."
   (interactive)
   (unless (use-region-p)
-    (gptel-fn-complete--mark-function))
+    (gptel-fn-complete-mark-function))
   (call-interactively #'gptel-rewrite))
 
 (defun my-gptel-query-function ()
@@ -919,7 +919,7 @@ Use the region instead if one is selected."
 (add-to-list 'load-path (concat my-emacs-path "elisp/gptel-fn-complete"))
 (autoload #'gptel-fn-complete "gptel-fn-complete"
   "Complete function at point using an LLM." t)
-(autoload #'gptel-fn-complete--mark-function "gptel-fn-complete"
+(autoload #'gptel-fn-complete-mark-function "gptel-fn-complete"
   "Put mark at end of this function, point at beginning." t)
 
 ;; Minuet for AI completion
@@ -1772,7 +1772,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (global-set-key (kbd "s-c") #'kill-ring-save)
   (global-set-key (kbd "s-m") (lambda () (interactive)))
   (global-set-key (kbd "s-p") #'project-find-file)
-  (global-set-key (kbd "s-q") #'my-kill-emacs)
+  (global-set-key (kbd "s-q") #'fill-paragraph)
   (global-set-key (kbd "s-w") #'kill-ring-save)
   (global-set-key (kbd "s-v") #'yank)
   (global-set-key (kbd "s-x") #'counsel-M-x)
