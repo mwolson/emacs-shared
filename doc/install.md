@@ -315,6 +315,9 @@ emacs -q init.el  # or other editing command
 `init.el` contents, change these as appropriate:
 
 ```elisp
+;; Authinfo location for any AI passwords
+(setopt auth-sources '("~/.emacs.d/.authinfo"))
+
 ;; Load shared init file
 (load-file (concat my-emacs-path "init/shared-init.el"))
 ```
