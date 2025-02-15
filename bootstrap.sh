@@ -165,7 +165,7 @@ if [[ -n "$BUILD_GIT_MANPAGES" ]]; then
     qpopd
 fi
 
-dir_elisp_submodules="archive-rpm gptel ligature polymode"
+dir_elisp_submodules="aidermacs archive-rpm gptel ligature polymode"
 for mod in $dir_elisp_submodules; do
     update_submodule elisp/"$mod"
     byte_compile "$mod" elisp/"$mod"

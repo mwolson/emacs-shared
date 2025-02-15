@@ -522,17 +522,6 @@ interactively.
                        :capabilities (tool json)
                        :context-window 256))))
 
-    (require 'gptel-gemini)
-    (unless (alist-get 'gemini-2.0-flash gptel--gemini-models)
-      (add-to-list 'gptel--gemini-models
-                   '(gemini-2.0-flash
-                     :description "Next generation features, superior speed, native tool use"
-                     :capabilities (tool-use json media)
-                     :mime-types ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
-                                  "application/pdf" "text/plain" "text/csv" "text/html")
-                     :context-window 1000
-                     :cutoff-date "2024-12")))
-
     (setq my-gptel--gemini
           (gptel-make-gemini "Gemini"
             :stream t
@@ -601,6 +590,7 @@ interactively.
 (defun my-gptel-toggle-local ()
   "Toggle between local AI and remote AI."
   (interactive)
+  (require 'aidermacs)
   (require 'gptel)
   (require 'minuet)
   (let* ((use-local (cond ((eq gptel-backend (symbol-value my-gptel-backend-local))
@@ -627,8 +617,8 @@ interactively.
                 (gptel--model-request-params gptel-model)))
       (setq minuet-provider my-minuet-provider-remote
             my-minuet-provider my-minuet-provider-remote))
-    (message "gptel backend is now %s and minuet provider is now %s"
-             backend-sym minuet-provider)))
+    (message "gptel backend is now %s, aider %s, and minuet %s"
+             backend-sym my-aidermacs-model minuet-provider)))
 
 (defun my-gptel-context-save-and-quit ()
   "Apply gptel context changes and quit."
@@ -678,6 +668,8 @@ Use the region instead if one is selected."
   (interactive)
   (gptel-context-remove-all))
 
+(autoload #'gptel-api-key-from-auth-source "gptel"
+  "Lookup api key in the auth source." nil)
 (autoload #'gptel-backend-name "gptel-openai"
   "Access slot \"name\" of ‘gptel-backend’ struct." nil)
 (autoload #'gptel-context-add-file "gptel-context"
@@ -694,6 +686,15 @@ Use the region instead if one is selected."
   "Complete function at point using an LLM." t)
 (autoload #'gptel-fn-complete-mark-function "gptel-fn-complete"
   "Put mark at end of this function, point at beginning." t)
+
+;; Aidermacs for aider AI integration
+(with-eval-after-load "aidermacs"
+  (setenv "GEMINI_API_KEY" (gptel-api-key-from-auth-source
+                            (gptel-backend-host my-gptel--gemini))))
+
+(add-to-list 'load-path (concat my-emacs-path "elisp/aidermacs"))
+(setopt aidermacs-default-model my-aidermacs-model)
+(global-set-key (kbd "C-c a") #'aidermacs-transient-menu)
 
 ;; Minuet for AI completion
 (defun my-minuet-maybe-turn-on-auto-suggest ()

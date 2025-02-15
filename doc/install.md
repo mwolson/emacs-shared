@@ -63,6 +63,16 @@ For a full install, in addition to the above also run:
 sudo paru -S jdtls omnisharp-roslyn-bin
 ```
 
+## Install aider
+
+You'll need to [install aider](https://aider.chat/docs/install.html) in order to use some AI features with `aidermacs`. It's recommended to [install uv](https://docs.astral.sh/uv/getting-started/installation/) first, and then do:
+
+```sh
+uv tool install --force --python python3.12 aider-chat@latest
+```
+
+Make sure to also add `export PATH=~/.local/bin:"$PATH"` or similar to your `.bashrc` or `.zshenv` file and then restart the shell to make the `aider` command available.
+
 ## Install basedpyright
 
 You'll need to [install basedpyright](https://docs.basedpyright.com/latest/installation/command-line-and-language-server/) in order to support language server features for Python. On Mac, install the `basedpyright` package from homebrew.

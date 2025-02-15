@@ -34,6 +34,8 @@
 (defvar my-frame-maximize-p  t)
 (defvar my-frame-pad-width   (if (eq system-type 'darwin) 65 nil))
 (defvar my-frame-pad-height  (if (eq system-type 'darwin) 15 nil))
+(defvar my-aidermacs-model   "anthropic/claude-3-5-sonnet-20241022")
+(defvar my-aidermacs-model-remote "anthropic/claude-3-5-sonnet-20241022")
 (defvar my-gptel-backend     'my-gptel--claude)
 (defvar my-gptel-backend-local 'my-gptel--local-ai)
 (defvar my-gptel-backend-remote 'my-gptel--claude)
