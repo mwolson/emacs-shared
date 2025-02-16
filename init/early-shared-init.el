@@ -35,6 +35,7 @@
 (defvar my-frame-pad-width   (if (eq system-type 'darwin) 65 nil))
 (defvar my-frame-pad-height  (if (eq system-type 'darwin) 15 nil))
 (defvar my-aidermacs-model   "anthropic/claude-3-5-sonnet-20241022")
+(defvar my-aidermacs-model-local "openai/Sky-T1-32B-Flash-Q4_K_S")
 (defvar my-aidermacs-model-remote "anthropic/claude-3-5-sonnet-20241022")
 (defvar my-gptel-backend     'my-gptel--claude)
 (defvar my-gptel-backend-local 'my-gptel--local-ai)

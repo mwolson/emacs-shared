@@ -611,10 +611,14 @@ interactively.
           my-gptel-model model)
     (if use-local
         (progn
+          (setopt aidermacs-default-model my-aidermacs-model-local
+                  my-aidermacs-model my-aidermacs-model-local)
           (setq minuet-provider 'openai-compatible
                 my-minuet-provider 'openai-compatible)
           (setf (plist-get minuet-openai-compatible-options :optional)
                 (gptel--model-request-params gptel-model)))
+      (setopt aidermacs-default-model my-aidermacs-model-remote
+              my-aidermacs-model my-aidermacs-model-remote)
       (setq minuet-provider my-minuet-provider-remote
             my-minuet-provider my-minuet-provider-remote))
     (message "gptel backend is now %s, aider %s, and minuet %s"
@@ -690,7 +694,9 @@ Use the region instead if one is selected."
 ;; Aidermacs for aider AI integration
 (with-eval-after-load "aidermacs"
   (setenv "GEMINI_API_KEY" (gptel-api-key-from-auth-source
-                            (gptel-backend-host my-gptel--gemini))))
+                            (gptel-backend-host my-gptel--gemini)))
+  (setenv "OPENAI_API_KEY" (gptel-api-key-from-auth-source
+                            (gptel-backend-host gptel--openai))))
 
 (add-to-list 'load-path (concat my-emacs-path "elisp/aidermacs"))
 (setopt aidermacs-default-model my-aidermacs-model)
