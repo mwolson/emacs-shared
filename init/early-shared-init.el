@@ -127,6 +127,11 @@
                     (t el)))
             my-prog-mode-ligatures)))
 
+(defun my-setup-web-ligatures ()
+  (interactive)
+  (setq-local ligature-composition-table nil)
+  (ligature-set-ligatures major-mode my-web-mode-ligatures))
+
 (with-eval-after-load "maxframe"
   (when my-frame-pad-width
     (setopt mf-max-width (- (display-pixel-width) my-frame-pad-width)))

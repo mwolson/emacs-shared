@@ -378,6 +378,18 @@
   (define-key flymake-mode-map (kbd "C-x f") my-flymake-mode-map))
 
 ;; NodeJS REPL
+(defun my-js-comint-send-defun (start end)
+  "Send the function at point to the inferior Javascript process."
+  (interactive "r")
+  (unless (region-active-p)
+    (save-mark-and-excursion
+      (gptel-fn-complete--mark-function-treesit)
+      (setq start (point)
+            end (mark))))
+  (let ((text (buffer-substring-no-properties start end)))
+    (js-comint-start-or-switch-to-repl)
+    (js-comint-send-string text)))
+
 (defun my-js-comint-send-last-sexp ()
   "Send the previous sexp to the inferior Javascript process."
   (interactive)
@@ -410,6 +422,8 @@
     (define-key map (kbd "C-c C-l") 'my-js-comint-send-line)
     (define-key map (kbd "C-c C-r") 'my-js-comint-send-region)
     (define-key map (kbd "C-c C-z") 'js-comint-start-or-switch-to-repl)
+    (define-key map (kbd "C-M-x") 'my-js-comint-send-defun)
+    (define-key map (kbd "C-s-x") 'my-js-comint-send-defun)
     map)
   "Keymap for node-repl-interaction-mode.")
 
@@ -962,14 +976,16 @@ CONTEXT and CALLBACK will be passed to the base function."
                    (:classFileContentsSupport t :skipProjectConfiguration t)))))
   (add-hook 'java-ts-mode-hook #'my-eglot-ensure))
 
+;; JSON
+(my-remap-major-mode 'json-mode 'json-ts-mode)
+(add-to-list 'auto-mode-alist '("\\.json\\'" . json-ts-mode))
+(add-hook 'json-ts-mode-hook #'add-node-modules-path t)
+(add-hook 'json-ts-mode-hook #'my-eglot-ensure t)
+(add-hook 'json-ts-mode-hook #'my-setup-web-ligatures t)
+
 ;; JTSX (Javascript, Typescript, and JSX support)
 (defvar my-jtsx-major-modes '(astro-mode jtsx-jsx-mode jtsx-tsx-mode jtsx-typescript-mode))
 (defvar my-jtsx-ts-major-modes '(jtsx-tsx-mode jtsx-typescript-mode))
-
-(defun my-setup-jtsx-ligatures ()
-  (interactive)
-  (setq-local ligature-composition-table nil)
-  (ligature-set-ligatures major-mode my-web-mode-ligatures))
 
 (add-to-list 'load-path (concat my-emacs-path "elisp/jtsx"))
 (add-to-list 'auto-mode-alist '("\\.[cm]js\\'" . jtsx-jsx-mode))
@@ -997,7 +1013,7 @@ CONTEXT and CALLBACK will be passed to the base function."
     (add-hook hook #'my-eglot-ensure t)
     (add-hook hook #'my-node-repl-setup t)
     (add-hook hook #'my-eslint-setup t)
-    (add-hook hook #'my-setup-jtsx-ligatures t)))
+    (add-hook hook #'my-setup-web-ligatures t)))
 
 (defclass eglot-deno (eglot-lsp-server) ()
   :documentation "A custom class for deno lsp.")
@@ -1079,16 +1095,10 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-to-list 'my-polymode-aliases '(swift . swift-ts-mode))
 
 ;; Web Mode
-(defun my-setup-web-mode-ligatures ()
-  (interactive)
-  (setq-local ligature-composition-table nil)
-  (ligature-set-ligatures major-mode my-web-mode-ligatures))
-
 (add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.json\\'" . web-mode))
 (add-hook 'web-mode-hook #'add-node-modules-path t)
-(add-hook 'web-mode-hook #'my-setup-web-mode-ligatures t)
+(add-hook 'web-mode-hook #'my-setup-web-ligatures t)
 
 ;; Zig
 (add-to-list 'load-path (concat my-emacs-path "elisp/zig-ts-mode"))

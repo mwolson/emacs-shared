@@ -106,6 +106,10 @@
         path = extra/tree-sitter-jsdoc
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-jsdoc
+[submodule "extra/tree-sitter-json"]
+	path = extra/tree-sitter-json
+        shallow = true
+	url = https://github.com/tree-sitter/tree-sitter-json.git
 [submodule "extra/tree-sitter-kotlin"]
         path = extra/tree-sitter-kotlin
         shallow = true
@@ -115,6 +119,10 @@
         shallow = true
         url = https://github.com/tree-sitter-grammars/tree-sitter-markdown.git
         branch = split_parser
+[submodule "extra/tree-sitter-mermaid"]
+	path = extra/tree-sitter-mermaid
+        shallow = true
+	url = https://github.com/monaqa/tree-sitter-mermaid
 [submodule "extra/tree-sitter-nix"]
         path = extra/tree-sitter-nix
         shallow = true
@@ -147,11 +155,12 @@
         path = extra/tree-sitter-zig
         shallow = true
         url = https://github.com/mwolson/tree-sitter-zig.git
+[submodule "extra/vscode"]
+	path = extra/vscode
+	ignore = dirty
+        shallow = true
+	url = https://github.com/microsoft/vscode.git
 [submodule "share/man"]
         path = share/man
         shallow = true
         url = https://github.com/mwolson/git-for-windows-manpages.git
-[submodule "extra/tree-sitter-mermaid"]
-	path = extra/tree-sitter-mermaid
-        shallow = true
-	url = https://github.com/monaqa/tree-sitter-mermaid

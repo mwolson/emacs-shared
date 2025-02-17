@@ -8,6 +8,7 @@
     "test": "test"
   },
   "scripts": {
+    "compile:json-server": "cd extra/vscode/extensions/json-language-features/server && pnpm import --quiet && pnpm i && rimraf out && tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,6 +19,10 @@
     "@mermaid-js/mermaid-cli": "^11.4.2",
     "prettier": "^3.4.2",
     "typescript-eslint-language-service": "^5.0.5",
-    "typescript-language-server": "^4.3.3"
+    "typescript-language-server": "^4.3.3",
+    "vscode-json-languageserver": "link:extra/vscode/extensions/json-language-features/server"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1"
   }
 }
