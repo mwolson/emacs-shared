@@ -308,14 +308,25 @@
 (defvar my-debug-jsonrpc nil
   "Whether to enable log messages for jsonrpc.")
 
+(defun my-jsonrpc--log-event-real (&rest args)
+  "Placeholder for `jsonrpc--log-event'."
+  nil)
+
+(defun my-jsonrpc--log-event (&rest args)
+  "Control whether jsonrpc events are logged."
+  (when my-debug-jsonrpc
+    (apply #'my-jsonrpc--log-event-real args)))
+
 (with-eval-after-load "eglot"
   (setq eglot-diagnostics-map
         (let ((map (make-sparse-keymap)))
           (define-key map (kbd "<mouse-3>") #'eglot-code-actions-at-mouse)
           map))
   (define-key eglot-mode-map (kbd "<f2>") #'eglot-rename)
-  (unless my-debug-jsonrpc
-    (fset #'jsonrpc--log-event #'(lambda (&rest args) nil)))
+  (fset #'my-jsonrpc--log-event-real (symbol-function 'jsonrpc--log-event))
+  (fset #'jsonrpc--log-event #'my-jsonrpc--log-event)
+  ;; to debug eglot:
+  ;; (setq my-debug-jsonrpc t)
   (setopt eglot-extend-to-xref t
           eglot-send-changes-idle-time 0.2))
 
