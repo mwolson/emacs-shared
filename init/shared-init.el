@@ -466,7 +466,12 @@ interactively.
 (defvar my-gptel--local-ai nil)
 (defvar my-gptel--mistral nil)
 (defvar my-gptel-local-models
-  '((Sky-T1-32B-Flash-Q4_K_S
+  '((Sky-T1-32B-Preview-Q4_K_S
+     :description "Sky-T1-32B-Preview-Q4_K_S model"
+     :capabilities (media tool json url)
+     :context-window 256
+     :request-params (:temperature 0.2 :top_p 0.80 :top_k 20))
+    (Sky-T1-32B-Flash-Q4_K_S
      :description "Sky-T1-32B-Flash-Q4_K_S model"
      :capabilities (media tool json url)
      :context-window 256
