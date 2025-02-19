@@ -615,7 +615,7 @@ interactively.
   (interactive)
   (require 'gptel)
   (let ((backend-name (format "*%s*" (gptel-backend-name gptel-backend))))
-    (switch-to-buffer (gptel backend-name nil "### "))))
+    (switch-to-buffer (gptel backend-name nil ""))))
 
 (defun my-gptel-toggle-local ()
   "Toggle between local AI and remote AI."
@@ -646,7 +646,9 @@ interactively.
           (setq minuet-provider 'openai-compatible
                 my-minuet-provider 'openai-compatible)
           (setf (plist-get minuet-openai-compatible-options :optional)
-                (gptel--model-request-params gptel-model)))
+                (copy-sequence (gptel--model-request-params gptel-model)))
+          (minuet-set-optional-options minuet-openai-compatible-options
+                                       :max_tokens 128))
       (setopt aidermacs-default-model my-aidermacs-model-remote
               my-aidermacs-model my-aidermacs-model-remote)
       (setq minuet-provider my-minuet-provider-remote
@@ -723,8 +725,8 @@ Use the region instead if one is selected."
 
 ;; Aidermacs for aider AI integration
 (with-eval-after-load "aidermacs"
-  (setenv "GEMINI_API_KEY" (gptel-api-key-from-auth-source
-                            (gptel-backend-host my-gptel--gemini)))
+  (setenv "ANTHROPIC_API_KEY" (gptel-api-key-from-auth-source
+                               (gptel-backend-host my-gptel--claude)))
   (setenv "OPENAI_API_KEY" (gptel-api-key-from-auth-source
                             (gptel-backend-host gptel--openai))))
 
@@ -777,21 +779,30 @@ Use the region instead if one is selected."
   (let ((gptel-backend backend))
     (gptel-api-key-from-auth-source)))
 
+(defun my-minuet-llama-cpp-fim-qwen-prompt-function (ctx)
+  (format "<|fim_prefix|>%s\n%s<|fim_suffix|>%s<|fim_middle|>"
+          (plist-get ctx :language-and-tab)
+          (plist-get ctx :before-cursor)
+          (plist-get ctx :after-cursor)))
+
 (defun my-minuet-sync-options-from-gptel (m-backend g-backend)
   (let* ((options-name (format "minuet-%s-options" (symbol-name m-backend)))
          (options (symbol-value (intern options-name))))
     (when (memq m-backend '(openai-compatible openai-fim-compatible))
       (plist-put options :api-key #'(lambda () "local-ai"))
       (plist-put options :name (gptel-backend-name g-backend))
-      (setf (plist-get options :optional) (gptel--model-request-params gptel-model)))
+      (setf (plist-get options :optional)
+            (copy-sequence (gptel--model-request-params gptel-model)))
+      (minuet-set-optional-options options :max_tokens 128))
     (cond ((eq m-backend 'openai-fim-compatible)
            (plist-put options :end-point
                       (format "%s://%s%s"
                               (gptel-backend-protocol g-backend)
                               (gptel-backend-host g-backend)
-                              "/infill"))
-           (plist-put options :template '(:prompt minuet--default-fim-prompt-function
-                                          :suffix minuet--default-fim-suffix-function)))
+                              "/v1/completions"))
+           (plist-put options :template
+                      '(:prompt my-minuet-llama-cpp-fim-qwen-prompt-function
+                        :suffix nil)))
           ((eq m-backend 'openai-compatible)
            (plist-put options :end-point
                       (format "%s://%s%s"
