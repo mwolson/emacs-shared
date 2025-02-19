@@ -213,10 +213,7 @@
         (when (or (not my-frame-maximize-p) my-frame-maximize-if-pixel-width-lte)
           (add-to-list 'default-frame-alist (cons 'height my-frame-height))
           (add-to-list 'default-frame-alist (cons 'width my-frame-width)))
-        (when (eq window-system 'mac)
-          (ignore-errors
-            (mac-auto-operator-composition-mode)))
-        (when (memq window-system '(pgtk w32 x))
+        (when (memq window-system '(ns pgtk w32 x))
           (my-enable-ligatures))
         ;; Make sure DEL key does what I want
         (normal-erase-is-backspace-mode 1)
