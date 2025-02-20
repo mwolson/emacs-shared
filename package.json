@@ -23,6 +23,7 @@
     "vscode-json-languageserver": "link:extra/vscode/extensions/json-language-features/server"
   },
   "devDependencies": {
-    "rimraf": "^6.0.1"
+    "rimraf": "^6.0.1",
+    "typescript": "^5.7.3"
   }
 }
