@@ -1,7 +1,6 @@
 [submodule "elisp/aidermacs"]
 	path = elisp/aidermacs
-	url = https://github.com/mwolson/aidermacs.git
-#	url = https://github.com/MatthewZMD/aidermacs.git
+	url = https://github.com/MatthewZMD/aidermacs.git
 [submodule "elisp/archive-rpm"]
         path = elisp/archive-rpm
         shallow = true
