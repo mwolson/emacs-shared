@@ -81,6 +81,17 @@ You'll need to [install basedpyright](https://docs.basedpyright.com/latest/insta
 
 You'll need to [install clangd](https://clangd.llvm.org/installation) in order to support language server features for C/C++. On Mac, install the `llvm` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
 
+## (Optional) Install clojure and leiningen
+
+You'll need to [install clojure](https://clojure.org/guides/install_clojure) and [install leiningen](https://wiki.leiningen.org/Packaging) in order to support Clojure. On Mac:
+
+```sh
+brew install --cask temurin@21
+brew install clojure/tools/clojure leiningen
+# do this to avoid failures when starting CIDER for the first time
+mkdir -p ~/.lein
+```
+
 ## Install fd
 
 [fd](https://github.com/sharkdp/fd/releases) is helpful for reducing time for locating files in project directories in some cases. On Mac, install the `fd` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
