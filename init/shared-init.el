@@ -495,33 +495,20 @@ interactively.
      :description "Sky-T1-32B-Preview-Q4_K_S model"
      :capabilities (media tool json url)
      :context-window 256
+     ;; temperature can go down to 0 for more predictability but less creativity
      :request-params (:temperature 0.2 :top_p 0.80 :top_k 20))
-    (Sky-T1-32B-Flash-Q4_K_S
-     :description "Sky-T1-32B-Flash-Q4_K_S model"
-     :capabilities (media tool json url)
-     :context-window 256
-     ;; temperature can go up to 0.3 for more creativity but higher chance of
-     ;; syntax errors
-     :request-params (:temperature 0.0 :top_p 0.80 :top_k 20))
-    (Sky-T1-32B-Flash-IQ2_XXS
-     :description "Sky-T1-32B-Flash-IQ2_XXS model"
+    (Sky-T1-32B-Preview-IQ2_XXS
+     :description "Sky-T1-32B-Preview-IQ2_XXS model"
      :capabilities (media tool json url)
      :context-window 256
      :request-params (:temperature 0.025 :top_p 0.80 :top_k 25))
-    (FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS
-     :description "FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview-IQ4_XS model"
+    (FuseO1-DeepSeekR1-QwQ-SkyT1-32B-Preview-IQ4_XS
+     :description "FuseO1-DeepSeekR1-QwQ-SkyT1-32B-Preview-IQ4_XS model"
      :capabilities (media reasoning json url)
      :context-window 256
      ;; temperature can go up to 0.5 for more creativity but higher chance of
      ;; syntax errors
-     :request-params (:temperature 0.0 :top_p 0.75 :top_k 20))
-    (simplescaling_s1-32B-Q4_K_S
-     :description "simplescaling_s1-32B-Q4_K_S model"
-     :capabilities (media reasoning tool json url)
-     :context-window 256
-     ;; temperature can go up to 0.3 for more creativity but higher chance of
-     ;; syntax errors
-     :request-params (:temperature 0.0 :top_p 0.80 :top_k 20))
+     :request-params (:temperature 0.025 :top_p 0.80 :top_k 25))
     (DeepSeek-R1-Distill-Qwen-32B-Q2_K_L
      :description "DeepSeek-R1-Distill-Qwen-32B-Q2_K_L model"
      :capabilities (media reasoning json url)
