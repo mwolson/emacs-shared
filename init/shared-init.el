@@ -719,7 +719,6 @@ Use the region instead if one is selected."
 
 (add-to-list 'load-path (concat my-emacs-path "elisp/aidermacs"))
 (setopt aidermacs-default-model my-aidermacs-model)
-(global-set-key (kbd "C-c a") #'aidermacs-transient-menu)
 
 ;; Minuet for AI completion
 (defun my-minuet-maybe-turn-on-auto-suggest ()
@@ -1471,6 +1470,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
     (define-key map (kbd "a s") #'my-asdf-vm-init)
     (define-key map (kbd "c") #'project-compile)
     (define-key map (kbd "f") #'project-find-file)
+    (define-key map (kbd "g a") #'aidermacs-transient-menu)
     (define-key map (kbd "g g") #'my-gptel-start)
     (define-key map (kbd "g p") #'gptel-menu)
     (define-key map (kbd "g s") #'gptel-send)

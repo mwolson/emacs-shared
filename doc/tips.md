@@ -11,6 +11,7 @@
 * <kbd>C-c p a s</kbd> to switch Emacs to a local asdf-managed version of node.js or other development program
 * <kbd>C-c p c</kbd> to start a compilation at the top of the current project
 * <kbd>C-c p f</kbd> to find a file within the current project
+* <kbd>C-c p g a</kbd> to start or manage an Aider session for AI coding
 * <kbd>C-c p g g</kbd> to start a Claude AI interaction buffer
 * <kbd>C-c p g p</kbd> to bring up a gptel menu for taking different AI actions
 * <kbd>C-c p k</kbd> to close all files in the current project
