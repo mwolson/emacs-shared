@@ -37,6 +37,8 @@
 (defvar my-aidermacs-model   "anthropic/claude-3-5-sonnet-20241022")
 (defvar my-aidermacs-model-local "openai/Sky-T1-32B-Preview-Q4_K_S")
 (defvar my-aidermacs-model-remote "anthropic/claude-3-5-sonnet-20241022")
+;; backup 1: (setq my-aidermacs-model-remote "gemini/gemini-2.0-flash")
+;; backup 2: (setq my-aidermacs-model-remote "gpt-4o")
 (defvar my-gptel-backend     'my-gptel--claude)
 (defvar my-gptel-backend-local 'my-gptel--local-ai)
 (defvar my-gptel-backend-remote 'my-gptel--claude)

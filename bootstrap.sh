@@ -33,6 +33,7 @@ fi
 
 BUILD=y
 compile_check which
+compile_check cmake
 compile_check make
 compile_check node
 compile_check pnpm
@@ -173,8 +174,9 @@ for mod in $dir_elisp_submodules; do
 done
 
 file_elisp_submodules="
-    asdf-vm erlang-ts gptel-fn-complete jtsx kotlin-ts-mode mermaid-ts-mode
-    minuet poly-markdown prisma-ts-mode swift-ts-mode tmux-mode zig-ts-mode
+    asdf-vm clojure-ts-mode erlang-ts gptel-fn-complete jtsx kotlin-ts-mode
+    mermaid-ts-mode minuet poly-markdown prisma-ts-mode swift-ts-mode tmux-mode
+    vterm zig-ts-mode
 "
 for mod in $file_elisp_submodules; do
     update_submodule elisp/"$mod"
@@ -184,6 +186,14 @@ done
 update_submodule extra/emacs
 
 if [[ -n "$BUILD" ]]; then
+    qpushd elisp/vterm
+    rm -fr build
+    mkdir -p build
+    cd build
+    cmake ..
+    make
+    qpopd
+
     "$(get_topdir)"/install-treesit-grammar.sh \
         markdown_inline markdown "tree-sitter-markdown-inline/src"
 

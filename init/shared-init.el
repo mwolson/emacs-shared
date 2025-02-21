@@ -482,6 +482,10 @@ interactively.
 (with-eval-after-load "treesit"
   (setopt treesit-font-lock-level 4))
 
+;; vterm
+(add-to-list 'load-path (concat my-emacs-path "elisp/vterm"))
+(require 'vterm)
+
 ;; Set up gptel
 (defvar my-gptel--backends-defined nil)
 (defvar my-gptel--claude nil)
@@ -604,6 +608,12 @@ interactively.
   (let ((backend-name (format "*%s*" (gptel-backend-name gptel-backend))))
     (switch-to-buffer (gptel backend-name nil ""))))
 
+(defun my-aidermacs-set-editor-model (model)
+  (setopt aidermacs-default-model model
+          aidermacs-editor-model model
+          aidermacs-extra-args (list "--model" model)
+          my-aidermacs-model model))
+
 (defun my-gptel-toggle-local ()
   "Toggle between local AI and remote AI."
   (interactive)
@@ -628,16 +638,14 @@ interactively.
           my-gptel-model model)
     (if use-local
         (progn
-          (setopt aidermacs-default-model my-aidermacs-model-local
-                  my-aidermacs-model my-aidermacs-model-local)
+          (my-aidermacs-set-editor-model my-aidermacs-model-local)
           (setq minuet-provider 'openai-compatible
                 my-minuet-provider 'openai-compatible)
           (setf (plist-get minuet-openai-compatible-options :optional)
                 (copy-sequence (gptel--model-request-params gptel-model)))
           (minuet-set-optional-options minuet-openai-compatible-options
                                        :max_tokens 128))
-      (setopt aidermacs-default-model my-aidermacs-model-remote
-              my-aidermacs-model my-aidermacs-model-remote)
+      (my-aidermacs-set-editor-model my-aidermacs-model-remote)
       (setq minuet-provider my-minuet-provider-remote
             my-minuet-provider my-minuet-provider-remote))
     (message "gptel backend is now %s, aider %s, and minuet %s"
@@ -711,14 +719,12 @@ Use the region instead if one is selected."
   "Put mark at end of this function, point at beginning." t)
 
 ;; Aidermacs for aider AI integration
-(with-eval-after-load "aidermacs"
-  (setenv "ANTHROPIC_API_KEY" (gptel-api-key-from-auth-source
-                               (gptel-backend-host my-gptel--claude)))
-  (setenv "OPENAI_API_KEY" (gptel-api-key-from-auth-source
-                            (gptel-backend-host gptel--openai))))
+(with-eval-after-load "aidermacs-backends"
+  ;; 'vterm is neat, but it crashes frequently on macOS
+  (setopt aidermacs-backend 'comint))
 
 (add-to-list 'load-path (concat my-emacs-path "elisp/aidermacs"))
-(setopt aidermacs-default-model my-aidermacs-model)
+(my-aidermacs-set-editor-model my-aidermacs-model)
 
 ;; Minuet for AI completion
 (defun my-minuet-maybe-turn-on-auto-suggest ()
@@ -943,20 +949,27 @@ CONTEXT and CALLBACK will be passed to the base function."
   (add-hook 'csharp-ts-mode-hook #'my-eglot-ensure))
 
 ;; Clojure
-(with-eval-after-load "clojure-ts-mode"
-  (require 'cider))
-
 (with-eval-after-load "cider-repl"
   (define-key cider-repl-mode-map (kbd "C-d") #'cider-quit))
+
+(defvar my-clojure-modes
+  '(clojure-mode clojure-ts-mode clojurec-mode clojurescript-mode))
 
 (with-eval-after-load "apheleia-formatters"
   (setf (alist-get 'zprint apheleia-formatters)
         '("zprint" "{:style [:how-to-ns] :search-config? true}"))
-  (dolist (mode '(clojure-mode clojure-ts-mode clojurec-mode clojurescript-mode))
+  (dolist (mode my-clojure-modes)
     (setf (alist-get mode apheleia-mode-alist)
           'zprint)))
 
+(add-to-list 'load-path (concat my-emacs-path "elisp/clojure-ts-mode"))
+(autoload #'clojure-ts-mode "clojure-ts-mode" nil t)
 (my-remap-major-mode 'clojure-mode 'clojure-ts-mode)
+(add-hook 'clojure-ts-mode-hook #'cider-mode t)
+(add-hook 'clojure-ts-mode-hook #'my-eglot-ensure t)
+(add-to-list 'eglot-server-programs
+             '((clojure-ts-mode clojure-mode)
+               "clojure-lsp"))
 
 ;; Emacs Lisp
 (autoload #'plist-lisp-indent-install "plist-lisp-indent"

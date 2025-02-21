@@ -8,6 +8,9 @@
 [submodule "elisp/asdf-vm"]
         path = elisp/asdf-vm
         url = https://github.com/delonnewman/asdf-vm.el.git
+[submodule "elisp/clojure-ts-mode"]
+	path = elisp/clojure-ts-mode
+	url = https://github.com/clojure-emacs/clojure-ts-mode.git
 [submodule "elisp/erlang-ts"]
         path = elisp/erlang-ts
         url = https://github.com/erlang/emacs-erlang-ts.git
@@ -47,6 +50,9 @@
 [submodule "elisp/tmux-mode"]
         path = elisp/tmux-mode
         url = https://github.com/nverno/tmux-mode.git
+[submodule "elisp/vterm"]
+	path = elisp/vterm
+	url = https://github.com/akermu/emacs-libvterm.git
 [submodule "elisp/zig-ts-mode"]
         path = elisp/zig-ts-mode
         url = https://codeberg.org/meow_king/zig-ts-mode.git

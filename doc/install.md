@@ -31,7 +31,7 @@ pacman -Sy pacman
 pacman -Syu
 pacman -Su
 pacman -S --needed base-devel libssh2-devel msys/man-db xmlto
-pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,fd,gcc,gnutls,go,gopls,make,ninja,ripgrep,rust}
+pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,cmake,fd,gcc,gnutls,go,gopls,make,ninja,ripgrep,rust}
 ```
 * Make sure you do not have git installed through MSYS2 (we want it to come from Git For Windows instead so we get caching) by running this and ignoring any "target not found" errors:
 ```sh
@@ -54,13 +54,13 @@ makepkg -si
 Minimal install:
 
 ```sh
-sudo paru -S asdf-vm aspell-en base-devel basedpyright clang fd gnutls gopls libssh2-devel make man-db man-pages ninja openssh ripgrep rust-analyzer zls
+sudo paru -S asdf-vm aspell-en base-devel basedpyright clang cmake fd gnutls gopls libssh2-devel make man-db man-pages ninja openssh ripgrep rust-analyzer zls
 ```
 
 For a full install, in addition to the above also run:
 
 ```sh
-sudo paru -S clojure jdtls leiningen omnisharp-roslyn-bin zprint-bin
+sudo paru -S clojure clojure-lsp-bin jdtls leiningen omnisharp-roslyn-bin zprint-bin
 ```
 
 ## (Optional) Install aider
@@ -81,13 +81,14 @@ You'll need to [install basedpyright](https://docs.basedpyright.com/latest/insta
 
 You'll need to [install clangd](https://clangd.llvm.org/installation) in order to support language server features for C/C++. On Mac, install the `llvm` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
 
-## (Optional) Install clojure, cljstyle, and leiningen
+## (Optional) Install clojure, clojure-lsp, cljstyle, and leiningen
 
-You'll need to [install clojure](https://clojure.org/guides/install_clojure), [install leiningen](https://wiki.leiningen.org/Packaging), and [install zprint](https://github.com/kkinnear/zprint/blob/main/README.md#get-zprint) in order to support Clojure. On Mac:
+You'll need to [install clojure](https://clojure.org/guides/install_clojure), [install clojure-lsp](https://clojure-lsp.io/installation/), [install leiningen](https://wiki.leiningen.org/Packaging), and [install zprint](https://github.com/kkinnear/zprint/blob/main/README.md#get-zprint) in order to support Clojure. On Mac:
 
 ```sh
 brew install --cask temurin@21
 brew install clojure/tools/clojure leiningen
+brew install clojure-lsp/brew/clojure-lsp-native
 brew install --cask zprint
 # do this to avoid failures when starting CIDER for the first time
 mkdir -p ~/.lein
@@ -100,6 +101,10 @@ You'll also want to create a `~/.zprintrc` file with these contents:
 ```clj
 {:style [:how-to-ns], :search-config? true}
 ```
+
+## Install cmake
+
+You'll need to install [cmake](https://cmake.org/download/) in order to build vterm, a terminal emulator for Emacs. On Mac, install the `cmake` package from homebrew.
 
 ## Install fd
 
@@ -167,6 +172,10 @@ Run `paru -S omnisharp-roslyn-bin`
 ## Install rust-analyzer
 
 You'll need to [install rust analyzer](https://rust-analyzer.github.io/manual.html#rust-analyzer-language-server-binary) in order to support language server features for Rust. On Mac, install the `rust` and `rust-analyzer` packages from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
+
+## (Optional) Install vterm shell integration
+
+In order to get the most use out of vterm, be sure to [configure your shell for vterm](https://github.com/akermu/emacs-libvterm#shell-side-configuration).
 
 ## Install zls
 
