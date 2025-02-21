@@ -66,7 +66,7 @@
          ;; see also https://taonaw.com/2024/10/06/emacsplus-path-in.html
          `(,(concat my-emacs-path "bin")
            ,(concat my-emacs-path "node_modules/.bin")
-           "~/bin"
+           "~/.local/bin"
            "/opt/homebrew/bin"
            "/opt/homebrew/sbin"
            "/usr/local/bin"
@@ -80,8 +80,10 @@
            "C:/msys64/usr/bin"
            "c:/msys64/ucrt64/bin"
            ,(concat my-emacs-path "node_modules/.bin")
+           "~/.local/bin"
            "C:/Program Files/maven/bin"))
         (t `(,(concat my-emacs-path "node_modules/.bin")
+             "~/.local/bin"
              "/opt/maven/bin"))))
 (setq my-system-paths (cl-remove-if-not #'file-exists-p my-system-paths))
 
