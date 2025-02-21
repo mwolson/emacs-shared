@@ -949,6 +949,13 @@ CONTEXT and CALLBACK will be passed to the base function."
 (with-eval-after-load "cider-repl"
   (define-key cider-repl-mode-map (kbd "C-d") #'cider-quit))
 
+(with-eval-after-load "apheleia-formatters"
+  (setf (alist-get 'zprint apheleia-formatters)
+        '("zprint" "{:style [:how-to-ns] :search-config? true}"))
+  (dolist (mode '(clojure-mode clojure-ts-mode clojurec-mode clojurescript-mode))
+    (setf (alist-get mode apheleia-mode-alist)
+          'zprint)))
+
 (my-remap-major-mode 'clojure-mode 'clojure-ts-mode)
 
 ;; Emacs Lisp

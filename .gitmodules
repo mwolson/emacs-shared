@@ -66,6 +66,10 @@
         path = extra/tree-sitter-bash
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-bash.git
+[submodule "extra/tree-sitter-c"]
+	path = extra/tree-sitter-c
+        shallow = true
+	url = https://github.com/tree-sitter/tree-sitter-c.git
 [submodule "extra/tree-sitter-c-sharp"]
 	path = extra/tree-sitter-c-sharp
         shallow = true

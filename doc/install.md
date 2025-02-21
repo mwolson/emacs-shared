@@ -60,7 +60,7 @@ sudo paru -S asdf-vm aspell-en base-devel basedpyright clang fd gnutls gopls lib
 For a full install, in addition to the above also run:
 
 ```sh
-sudo paru -S jdtls omnisharp-roslyn-bin
+sudo paru -S clojure jdtls leiningen omnisharp-roslyn-bin zprint-bin
 ```
 
 ## (Optional) Install aider
@@ -81,15 +81,24 @@ You'll need to [install basedpyright](https://docs.basedpyright.com/latest/insta
 
 You'll need to [install clangd](https://clangd.llvm.org/installation) in order to support language server features for C/C++. On Mac, install the `llvm` package from homebrew. For Windows, we've already done this for Windows in the `Install MSYS2` section.
 
-## (Optional) Install clojure and leiningen
+## (Optional) Install clojure, cljstyle, and leiningen
 
-You'll need to [install clojure](https://clojure.org/guides/install_clojure) and [install leiningen](https://wiki.leiningen.org/Packaging) in order to support Clojure. On Mac:
+You'll need to [install clojure](https://clojure.org/guides/install_clojure), [install leiningen](https://wiki.leiningen.org/Packaging), and [install zprint](https://github.com/kkinnear/zprint/blob/main/README.md#get-zprint) in order to support Clojure. On Mac:
 
 ```sh
 brew install --cask temurin@21
 brew install clojure/tools/clojure leiningen
+brew install --cask zprint
 # do this to avoid failures when starting CIDER for the first time
 mkdir -p ~/.lein
+```
+
+Note that on macOS: You'll need to attempt to run `/opt/homebrew/bin/zprint --version` and then go into System Settings -> Privacy & Security -> Security -> Allow, run it one more time, and click Run Anyway. You may also need to restart any open terminals so that the version of zprint in `/usr/bin` doesn't shadow the one in `/opt/homebrew/bin`.
+
+You'll also want to create a `~/.zprintrc` file with these contents:
+
+```clj
+{:style [:how-to-ns], :search-config? true}
 ```
 
 ## Install fd
