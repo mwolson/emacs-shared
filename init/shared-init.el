@@ -1321,9 +1321,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (add-to-list 'load-path (concat my-emacs-path "elisp/poly-markdown"))
 (autoload #'poly-markdown-mode "poly-markdown" t)
 (autoload #'poly-gfm-mode "poly-markdown" t)
-
-(add-to-list 'auto-mode-alist '("\\.md\\'" . poly-gfm-mode))
-(add-to-list 'auto-mode-alist '("\\.mdx\\'" . poly-gfm-mode))
+(my-remap-major-mode 'gfm-mode 'poly-gfm-mode)
+(my-remap-major-mode 'markdown-mode 'poly-gfm-mode)
+(my-remap-major-mode 'poly-markdown-mode 'poly-gfm-mode)
 
 (with-eval-after-load "gptel"
   (setopt gptel-default-mode #'poly-gfm-mode)
@@ -1338,7 +1338,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (dolist (to-remap major-mode-remap-alist)
     (let ((from (my-replace-mode-in-symbol (car to-remap)))
           (to (cdr to-remap)))
-      (add-to-list 'polymode-mode-name-aliases (cons from to))))
+      (unless (eq to 'poly-gfm-mode)
+        (add-to-list 'polymode-mode-name-aliases (cons from to)))))
   (dolist (alias my-polymode-aliases)
     (add-to-list 'polymode-mode-name-aliases alias)))
 
@@ -1366,9 +1367,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (my-polymode-install-aliases)
   (my-replace-cdrs-in-alist 'sh-mode 'bash-ts-mode 'polymode-mode-name-aliases)
   (my-replace-cdrs-in-alist 'shell-script-mode 'bash-ts-mode 'polymode-mode-name-aliases))
-
-(my-replace-cdrs-in-alist 'poly-markdown-mode 'poly-gfm-mode 'auto-mode-alist)
-(my-replace-cdrs-in-alist 'markdown-mode 'poly-gfm-mode 'auto-mode-alist)
 
 ;; Don't mess with keys that I'm used to
 (defun my-markdown-mode-keys ()
