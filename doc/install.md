@@ -98,8 +98,9 @@ Note that on macOS: You'll need to attempt to run `/opt/homebrew/bin/zprint --ve
 
 You'll also want to create a `~/.zprintrc` file with these contents:
 
-```clj
-{:style [:how-to-ns], :search-config? true}
+```clojure
+;; -*- clojure -*-
+{:search-config? true, :style [:how-to-ns]}
 ```
 
 ## Install cmake

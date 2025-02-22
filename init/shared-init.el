@@ -953,7 +953,7 @@ CONTEXT and CALLBACK will be passed to the base function."
   (define-key cider-repl-mode-map (kbd "C-d") #'cider-quit))
 
 (defvar my-clojure-modes
-  '(clojure-mode clojure-ts-mode clojurec-mode clojurescript-mode))
+  '(clojure-ts-mode clojure-ts-clojurec-mode clojure-ts-clojurescript-mode))
 
 (with-eval-after-load "apheleia-formatters"
   (setf (alist-get 'zprint apheleia-formatters)
@@ -965,11 +965,16 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-to-list 'load-path (concat my-emacs-path "elisp/clojure-ts-mode"))
 (autoload #'clojure-ts-mode "clojure-ts-mode" nil t)
 (my-remap-major-mode 'clojure-mode 'clojure-ts-mode)
-(add-hook 'clojure-ts-mode-hook #'cider-mode t)
-(add-hook 'clojure-ts-mode-hook #'my-eglot-ensure t)
+(my-remap-major-mode 'clojurec-mode 'clojure-ts-clojurec-mode)
+(my-remap-major-mode 'clojurescript-mode 'clojure-ts-clojurescript-mode)
+
+(dolist (mode my-clojure-modes)
+  (let ((hook (intern (concat (symbol-name mode) "-hook"))))
+    (add-hook hook #'cider-mode t)
+    (add-hook hook #'my-eglot-ensure t)))
+
 (add-to-list 'eglot-server-programs
-             '((clojure-ts-mode clojure-mode)
-               "clojure-lsp"))
+             `(,my-clojure-modes "clojure-lsp"))
 
 ;; Emacs Lisp
 (autoload #'plist-lisp-indent-install "plist-lisp-indent"
