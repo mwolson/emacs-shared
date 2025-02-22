@@ -104,7 +104,7 @@ You'll also want to create a `~/.zprintrc` file with these contents:
 
 ## Install cmake
 
-You'll need to install [cmake](https://cmake.org/download/) in order to build vterm, a terminal emulator for Emacs. On Mac, install the `cmake` package from homebrew.
+You'll need to install [cmake](https://cmake.org/download/) in order to build vterm, a terminal emulator for Emacs. On Mac, install the `cmake` and `libtool` packages from homebrew.
 
 ## Install fd
 
