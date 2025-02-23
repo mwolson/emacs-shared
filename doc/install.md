@@ -133,11 +133,11 @@ It's recommended to do a [manual install of asdf](https://asdf-vm.com/guide/gett
 asdf plugin add nodejs https://github.com/taybart/asdf-nodejs
 asdf cmd nodejs update-nodebuild
 asdf install nodejs $(asdf cmd nodejs resolve lts --latest-available)
-asdf set nodejs $(asdf cmd nodejs resolve lts --latest-installed)
+asdf set -u nodejs $(asdf cmd nodejs resolve lts --latest-installed)
 
 asdf plugin add pnpm
 asdf install pnpm latest
-asdf global pnpm latest
+asdf set -u pnpm latest
 ```
 
 ## Install Omnisharp (optional)
