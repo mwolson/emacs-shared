@@ -524,6 +524,21 @@ interactively.
      :context-window 256
      :request-params (:temperature 0.5 :top_p 0.75 :top_k 20))))
 
+(defun my-auth-source-get-api-key (host &optional user)
+  (if-let* ((secret (plist-get
+                     (car (auth-source-search
+                           :host host
+                           :user (or user "apikey")
+                           :require '(:secret)))
+                     :secret)))
+      (if (functionp secret)
+          (encode-coding-string (funcall secret) 'utf-8)
+        secret)
+    (user-error "No `apikey' found in the auth source")))
+
+(defvar my-gptel-ensure-backends-hook '()
+  "Additional functions to call when running `my-gptel-ensure-backends'.")
+
 (defun my-gptel-ensure-backends ()
   (unless my-gptel--backends-defined
     (setq my-gptel--backends-defined t)
@@ -580,7 +595,9 @@ interactively.
                       (open-mistral-nemo
                        :description "Official open-mistral-nemo Mistral AI model"
                        :capabilities (tool json url)
-                       :context-window 131)))))
+                       :context-window 131))))
+
+    (run-hooks 'my-gptel-ensure-backends-hook))
 
   (setopt gptel-backend (symbol-value my-gptel-backend)
           gptel-model (or my-gptel-model (car (gptel-backend-models gptel-backend)))
@@ -768,8 +785,7 @@ Use the region instead if one is selected."
     (my-minuet-complete-1)))
 
 (defun my-minuet-get-api-key (backend)
-  (let ((gptel-backend backend))
-    (gptel-api-key-from-auth-source)))
+  (my-auth-source-get-api-key (gptel-backend-host backend)))
 
 (defun my-minuet-llama-cpp-fim-qwen-prompt-function (ctx)
   (format "<|fim_prefix|>%s\n%s<|fim_suffix|>%s<|fim_middle|>"
