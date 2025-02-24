@@ -1006,6 +1006,17 @@ CONTEXT and CALLBACK will be passed to the base function."
   "Major mode for editing erlang with tree-sitter." t)
 
 ;; Go
+(defun my-project-find-go-module (dir)
+  (when-let ((root (locate-dominating-file dir "go.mod")))
+    (cons 'go-module root)))
+
+(with-eval-after-load "project"
+  ;; from https://github.com/golang/tools/blob/master/gopls/doc/emacs.md#configuring-project-for-go-modules-in-emacs
+  (cl-defmethod project-root ((project (head go-module)))
+    (cdr project))
+
+  (add-hook 'project-find-functions #'my-project-find-go-module))
+
 (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
 (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))
 (add-to-list 'my-polymode-aliases '(go . go-ts-mode))
@@ -1117,6 +1128,16 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-to-list 'auto-mode-alist '("\\.prisma\\'" . prisma-ts-mode))
 
 ;; Python
+(defun my-project-find-python-project (dir)
+  (when-let ((root (locate-dominating-file dir "pyproject.toml")))
+    (cons 'python-project root)))
+
+(with-eval-after-load "project"
+  (cl-defmethod project-root ((project (head python-project)))
+    (cdr project))
+
+  (add-hook 'project-find-functions #'my-project-find-python-project))
+
 (add-to-list 'auto-mode-alist '("/uv\\.lock\\'" . conf-toml-mode))
 (my-remap-major-mode 'python-mode 'python-ts-mode)
 (add-to-list 'eglot-server-programs
@@ -1217,10 +1238,6 @@ CONTEXT and CALLBACK will be passed to the base function."
         (cl-remove-if #'(lambda (item) (memq (car item) to-remove))
                       project-switch-commands)))
 
-(defun my-project-find-go-module (dir)
-  (when-let ((root (locate-dominating-file dir "go.mod")))
-    (cons 'go-module root)))
-
 (with-eval-after-load "project"
   (my-remove-project-switch-bindings '(project-eshell
                                        project-find-dir
@@ -1234,13 +1251,7 @@ CONTEXT and CALLBACK will be passed to the base function."
   (define-key project-prefix-map "s" #'my-counsel-ripgrep)
   (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
   (define-key project-prefix-map (kbd "RET") #'magit-project-status)
-  (define-key project-prefix-map "m" #'magit-project-status)
-
-  ;; from https://github.com/golang/tools/blob/master/gopls/doc/emacs.md#configuring-project-for-go-modules-in-emacs
-  (cl-defmethod project-root ((project (head go-module)))
-    (cdr project))
-
-  (add-hook 'project-find-functions #'my-project-find-go-module))
+  (define-key project-prefix-map "m" #'magit-project-status))
 
 ;; Insinuate with ripgrep
 (defvar my-default-ripgrep-args "--hidden -i --no-ignore-vcs --ignore-file=.gitignore --glob=!.git/")
