@@ -551,7 +551,7 @@ interactively.
                      (media tool-use cache)
                      :mime-types
                      ("image/jpeg" "image/png" "image/gif" "image/webp" "application/pdf")
-                     :context-window 200 :input-cost 3 :output-cost 15 :cutoff-date "2024-04")))
+                     :context-window 200 :input-cost 3 :output-cost 15 :cutoff-date "2024-11")))
 
     (setq my-gptel--claude
           (gptel-make-anthropic "Claude"
