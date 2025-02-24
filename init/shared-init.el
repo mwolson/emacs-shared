@@ -543,6 +543,16 @@ interactively.
   (unless my-gptel--backends-defined
     (setq my-gptel--backends-defined t)
 
+    (require 'gptel-anthropic)
+    (unless (alist-get 'claude-3-7-sonnet-20250219 gptel--anthropic-models)
+      (add-to-list 'gptel--anthropic-models
+                   '(claude-3-7-sonnet-20250219
+                     :description "Highest level of intelligence and capability" :capabilities
+                     (media tool-use cache)
+                     :mime-types
+                     ("image/jpeg" "image/png" "image/gif" "image/webp" "application/pdf")
+                     :context-window 200 :input-cost 3 :output-cost 15 :cutoff-date "2024-04")))
+
     (setq my-gptel--claude
           (gptel-make-anthropic "Claude"
             :stream t
