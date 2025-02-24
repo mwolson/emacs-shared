@@ -1038,7 +1038,7 @@ CONTEXT and CALLBACK will be passed to the base function."
 
 ;; JSON
 (my-remap-major-mode 'json-mode 'json-ts-mode)
-(add-to-list 'auto-mode-alist '("\\.json\\'" . json-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.jsonc?\\'" . json-ts-mode))
 (add-hook 'json-ts-mode-hook #'add-node-modules-path t)
 (add-hook 'json-ts-mode-hook #'my-eglot-ensure t)
 (add-hook 'json-ts-mode-hook #'my-setup-web-ligatures t)
