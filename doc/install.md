@@ -211,7 +211,7 @@ We'll install the [emacs-plus version from Homebrew](https://github.com/d12frost
 ```sh
 brew tap d12frosted/emacs-plus
 brew install emacs-plus@30
-osascript -e 'tell application "Finder" to make alias file to posix file "/opt/homebrew/opt/emacs-plus@30/Emacs.app" at POSIX file "/Applications" with properties {name:"Emacs.app"}'
+osascript -e 'tell application "Finder" to make alias file to posix file "/opt/homebrew/opt/emacs-plus@30/Emacs.app" at posix file "/Applications" with properties {name:"Emacs.app"}'
 ```
 
 If you get an error when starting Emacs like `"dyld[48068]: Library not loaded: /opt/homebrew/opt/tree-sitter/lib/libtree-sitter.0.23.dylib"`, when you may need to reinstall the XCode Commandline Tools, then check System Update for any updates to it, and then reboot to make the changes take effect. After that, try installing `emacs-plus` again per the above instructions.
