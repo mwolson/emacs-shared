@@ -22,11 +22,14 @@
                   (package-build--inhibit-fetch 'strict)
                   (package-build-working-dir (expand-file-name "elisp"))
                   (package-build-recipes-dir (expand-file-name "recipes")))
-             ;; work around bug where lm-package-requires can't read
-             ;; dependencies out of a `.el` file header.
-             ;; probably introduced in emacs 30.1
-             (cl-letf (((symbol-function 'lm-package-requires) nil))
-               (package-build-archive lib-name t))
+             ;; work around issue where macOS adds some "provenance" files
+             ;; to any tar files it creates
+             (with-environment-variables (("COPYFILE_DISABLE" "true"))
+               ;; work around bug where lm-package-requires can't read
+               ;; dependencies out of a `.el` file header.
+               ;; probably introduced in emacs 30.1
+               (cl-letf (((symbol-function 'lm-package-requires) nil))
+                 (package-build-archive lib-name t)))
              (let ((entry (assq lib-sym (package-build-archive-alist))))
                (package-install-file (package-build--artifact-file entry))))))))
 
