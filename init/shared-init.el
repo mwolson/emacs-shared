@@ -1161,7 +1161,7 @@ CONTEXT and CALLBACK will be passed to the base function."
 (setopt ivy-use-virtual-buffers t)
 (setopt ivy-count-format "(%d/%d) ")
 (setq ivy-re-builders-alist
-      '((t . ivy--regex-plus)))
+      '((t . ivy--regex-ignore-order)))
 (setopt counsel-find-file-at-point t)
 (setopt counsel-mode-override-describe-bindings t)
 (counsel-mode 1)
