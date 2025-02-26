@@ -43,6 +43,7 @@
  '(footnote-body-tag-spacing 1)
  '(gc-cons-threshold 100000000)
  '(git-commit-summary-max-length 120)
+ '(image-use-external-converter t)
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
  '(ispell-local-dictionary "american")
