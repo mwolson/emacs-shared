@@ -1463,7 +1463,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 ;; Magit settings
 (with-eval-after-load "git-commit"
-  ;; Kill auto-fill in git-commit mode
+  (setopt git-commit-major-mode 'org-mode)
   (remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill))
 
 ;; Don't overwrite M-w in magit mode, and clear mark when done

@@ -202,7 +202,6 @@
 (defun my-enable-ligatures ()
   ;; Enable ligatures in programming modes
   (interactive)
-  (require 'ligature)
   (ligature-set-ligatures 'markdown-mode my-prog-mode-ligatures)
   (ligature-set-ligatures 'prog-mode my-prog-mode-ligatures)
   (global-ligature-mode t))

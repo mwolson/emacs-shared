@@ -47,7 +47,7 @@ if [[ $OS == Windows ]]; then
     fi
 fi
 
-REQUIRED_EMACS_VERSION=29.4
+REQUIRED_EMACS_VERSION=30.1
 
 # Set this environment variable to rebuild git-for-windows manpages; otherwise use pre-built ones
 : ${BUILD_GIT_MANPAGES:=}
@@ -125,7 +125,12 @@ if [[ -n "$BUILD" ]]; then
     pnpm run compile:json-server
 fi
 
-emacs --script "$(get_topdir)"/install-packages.el 2>&1 | grep -v '^Loading '
+emacs_script "$(get_topdir)"/install-packages.el
+
+if [[ -n "$BUILD" ]]; then
+    echo "Compiling vterm..."
+    emacs_script "$(get_topdir)"/install-vterm.el
+fi
 
 set_treesit_dir
 
@@ -167,17 +172,13 @@ if [[ -n "$BUILD_GIT_MANPAGES" ]]; then
     qpopd
 fi
 
-dir_elisp_submodules="aidermacs archive-rpm gptel ligature polymode"
-for mod in $dir_elisp_submodules; do
+for fullmod in recipes/*; do
+    mod=${fullmod##*/}
     update_submodule elisp/"$mod"
     byte_compile "$mod" elisp/"$mod"
 done
 
-file_elisp_submodules="
-    asdf-vm clojure-ts-mode erlang-ts gptel-fn-complete jtsx kotlin-ts-mode
-    mermaid-ts-mode minuet poly-markdown prisma-ts-mode swift-ts-mode tmux-mode
-    vterm zig-ts-mode
-"
+file_elisp_submodules="asdf-vm gptel-fn-complete mermaid-ts-mode"
 for mod in $file_elisp_submodules; do
     update_submodule elisp/"$mod"
     byte_compile "$mod" elisp/"$mod"/"$mod".el
@@ -186,14 +187,6 @@ done
 update_submodule extra/emacs
 
 if [[ -n "$BUILD" ]]; then
-    qpushd elisp/vterm
-    rm -fr build
-    mkdir -p build
-    cd build
-    cmake ..
-    make
-    qpopd
-
     "$(get_topdir)"/install-treesit-grammar.sh \
         markdown_inline markdown "tree-sitter-markdown-inline/src"
 

@@ -4,5 +4,6 @@
 /elisp/archive-rpm/*
 /extra/emacs/*
 /extra/git/*
+/extra/vscode/*
 /node_modules
 /share/man/*

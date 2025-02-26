@@ -49,14 +49,25 @@ function update_submodule () {
     qpopd
 }
 
+function emacs_script() {
+    emacs --script "$@" 2>&1 | grep -v '^Loading '
+}
+
 function byte_compile() {
-    emacs --script "$(get_topdir)"/byte-compile-local.el "$@" 2>&1 | \
-        grep -v '^Loading '
+    if [[ -d "$2" ]]; then
+        rm -f "$2"/*.elc
+    elif [[ -f "$2" ]]; then
+        rm -f "${2}c"
+    else
+        echo "Warning: unknown type for $2"
+    fi
+
+    emacs_script "$(get_topdir)"/byte-compile-local.el "$@"
 }
 
 function set_treesit_dir() {
-    emacs --script "$(get_topdir)"/get-treesit-dir.el "$@" 2>&1 | \
-        grep -v '^Loading ' > "$(get_topdir)"/build/.treesit-dir
+    emacs_script "$(get_topdir)"/get-treesit-dir.el "$@" > \
+        "$(get_topdir)"/build/.treesit-dir
 }
 
 function get_treesit_dir() {
@@ -64,6 +75,5 @@ function get_treesit_dir() {
 }
 
 function install_treesit_grammar() {
-    emacs --script "$(get_topdir)"/install-treesit-grammar.el "$@" 2>&1 | \
-        grep -v '^Loading '
+    emacs_script "$(get_topdir)"/install-treesit-grammar.el "$@"
 }

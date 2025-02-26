@@ -38,7 +38,7 @@
  '(eldoc-minor-mode-string " E")
  '(electric-indent-mode nil)
  '(enable-recursive-minibuffers t)
- '(fill-column 119)
+ '(fill-column 100)
  '(flyspell-issue-welcome-flag nil)
  '(footnote-body-tag-spacing 1)
  '(gc-cons-threshold 100000000)
@@ -79,18 +79,21 @@
  '(message-log-max 500)
  '(mouse-wheel-mode t)
  '(org-capture-templates
-   '(("n" "Note" entry
-      (file+headline "" "Notes")
-      "* %?" :prepend t :empty-lines-after 1)))
+   '(("n" "Note" entry (file+headline "" "Notes") "* %?" :prepend t :empty-lines-after 1)))
  '(org-default-notes-file "~/Documents/notes.org")
  '(org-startup-folded nil)
  '(org-startup-truncated nil)
  '(package-archives
-   '(("melpa-stable" . "http://stable.melpa.org/packages/")
-     ("gnu" . "http://elpa.gnu.org/packages/")))
+   '(("melpa" . "http://melpa.org/packages/") ("gnu" . "http://elpa.gnu.org/packages/")))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(add-node-modules-path amx apheleia archive-rpm atomic-chrome browse-kill-ring cider clojure-ts-mode color-theme-sanityinc-tomorrow company company-statistics consult counsel diminish dumb-jump editorconfig el-mock erlang fish-mode flx git-modes gptel hydra ivy js-comint ligature lua-mode magit markdown-mode maxframe minions modus-themes nix-ts-mode package-utils plz polymode reformatter rg slime swiper terraform-mode transient web-mode wgrep))
+   '(add-node-modules-path amx apheleia archive-rpm atomic-chrome browse-kill-ring cider clojure-ts-mode
+                           color-theme-sanityinc-tomorrow company company-statistics consult counsel diminish dumb-jump
+                           editorconfig el-mock erlang erlang-ts fish-mode flx git-modes gptel hydra ivy js-comint jtsx
+                           kotlin-ts-mode ligature lua-mode magit markdown-mode maxframe minions minuet modus-themes
+                           nix-ts-mode package-build package-utils plz poly-markdown polymode prisma-ts-mode
+                           reformatter rg slime swift-ts-mode swiper terraform-mode tmux-mode transient vterm web-mode
+                           wgrep zig-ts-mode))
  '(post-jump-header nil)
  '(project-vc-merge-submodules nil)
  '(recentf-mode nil)

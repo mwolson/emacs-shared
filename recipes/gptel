@@ -1,0 +1,1 @@
+(gptel :repo "" :fetcher github)

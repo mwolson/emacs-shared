@@ -1,61 +1,18 @@
 [submodule "elisp/aidermacs"]
 	path = elisp/aidermacs
 	url = https://github.com/MatthewZMD/aidermacs.git
-[submodule "elisp/archive-rpm"]
-        path = elisp/archive-rpm
-        shallow = true
-        url = https://github.com/nbarrientos/archive-rpm.git
 [submodule "elisp/asdf-vm"]
         path = elisp/asdf-vm
         url = https://github.com/delonnewman/asdf-vm.el.git
-[submodule "elisp/clojure-ts-mode"]
-	path = elisp/clojure-ts-mode
-	url = https://github.com/clojure-emacs/clojure-ts-mode.git
-[submodule "elisp/erlang-ts"]
-        path = elisp/erlang-ts
-        url = https://github.com/erlang/emacs-erlang-ts.git
 [submodule "elisp/gptel"]
         path = elisp/gptel
         url = https://github.com/karthink/gptel.git
 [submodule "elisp/gptel-fn-complete"]
 	path = elisp/gptel-fn-complete
 	url = https://github.com/mwolson/gptel-fn-complete.git
-[submodule "elisp/jtsx"]
-        path = elisp/jtsx
-        url = https://github.com/llemaitre19/jtsx.git
-[submodule "elisp/kotlin-ts-mode"]
-        path = elisp/kotlin-ts-mode
-        url = https://gitlab.com/bricka/emacs-kotlin-ts-mode.git
-[submodule "elisp/ligature"]
-        path = elisp/ligature
-        url = https://github.com/mickeynp/ligature.el.git
 [submodule "elisp/mermaid-ts-mode"]
 	path = elisp/mermaid-ts-mode
 	url = https://github.com/kiennq/mermaid-ts-mode.git
-[submodule "elisp/minuet"]
-	path = elisp/minuet
-	url = https://github.com/milanglacier/minuet-ai.el.git
-[submodule "elisp/polymode"]
-        path = elisp/polymode
-        url = https://github.com/polymode/polymode.git
-[submodule "elisp/prisma-ts-mode"]
-        path = elisp/prisma-ts-mode
-        url = https://github.com/nverno/prisma-ts-mode.git
-[submodule "elisp/poly-markdown"]
-        path = elisp/poly-markdown
-        url = https://github.com/polymode/poly-markdown.git
-[submodule "elisp/swift-ts-mode"]
-        path = elisp/swift-ts-mode
-        url = https://github.com/rechsteiner/swift-ts-mode.git
-[submodule "elisp/tmux-mode"]
-        path = elisp/tmux-mode
-        url = https://github.com/nverno/tmux-mode.git
-[submodule "elisp/vterm"]
-	path = elisp/vterm
-	url = https://github.com/akermu/emacs-libvterm.git
-[submodule "elisp/zig-ts-mode"]
-        path = elisp/zig-ts-mode
-        url = https://codeberg.org/meow_king/zig-ts-mode.git
 [submodule "extra/emacs"]
         path = extra/emacs
         shallow = true

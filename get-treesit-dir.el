@@ -1,7 +1,7 @@
 (load-file (concat (file-name-directory load-file-name) "init/settings.el"))
 
-(require 'package)
 (require 'treesit)
+(require 'package)
 (package-initialize)
 
 (defun my-get-treesit-dir ()
