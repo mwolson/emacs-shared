@@ -178,7 +178,9 @@ for fullmod in recipes/*; do
     byte_compile "$mod" elisp/"$mod"
 done
 
-file_elisp_submodules="asdf-vm gptel-fn-complete mermaid-ts-mode"
+file_elisp_submodules="
+    asdf-vm flymake-stylelint gptel-fn-complete mermaid-ts-mode
+"
 for mod in $file_elisp_submodules; do
     update_submodule elisp/"$mod"
     byte_compile "$mod" elisp/"$mod"/"$mod".el

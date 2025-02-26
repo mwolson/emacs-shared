@@ -87,13 +87,15 @@
    '(("melpa" . "http://melpa.org/packages/") ("gnu" . "http://elpa.gnu.org/packages/")))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(add-node-modules-path amx apheleia archive-rpm atomic-chrome browse-kill-ring cider clojure-ts-mode
-                           color-theme-sanityinc-tomorrow company company-statistics consult counsel diminish dumb-jump
-                           editorconfig el-mock erlang erlang-ts fish-mode flx git-modes gptel hydra ivy js-comint jtsx
-                           kotlin-ts-mode ligature lua-mode magit markdown-mode maxframe minions minuet modus-themes
-                           nix-ts-mode package-build package-utils plz poly-markdown polymode prisma-ts-mode
-                           reformatter rg slime swift-ts-mode swiper terraform-mode tmux-mode transient vterm web-mode
-                           wgrep zig-ts-mode))
+   '(add-node-modules-path amx apheleia archive-rpm atomic-chrome browse-kill-ring cider
+                           clojure-ts-mode color-theme-sanityinc-tomorrow company company-statistics
+                           consult counsel diminish dumb-jump editorconfig el-mock erlang erlang-ts
+                           fish-mode flx git-modes gptel hydra ivy js-comint jtsx kotlin-ts-mode
+                           ligature lua-mode magit markdown-mode maxframe minions minuet
+                           modus-themes nix-ts-mode nsis-mode package-build package-utils plz
+                           poly-markdown polymode prisma-ts-mode reformatter rg slime swift-ts-mode
+                           swiper terraform-mode tmux-mode transient vterm web-mode wgrep
+                           zig-ts-mode))
  '(post-jump-header nil)
  '(project-vc-merge-submodules nil)
  '(recentf-mode nil)

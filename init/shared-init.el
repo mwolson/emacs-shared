@@ -482,10 +482,6 @@ interactively.
 (with-eval-after-load "treesit"
   (setopt treesit-font-lock-level 4))
 
-;; vterm
-(add-to-list 'load-path (concat my-emacs-path "elisp/vterm"))
-(require 'vterm)
-
 ;; Set up gptel
 (defvar my-gptel--backends-defined nil)
 (defvar my-gptel--claude nil)
@@ -716,6 +712,7 @@ Use the region instead if one is selected."
   (interactive)
   (gptel-context-remove-all))
 
+(add-to-list 'load-path (concat my-emacs-path "elisp/gptel"))
 (autoload #'gptel-api-key-from-auth-source "gptel"
   "Lookup api key in the auth source." nil)
 (autoload #'gptel-backend-name "gptel-openai"
@@ -881,18 +878,7 @@ CONTEXT and CALLBACK will be passed to the base function."
   (define-key minuet-active-mode-map (kbd "<tab>") #'minuet-next-suggestion)
   (define-key minuet-active-mode-map (kbd "<return>") #'minuet-accept-suggestion))
 
-;; (with-eval-after-load "company"
-;;   (autoload #'company-minuet-setup "company-minuet" "`company-mode' completion for minuet." t)
-;;   (add-hook 'prog-mode-hook #'company-minuet-setup))
-
-;; (autoload #'minuet-capf-setup "minuet-capf" "Setup completion-at-point for minuet." t)
-
 ;; (add-hook 'prog-mode-hook #'minuet-auto-suggestion-mode)
-
-(add-to-list 'load-path (concat my-emacs-path "elisp/minuet"))
-(autoload #'minuet-auto-suggestion-mode "minuet" "Toggle automatic code suggestions." t)
-(autoload #'minuet-complete-with-minibuffer "minuet" "Complete using minibuffer interface." t)
-(autoload #'minuet-show-suggestion "minuet" "Show code suggestion using overlay at point." t)
 (add-hook 'prog-mode-hook #'my-minuet-maybe-turn-on-auto-suggest t)
 
 (defvar my-minuet-map
@@ -978,8 +964,6 @@ CONTEXT and CALLBACK will be passed to the base function."
     (setf (alist-get mode apheleia-mode-alist)
           'zprint)))
 
-(add-to-list 'load-path (concat my-emacs-path "elisp/clojure-ts-mode"))
-(autoload #'clojure-ts-mode "clojure-ts-mode" nil t)
 (my-remap-major-mode 'clojure-mode 'clojure-ts-mode)
 (my-remap-major-mode 'clojurec-mode 'clojure-ts-clojurec-mode)
 (my-remap-major-mode 'clojurescript-mode 'clojure-ts-clojurescript-mode)
@@ -1000,10 +984,7 @@ CONTEXT and CALLBACK will be passed to the base function."
   (add-hook 'emacs-lisp-mode-hook #'plist-lisp-indent-install t))
 
 ;; Erlang
-(add-to-list 'load-path (concat my-emacs-path "elisp/erlang-ts"))
 (my-remap-major-mode 'erlang-mode 'erlang-ts-mode)
-(autoload #'erlang-ts-mode "erlang-ts"
-  "Major mode for editing erlang with tree-sitter." t)
 
 ;; Go
 (defun my-project-find-go-module (dir)
@@ -1047,14 +1028,10 @@ CONTEXT and CALLBACK will be passed to the base function."
 (defvar my-jtsx-major-modes '(astro-mode jtsx-jsx-mode jtsx-tsx-mode jtsx-typescript-mode))
 (defvar my-jtsx-ts-major-modes '(jtsx-tsx-mode jtsx-typescript-mode))
 
-(add-to-list 'load-path (concat my-emacs-path "elisp/jtsx"))
 (add-to-list 'auto-mode-alist '("\\.[cm]js\\'" . jtsx-jsx-mode))
 (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . jtsx-jsx-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . jtsx-typescript-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . jtsx-tsx-mode))
-(autoload #'jtsx-jsx-mode "jtsx" "Major mode extending `js-ts-mode'." t)
-(autoload #'jtsx-tsx-mode "jtsx" "Major mode extending `tsx-ts-mode'." t)
-(autoload #'jtsx-typescript-mode "jtsx" "Major mode extending `typescript-ts-mode'." t)
 (add-to-list 'my-polymode-aliases '(javascript . jtsx-jsx-mode))
 (add-to-list 'my-polymode-aliases '(typescript . jtsx-tsx-mode))
 (my-remap-major-mode 'js-mode 'jtsx-jsx-mode)
@@ -1096,9 +1073,7 @@ CONTEXT and CALLBACK will be passed to the base function."
 ;;)
 
 ;; Kotlin
-(add-to-list 'load-path (concat my-emacs-path "elisp/kotlin-ts-mode"))
 (add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-ts-mode))
-(autoload #'kotlin-ts-mode "kotlin-ts-mode" "Major mode for editing Kotlin." t)
 (add-to-list 'my-polymode-aliases '(kotlin . kotlin-ts-mode))
 
 ;; Lisp REPL using SLIME
@@ -1123,8 +1098,6 @@ CONTEXT and CALLBACK will be passed to the base function."
   (add-to-list 'compilation-error-regexp-alist 'nodejs))
 
 ;; Prisma support (a JS DB framework)
-(add-to-list 'load-path (concat my-emacs-path "elisp/prisma-ts-mode"))
-(autoload #'prisma-ts-mode "prisma-ts-mode" "Major mode for editing prisma source code." t)
 (add-to-list 'auto-mode-alist '("\\.prisma\\'" . prisma-ts-mode))
 
 ;; Python
@@ -1154,13 +1127,14 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-hook 'rust-ts-mode-hook #'my-eglot-ensure)
 
 ;; SCSS
-(require 'flymake-stylelint)
+(add-to-list 'load-path (concat my-emacs-path "elisp/flymake-stylelint"))
+(autoload #'flymake-stylelint-enable "flymake-stylelint"
+  "Enable flymake-stylelint." nil)
+
 (add-hook 'scss-mode-hook 'add-node-modules-path t)
 (add-hook 'scss-mode-hook 'flymake-stylelint-enable t)
 
 ;; Swift
-(add-to-list 'load-path (concat my-emacs-path "elisp/swift-ts-mode"))
-(autoload #'swift-ts-mode "swift-ts-mode" "Major mode for editing Swift." t)
 (add-to-list 'auto-mode-alist '("\\.swift\\(interface\\)?\\'" . swift-ts-mode))
 (add-to-list 'my-polymode-aliases '(swift . swift-ts-mode))
 
@@ -1171,8 +1145,6 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-hook 'web-mode-hook #'my-setup-web-ligatures t)
 
 ;; Zig
-(add-to-list 'load-path (concat my-emacs-path "elisp/zig-ts-mode"))
-(autoload #'zig-ts-mode "zig-ts-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-ts-mode))
 (add-to-list 'my-polymode-aliases '(zig . zig-ts-mode))
 (add-to-list 'eglot-server-programs
@@ -1345,9 +1317,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (add-hook 'lisp-interaction-mode-hook 'my-turn-off-display-line-numbers-mode t)
 
 ;; Markdown support
-(add-to-list 'load-path (concat my-emacs-path "elisp/poly-markdown"))
-(autoload #'poly-markdown-mode "poly-markdown" t)
-(autoload #'poly-gfm-mode "poly-markdown" t)
 (my-remap-major-mode 'gfm-mode 'poly-gfm-mode)
 (my-remap-major-mode 'markdown-mode 'poly-gfm-mode)
 (my-remap-major-mode 'poly-markdown-mode 'poly-gfm-mode)
@@ -1402,7 +1371,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (add-hook 'markdown-mode-hook #'my-markdown-mode-keys t)
 
 ;; Support for .nsh files
-(autoload #'nsis-mode "nsis-mode" "NSIS mode" t)
 (setq auto-mode-alist (append '(("\\.[Nn][Ss][HhIi]\\'" . nsis-mode)) auto-mode-alist))
 
 ;; Support for .plist files from https://www.emacswiki.org/emacs/MacOSXPlist
@@ -1419,8 +1387,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (jka-compr-update)
 
 ;; tmux support
-(add-to-list 'load-path (concat my-emacs-path "elisp/tmux-mode"))
-(autoload #'tmux-mode "tmux-mode" "tmux mode" t)
 (add-to-list 'auto-mode-alist '("\\.?tmux\\.conf\\(\\.[^.]+\\)?\\'" . tmux-mode))
 
 ;; YAML changes
