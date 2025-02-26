@@ -539,6 +539,7 @@ interactively.
   (unless my-gptel--backends-defined
     (setq my-gptel--backends-defined t)
 
+    (require 'gptel-anthropic)
     (setq my-gptel--claude
           (gptel-make-anthropic "Claude"
             :stream t
@@ -554,6 +555,7 @@ interactively.
                        :capabilities (tool json)
                        :context-window 256))))
 
+    (require 'gptel-gemini)
     (setq my-gptel--gemini
           (gptel-make-gemini "Gemini"
             :stream t
@@ -595,8 +597,8 @@ interactively.
 
     (run-hooks 'my-gptel-ensure-backends-hook))
 
-  (setopt gptel-backend (symbol-value my-gptel-backend)
-          gptel-model (or my-gptel-model (car (gptel-backend-models gptel-backend)))
+  (setq gptel-backend (symbol-value my-gptel-backend))
+  (setopt gptel-model (or my-gptel-model (car (gptel-backend-models gptel-backend)))
           gptel-expert-commands t
           gptel-rewrite-default-action 'accept
           gptel-temperature my-gptel-temperature)
@@ -738,6 +740,7 @@ Use the region instead if one is selected."
   (setopt aidermacs-backend 'comint))
 
 (add-to-list 'load-path (concat my-emacs-path "elisp/aidermacs"))
+(autoload #'aidermacs-transient-menu "aidermacs" "Transient menu for aidermacs commands." t)
 (my-aidermacs-set-editor-model my-aidermacs-model)
 
 ;; Minuet for AI completion
