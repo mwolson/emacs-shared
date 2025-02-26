@@ -66,7 +66,7 @@ elif [[ $OS == macOS ]]; then
         echo >&2 "Error: Emacs does not seem to be installed in Applications"
         exit 1
     fi
-    if [[ ! -e /opt/homebrew/opt/emacs-plus@29/Emacs.app/Contents/MacOS/Emacs ]]; then
+    if [[ ! -e /opt/homebrew/opt/emacs-plus@30/Emacs.app/Contents/MacOS/Emacs ]]; then
         echo >&2 "Error: Could not find Emacs Homebrew installation"
         exit 1
     fi
