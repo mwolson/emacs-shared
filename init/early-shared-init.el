@@ -92,7 +92,7 @@
 ;;; Display
 
 ;; Ligatures
-(let* ((after- "<~|")
+(let* ((after- "<|")
        (after-> (concat after- ">"))
        (after--> (concat after-> "-"))
        (-2+ "\\(-\\{2,\\}\\)")
