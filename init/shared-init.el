@@ -1194,7 +1194,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (with-eval-after-load "vertico"
   (setopt vertico-count 14
-          vertico-cycle t
           vertico-resize nil)
 
   (define-key vertico-map (kbd "?") #'minibuffer-completion-help)
