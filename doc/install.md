@@ -220,7 +220,22 @@ You'll also probably want to go into System Settings -> Privacy & Security -> Fu
 
 ### Install Emacs on Arch Linux
 
-If you are on Wayland (the default window system), install the `emacs-wayland` package, otherwise install `emacs`.
+* If you want Emacs to be hyper-fast and stable but require a bit of extra setup, install the `emacs-lucid` AUR package.
+* If you want Emacs to be reasonably fast, install the `emacs` package.
+* If you are on Wayland (the default window system) and want better font hinting at the cost of much slower editing, install the `emacs-wayland` package.
+
+*Emacs Lucid Setup*
+
+If you're using `emacs-lucid`, you'll probably want [Xresource settings](https://www.gnu.org/software/emacs/manual/html_node/emacs/Lucid-Resources.html) like this for dark background menus on a 4k hi-res display, stored in a file called `~/.Xresources`:
+
+```sh
+Emacs.pane.menubar.buttonForeground: white
+Emacs.pane.menubar.cursor: left_ptr
+Emacs.pane.menubar.horizontalSpacing: 12
+Emacs.pane.menubar.verticalSpacing: 8
+```
+
+To apply the changes, run `xrdb -merge ~/.Xresources` and then restart Emacs. On most window environments, the `~/.Xresources` file should be automatically read after logging in.
 
 ### Install Emacs on Ubuntu
 

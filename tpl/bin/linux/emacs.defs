@@ -1,2 +1,3 @@
+# -*- sh -*-
 CLIENT=/usr/bin/emacsclient
 DAEMON=/usr/bin/emacs

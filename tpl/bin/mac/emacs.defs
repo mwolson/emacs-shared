@@ -1,2 +1,3 @@
+# -*- sh -*-
 CLIENT=/opt/homebrew/bin/emacsclient
 DAEMON=/opt/homebrew/opt/emacs-plus@30/Emacs.app/Contents/MacOS/Emacs

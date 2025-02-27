@@ -1,2 +1,3 @@
+# -*- sh -*-
 CLIENT=emacsclient
 DAEMON=emacs-30.1
