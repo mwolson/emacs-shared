@@ -1173,6 +1173,17 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-hook 'zig-ts-mode-hook #'my-eglot-ensure)
 
 ;; Consult, Embark, Marginalia, Orderless, Vertico
+(defun my-consult-line ()
+  "Start incremental search from current line."
+  (interactive)
+  (let ((reg (if (region-active-p)
+                 (prog1
+                     (buffer-substring-no-properties (point) (mark))
+                   (deactivate-mark))
+               (if-let* ((sym (symbol-at-point)))
+                   (symbol-name sym)))))
+    (consult-line reg nil)))
+
 (defvar my-default-ripgrep-args "--hidden -i --no-ignore-vcs --ignore-file=.gitignore --glob=!.git/")
 
 (defun my-consult-ripgrep (regexp rg-args &optional arg)
@@ -1193,7 +1204,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
              default-args))))
   ;; (let ((consult-ripgrep-args "rg --no-heading --line-number %s ."))
   (let ((consult-ripgrep-args rg-args))
-    (consult-ripgrep regexp)))
+    (consult-ripgrep nil regexp)))
 
 (with-eval-after-load "embark"
   (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
@@ -1216,6 +1227,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
   (define-key vertico-map (kbd "?") #'minibuffer-completion-help)
   (define-key vertico-map (kbd "/") #'my-vertico-insert-like-ivy)
+  (define-key vertico-map (kbd "C-c C-c") #'vertico-repeat)
+  (define-key vertico-map (kbd "C-c C-o") #'embark-export)
   (define-key vertico-map (kbd "C-c C-s") #'vertico-suspend)
   (define-key vertico-map (kbd "C-k") #'kill-line)
   (define-key vertico-map (kbd "C-r") #'vertico-previous)
@@ -1228,13 +1241,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
   (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
-
-(with-eval-after-load "vertico-multiform"
-  (setopt vertico-multiform-commands
-          '(("\\`execute-extended-command" unobtrusive
-             (vertico-flat-annotate . t)
-             (marginalia-annotator-registry
-              (command marginalia-annotate-binding))))))
 
 (defun my-extended-command-predicate (symbol buffer)
   (and (command-completion-default-include-p symbol buffer)
@@ -1281,8 +1287,8 @@ Not needed in Emacs 31 or higher."
 (global-set-key (kbd "C-c C-r") #'vertico-suspend)
 (global-set-key (kbd "C-c M-x") #'consult-mode-command)
 (global-set-key (kbd "C-h b") #'embark-bindings)
-(global-set-key (kbd "C-r") #'consult-line)
-(global-set-key (kbd "C-s") #'consult-line)
+(global-set-key (kbd "C-r") #'my-consult-line)
+(global-set-key (kbd "C-s") #'my-consult-line)
 (global-set-key (kbd "C-x b") #'consult-buffer)
 (global-set-key (kbd "M-g e") #'consult-compile-error)
 (global-set-key (kbd "M-g f") #'consult-flymake)
