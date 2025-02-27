@@ -1,3 +1,5 @@
+;; get-treesit-dir.el --- -*- lexical-binding: t -*-
+
 (load-file (concat (file-name-directory load-file-name) "init/settings.el"))
 
 (require 'treesit)
@@ -11,3 +13,6 @@
     (message "%s" (expand-file-name out-dir))))
 
 (apply #'my-get-treesit-dir argv)
+
+(provide 'get-treesit-dir)
+;;; get-treesit-dir.el ends here

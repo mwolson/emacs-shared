@@ -1,4 +1,6 @@
-;;; Customizations
+;; settings.el --- -*- lexical-binding: t -*-
+;;
+;; Customizations
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -41,7 +43,6 @@
  '(fill-column 100)
  '(flyspell-issue-welcome-flag nil)
  '(footnote-body-tag-spacing 1)
- '(gc-cons-threshold 100000000)
  '(git-commit-summary-max-length 120)
  '(image-use-external-converter t)
  '(indent-tabs-mode nil)
@@ -132,3 +133,6 @@
  '(web-mode-html-tag-face ((t (:inherit font-lock-constant-face))))
  '(web-mode-json-key-face ((t (:foreground unspecified :inherit font-lock-variable-name-face))))
  '(woman-italic ((t (:underline t :slant italic)))))
+
+(provide 'settings)
+;;; settings.el ends here

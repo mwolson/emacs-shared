@@ -1,15 +1,20 @@
-;;; Emacs initialization settings common to multiple computers
+;;; early-shared-init.el --- -*- lexical-binding: t -*-
 ;;
+;; Description: Emacs initialization settings common to multiple computers
 ;; Author: Michael Olson
 ;;
 ;; The contents of this file may be used, distributed, and modified
 ;; without restriction.
-;; Uncomment this to debug warnings
+;;
+;; Uncomment this to debug warnings:
 ;;
 ;; (require 'warnings)
 ;; (defun display-warning (type message)
 ;;   (setq debug-on-error t)
 ;;   (error message))
+
+(setq gc-cons-percentage 0.6)
+(setq gc-cons-threshold most-positive-fixnum)
 
 (require 'cl-seq)
 (require 'package)
@@ -213,27 +218,24 @@
       (progn
         (my-reset-font)
         (add-to-list 'default-frame-alist
-                     (cons 'font (cdr (assq 'font (frame-parameters)))))
+                     `(font . ,(cdr (assq 'font (frame-parameters)))))
         (when (or (not my-frame-maximize-p) my-frame-maximize-if-pixel-width-lte)
-          (add-to-list 'default-frame-alist (cons 'height my-frame-height))
-          (add-to-list 'default-frame-alist (cons 'width my-frame-width)))
+          (add-to-list 'default-frame-alist `(height . ,my-frame-height))
+          (add-to-list 'default-frame-alist `(width . ,my-frame-width)))
         (when (memq window-system '(ns pgtk w32 x))
           (my-enable-ligatures))
-        ;; Make sure DEL key does what I want
         (normal-erase-is-backspace-mode 1)
-        ;; Show the menu if we are using X
         (set-frame-parameter nil 'menu-bar-lines 1))
-    ;; Don't show the menu unless we are using X
+    (add-to-list 'default-frame-alist '(menu-bar-lines . 0))
     (set-frame-parameter nil 'menu-bar-lines 0)
-    ;; Manually enable mouse wheel in terminal
+    (setq menu-bar-mode nil)
     (require 'mwheel))
-  ;; Don't show scroll bars
-  (ignore-errors (scroll-bar-mode -1))
-  ;; Don't show the tool bar
-  (ignore-errors (tool-bar-mode -1))
-  ;; Initialize color theme
+  (add-to-list 'default-frame-alist '(tool-bar-lines . 0))
+  (add-to-list 'default-frame-alist '(horizontal-scroll-bars))
+  (add-to-list 'default-frame-alist '(vertical-scroll-bars))
+  (setq scroll-bar-mode nil
+        tool-bar-mode nil)
   (my-reset-theme)
-  ;; Maximize frame or re-apply frame settings
   (when window-system
     (global-tab-line-mode 1)
     (my-reset-frame-size)))

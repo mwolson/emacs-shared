@@ -1,3 +1,5 @@
+;; byte-compile-local.el --- -*- lexical-binding: t -*-
+
 (load-file (concat (file-name-directory load-file-name) "init/settings.el"))
 
 (require 'treesit) ; to silence an autoload warning, seems like emacs bug
@@ -34,3 +36,6 @@
                (package-install-file (package-build--artifact-file entry))))))))
 
 (apply #'my-byte-compile-local-package argv)
+
+(provide 'byte-compile-local)
+;;; byte-compile-local.el ends here

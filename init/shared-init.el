@@ -1,5 +1,6 @@
-;;; Emacs initialization settings common to multiple computers
+;;; shared-init.el --- -*- lexical-binding: t -*-
 ;;
+;; Description: Emacs initialization settings common to multiple computers
 ;; Author: Michael Olson
 ;;
 ;; The contents of this file may be used, distributed, and modified
@@ -21,14 +22,26 @@
 
 ;; Tasks that are run after initial startup for appearance of speed
 (defvar my-deferred-startup-hook '(display-startup-echo-area-message))
-(defun my-defer-startup (func)
-  "Defer running a task until sometime after Emacs has started."
-  (add-hook 'my-deferred-startup-hook func))
+
+(defun my-defer-startup (func &optional depth)
+  "Defer running a task until sometime after Emacs has started.
+
+When `depth' is provided, pass it to `add-hook'."
+  (add-hook 'my-deferred-startup-hook func depth))
+
 (defun my-run-deferred-tasks ()
   (unless (eq system-type 'windows-nt)
     (run-hooks 'my-deferred-startup-hook)))
 
 (run-with-idle-timer 0.2 nil #'my-run-deferred-tasks)
+
+;; Garbage collection settings
+(defun my-restore-gc-settings ()
+  (setq gc-cons-threshold  (* 67108864 2)) ; 128MB
+  (setq gc-cons-percentage 0.1)
+  (garbage-collect))
+
+(my-defer-startup #'my-restore-gc-settings t)
 
 ;;; OS Setup
 
