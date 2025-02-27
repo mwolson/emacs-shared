@@ -1211,6 +1211,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (with-eval-after-load "vertico"
   (setopt vertico-count 10
+          vertico-mouse-mode t
           vertico-resize nil)
 
   (define-key vertico-map (kbd "?") #'minibuffer-completion-help)
@@ -1222,6 +1223,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (define-key vertico-map (kbd "DEL") #'vertico-directory-delete-char)
   (define-key vertico-map (kbd "M-DEL") #'vertico-directory-delete-word)
   (define-key vertico-map (kbd "RET") #'vertico-directory-enter)
+  (define-key vertico-map (kbd "<prior>") #'vertico-scroll-down)
+  (define-key vertico-map (kbd "<next>") #'vertico-scroll-up)
 
   (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
@@ -1517,9 +1520,10 @@ Not needed in Emacs 31 or higher."
 (global-set-key (kbd "<f8> 2") #'my-profiler-stop-and-report)
 
 ;; Company: auto-completion for various modes
-(setopt company-idle-delay 0.2)
-(setopt company-tooltip-align-annotations t)
-(setopt company-tooltip-limit 20)
+(setopt company-global-modes '(not vterm-mode)
+        company-idle-delay 0.2
+        company-tooltip-align-annotations t
+        company-tooltip-limit 10)
 (add-hook 'after-init-hook 'global-company-mode t)
 (add-hook 'after-init-hook 'company-statistics-mode t)
 
