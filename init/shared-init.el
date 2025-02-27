@@ -1167,15 +1167,16 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
    (list (and (use-region-p)
               (buffer-substring-no-properties
                (region-beginning) (region-end)))
-         (if current-prefix-arg
-             (read-from-minibuffer
-              "Additional rg args: " my-default-ripgrep-args
-              nil nil nil my-default-ripgrep-args)
-           (concat consult-ripgrep-args " " my-default-ripgrep-args))))
+         (let ((default-args (progn
+                               (require 'consult)
+                               (concat consult-ripgrep-args " "
+                                       my-default-ripgrep-args))))
+           (if current-prefix-arg
+               (read-from-minibuffer
+                "Additional rg args: " default-args nil nil nil default-args)
+             default-args))))
   ;; (let ((consult-ripgrep-args "rg --no-heading --line-number %s ."))
-  (let ((consult-ripgrep-args
-         (if current-prefix-arg rg-args
-           (concat consult-ripgrep-args " " my-default-ripgrep-args))))
+  (let ((consult-ripgrep-args rg-args))
     (consult-ripgrep regexp)))
 
 (with-eval-after-load "embark"
@@ -1482,14 +1483,22 @@ Not needed in Emacs 31 or higher."
 
 ;; Profiling
 (require 'profiler)
-(cl-defmacro with-cpu-profiling (&rest body)
+(cl-defmacro my-with-cpu-profiling (&rest body)
   `(unwind-protect
        (progn
          (ignore-errors (profiler-cpu-log))
          (profiler-cpu-start profiler-sampling-interval)
          ,@body)
-     (profiler-report-cpu)
-     (profiler-cpu-stop)))
+     (profiler-report)
+     (profiler-stop)))
+
+(defun my-profiler-stop-and-report ()
+  (interactive)
+  (profiler-report)
+  (profiler-stop))
+
+(global-set-key (kbd "<f8> 1") #'profiler-start)
+(global-set-key (kbd "<f8> 2") #'my-profiler-stop-and-report)
 
 ;; Company: auto-completion for various modes
 (setopt company-idle-delay 0.2)
