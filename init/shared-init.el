@@ -1194,7 +1194,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
           (t (self-insert-command 1 ?/)))))
 
 (with-eval-after-load "vertico"
-  (setopt vertico-count 14
+  (setopt vertico-count 10
           vertico-resize nil)
 
   (define-key vertico-map (kbd "?") #'minibuffer-completion-help)
