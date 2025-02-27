@@ -26,9 +26,11 @@
 ## Using Magit
 
 * <kbd>C-c V s</kbd> to visit Magit Status Mode from any file within a git project
-* <kbd>C-c V l</kbd> to visit Magit Log mode and see a list of git revisions made to the project, which can be opened
-* <kbd>C-c V b</kbd> to visit Magit Branch mode and see a list of git branches to checkout
 * <kbd>C-c V a</kbd> to open `git blame` on the current file - use <kbd>q</kbd> to exit when done
+* <kbd>C-c V b</kbd> to visit Magit Branch mode and see a list of git branches to checkout
+* <kbd>C-c V f</kbd> to take a git action on the current file with a menu
+* <kbd>C-c V l</kbd> to visit Magit Log mode and see a list of git revisions made to the project, which can be opened
+* <kbd>C-c V v</kbd> to take a git action on the current repo with a menu
 
 ## Search
 

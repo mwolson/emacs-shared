@@ -77,7 +77,7 @@
                                  "C:\\msys64\\ucrt64\\share\\man;"
                                  "C:\\Program Files\\Emacs\\emacs-" emacs-version "\\share\\man"))
        (require 'woman)
-       (defalias 'man 'woman)))
+       (defalias 'man #'woman)))
 
 ;;; Customizations
 
@@ -897,7 +897,7 @@ CONTEXT and CALLBACK will be passed to the base function."
 
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
 (require 'dumb-jump)
-(setopt dumb-jump-selector 'ivy)
+(setopt dumb-jump-selector 'completing-read)
 (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
 
 (defvar my-xref-map
@@ -913,6 +913,7 @@ CONTEXT and CALLBACK will be passed to the base function."
     (define-key map (kbd ".") #'xref-find-definitions)
     (define-key map (kbd ",") #'xref-go-back)
     (define-key map (kbd "/") #'xref-find-references)
+    (define-key map (kbd "RET") #'embark-act)
     map)
   "My key customizations for AI and xref.")
 
@@ -1155,32 +1156,124 @@ CONTEXT and CALLBACK will be passed to the base function."
                ("zls" :initializationOptions ())))
 (add-hook 'zig-ts-mode-hook #'my-eglot-ensure)
 
-;; Load amx, which makes M-x work better on Ivy
-(add-hook 'after-init-hook 'amx-mode t)
+;; Consult, Embark, Marginalia, Orderless, Vertico
+(defvar my-default-ripgrep-args "--hidden -i --no-ignore-vcs --ignore-file=.gitignore --glob=!.git/")
 
-;; Ivy, Counsel, and Swiper
-(require 'counsel)
-(ivy-mode 1)
-(setopt ivy-use-virtual-buffers t)
-(setopt ivy-count-format "(%d/%d) ")
-(setq ivy-re-builders-alist
-      '((t . ivy--regex-ignore-order)))
-(setopt counsel-find-file-at-point t)
-(setopt counsel-mode-override-describe-bindings t)
-(counsel-mode 1)
+(defun my-consult-ripgrep (regexp rg-args &optional arg)
+  "Run a Consult Ripgrep search with `REGEXP' rooted at the current project root.
 
-(define-key ivy-minibuffer-map (kbd "C-r") 'ivy-previous-line-or-history)
-(define-key ivy-occur-grep-mode-map "r" 'ivy-wgrep-change-to-wgrep-mode)
+With \\[universal-argument], also prompt for extra rg arguments and set into RG-ARGS."
+  (interactive
+   (list (and (use-region-p)
+              (buffer-substring-no-properties
+               (region-beginning) (region-end)))
+         (if current-prefix-arg
+             (read-from-minibuffer
+              "Additional rg args: " my-default-ripgrep-args
+              nil nil nil my-default-ripgrep-args)
+           (concat consult-ripgrep-args " " my-default-ripgrep-args))))
+  ;; (let ((consult-ripgrep-args "rg --no-heading --line-number %s ."))
+  (let ((consult-ripgrep-args
+         (if current-prefix-arg rg-args
+           (concat consult-ripgrep-args " " my-default-ripgrep-args))))
+    (consult-ripgrep regexp)))
 
-(global-set-key (kbd "C-s") 'swiper-isearch)
-(global-set-key (kbd "C-r") 'swiper-isearch)
-(global-set-key (kbd "C-c C-r") 'ivy-resume)
+(with-eval-after-load "embark"
+  (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
 
-;; Tell fd to ignore any other .gitignore files that it finds in subdirectories,
-;; mostly for submodule purposes, and only use the one in the top-level git repo
-;;
-;; (setq sample-git-fd-args
-;;       (concat sample-git-fd-args " --no-ignore-vcs --ignore-file .gitignore"))
+(with-eval-after-load "marginalia"
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup t))
+
+(defun my-vertico-insert-like-ivy ()
+  (interactive)
+  (let* ((mb (minibuffer-contents-no-properties))
+         (lc (if (string= mb "") mb (substring mb -1))))
+    (cond ((string-match-p "^[/~:]" lc) (self-insert-command 1 ?/))
+          ((file-directory-p (vertico--candidate)) (vertico-insert))
+          (t (self-insert-command 1 ?/)))))
+
+(with-eval-after-load "vertico"
+  (setopt vertico-count 14
+          vertico-cycle t
+          vertico-resize nil)
+
+  (define-key vertico-map (kbd "?") #'minibuffer-completion-help)
+  (define-key vertico-map (kbd "/") #'my-vertico-insert-like-ivy)
+  (define-key vertico-map (kbd "C-c C-s") #'vertico-suspend)
+  (define-key vertico-map (kbd "C-k") #'kill-line)
+  (define-key vertico-map (kbd "C-r") #'vertico-previous)
+  (define-key vertico-map (kbd "C-s") #'vertico-next)
+  (define-key vertico-map (kbd "DEL") #'vertico-directory-delete-char)
+  (define-key vertico-map (kbd "M-DEL") #'vertico-directory-delete-word)
+  (define-key vertico-map (kbd "RET") #'vertico-directory-enter)
+
+  (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
+  (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
+
+(with-eval-after-load "vertico-multiform"
+  (setopt vertico-multiform-commands
+          '(("\\`execute-extended-command" unobtrusive
+             (vertico-flat-annotate . t)
+             (marginalia-annotator-registry
+              (command marginalia-annotate-binding))))))
+
+(defun my-extended-command-predicate (symbol buffer)
+  (and (command-completion-default-include-p symbol buffer)
+       (transient-command-completion-not-suffix-only-p symbol buffer)))
+
+(setq completion-category-defaults nil
+      completion-category-overrides '((file (styles basic partial-completion)))
+      completion-in-region-function #'consult-completion-in-region
+      completion-styles '(orderless basic)
+      consult-async-min-input 2
+      consult-async-input-debounce 0.1
+      consult-async-input-throttle 0.2
+      consult-async-refresh-delay 0.15
+      prefix-help-command #'embark-prefix-help-command
+      read-extended-command-predicate #'my-extended-command-predicate
+      xref-search-program 'ripgrep
+      xref-show-definitions-function #'consult-xref
+      xref-show-xrefs-function #'consult-xref)
+
+(defun my-crm-indicator (args)
+  "Work around issue in completing-read-multiple.
+
+Not needed in Emacs 31 or higher."
+  (cons (format "[CRM%s] %s"
+                (replace-regexp-in-string
+                 "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+                 crm-separator)
+                (car args))
+        (cdr args)))
+
+(advice-add #'completing-read-multiple :filter-args #'my-crm-indicator)
+
+(plist-put minibuffer-prompt-properties 'cursor-intangible t)
+(add-hook 'completion-list-mode #'consult-preview-at-point-mode)
+
+(my-defer-startup #'marginalia-mode)
+(my-defer-startup #'vertico-mode)
+
+(dolist (map (list minibuffer-local-map read-expression-map))
+  (define-key map (kbd "C-k") #'kill-line)
+  (define-key map (kbd "M-s") #'consult-history)
+  (define-key map (kbd "M-r") #'consult-history))
+
+(global-set-key (kbd "C-c C-r") #'vertico-suspend)
+(global-set-key (kbd "C-c M-x") #'consult-mode-command)
+(global-set-key (kbd "C-h b") #'embark-bindings)
+(global-set-key (kbd "C-r") #'consult-line)
+(global-set-key (kbd "C-s") #'consult-line)
+(global-set-key (kbd "C-x b") #'consult-buffer)
+(global-set-key (kbd "M-g e") #'consult-compile-error)
+(global-set-key (kbd "M-g f") #'consult-flymake)
+(global-set-key (kbd "M-g g") #'consult-goto-line)
+(global-set-key (kbd "M-g i") #'consult-imenu)
+(global-set-key (kbd "M-g I") #'consult-imenu-multi)
+(global-set-key (kbd "M-g k") #'consult-global-mark)
+(global-set-key (kbd "M-g M-g") #'consult-goto-line)
+(global-set-key (kbd "M-g m") #'consult-mark)
+(global-set-key (kbd "M-y") #'consult-yank-pop)
 
 ;; Set up project.el
 (defun my-project-root ()
@@ -1220,17 +1313,16 @@ CONTEXT and CALLBACK will be passed to the base function."
                                        project-query-replace-regexp
                                        project-vc-dir))
   (add-to-list 'project-switch-commands '(project-dired "Dired") t)
+  (define-key project-prefix-map "b" #'consult-project-buffer)
   (define-key project-prefix-map "d" #'project-dired)
-  (add-to-list 'project-switch-commands '(my-counsel-ripgrep "Ripgrep") t)
-  (define-key project-prefix-map "r" #'my-counsel-ripgrep)
-  (define-key project-prefix-map "s" #'my-counsel-ripgrep)
+  (add-to-list 'project-switch-commands '(my-consult-ripgrep "Ripgrep") t)
+  (define-key project-prefix-map "r" #'my-consult-ripgrep)
+  (define-key project-prefix-map "s" #'my-consult-ripgrep)
   (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
   (define-key project-prefix-map (kbd "RET") #'magit-project-status)
   (define-key project-prefix-map "m" #'magit-project-status))
 
 ;; Insinuate with ripgrep
-(defvar my-default-ripgrep-args "--hidden -i --no-ignore-vcs --ignore-file=.gitignore --glob=!.git/")
-
 (defun my-rg-command-line-flags (&optional flags)
   (append flags (split-string-shell-command my-default-ripgrep-args)))
 
@@ -1239,18 +1331,6 @@ CONTEXT and CALLBACK will be passed to the base function."
 (with-eval-after-load "rg"
   (define-key rg-mode-map (kbd "e") #'rg-rerun-change-regexp)
   (define-key rg-mode-map (kbd "r") #'wgrep-change-to-wgrep-mode))
-
-(defun my-counsel-ripgrep (regexp rg-args &optional arg)
-  "Run a Counsel Ripgrep search with `REGEXP' rooted at the current project root.
-
-With \\[universal-argument], also prompt for extra rg arguments and set into RG-ARGS."
-  (interactive
-   (list (and (use-region-p) (buffer-substring-no-properties (region-beginning) (region-end)))
-         (if current-prefix-arg
-             (read-from-minibuffer "Additional rg args: " my-default-ripgrep-args nil nil nil my-default-ripgrep-args)
-           my-default-ripgrep-args)))
-  (let ((counsel-rg-base-command "rg --no-heading --line-number %s ."))
-    (counsel-rg regexp (my-project-root) rg-args)))
 
 ;; Bind N and P in ediff so that I don't leave the control buffer
 (defun my-ediff-next-difference (&rest args)
@@ -1442,7 +1522,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (deactivate-mark))
 
 (with-eval-after-load "magit"
-  (setopt magit-completing-read-function 'ivy-completing-read)
   ;; magit-log currently has some kind of transient bug, so don't show transient menu
   (define-key magit-mode-map (kbd "l") #'magit-log-current)
   (define-key magit-mode-map (kbd "M-w") #'my-magit-kill-ring-save)
@@ -1456,10 +1535,12 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 ;; Map some magit keys globally
 (global-set-key (kbd "C-x V") nil)
-(global-set-key (kbd "C-x V a") 'magit-blame)
-(global-set-key (kbd "C-x V b") 'magit-show-refs-current)
-(global-set-key (kbd "C-x V l") 'magit-log-head)
-(global-set-key (kbd "C-x V s") 'magit-status)
+(global-set-key (kbd "C-x V a") #'magit-blame)
+(global-set-key (kbd "C-x V b") #'magit-show-refs-current)
+(global-set-key (kbd "C-x V f") #'magit-file-dispatch)
+(global-set-key (kbd "C-x V l") #'magit-log-head)
+(global-set-key (kbd "C-x V s") #'magit-status)
+(global-set-key (kbd "C-x V v") #'magit-dispatch)
 
 ;; Don't display any minor modes on the mode-line
 (require 'minions)
@@ -1498,7 +1579,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
     (define-key map (kbd "p") #'project-switch-project)
     (define-key map (kbd "t") #'project-switch-to-buffer)
     (define-key map (kbd "s r") #'rg-project)
-    (define-key map (kbd "s s") #'my-counsel-ripgrep)
+    (define-key map (kbd "s s") #'my-consult-ripgrep)
     (define-key map (kbd "w p") #'my-copy-project-relative-path-of-current-buffer)
     (define-key map (kbd "w w") #'my-copy-path-of-current-buffer)
     (define-key map (kbd "!") #'project-async-shell-command)
@@ -1547,9 +1628,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 ;; Typo prevention
 (global-set-key (kbd "C-x 4") #'split-window-right)
-(global-set-key (kbd "C-x C-b") #'ivy-switch-buffer)
-(global-set-key (kbd "C-x C-d") #'counsel-find-file)
-(global-set-key (kbd "C-x n") #'ivy-switch-buffer)
+(global-set-key (kbd "C-x C-b") #'consult-buffer)
+(global-set-key (kbd "C-x C-d") #'find-file)
+(global-set-key (kbd "C-x n") #'consult-buffer)
 
 ;; Disable some keybinds to avoid typos
 (global-set-key [insert] (lambda () (interactive)))
@@ -1598,8 +1679,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (global-set-key (kbd "s-q") #'fill-paragraph)
   (global-set-key (kbd "s-w") #'kill-ring-save)
   (global-set-key (kbd "s-v") #'yank)
-  (global-set-key (kbd "s-x") #'counsel-M-x)
-  (global-set-key (kbd "s-y") #'counsel-yank-pop)
+  (global-set-key (kbd "s-x") #'execute-extended-command)
+  (global-set-key (kbd "s-y") #'consult-yank-pop)
   (global-set-key (kbd "<C-s-left>") #'backward-sexp)
   (global-set-key (kbd "<C-s-right>") #'forward-sexp)
   (global-set-key (kbd "C-s-n") #'forward-list)

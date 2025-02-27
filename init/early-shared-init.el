@@ -224,7 +224,9 @@
         ;; Show the menu if we are using X
         (set-frame-parameter nil 'menu-bar-lines 1))
     ;; Don't show the menu unless we are using X
-    (set-frame-parameter nil 'menu-bar-lines 0))
+    (set-frame-parameter nil 'menu-bar-lines 0)
+    ;; Manually enable mouse wheel in terminal
+    (require 'mwheel))
   ;; Don't show scroll bars
   (ignore-errors (scroll-bar-mode -1))
   ;; Don't show the tool bar

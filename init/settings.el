@@ -69,6 +69,8 @@
  '(ls-lisp-support-shell-wildcards nil)
  '(ls-lisp-use-insert-directory-program nil)
  '(ls-lisp-verbosity '(uid gid))
+ '(magit-define-global-key-bindings nil)
+ '(magit-diff-refine-hunk t)
  '(magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1)
  '(magit-log-section-commit-count 1)
  '(magit-prefer-remote-upstream t)
@@ -88,15 +90,15 @@
    '(("melpa" . "http://melpa.org/packages/") ("gnu" . "http://elpa.gnu.org/packages/")))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(add-node-modules-path amx apheleia archive-rpm atomic-chrome browse-kill-ring cider
-                           clojure-ts-mode color-theme-sanityinc-tomorrow company company-statistics
-                           consult counsel diminish dumb-jump editorconfig el-mock erlang erlang-ts
-                           fish-mode flx git-modes gptel hydra ivy js-comint jtsx kotlin-ts-mode
-                           ligature lua-mode magit markdown-mode maxframe minions minuet
-                           modus-themes nix-ts-mode nsis-mode package-build package-utils plz
-                           poly-markdown polymode prisma-ts-mode reformatter rg slime swift-ts-mode
-                           swiper terraform-mode tmux-mode transient vterm web-mode wgrep
-                           zig-ts-mode))
+   '(add-node-modules-path apheleia archive-rpm atomic-chrome browse-kill-ring cider clojure-ts-mode
+                           color-theme-sanityinc-tomorrow company company-statistics consult
+                           diminish dumb-jump editorconfig el-mock embark embark-consult erlang
+                           erlang-ts fish-mode flx git-modes gptel hydra js-comint jtsx
+                           kotlin-ts-mode ligature lua-mode magit marginalia markdown-mode maxframe
+                           minions minuet modus-themes nerd-icons-completion nix-ts-mode nsis-mode
+                           orderless package-build package-utils plz poly-markdown polymode
+                           prisma-ts-mode reformatter rg slime swift-ts-mode terraform-mode
+                           tmux-mode transient vertico vterm web-mode wgrep zig-ts-mode))
  '(post-jump-header nil)
  '(project-vc-merge-submodules nil)
  '(recentf-mode nil)
@@ -120,9 +122,7 @@
  '(web-mode-markup-indent-offset 2)
  '(woman-fill-column 95)
  '(woman-fontify t)
- '(woman-use-own-frame nil)
- '(xref-search-program 'ripgrep)
- '(xref-show-definitions-function 'xref-show-definitions-completing-read))
+ '(woman-use-own-frame nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
