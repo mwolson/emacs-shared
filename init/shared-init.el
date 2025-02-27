@@ -103,7 +103,7 @@ When `depth' is provided, pass it to `add-hook'."
 
 ;;; Functions
 
-(defmacro match-data-changed (&rest body)
+(defmacro my-match-data-changed (&rest body)
   "Determine whether the match data has been modified by BODY."
   (let ((mdata (make-symbol "temp-buffer")))
     `(let ((,mdata (match-data)))
@@ -112,16 +112,21 @@ When `depth' is provided, pass it to `add-hook'."
              (message "Match data has not been changed")
            (message "Match data has been changed!"))))))
 
-(put 'match-data-changed 'lisp-indent-function 0)
-(put 'match-data-changed 'edebug-form-spec '(body))
+(put 'my-match-data-changed 'lisp-indent-function 0)
+(put 'my-match-data-changed 'edebug-form-spec '(body))
 
-(defun byte-compile-this-file-temporarily ()
+(defun my-byte-compile-this-file-temporarily ()
   (interactive)
   (let ((file buffer-file-name))
     (byte-compile-file file)
     (save-match-data
       (when (string-match "\\.el\\'" file)
         (delete-file (concat file "c"))))))
+
+(defun my-byte-compile-this-file ()
+  (interactive)
+  (let ((file buffer-file-name))
+    (byte-compile-file file)))
 
 (defun my-fetch-url (url)
   "Fetch the given URL into a buffer and switch to it."
@@ -151,7 +156,7 @@ When `depth' is provided, pass it to `add-hook'."
               (setcdr el new-mode)))
         (symbol-value alist)))
 
-;;; Things that can't be changed easily using `customize'
+;;; Base Programs and Features
 
 ;; Enable some commands
 (put 'downcase-region 'disabled nil)
@@ -175,8 +180,6 @@ When `depth' is provided, pass it to `add-hook'."
 
 (with-eval-after-load "add-log"
   (setopt add-log-mailing-address my-changelog-address))
-
-;;; Base Programs and Features
 
 ;; Load `dired' itself, with `tramp' extension
 (require 'dired)
