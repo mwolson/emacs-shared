@@ -432,7 +432,8 @@ When `depth' is provided, pass it to `add-hook'."
 (defun my-js-comint-send-line ()
   "Send the buffer to the inferior Javascript process."
   (interactive)
-  (let ((text (buffer-substring-no-properties (point-at-bol) (point-at-eol))))
+  (let ((text (buffer-substring-no-properties (line-beginning-position)
+                                              (line-end-position))))
     (js-comint-start-or-switch-to-repl)
     (js-comint-send-string text)))
 
@@ -1173,6 +1174,8 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-hook 'zig-ts-mode-hook #'my-eglot-ensure)
 
 ;; Consult, Embark, Marginalia, Orderless, Vertico
+(defvar my-minibuffer-from-consult-line nil)
+
 (defun my-consult-line ()
   "Start incremental search from current line."
   (interactive)
@@ -1182,7 +1185,8 @@ CONTEXT and CALLBACK will be passed to the base function."
                    (deactivate-mark))
                (if-let* ((sym (and current-prefix-arg
                                    (symbol-at-point))))
-                   (symbol-name sym)))))
+                   (symbol-name sym))))
+        (my-minibuffer-from-consult-line t))
     (consult-line reg nil)))
 
 (defvar my-default-ripgrep-args "--hidden -i --no-ignore-vcs --ignore-file=.gitignore --glob=!.git/")
@@ -1274,8 +1278,63 @@ Not needed in Emacs 31 or higher."
 
 (advice-add #'completing-read-multiple :filter-args #'my-crm-indicator)
 
+(defvar my-minibuffer-restore-pos nil)
+
+(defun my-minibuffer-move-window-contents-up ()
+  "Ensure that the window is moved to leave room for minibuffer under cursor.
+
+This prevents the window from later moving back once the minibuffer is done showing."
+  (let* ((prior-win (minibuffer-selected-window))
+         (prior-buf (and prior-win (window-buffer prior-win))))
+    (when (and prior-win (= (minibuffer-depth) 1))
+      (with-selected-window prior-win
+        (let* ((rows-dec (window-screen-lines))
+               (rows (if (> (mod rows-dec 1.0) 0.0)
+                         (round (+ rows-dec 0.5))
+                       (round rows-dec)))
+               (ppos (posn-at-point))
+	       (cursor-row (cdr (posn-actual-col-row ppos)))
+               ;; 4 = 1 minibuffer input line + 3 rows of context
+               (max-allowed-row (max 0 (- rows vertico-count 4)))
+               (scroll-up-amount (min (max 0 cursor-row)
+                                      (- cursor-row max-allowed-row))))
+          (when (and (> cursor-row max-allowed-row)
+                     (> scroll-up-amount 0))
+            (setq my-minibuffer-restore-pos
+                  (vector prior-win prior-buf (line-beginning-position)
+                          scroll-up-amount))
+            (scroll-up scroll-up-amount)))))))
+
+(defun my-minibuffer-restore-after-exit ()
+  (when (= (minibuffer-depth) 1)
+    (if my-minibuffer-from-consult-line
+        (progn
+          (setq my-minibuffer-restore-pos nil)
+          ;; 5 ~= (1 minibuffer input line + 10) / 2
+          (run-with-timer 0.0 nil (lambda ()
+                                    (recenter)
+                                    (scroll-up 5))))
+      (when (and my-minibuffer-restore-pos
+                 (null (transient-active-prefix)))
+        (let ((prior-win (aref my-minibuffer-restore-pos 0))
+              (prior-buf (aref my-minibuffer-restore-pos 1))
+              (prior-line-begin (aref my-minibuffer-restore-pos 2))
+              (scroll-up-amount (aref my-minibuffer-restore-pos 3)))
+          (setq my-minibuffer-restore-pos nil)
+          (run-with-timer
+           0.0 nil
+           (lambda ()
+             (when (and (window-live-p prior-win)
+                        (eq (window-buffer prior-win) prior-buf))
+               (with-selected-window prior-win
+                 (when (eq (line-beginning-position)
+                           prior-line-begin)
+                   (scroll-up scroll-up-amount)))))))))))
+
 (plist-put minibuffer-prompt-properties 'cursor-intangible t)
 (add-hook 'completion-list-mode #'consult-preview-at-point-mode)
+(add-hook 'minibuffer-setup-hook #'my-minibuffer-move-window-contents-up -100)
+(add-hook 'minibuffer-exit-hook #'my-minibuffer-restore-after-exit 100)
 
 (my-defer-startup #'marginalia-mode)
 (my-defer-startup #'vertico-mode)
