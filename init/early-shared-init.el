@@ -16,6 +16,34 @@
 (setq gc-cons-percentage 0.6)
 (setq gc-cons-threshold most-positive-fixnum)
 
+;; Show a bell icon instead of beeping
+(defvar my-bell-icon-graphical " 🔔 "
+  "Bell icon to display in the mode line.")
+
+(defvar my-bell-icon-display ""
+  "Variable to hold the bell icon display state.")
+
+(defvar my-bell-icon-flashing nil)
+
+(defun my-remove-bell-icon ()
+  (when my-bell-icon-flashing
+    (setq mode-line-format (remove 'my-bell-icon-display mode-line-format)
+          my-bell-icon-display ""
+          my-bell-icon-flashing nil)
+    (force-mode-line-update)))
+
+(defun my-flash-bell-icon ()
+  "Briefly display a bell icon in the mode line."
+  (unless my-bell-icon-flashing
+    (run-with-timer 0.3 nil #'my-remove-bell-icon)
+    (setq my-bell-icon-flashing t
+          my-bell-icon-display my-bell-icon-graphical
+          mode-line-format (append mode-line-format '(my-bell-icon-display)))
+    (force-mode-line-update)))
+
+(setq ring-bell-function #'my-flash-bell-icon)
+
+;; Initialize packages so we get access to the theme
 (require 'cl-seq)
 (require 'package)
 (package-initialize)

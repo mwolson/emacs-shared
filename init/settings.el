@@ -116,7 +116,6 @@
  '(tramp-auto-save-directory "~/.emacs.d/.autosave.d")
  '(tramp-backup-directory-alist '(("." . "~/.emacs.d/backup")))
  '(uniquify-buffer-name-style 'forward nil (uniquify))
- '(visible-bell t)
  '(web-mode-code-indent-offset 2)
  '(web-mode-enable-auto-indentation nil)
  '(web-mode-enable-auto-quoting nil)
