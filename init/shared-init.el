@@ -1180,7 +1180,7 @@ CONTEXT and CALLBACK will be passed to the base function."
                  (prog1
                      (buffer-substring-no-properties (point) (mark))
                    (deactivate-mark))
-               (if-let* ((sym (and (derived-mode-p 'prog-mode)
+               (if-let* ((sym (and current-prefix-arg
                                    (symbol-at-point))))
                    (symbol-name sym)))))
     (consult-line reg nil)))
