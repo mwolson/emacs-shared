@@ -1721,6 +1721,7 @@ This prevents the window from later moving back once the minibuffer is done show
   (define-key diff-mode-map (kbd "M-q") 'fill-paragraph))
 
 ;; Typo prevention
+(global-set-key (kbd "C-h C-n") #'describe-gnu-project)
 (global-set-key (kbd "C-x 4") #'split-window-right)
 (global-set-key (kbd "C-x C-b") #'consult-buffer)
 (global-set-key (kbd "C-x C-d") #'find-file)
@@ -1729,6 +1730,7 @@ This prevents the window from later moving back once the minibuffer is done show
 ;; Disable some keybinds to avoid typos
 (global-set-key [insert] (lambda () (interactive)))
 (global-set-key [insertchar] (lambda () (interactive)))
+(global-set-key (kbd "C-h g") (lambda () (interactive)))
 (global-set-key (kbd "C-t") (lambda () (interactive)))
 (global-set-key (kbd "C-z") (lambda () (interactive)))
 (global-set-key (kbd "C-x C-z") (lambda () (interactive)))
