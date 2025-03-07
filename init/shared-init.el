@@ -499,6 +499,10 @@ interactively.
 (with-eval-after-load "treesit"
   (setopt treesit-font-lock-level 4))
 
+;; VTerm, a fast but sometimes unstable terminal emulator
+(with-eval-after-load "vterm"
+  (setq vterm-timer-delay 0.05))
+
 ;; Set up gptel
 (defvar my-gptel--backends-defined nil)
 (defvar my-gptel--claude nil)
@@ -1610,6 +1614,7 @@ This prevents the window from later moving back once the minibuffer is done show
 
   (add-hook 'corfu-mode-hook #'my-setup-corfu)
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
+  (keymap-unset corfu-map "RET")
 
   (setopt corfu-auto t
           corfu-quit-no-match 'separator
@@ -1617,6 +1622,9 @@ This prevents the window from later moving back once the minibuffer is done show
           global-corfu-modes '((not org-mode) t)
           tab-always-indent 'complete
           text-mode-ispell-word-completion nil)
+
+  (dolist (el '("delete-backward-char\\'" "\\`backward-delete-char"))
+    (setq corfu-auto-commands (delete el corfu-auto-commands)))
 
   (global-corfu-mode))
 
