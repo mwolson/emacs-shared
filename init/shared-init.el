@@ -1593,7 +1593,7 @@ This prevents the window from later moving back once the minibuffer is done show
 (global-set-key (kbd "<f8> 2") #'my-profiler-stop-and-report)
 
 ;; Corfu and Cape for auto-completion
-(defun my-setup-corfu ()
+(defun my-setup-corfu-mode ()
   (setq-local completion-styles '(orderless-literal-only basic)
               completion-category-overrides nil
               completion-category-defaults nil))
@@ -1612,8 +1612,12 @@ This prevents the window from later moving back once the minibuffer is done show
   (dolist (hook '(prog-mode-hook shell-mode-hook))
     (add-hook hook #'corfu-mode t))
 
-  (add-hook 'corfu-mode-hook #'my-setup-corfu)
+  (add-hook 'corfu-mode-hook #'my-setup-corfu-mode)
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
+  (define-key corfu-map (kbd "<remap> <move-beginning-of-line>") nil)
+  (define-key corfu-map (kbd "<remap> <move-end-of-line>") nil)
+  (define-key corfu-map (kbd "<remap> <scroll-down-command>") nil)
+  (define-key corfu-map (kbd "<remap> <scroll-up-command>") nil)
 
   (setopt corfu-auto t
           corfu-quit-no-match 'separator
