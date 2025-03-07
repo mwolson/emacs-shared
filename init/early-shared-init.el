@@ -270,6 +270,9 @@
     (global-tab-line-mode 1)
     (my-reset-frame-size)))
 
+;; Initialize client frames
+(defun my-init-client ())
+
 ;; Initialize display settings
 (defun my-populate-scratch-buffer ()
   (interactive)

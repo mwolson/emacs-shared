@@ -1614,13 +1614,11 @@ This prevents the window from later moving back once the minibuffer is done show
 
   (add-hook 'corfu-mode-hook #'my-setup-corfu)
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
-  (keymap-unset corfu-map "RET")
 
   (setopt corfu-auto t
           corfu-quit-no-match 'separator
           global-corfu-minibuffer #'my-global-corfu-minibuffer
           global-corfu-modes '((not org-mode) t)
-          tab-always-indent 'complete
           text-mode-ispell-word-completion nil)
 
   (dolist (el '("delete-backward-char\\'" "\\`backward-delete-char"))
@@ -1729,8 +1727,26 @@ This prevents the window from later moving back once the minibuffer is done show
 
 (defun my-kill-emacs ()
   (interactive)
-  (let ((confirm-kill-emacs 'y-or-n-p))
-    (call-interactively 'save-buffers-kill-emacs t)))
+  (let* ((confirm-kill-emacs 'y-or-n-p)
+         (cur-proc (frame-parameter nil 'client))
+         (all-procs (cl-remove-if-not
+                     (lambda (proc)
+                       (terminal-live-p (process-get proc 'terminal)))
+                     server-clients))
+         (other-graphics (cl-remove-if
+                          (lambda (proc)
+                            (or (eq proc cur-proc)
+                                (let ((frame (process-get proc 'frame)))
+                                  (frame-parameter frame 'tty))))
+                          all-procs))
+         (kill-cmd (if (and cur-proc
+                            (processp cur-proc)
+                            (> (length all-procs) 1)
+                            (>= (length other-graphics) 1))
+                       'save-buffers-kill-terminal
+                     'save-buffers-kill-emacs)))
+    (call-interactively kill-cmd t)))
+
 (global-set-key (kbd "C-x C-c") #'my-kill-emacs)
 (global-set-key (kbd "C-x C-M-s") #'my-kill-emacs)
 
