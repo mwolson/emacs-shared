@@ -1211,6 +1211,10 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (let ((consult-ripgrep-args rg-args))
     (consult-ripgrep nil regexp)))
 
+(with-eval-after-load "consult"
+  (with-eval-after-load "minuet"
+    (consult-customize minuet-complete-with-minibuffer)))
+
 (with-eval-after-load "embark"
   (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
 
@@ -1253,7 +1257,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (setq completion-category-defaults nil
       completion-category-overrides '((file (styles basic partial-completion)))
-      completion-in-region-function #'consult-completion-in-region
       completion-styles '(orderless basic)
       consult-async-min-input 2
       consult-async-input-debounce 0.1
@@ -1585,21 +1588,51 @@ This prevents the window from later moving back once the minibuffer is done show
 (global-set-key (kbd "<f8> 1") #'profiler-start)
 (global-set-key (kbd "<f8> 2") #'my-profiler-stop-and-report)
 
-;; Company: auto-completion for various modes
-(setopt company-global-modes '(not vterm-mode)
-        company-idle-delay 0.2
-        company-tooltip-align-annotations t
-        company-tooltip-limit 10)
-(add-hook 'after-init-hook 'global-company-mode t)
-(add-hook 'after-init-hook 'company-statistics-mode t)
+;; Corfu and Cape for auto-completion
+(defun my-setup-corfu ()
+  (setq-local completion-styles '(orderless-literal-only basic)
+              completion-category-overrides nil
+              completion-category-defaults nil))
 
-(with-eval-after-load "company"
-  (define-key company-active-map (kbd "<tab>") 'company-complete-selection))
+(defun my-global-corfu-minibuffer ()
+  (not (or (bound-and-true-p mct--active)
+           (bound-and-true-p vertico--input)
+           (eq (current-local-map) read-passwd-map))))
 
-;; Consult: completion in minbuffers for minuet and other modes
-(with-eval-after-load "consult"
-  (with-eval-after-load "minuet"
-    (consult-customize minuet-complete-with-minibuffer)))
+(defun my-enable-corfu ()
+  (require 'orderless)
+  (orderless-define-completion-style orderless-literal-only
+    (orderless-style-dispatchers nil)
+    (orderless-matching-styles '(orderless-literal)))
+
+  (dolist (hook '(prog-mode-hook shell-mode-hook))
+    (add-hook hook #'corfu-mode t))
+
+  (add-hook 'corfu-mode-hook #'my-setup-corfu)
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
+
+  (setopt corfu-auto t
+          corfu-quit-no-match 'separator
+          global-corfu-minibuffer #'my-global-corfu-minibuffer
+          global-corfu-modes '((not org-mode) t)
+          tab-always-indent 'complete
+          text-mode-ispell-word-completion nil)
+
+  (global-corfu-mode))
+
+(my-defer-startup #'my-enable-corfu)
+
+(add-hook 'completion-at-point-functions #'cape-dabbrev)
+(add-hook 'completion-at-point-functions #'cape-elisp-block)
+(add-hook 'completion-at-point-functions #'cape-elisp-symbol)
+(add-hook 'completion-at-point-functions #'cape-file)
+(add-hook 'completion-at-point-functions #'cape-keyword)
+
+(with-eval-after-load "dabbrev"
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
 
 ;; Setup info for manually compiled packages
 (add-to-list 'Info-default-directory-list (concat my-emacs-path "share/info"))

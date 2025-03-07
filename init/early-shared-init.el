@@ -239,7 +239,7 @@
   (ligature-set-ligatures 'prog-mode my-prog-mode-ligatures)
   (global-ligature-mode t))
 
-;; This function should be called on the emacsclient commandline in cases where no file is being passed on commandline.
+;; Initialize client displays
 (defun my-init-client-display ()
   (interactive)
   (if window-system
@@ -254,10 +254,12 @@
           (my-enable-ligatures))
         (normal-erase-is-backspace-mode 1)
         (set-frame-parameter nil 'menu-bar-lines 1))
+    ;; terminal settings
     (add-to-list 'default-frame-alist '(menu-bar-lines . 0))
     (set-frame-parameter nil 'menu-bar-lines 0)
     (setq menu-bar-mode nil)
-    (require 'mwheel))
+    (require 'mwheel)
+    (corfu-terminal-mode 1))
   (add-to-list 'default-frame-alist '(tool-bar-lines . 0))
   (add-to-list 'default-frame-alist '(horizontal-scroll-bars))
   (add-to-list 'default-frame-alist '(vertical-scroll-bars))

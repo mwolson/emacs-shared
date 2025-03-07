@@ -88,18 +88,20 @@
  '(org-startup-folded nil)
  '(org-startup-truncated nil)
  '(package-archives
-   '(("melpa" . "http://melpa.org/packages/") ("gnu" . "http://elpa.gnu.org/packages/")))
+   '(("melpa" . "http://melpa.org/packages/") ("gnu" . "http://elpa.gnu.org/packages/")
+     ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(add-node-modules-path apheleia archive-rpm atomic-chrome browse-kill-ring cider clojure-ts-mode
-                           color-theme-sanityinc-tomorrow company company-statistics consult
-                           diminish dumb-jump editorconfig el-mock embark embark-consult erlang
-                           erlang-ts fish-mode flx git-modes gptel hydra js-comint jtsx
-                           kotlin-ts-mode ligature lua-mode magit marginalia markdown-mode maxframe
-                           minions minuet modus-themes nerd-icons-completion nix-ts-mode nsis-mode
-                           orderless package-build package-utils plz poly-markdown polymode
-                           prisma-ts-mode reformatter rg slime swift-ts-mode terraform-mode
-                           tmux-mode transient vertico vterm web-mode wgrep zig-ts-mode))
+   '(add-node-modules-path apheleia archive-rpm atomic-chrome browse-kill-ring cape cider
+                           clojure-ts-mode color-theme-sanityinc-tomorrow consult corfu
+                           corfu-terminal diminish dumb-jump editorconfig el-mock embark
+                           embark-consult erlang erlang-ts fish-mode flx git-modes gptel hydra
+                           js-comint jtsx kotlin-ts-mode ligature lua-mode magit marginalia
+                           markdown-mode maxframe minions minuet modus-themes nerd-icons-completion
+                           nerd-icons-corfu nix-ts-mode nsis-mode orderless package-build
+                           package-utils plz poly-markdown polymode prisma-ts-mode reformatter rg
+                           slime swift-ts-mode terraform-mode tmux-mode transient vertico vterm
+                           web-mode wgrep zig-ts-mode))
  '(post-jump-header nil)
  '(project-vc-merge-submodules nil)
  '(recentf-mode nil)
