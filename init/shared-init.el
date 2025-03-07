@@ -1101,12 +1101,20 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-ts-mode))
 (add-to-list 'my-polymode-aliases '(kotlin . kotlin-ts-mode))
 
-;; Lisp REPL using SLIME
+;; Lisp
 (require 'slime)
 (slime-setup '(slime-repl))
 (setopt slime-auto-connect 'always)
 (setopt slime-kill-without-query-p t)
 (setopt slime-protocol-version 'ignore)
+
+;; Don't warn me when opening some Common Lisp files
+(put 'package 'safe-local-variable 'symbolp)
+(put 'Package 'safe-local-variable 'symbolp)
+(put 'syntax 'safe-local-variable 'symbolp)
+(put 'Syntax 'safe-local-variable 'symbolp)
+(put 'Base 'safe-local-variable 'integerp)
+(put 'base 'safe-local-variable 'integerp)
 
 ;; Nix
 (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
@@ -1457,14 +1465,6 @@ This prevents the window from later moving back once the minibuffer is done show
   (define-key texinfo-mode-map (kbd "C-c C-v") #'my-texinfo-view-file))
 (add-hook 'texinfo-mode-hook 'my-texinfo-extra-keys t)
 
-;; Don't warn me when opening some Common Lisp files
-(put 'package 'safe-local-variable 'symbolp)
-(put 'Package 'safe-local-variable 'symbolp)
-(put 'syntax 'safe-local-variable 'symbolp)
-(put 'Syntax 'safe-local-variable 'symbolp)
-(put 'Base 'safe-local-variable 'integerp)
-(put 'base 'safe-local-variable 'integerp)
-
 ;; Enable wdired on "r"
 (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
 
@@ -1618,7 +1618,7 @@ This prevents the window from later moving back once the minibuffer is done show
   (setopt corfu-auto t
           corfu-quit-no-match 'separator
           global-corfu-minibuffer #'my-global-corfu-minibuffer
-          global-corfu-modes '((not org-mode) t)
+          global-corfu-modes '((not vterm-mode) t)
           text-mode-ispell-word-completion nil)
 
   (dolist (el '("delete-backward-char\\'" "\\`backward-delete-char"))
