@@ -1227,7 +1227,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
                (read-from-minibuffer
                 "Additional rg args: " default-args nil nil nil default-args)
              default-args))))
-  ;; (let ((consult-ripgrep-args "rg --no-heading --line-number %s ."))
   (let ((consult-ripgrep-args rg-args))
     (consult-ripgrep nil regexp)))
 
@@ -1269,7 +1268,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (define-key vertico-map (kbd "<next>") #'vertico-scroll-up)
 
   (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
-  (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
+  (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
+
+  (vertico-prescient-mode))
 
 (defun my-extended-command-predicate (symbol buffer)
   (and (command-completion-default-include-p symbol buffer)
@@ -1495,9 +1496,14 @@ This prevents the window from later moving back once the minibuffer is done show
   (interactive)
   (display-line-numbers-mode -1))
 
-(add-hook 'conf-mode-hook 'my-turn-on-display-line-numbers-mode t)
-(add-hook 'prog-mode-hook 'my-turn-on-display-line-numbers-mode t)
+(add-hook 'conf-mode-hook #'my-turn-on-display-line-numbers-mode t)
+
+(add-hook 'prog-mode-hook #'my-turn-on-display-line-numbers-mode t)
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode t)
+
 (add-hook 'lisp-interaction-mode-hook 'my-turn-off-display-line-numbers-mode t)
+
+(kill-ring-deindent-mode 1)
 
 ;; Markdown support
 (my-remap-major-mode 'gfm-mode 'poly-gfm-mode)
@@ -1650,6 +1656,8 @@ This prevents the window from later moving back once the minibuffer is done show
     (setq corfu-auto-commands (delete el corfu-auto-commands)))
 
   (corfu-popupinfo-mode)
+  (corfu-prescient-mode)
+  (prescient-persist-mode)
   (global-corfu-mode))
 
 (my-defer-startup #'my-enable-corfu)
