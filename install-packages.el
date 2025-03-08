@@ -23,5 +23,9 @@
 
 (my-package-autoremove)
 
+(require 'kind-icon)
+(kind-icon-reset-cache)
+(kind-icon-preview-all)
+
 (provide 'install-packages)
 ;;; install-packages.el ends here

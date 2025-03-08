@@ -338,9 +338,11 @@ When `depth' is provided, pass it to `add-hook'."
         (let ((map (make-sparse-keymap)))
           (define-key map (kbd "<mouse-3>") #'eglot-code-actions-at-mouse)
           map))
+
   (define-key eglot-mode-map (kbd "<f2>") #'eglot-rename)
   (fset #'my-jsonrpc--log-event-real (symbol-function 'jsonrpc--log-event))
   (fset #'jsonrpc--log-event #'my-jsonrpc--log-event)
+
   ;; to debug eglot:
   ;; (setq my-debug-jsonrpc t)
   (setopt eglot-extend-to-xref t
@@ -1603,6 +1605,12 @@ This prevents the window from later moving back once the minibuffer is done show
            (bound-and-true-p vertico--input)
            (eq (current-local-map) read-passwd-map))))
 
+(defun my-eglot-capf ()
+  (setq-local completion-at-point-functions
+              (list (cape-capf-super
+                     #'eglot-completion-at-point
+                     #'cape-file))))
+
 (defun my-enable-corfu ()
   (require 'orderless)
   (orderless-define-completion-style orderless-literal-only
@@ -1613,7 +1621,12 @@ This prevents the window from later moving back once the minibuffer is done show
     (add-hook hook #'corfu-mode t))
 
   (add-hook 'corfu-mode-hook #'my-setup-corfu-mode)
-  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
+  (add-hook 'eglot-managed-mode-hook #'my-eglot-capf)
+
+  (require 'kind-icon)
+  (plist-put kind-icon-default-style :height 0.35)
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
+
   (define-key corfu-map (kbd "<remap> <move-beginning-of-line>") nil)
   (define-key corfu-map (kbd "<remap> <move-end-of-line>") nil)
   (define-key corfu-map (kbd "<remap> <scroll-down-command>") nil)
@@ -1628,6 +1641,7 @@ This prevents the window from later moving back once the minibuffer is done show
   (dolist (el '("delete-backward-char\\'" "\\`backward-delete-char"))
     (setq corfu-auto-commands (delete el corfu-auto-commands)))
 
+  (corfu-popupinfo-mode)
   (global-corfu-mode))
 
 (my-defer-startup #'my-enable-corfu)

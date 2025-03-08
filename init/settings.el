@@ -96,9 +96,9 @@
                            clojure-ts-mode color-theme-sanityinc-tomorrow consult corfu
                            corfu-terminal diminish dumb-jump editorconfig el-mock embark
                            embark-consult erlang erlang-ts fish-mode flx git-modes gptel hydra
-                           js-comint jtsx kotlin-ts-mode ligature lua-mode magit marginalia
-                           markdown-mode maxframe minions minuet modus-themes nerd-icons-completion
-                           nerd-icons-corfu nix-ts-mode nsis-mode orderless package-build
+                           js-comint jtsx kind-icon kotlin-ts-mode ligature lua-mode magit
+                           marginalia markdown-mode maxframe minions minuet modus-themes
+                           nerd-icons-completion nix-ts-mode nsis-mode orderless package-build
                            package-utils plz poly-markdown polymode prisma-ts-mode reformatter rg
                            slime swift-ts-mode terraform-mode tmux-mode transient vertico vterm
                            web-mode wgrep zig-ts-mode))

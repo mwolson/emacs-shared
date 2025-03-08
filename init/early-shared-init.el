@@ -46,6 +46,7 @@
 ;; Initialize packages so we get access to the theme
 (require 'cl-seq)
 (require 'package)
+(require 'treesit)
 (package-initialize)
 
 ;;; Options that change behavior of this repo
