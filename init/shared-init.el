@@ -1633,6 +1633,8 @@ This prevents the window from later moving back once the minibuffer is done show
   (define-key corfu-map (kbd "<remap> <scroll-up-command>") nil)
 
   (setopt corfu-auto t
+          corfu-popupinfo-delay '(0.3 . 0.01)
+          corfu-popupinfo-hide nil
           corfu-quit-no-match 'separator
           global-corfu-minibuffer #'my-global-corfu-minibuffer
           global-corfu-modes '((not vterm-mode) t)
