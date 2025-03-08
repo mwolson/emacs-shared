@@ -196,6 +196,7 @@ When `depth' is provided, pass it to `add-hook'."
 ;; Long lines support
 (global-so-long-mode 1)
 (add-to-list 'so-long-target-modes 'fundamental-mode)
+(global-visual-wrap-prefix-mode)
 
 ;; Don't slow down ls and don't make dired output too wide on w32 systems
 (setq w32-get-true-file-attributes nil)
@@ -1178,6 +1179,11 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
 (add-hook 'web-mode-hook #'add-node-modules-path t)
 (add-hook 'web-mode-hook #'my-setup-web-ligatures t)
+
+(setopt web-mode-code-indent-offset 2
+        web-mode-enable-auto-indentation nil
+        web-mode-enable-auto-quoting nil
+        web-mode-markup-indent-offset 2)
 
 ;; Zig
 (add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-ts-mode))
