@@ -302,8 +302,8 @@ When `depth' is provided, pass it to `add-hook'."
 
 ;; Compile buffers
 (with-eval-after-load "compile"
-  (define-key compilation-mode-map (kbd "M-g") #'recompile)
-  (define-key compilation-shell-minor-mode-map (kbd "M-g") #'recompile))
+  (keymap-set compilation-mode-map "M-g" #'recompile)
+  (keymap-set compilation-shell-minor-mode-map "M-g" #'recompile))
 
 (add-hook 'compilation-filter-hook #'ansi-color-compilation-filter t)
 
@@ -337,10 +337,10 @@ When `depth' is provided, pass it to `add-hook'."
 (with-eval-after-load "eglot"
   (setq eglot-diagnostics-map
         (let ((map (make-sparse-keymap)))
-          (define-key map (kbd "<mouse-3>") #'eglot-code-actions-at-mouse)
+          (keymap-set map "<mouse-3>" #'eglot-code-actions-at-mouse)
           map))
 
-  (define-key eglot-mode-map (kbd "<f2>") #'eglot-rename)
+  (keymap-set eglot-mode-map "<f2>" #'eglot-rename)
   (fset #'my-jsonrpc--log-event-real (symbol-function 'jsonrpc--log-event))
   (fset #'jsonrpc--log-event #'my-jsonrpc--log-event)
 
@@ -395,17 +395,17 @@ When `depth' is provided, pass it to `add-hook'."
 ;; Flymake
 (defvar my-flymake-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "c") #'flymake-start)
-    (define-key map (kbd "l") #'flymake-show-buffer-diagnostics)
-    (define-key map (kbd "L") #'flymake-switch-to-log-buffer)
-    (define-key map (kbd "n") #'flymake-goto-next-error)
-    (define-key map (kbd "p") #'flymake-goto-prev-error)
+    (keymap-set map "c" #'flymake-start)
+    (keymap-set map "l" #'flymake-show-buffer-diagnostics)
+    (keymap-set map "L" #'flymake-switch-to-log-buffer)
+    (keymap-set map "n" #'flymake-goto-next-error)
+    (keymap-set map "p" #'flymake-goto-prev-error)
     map)
   "My key customizations for flymake.")
 
 (with-eval-after-load "flymake"
-  (define-key flymake-mode-map (kbd "C-c f") my-flymake-mode-map)
-  (define-key flymake-mode-map (kbd "C-x f") my-flymake-mode-map))
+  (keymap-set flymake-mode-map "C-c f" my-flymake-mode-map)
+  (keymap-set flymake-mode-map "C-x f" my-flymake-mode-map))
 
 ;; NodeJS REPL
 (defun my-js-comint-send-defun (start end)
@@ -449,12 +449,12 @@ When `depth' is provided, pass it to `add-hook'."
 
 (defvar node-repl-interaction-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-x C-e") 'my-js-comint-send-last-sexp)
-    (define-key map (kbd "C-c C-l") 'my-js-comint-send-line)
-    (define-key map (kbd "C-c C-r") 'my-js-comint-send-region)
-    (define-key map (kbd "C-c C-z") 'js-comint-start-or-switch-to-repl)
-    (define-key map (kbd "C-M-x") 'my-js-comint-send-defun)
-    (define-key map (kbd "C-s-x") 'my-js-comint-send-defun)
+    (keymap-set map "C-x C-e" 'my-js-comint-send-last-sexp)
+    (keymap-set map "C-c C-l" 'my-js-comint-send-line)
+    (keymap-set map "C-c C-r" 'my-js-comint-send-region)
+    (keymap-set map "C-c C-z" 'js-comint-start-or-switch-to-repl)
+    (keymap-set map "C-M-x" 'my-js-comint-send-defun)
+    (keymap-set map "C-s-x" 'my-js-comint-send-defun)
     map)
   "Keymap for node-repl-interaction-mode.")
 
@@ -638,7 +638,7 @@ interactively.
 
 (with-eval-after-load "gptel-context"
   (let ((map gptel-context-buffer-mode-map))
-    (define-key map (kbd "q") #'my-gptel-context-save-and-quit)))
+    (keymap-set map "q" #'my-gptel-context-save-and-quit)))
 
 (defun my-gptel-start ()
   "Start gptel with a default buffer name."
@@ -897,27 +897,27 @@ CONTEXT and CALLBACK will be passed to the base function."
           minuet-n-completions 1)
   (setq minuet-provider my-minuet-provider)
 
-  (define-key minuet-active-mode-map (kbd "C-c C-a") #'minuet-accept-suggestion)
-  (define-key minuet-active-mode-map (kbd "C-c C-k") #'minuet-dismiss-suggestion)
-  (define-key minuet-active-mode-map (kbd "C-c C-n") #'minuet-next-suggestion)
-  (define-key minuet-active-mode-map (kbd "C-c C-p") #'minuet-previous-suggestion)
-  (define-key minuet-active-mode-map (kbd "<backtab>") #'minuet-previous-suggestion)
-  (define-key minuet-active-mode-map (kbd "<tab>") #'minuet-next-suggestion)
-  (define-key minuet-active-mode-map (kbd "<return>") #'minuet-accept-suggestion))
+  (keymap-set minuet-active-mode-map "C-c C-a" #'minuet-accept-suggestion)
+  (keymap-set minuet-active-mode-map "C-c C-k" #'minuet-dismiss-suggestion)
+  (keymap-set minuet-active-mode-map "C-c C-n" #'minuet-next-suggestion)
+  (keymap-set minuet-active-mode-map "C-c C-p" #'minuet-previous-suggestion)
+  (keymap-set minuet-active-mode-map "<backtab>" #'minuet-previous-suggestion)
+  (keymap-set minuet-active-mode-map "<tab>" #'minuet-next-suggestion)
+  (keymap-set minuet-active-mode-map "<return>" #'minuet-accept-suggestion))
 
 ;; (add-hook 'prog-mode-hook #'minuet-auto-suggestion-mode)
 (add-hook 'prog-mode-hook #'my-minuet-maybe-turn-on-auto-suggest t)
 
 (defvar my-minuet-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "a") #'minuet-auto-suggestion-mode)
-    (define-key map (kbd "c") #'my-minuet-complete)
-    (define-key map (kbd "m") #'minuet-complete-with-minibuffer)
+    (keymap-set map "a" #'minuet-auto-suggestion-mode)
+    (keymap-set map "c" #'my-minuet-complete)
+    (keymap-set map "m" #'minuet-complete-with-minibuffer)
     map)
   "My key customizations for minuet.")
 
-(global-set-key (kbd "C-c m") my-minuet-map)
-(global-set-key (kbd "C-x m") my-minuet-map)
+(keymap-global-set "C-c m" my-minuet-map)
+(keymap-global-set "C-x m" my-minuet-map)
 
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
 (require 'dumb-jump)
@@ -926,29 +926,29 @@ CONTEXT and CALLBACK will be passed to the base function."
 
 (defvar my-xref-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "a a") #'my-gptel-add-function)
-    (define-key map (kbd "a f") #'my-gptel-add-current-file)
-    (define-key map (kbd "c") #'gptel-fn-complete)
-    (define-key map (kbd "k") #'my-gptel-context-remove-all)
-    (define-key map (kbd "l") #'my-gptel-toggle-local)
-    (define-key map (kbd "q") #'my-gptel-query-function)
-    (define-key map (kbd "r") #'my-gptel-rewrite-function)
-    (define-key map (kbd "v") #'my-gptel-view-context)
-    (define-key map (kbd ".") #'xref-find-definitions)
-    (define-key map (kbd ",") #'xref-go-back)
-    (define-key map (kbd "/") #'xref-find-references)
-    (define-key map (kbd "RET") #'embark-act)
+    (keymap-set map "a a" #'my-gptel-add-function)
+    (keymap-set map "a f" #'my-gptel-add-current-file)
+    (keymap-set map "c" #'gptel-fn-complete)
+    (keymap-set map "k" #'my-gptel-context-remove-all)
+    (keymap-set map "l" #'my-gptel-toggle-local)
+    (keymap-set map "q" #'my-gptel-query-function)
+    (keymap-set map "r" #'my-gptel-rewrite-function)
+    (keymap-set map "v" #'my-gptel-view-context)
+    (keymap-set map "." #'xref-find-definitions)
+    (keymap-set map "," #'xref-go-back)
+    (keymap-set map "/" #'xref-find-references)
+    (keymap-set map "RET" #'embark-act)
     map)
   "My key customizations for AI and xref.")
 
-(global-set-key (kbd "C-c .") my-xref-map)
-(global-set-key (kbd "C-c C-.") my-xref-map)
-(global-set-key (kbd "C-x .") my-xref-map)
-(global-set-key (kbd "C-x C-.") my-xref-map)
+(keymap-global-set "C-c ." my-xref-map)
+(keymap-global-set "C-c C-." my-xref-map)
+(keymap-global-set "C-x ." my-xref-map)
+(keymap-global-set "C-x C-." my-xref-map)
 
 (defvar my-xref-minor-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c .") my-xref-map)
+    (keymap-set map "C-c ." my-xref-map)
     map))
 
 (define-minor-mode my-xref-minor-mode
@@ -971,7 +971,7 @@ CONTEXT and CALLBACK will be passed to the base function."
 ;; `C-c . .` doesn't currently work, see this for ideas:
 ;; https://github.com/theschmocker/dotfiles/blob/33944638a5a59ddba01b64066daf50d46e5f0c3a/emacs/.doom.d/config.el#L807
 (with-eval-after-load "csharp-ts-mode"
-  (define-key csharp-mode-map (kbd "C-c .") nil))
+  (keymap-set csharp-mode-map "C-c ." nil))
 
 (my-remap-major-mode 'csharp-mode 'csharp-ts-mode)
 (add-hook 'csharp-ts-mode-hook #'my-xref-minor-mode t)
@@ -980,7 +980,7 @@ CONTEXT and CALLBACK will be passed to the base function."
 
 ;; Clojure
 (with-eval-after-load "cider-repl"
-  (define-key cider-repl-mode-map (kbd "C-d") #'cider-quit))
+  (keymap-set cider-repl-mode-map "C-d" #'cider-quit))
 
 (defvar my-clojure-modes
   '(clojure-ts-mode clojure-ts-clojurec-mode clojure-ts-clojurescript-mode))
@@ -1253,19 +1253,19 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
           vertico-mouse-mode t
           vertico-resize nil)
 
-  (define-key vertico-map (kbd "?") #'minibuffer-completion-help)
-  (define-key vertico-map (kbd "/") #'my-vertico-insert-like-ivy)
-  (define-key vertico-map (kbd "C-c C-c") #'vertico-repeat)
-  (define-key vertico-map (kbd "C-c C-o") #'embark-export)
-  (define-key vertico-map (kbd "C-c C-s") #'vertico-suspend)
-  (define-key vertico-map (kbd "C-k") #'kill-line)
-  (define-key vertico-map (kbd "C-r") #'vertico-previous)
-  (define-key vertico-map (kbd "C-s") #'vertico-next)
-  (define-key vertico-map (kbd "DEL") #'vertico-directory-delete-char)
-  (define-key vertico-map (kbd "M-DEL") #'vertico-directory-delete-word)
-  (define-key vertico-map (kbd "RET") #'vertico-directory-enter)
-  (define-key vertico-map (kbd "<prior>") #'vertico-scroll-down)
-  (define-key vertico-map (kbd "<next>") #'vertico-scroll-up)
+  (keymap-set vertico-map "?" #'minibuffer-completion-help)
+  (keymap-set vertico-map "/" #'my-vertico-insert-like-ivy)
+  (keymap-set vertico-map "C-c C-c" #'vertico-repeat)
+  (keymap-set vertico-map "C-c C-o" #'embark-export)
+  (keymap-set vertico-map "C-c C-s" #'vertico-suspend)
+  (keymap-set vertico-map "C-k" #'kill-line)
+  (keymap-set vertico-map "C-r" #'vertico-previous)
+  (keymap-set vertico-map "C-s" #'vertico-next)
+  (keymap-set vertico-map "DEL" #'vertico-directory-delete-char)
+  (keymap-set vertico-map "M-DEL" #'vertico-directory-delete-word)
+  (keymap-set vertico-map "RET" #'vertico-directory-enter)
+  (keymap-set vertico-map "<prior>" #'vertico-scroll-down)
+  (keymap-set vertico-map "<next>" #'vertico-scroll-up)
 
   (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
@@ -1364,25 +1364,25 @@ This prevents the window from later moving back once the minibuffer is done show
 (my-defer-startup #'vertico-mode)
 
 (dolist (map (list minibuffer-local-map read-expression-map))
-  (define-key map (kbd "C-k") #'kill-line)
-  (define-key map (kbd "M-s") #'consult-history)
-  (define-key map (kbd "M-r") #'consult-history))
+  (keymap-set map "C-k" #'kill-line)
+  (keymap-set map "M-s" #'consult-history)
+  (keymap-set map "M-r" #'consult-history))
 
-(global-set-key (kbd "C-c C-r") #'vertico-suspend)
-(global-set-key (kbd "C-c M-x") #'consult-mode-command)
-(global-set-key (kbd "C-h b") #'embark-bindings)
-(global-set-key (kbd "C-r") #'my-consult-line)
-(global-set-key (kbd "C-s") #'my-consult-line)
-(global-set-key (kbd "C-x b") #'consult-buffer)
-(global-set-key (kbd "M-g e") #'consult-compile-error)
-(global-set-key (kbd "M-g f") #'consult-flymake)
-(global-set-key (kbd "M-g g") #'consult-goto-line)
-(global-set-key (kbd "M-g i") #'consult-imenu)
-(global-set-key (kbd "M-g I") #'consult-imenu-multi)
-(global-set-key (kbd "M-g k") #'consult-global-mark)
-(global-set-key (kbd "M-g M-g") #'consult-goto-line)
-(global-set-key (kbd "M-g m") #'consult-mark)
-(global-set-key (kbd "M-y") #'consult-yank-pop)
+(keymap-global-set "C-c C-r" #'vertico-suspend)
+(keymap-global-set "C-c M-x" #'consult-mode-command)
+(keymap-global-set "C-h b" #'embark-bindings)
+(keymap-global-set "C-r" #'my-consult-line)
+(keymap-global-set "C-s" #'my-consult-line)
+(keymap-global-set "C-x b" #'consult-buffer)
+(keymap-global-set "M-g e" #'consult-compile-error)
+(keymap-global-set "M-g f" #'consult-flymake)
+(keymap-global-set "M-g g" #'consult-goto-line)
+(keymap-global-set "M-g i" #'consult-imenu)
+(keymap-global-set "M-g I" #'consult-imenu-multi)
+(keymap-global-set "M-g k" #'consult-global-mark)
+(keymap-global-set "M-g M-g" #'consult-goto-line)
+(keymap-global-set "M-g m" #'consult-mark)
+(keymap-global-set "M-y" #'consult-yank-pop)
 
 ;; Set up project.el
 (defun my-project-root ()
@@ -1422,14 +1422,14 @@ This prevents the window from later moving back once the minibuffer is done show
                                        project-query-replace-regexp
                                        project-vc-dir))
   (add-to-list 'project-switch-commands '(project-dired "Dired") t)
-  (define-key project-prefix-map "b" #'consult-project-buffer)
-  (define-key project-prefix-map "d" #'project-dired)
+  (keymap-set project-prefix-map "b" #'consult-project-buffer)
+  (keymap-set project-prefix-map "d" #'project-dired)
   (add-to-list 'project-switch-commands '(my-consult-ripgrep "Ripgrep") t)
-  (define-key project-prefix-map "r" #'my-consult-ripgrep)
-  (define-key project-prefix-map "s" #'my-consult-ripgrep)
+  (keymap-set project-prefix-map "r" #'my-consult-ripgrep)
+  (keymap-set project-prefix-map "s" #'my-consult-ripgrep)
   (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
-  (define-key project-prefix-map (kbd "RET") #'magit-project-status)
-  (define-key project-prefix-map "m" #'magit-project-status))
+  (keymap-set project-prefix-map "RET" #'magit-project-status)
+  (keymap-set project-prefix-map "m" #'magit-project-status))
 
 ;; Insinuate with ripgrep
 (defun my-rg-command-line-flags (&optional flags)
@@ -1438,8 +1438,8 @@ This prevents the window from later moving back once the minibuffer is done show
 (setq rg-command-line-flags-function #'my-rg-command-line-flags)
 
 (with-eval-after-load "rg"
-  (define-key rg-mode-map (kbd "e") #'rg-rerun-change-regexp)
-  (define-key rg-mode-map (kbd "r") #'wgrep-change-to-wgrep-mode))
+  (keymap-set rg-mode-map "e" #'rg-rerun-change-regexp)
+  (keymap-set rg-mode-map "r" #'wgrep-change-to-wgrep-mode))
 
 ;; Bind N and P in ediff so that I don't leave the control buffer
 (defun my-ediff-next-difference (&rest args)
@@ -1453,8 +1453,8 @@ This prevents the window from later moving back once the minibuffer is done show
     (call-interactively 'ediff-previous-difference)))
 
 (defun my-ediff-extra-keys ()
-  (define-key ediff-mode-map (kbd "N") #'my-ediff-next-difference)
-  (define-key ediff-mode-map (kbd "P") #'my-ediff-previous-difference))
+  (keymap-set ediff-mode-map "N" #'my-ediff-next-difference)
+  (keymap-set ediff-mode-map "P" #'my-ediff-previous-difference))
 (add-hook 'ediff-keymap-setup-hook 'my-ediff-extra-keys t)
 
 ;; Make TexInfo easier to work with
@@ -1470,12 +1470,12 @@ This prevents the window from later moving back once the minibuffer is done show
 
 (defun my-texinfo-extra-keys ()
   "Make texinfo stuff easier to work with."
-  (define-key texinfo-mode-map (kbd "C-c C-p") #'makeinfo-buffer)
-  (define-key texinfo-mode-map (kbd "C-c C-v") #'my-texinfo-view-file))
+  (keymap-set texinfo-mode-map "C-c C-p" #'makeinfo-buffer)
+  (keymap-set texinfo-mode-map "C-c C-v" #'my-texinfo-view-file))
 (add-hook 'texinfo-mode-hook 'my-texinfo-extra-keys t)
 
 ;; Enable wdired on "r"
-(define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
+(keymap-set dired-mode-map "r" 'wdired-change-to-wdired-mode)
 
 ;; Make tramp's backup directories the same as the normal ones
 (setopt tramp-backup-directory-alist backup-directory-alist)
@@ -1539,10 +1539,10 @@ This prevents the window from later moving back once the minibuffer is done show
     (widen)))
 
 (with-eval-after-load "polymode"
-  (define-key polymode-map (kbd "k") #'polymode-kill-chunk)
-  (define-key polymode-map (kbd "w") #'my-polymode-yank-chunk)
-  (define-key polymode-map (kbd "C-w") #'my-polymode-yank-chunk)
-  (define-key polymode-minor-mode-map (kbd "C-c n") polymode-map)
+  (keymap-set polymode-map "k" #'polymode-kill-chunk)
+  (keymap-set polymode-map "w" #'my-polymode-yank-chunk)
+  (keymap-set polymode-map "C-w" #'my-polymode-yank-chunk)
+  (keymap-set polymode-minor-mode-map "C-c n" polymode-map)
   (easy-menu-add-item polymode-menu
                       nil
                       '["Yank chunk" my-polymode-yank-chunk]
@@ -1555,8 +1555,9 @@ This prevents the window from later moving back once the minibuffer is done show
 
 ;; Don't mess with keys that I'm used to
 (defun my-markdown-mode-keys ()
-  (define-key markdown-mode-map (kbd "<M-right>") #'forward-word)
-  (define-key markdown-mode-map (kbd "<M-left>") #'backward-word))
+  (keymap-set markdown-mode-map "M-<left>" #'backward-word)
+  (keymap-set markdown-mode-map "M-<right>" #'forward-word))
+
 (add-hook 'markdown-mode-hook #'my-markdown-mode-keys t)
 
 ;; Support for .nsh files
@@ -1603,8 +1604,8 @@ This prevents the window from later moving back once the minibuffer is done show
   (profiler-report)
   (profiler-stop))
 
-(global-set-key (kbd "<f8> 1") #'profiler-start)
-(global-set-key (kbd "<f8> 2") #'my-profiler-stop-and-report)
+(keymap-global-set "<f8> 1" #'profiler-start)
+(keymap-global-set "<f8> 2" #'my-profiler-stop-and-report)
 
 ;; Corfu and Cape for auto-completion
 (defun my-setup-corfu-mode ()
@@ -1639,10 +1640,10 @@ This prevents the window from later moving back once the minibuffer is done show
   (plist-put kind-icon-default-style :height 0.35)
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
 
-  (define-key corfu-map (kbd "<remap> <move-beginning-of-line>") nil)
-  (define-key corfu-map (kbd "<remap> <move-end-of-line>") nil)
-  (define-key corfu-map (kbd "<remap> <scroll-down-command>") nil)
-  (define-key corfu-map (kbd "<remap> <scroll-up-command>") nil)
+  (keymap-set corfu-map "<remap> <move-beginning-of-line>" nil)
+  (keymap-set corfu-map "<remap> <move-end-of-line>" nil)
+  (keymap-set corfu-map "<remap> <scroll-down-command>" nil)
+  (keymap-set corfu-map "<remap> <scroll-up-command>" nil)
 
   (setopt corfu-auto t
           corfu-popupinfo-delay '(0.3 . 0.01)
@@ -1690,9 +1691,9 @@ This prevents the window from later moving back once the minibuffer is done show
 
 (with-eval-after-load "magit"
   ;; magit-log currently has some kind of transient bug, so don't show transient menu
-  (define-key magit-mode-map (kbd "l") #'magit-log-current)
-  (define-key magit-mode-map (kbd "M-w") #'my-magit-kill-ring-save)
-  (define-key magit-hunk-section-map (kbd "RET") #'magit-diff-visit-worktree-file))
+  (keymap-set magit-mode-map "l" #'magit-log-current)
+  (keymap-set magit-mode-map "M-w" #'my-magit-kill-ring-save)
+  (keymap-set magit-hunk-section-map "RET" #'magit-diff-visit-worktree-file))
 
 (defun my-preload-magit ()
   (require 'magit)
@@ -1701,13 +1702,13 @@ This prevents the window from later moving back once the minibuffer is done show
 (my-defer-startup #'my-preload-magit)
 
 ;; Map some magit keys globally
-(global-set-key (kbd "C-x V") nil)
-(global-set-key (kbd "C-x V a") #'magit-blame)
-(global-set-key (kbd "C-x V b") #'magit-show-refs-current)
-(global-set-key (kbd "C-x V f") #'magit-file-dispatch)
-(global-set-key (kbd "C-x V l") #'magit-log-head)
-(global-set-key (kbd "C-x V s") #'magit-status)
-(global-set-key (kbd "C-x V v") #'magit-dispatch)
+(keymap-global-set "C-x V" nil)
+(keymap-global-set "C-x V a" #'magit-blame)
+(keymap-global-set "C-x V b" #'magit-show-refs-current)
+(keymap-global-set "C-x V f" #'magit-file-dispatch)
+(keymap-global-set "C-x V l" #'magit-log-head)
+(keymap-global-set "C-x V s" #'magit-status)
+(keymap-global-set "C-x V v" #'magit-dispatch)
 
 ;; Don't display any minor modes on the mode-line
 (require 'minions)
@@ -1727,37 +1728,37 @@ This prevents the window from later moving back once the minibuffer is done show
   (org-capture nil "n"))
 
 (with-eval-after-load "org"
-  (define-key org-mode-map (kbd "<M-left>") #'left-word)
-  (define-key org-mode-map (kbd "<M-right>") #'right-word))
+  (keymap-set org-mode-map "M-<left>" #'left-word)
+  (keymap-set org-mode-map "M-<right>" #'right-word))
 
 ;; Project settings
 (defvar my-project-command-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "a a") #'project-remember-projects-under)
-    (define-key map (kbd "a s") #'my-asdf-vm-init)
-    (define-key map (kbd "c") #'project-compile)
-    (define-key map (kbd "f") #'project-find-file)
-    (define-key map (kbd "g a") #'aidermacs-transient-menu)
-    (define-key map (kbd "g g") #'my-gptel-start)
-    (define-key map (kbd "g p") #'gptel-menu)
-    (define-key map (kbd "g s") #'gptel-send)
-    (define-key map (kbd "k") #'project-kill-buffers)
-    (define-key map (kbd "n") #'my-org-find-notes-file)
-    (define-key map (kbd "p") #'project-switch-project)
-    (define-key map (kbd "t") #'project-switch-to-buffer)
-    (define-key map (kbd "s r") #'rg-project)
-    (define-key map (kbd "s s") #'my-consult-ripgrep)
-    (define-key map (kbd "w p") #'my-copy-project-relative-path-of-current-buffer)
-    (define-key map (kbd "w w") #'my-copy-path-of-current-buffer)
-    (define-key map (kbd "!") #'project-async-shell-command)
-    (define-key map (kbd " ") #'my-org-capture-note)
+    (keymap-set map "a a" #'project-remember-projects-under)
+    (keymap-set map "a s" #'my-asdf-vm-init)
+    (keymap-set map "c" #'project-compile)
+    (keymap-set map "f" #'project-find-file)
+    (keymap-set map "g a" #'aidermacs-transient-menu)
+    (keymap-set map "g g" #'my-gptel-start)
+    (keymap-set map "g p" #'gptel-menu)
+    (keymap-set map "g s" #'gptel-send)
+    (keymap-set map "k" #'project-kill-buffers)
+    (keymap-set map "n" #'my-org-find-notes-file)
+    (keymap-set map "p" #'project-switch-project)
+    (keymap-set map "t" #'project-switch-to-buffer)
+    (keymap-set map "s r" #'rg-project)
+    (keymap-set map "s s" #'my-consult-ripgrep)
+    (keymap-set map "w p" #'my-copy-project-relative-path-of-current-buffer)
+    (keymap-set map "w w" #'my-copy-path-of-current-buffer)
+    (keymap-set map "!" #'project-async-shell-command)
+    (keymap-set map "SPC" #'my-org-capture-note)
     map))
 
-(global-set-key (kbd "C-c p") my-project-command-map)
-(global-set-key (kbd "C-c C-p") my-project-command-map)
-(global-set-key (kbd "C-x g") #'mark-whole-buffer)
-(global-set-key (kbd "C-x r r") #'rectangle-mark-mode)
-(global-set-key (kbd "C-x p") #'other-window)
+(keymap-global-set "C-c p" my-project-command-map)
+(keymap-global-set "C-c C-p" my-project-command-map)
+(keymap-global-set "C-x g" #'mark-whole-buffer)
+(keymap-global-set "C-x r r" #'rectangle-mark-mode)
+(keymap-global-set "C-x p" #'other-window)
 
 (defun my-kill-emacs ()
   (interactive)
@@ -1781,52 +1782,52 @@ This prevents the window from later moving back once the minibuffer is done show
                      'save-buffers-kill-emacs)))
     (call-interactively kill-cmd t)))
 
-(global-set-key (kbd "C-x C-c") #'my-kill-emacs)
-(global-set-key (kbd "C-x C-M-s") #'my-kill-emacs)
+(keymap-global-set "C-x C-c" #'my-kill-emacs)
+(keymap-global-set "C-x C-M-s" #'my-kill-emacs)
 
 ;; Map some keys to find-function/find-variable
 (defvar my-find-things-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "f" #'find-function)
-    (define-key map "v" #'find-variable)
-    (define-key map "l" #'find-library)
-    (define-key map "a" #'find-face-definition)
+    (keymap-set map "f" #'find-function)
+    (keymap-set map "v" #'find-variable)
+    (keymap-set map "l" #'find-library)
+    (keymap-set map "a" #'find-face-definition)
     map)
   "My key customizations for find-function and related things.")
 
-(global-set-key (kbd "C-x F") my-find-things-map)
-(global-set-key (kbd "C-x f") my-find-things-map)
+(keymap-global-set "C-x F" my-find-things-map)
+(keymap-global-set "C-x f" my-find-things-map)
 
 (with-eval-after-load "view"
   ;; Make the `q' key bury the current buffer when viewing help
-  (define-key view-mode-map "q" 'bury-buffer)
+  (keymap-set view-mode-map "q" 'bury-buffer)
   ;; Make the <DEL> key scroll backwards in View mode
-  (define-key view-mode-map [delete] 'View-scroll-page-backward))
+  (keymap-set view-mode-map "DEL" 'View-scroll-page-backward))
 
 (with-eval-after-load "info"
   ;; Make the <DEL> key scroll backwards in Info mode
-  (define-key Info-mode-map [delete] 'Info-scroll-down))
+  (keymap-set Info-mode-map "DEL" 'Info-scroll-down))
 
 ;; diff-mode: Don't mess with M-q
 (with-eval-after-load "diff-mode"
-  (define-key diff-mode-map (kbd "M-q") 'fill-paragraph))
+  (keymap-set diff-mode-map "M-q" 'fill-paragraph))
 
 ;; Typo prevention
-(global-set-key (kbd "C-h C-n") #'describe-gnu-project)
-(global-set-key (kbd "C-x 4") #'split-window-right)
-(global-set-key (kbd "C-x C-b") #'consult-buffer)
-(global-set-key (kbd "C-x C-d") #'find-file)
-(global-set-key (kbd "C-x n") #'consult-buffer)
+(keymap-global-set "C-h C-n" #'describe-gnu-project)
+(keymap-global-set "C-x 4" #'split-window-right)
+(keymap-global-set "C-x C-b" #'consult-buffer)
+(keymap-global-set "C-x C-d" #'find-file)
+(keymap-global-set "C-x n" #'consult-buffer)
 
 ;; Disable some keybinds to avoid typos
-(global-set-key [insert] (lambda () (interactive)))
-(global-set-key [insertchar] (lambda () (interactive)))
-(global-set-key (kbd "C-h g") (lambda () (interactive)))
-(global-set-key (kbd "C-t") (lambda () (interactive)))
-(global-set-key (kbd "C-z") (lambda () (interactive)))
-(global-set-key (kbd "C-x C-z") (lambda () (interactive)))
-(global-set-key (kbd "<mouse-2>") (lambda () (interactive)))
-(global-set-key (kbd "<mouse-3>") (lambda () (interactive)))
+(keymap-global-set "<insert>" (lambda () (interactive)))
+(keymap-global-set "<insertchar>" (lambda () (interactive)))
+(keymap-global-set "C-h g" (lambda () (interactive)))
+(keymap-global-set "C-t" (lambda () (interactive)))
+(keymap-global-set "C-z" (lambda () (interactive)))
+(keymap-global-set "C-x C-z" (lambda () (interactive)))
+(keymap-global-set "<mouse-2>" (lambda () (interactive)))
+(keymap-global-set "<mouse-3>" (lambda () (interactive)))
 
 ;; Bind Apple-<key> to Alt-<key> for some Mac keys
 (when (and my-remap-cmd-key-p (eq system-type 'darwin))
@@ -1836,53 +1837,53 @@ This prevents the window from later moving back once the minibuffer is done show
 (defun my-set-super-bindings ()
   (interactive)
   (with-eval-after-load "cider-repl"
-    (define-key cider-repl-mode-map (kbd "s-n") #'cider-repl-next-input)
-    (define-key cider-repl-mode-map (kbd "s-p") #'cider-repl-previous-input))
+    (keymap-set cider-repl-mode-map "s-n" #'cider-repl-next-input)
+    (keymap-set cider-repl-mode-map "s-p" #'cider-repl-previous-input))
 
   (with-eval-after-load "magit"
-    (define-key magit-mode-map (kbd "s-2") #'magit-section-show-level-2-all)
-    (define-key magit-mode-map (kbd "s-4") #'magit-section-show-level-4-all)
-    (define-key magit-status-mode-map (kbd "s-c") #'my-magit-kill-ring-save)
-    (define-key magit-status-mode-map (kbd "s-w") #'my-magit-kill-ring-save))
+    (keymap-set magit-mode-map "s-2" #'magit-section-show-level-2-all)
+    (keymap-set magit-mode-map "s-4" #'magit-section-show-level-4-all)
+    (keymap-set magit-status-mode-map "s-c" #'my-magit-kill-ring-save)
+    (keymap-set magit-status-mode-map "s-w" #'my-magit-kill-ring-save))
 
   (with-eval-after-load "polymode"
-    (define-key polymode-minor-mode-map (kbd "s-n") 'polymode-map))
+    (keymap-set polymode-minor-mode-map "s-n" 'polymode-map))
 
-  (global-set-key (kbd "s-:") #'eval-expression)
-  (global-set-key (kbd "s-;") #'eval-expression)
-  (global-set-key (kbd "s-<") #'beginning-of-buffer)
-  (global-set-key (kbd "s-,") #'beginning-of-buffer)
-  (global-set-key (kbd "s->") #'end-of-buffer)
-  (global-set-key (kbd "s-.") #'end-of-buffer)
-  (global-set-key (kbd "<s-left>") #'left-word)
-  (global-set-key (kbd "<s-right>") #'right-word)
-  (global-set-key (kbd "s-1") #'shell-command)
-  (global-set-key (kbd "s-!") #'shell-command)
-  (global-set-key (kbd "s-$") #'ispell-word)
-  (global-set-key (kbd "s-a") #'mark-whole-buffer)
-  (global-set-key (kbd "s-c") #'kill-ring-save)
-  (global-set-key (kbd "s-m") (lambda () (interactive)))
-  (global-set-key (kbd "s-p") #'project-find-file)
-  (global-set-key (kbd "s-q") #'fill-paragraph)
-  (global-set-key (kbd "s-w") #'kill-ring-save)
-  (global-set-key (kbd "s-v") #'yank)
-  (global-set-key (kbd "s-x") #'execute-extended-command)
-  (global-set-key (kbd "s-y") #'consult-yank-pop)
-  (global-set-key (kbd "<C-s-left>") #'backward-sexp)
-  (global-set-key (kbd "<C-s-right>") #'forward-sexp)
-  (global-set-key (kbd "C-s-n") #'forward-list)
-  (global-set-key (kbd "C-s-p") #'backward-list)
-  (global-set-key (kbd "C-s-x") #'eval-defun)
-  (global-set-key (kbd "C-s-\\") #'indent-region))
+  (keymap-global-set "s-:" #'eval-expression)
+  (keymap-global-set "s-;" #'eval-expression)
+  (keymap-global-set "s-<" #'beginning-of-buffer)
+  (keymap-global-set "s-," #'beginning-of-buffer)
+  (keymap-global-set "s->" #'end-of-buffer)
+  (keymap-global-set "s-." #'end-of-buffer)
+  (keymap-global-set "s-<left>" #'left-word)
+  (keymap-global-set "s-<right>" #'right-word)
+  (keymap-global-set "s-1" #'shell-command)
+  (keymap-global-set "s-!" #'shell-command)
+  (keymap-global-set "s-$" #'ispell-word)
+  (keymap-global-set "s-a" #'mark-whole-buffer)
+  (keymap-global-set "s-c" #'kill-ring-save)
+  (keymap-global-set "s-m" (lambda () (interactive)))
+  (keymap-global-set "s-p" #'project-find-file)
+  (keymap-global-set "s-q" #'fill-paragraph)
+  (keymap-global-set "s-w" #'kill-ring-save)
+  (keymap-global-set "s-v" #'yank)
+  (keymap-global-set "s-x" #'execute-extended-command)
+  (keymap-global-set "s-y" #'consult-yank-pop)
+  (keymap-global-set "C-s-<left>" #'backward-sexp)
+  (keymap-global-set "C-s-<right>" #'forward-sexp)
+  (keymap-global-set "C-s-n" #'forward-list)
+  (keymap-global-set "C-s-p" #'backward-list)
+  (keymap-global-set "C-s-x" #'eval-defun)
+  (keymap-global-set "C-s-\\" #'indent-region))
 
 (defun my-set-mac-bindings ()
   (interactive)
-  (global-set-key (kbd "<home>") #'beginning-of-line)
-  (global-set-key (kbd "<end>") #'end-of-line)
-  (global-set-key (kbd "s-<up>") #'scroll-down-command)
-  (global-set-key (kbd "s-<down>") #'scroll-up-command)
-  (global-set-key (kbd "s-<left>") #'beginning-of-line)
-  (global-set-key (kbd "s-<right>") #'end-of-line))
+  (keymap-global-set "<home>" #'beginning-of-line)
+  (keymap-global-set "<end>" #'end-of-line)
+  (keymap-global-set "s-<up>" #'scroll-down-command)
+  (keymap-global-set "s-<down>" #'scroll-up-command)
+  (keymap-global-set "s-<left>" #'beginning-of-line)
+  (keymap-global-set "s-<right>" #'end-of-line))
 
 (defun my-init-client-keys ()
   (interactive)
