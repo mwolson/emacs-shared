@@ -766,6 +766,7 @@ Use the region instead if one is selected."
 (add-to-list 'load-path (concat my-emacs-path "elisp/aidermacs"))
 (autoload #'aidermacs-transient-menu "aidermacs" "Transient menu for aidermacs commands." t)
 (my-aidermacs-set-editor-model my-aidermacs-model)
+(my-defer-startup #'aidermacs-setup-minor-mode)
 
 ;; Minuet for AI completion
 (defun my-minuet-maybe-turn-on-auto-suggest ()
