@@ -738,7 +738,6 @@ Use the region instead if one is selected."
   (interactive)
   (gptel-context-remove-all))
 
-(add-to-list 'load-path (concat my-emacs-path "elisp/gptel"))
 (autoload #'gptel-api-key-from-auth-source "gptel"
   "Lookup api key in the auth source." nil)
 (autoload #'gptel-backend-name "gptel-openai"
@@ -763,8 +762,6 @@ Use the region instead if one is selected."
   ;; 'vterm is neat, but it crashes frequently on macOS
   (setopt aidermacs-backend 'comint))
 
-(add-to-list 'load-path (concat my-emacs-path "elisp/aidermacs"))
-(autoload #'aidermacs-transient-menu "aidermacs" "Transient menu for aidermacs commands." t)
 (my-aidermacs-set-editor-model my-aidermacs-model)
 (my-defer-startup #'aidermacs-setup-minor-mode)
 
