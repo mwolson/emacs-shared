@@ -1,15 +1,9 @@
-[submodule "elisp/aidermacs"]
-	path = elisp/aidermacs
-	url = https://github.com/MatthewZMD/aidermacs.git
 [submodule "elisp/asdf-vm"]
         path = elisp/asdf-vm
         url = https://github.com/delonnewman/asdf-vm.el.git
 [submodule "elisp/flymake-stylelint"]
 	path = elisp/flymake-stylelint
 	url = https://github.com/orzechowskid/flymake-stylelint.git
-[submodule "elisp/gptel"]
-        path = elisp/gptel
-        url = https://github.com/karthink/gptel.git
 [submodule "elisp/gptel-fn-complete"]
 	path = elisp/gptel-fn-complete
 	url = https://github.com/mwolson/gptel-fn-complete.git
