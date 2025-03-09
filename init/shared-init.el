@@ -1011,6 +1011,24 @@ CONTEXT and CALLBACK will be passed to the base function."
 (with-eval-after-load "elisp-mode"
   (add-hook 'emacs-lisp-mode-hook #'plist-lisp-indent-install t))
 
+(defun my-ielm-setup ()
+  (let ((map (copy-keymap inferior-emacs-lisp-mode-map)))
+    (keymap-set map "C-d" #'kill-buffer-and-window)
+    (push `(inferior-emacs-lisp-mode-map . ,map)
+          minor-mode-overriding-map-alist)))
+
+(add-to-list 'display-buffer-alist
+             '("*ielm*"
+               (display-buffer-in-side-window)
+               (side . bottom)
+               (window-height . 7)))
+
+(setq ielm-header "")
+(setq ielm-prompt "Eval: ")
+(add-hook 'ielm-indirect-setup-hook #'rainbow-delimiters-mode t)
+(add-hook 'ielm-mode-hook #'my-ielm-setup t)
+(keymap-global-set "C-M-;" #'ielm)
+
 ;; Erlang
 (my-remap-major-mode 'erlang-mode 'erlang-ts-mode)
 
