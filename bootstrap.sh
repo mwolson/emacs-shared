@@ -174,6 +174,8 @@ fi
 
 for fullmod in recipes/*; do
     mod=${fullmod##*/}
+    # if the pattern didn't match any recipes, stop
+    [[ -d elisp/"$mod" ]] || continue
     update_submodule elisp/"$mod"
     byte_compile "$mod" elisp/"$mod"
 done
