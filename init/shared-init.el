@@ -197,6 +197,7 @@ When `depth' is provided, pass it to `add-hook'."
 (global-so-long-mode 1)
 (add-to-list 'so-long-target-modes 'fundamental-mode)
 (global-visual-wrap-prefix-mode)
+(setopt visual-wrap-extra-indent 2)
 
 ;; Don't slow down ls and don't make dired output too wide on w32 systems
 (setq w32-get-true-file-attributes nil)
@@ -1209,7 +1210,7 @@ CONTEXT and CALLBACK will be passed to the base function."
                ("zls" :initializationOptions ())))
 (add-hook 'zig-ts-mode-hook #'my-eglot-ensure)
 
-;; Consult, Embark, Marginalia, Orderless, Vertico
+;; Consult, Embark, Marginalia, Orderless, Prescient, Vertico
 (defvar my-minibuffer-from-consult-line nil)
 
 (defun my-consult-line ()
@@ -1286,7 +1287,16 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
 
-  (vertico-prescient-mode))
+  (require 'vertico-prescient)
+  (setopt prescient-sort-full-matches-first t)
+
+  ;; disable prescient for consult-line since history doesn't make sense there
+  (setopt vertico-prescient-completion-category-overrides
+          (append `((consult-location (styles orderless basic)))
+                  vertico-prescient-completion-category-overrides))
+
+  (vertico-prescient-mode)
+  (prescient-persist-mode))
 
 (defun my-extended-command-predicate (symbol buffer)
   (and (command-completion-default-include-p symbol buffer)
@@ -1399,6 +1409,73 @@ This prevents the window from later moving back once the minibuffer is done show
 (keymap-global-set "M-g M-g" #'consult-goto-line)
 (keymap-global-set "M-g m" #'consult-mark)
 (keymap-global-set "M-y" #'consult-yank-pop)
+
+;; Corfu, Cape, Dabbrev for auto-completion
+(defun my-setup-corfu-mode ()
+  (setq-local completion-styles '(orderless-literal-only basic)
+              completion-category-overrides nil
+              completion-category-defaults nil))
+
+(defun my-global-corfu-minibuffer ()
+  (not (or (bound-and-true-p mct--active)
+           (bound-and-true-p vertico--input)
+           (eq (current-local-map) read-passwd-map))))
+
+(defun my-eglot-capf ()
+  (setq-local completion-at-point-functions
+              (list (cape-capf-super
+                     #'eglot-completion-at-point
+                     #'cape-file))))
+
+(defun my-load-corfu ()
+  (require 'orderless)
+  (orderless-define-completion-style orderless-literal-only
+    (orderless-style-dispatchers nil)
+    (orderless-matching-styles '(orderless-literal)))
+
+  (dolist (hook '(prog-mode-hook shell-mode-hook))
+    (add-hook hook #'corfu-mode t))
+
+  (add-hook 'corfu-mode-hook #'my-setup-corfu-mode)
+  (add-hook 'eglot-managed-mode-hook #'my-eglot-capf)
+
+  (require 'kind-icon)
+  (plist-put kind-icon-default-style :height 0.35)
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
+
+  (keymap-set corfu-map "<remap> <move-beginning-of-line>" nil)
+  (keymap-set corfu-map "<remap> <move-end-of-line>" nil)
+  (keymap-set corfu-map "<remap> <scroll-down-command>" nil)
+  (keymap-set corfu-map "<remap> <scroll-up-command>" nil)
+
+  (setopt corfu-auto t
+          corfu-popupinfo-delay '(0.3 . 0.01)
+          corfu-popupinfo-hide nil
+          corfu-quit-no-match 'separator
+          global-corfu-minibuffer #'my-global-corfu-minibuffer
+          global-corfu-modes '((not vterm-mode) t)
+          text-mode-ispell-word-completion nil)
+
+  (dolist (el '("delete-backward-char\\'" "\\`backward-delete-char"))
+    (setq corfu-auto-commands (delete el corfu-auto-commands)))
+
+  (corfu-popupinfo-mode)
+  (corfu-prescient-mode)
+  (global-corfu-mode))
+
+(my-defer-startup #'my-load-corfu)
+
+(add-hook 'completion-at-point-functions #'cape-dabbrev)
+(add-hook 'completion-at-point-functions #'cape-elisp-block)
+(add-hook 'completion-at-point-functions #'cape-elisp-symbol)
+(add-hook 'completion-at-point-functions #'cape-file)
+(add-hook 'completion-at-point-functions #'cape-keyword)
+
+(with-eval-after-load "dabbrev"
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
 
 ;; Set up project.el
 (defun my-project-root ()
@@ -1622,74 +1699,6 @@ This prevents the window from later moving back once the minibuffer is done show
 
 (keymap-global-set "<f8> 1" #'profiler-start)
 (keymap-global-set "<f8> 2" #'my-profiler-stop-and-report)
-
-;; Corfu and Cape for auto-completion
-(defun my-setup-corfu-mode ()
-  (setq-local completion-styles '(orderless-literal-only basic)
-              completion-category-overrides nil
-              completion-category-defaults nil))
-
-(defun my-global-corfu-minibuffer ()
-  (not (or (bound-and-true-p mct--active)
-           (bound-and-true-p vertico--input)
-           (eq (current-local-map) read-passwd-map))))
-
-(defun my-eglot-capf ()
-  (setq-local completion-at-point-functions
-              (list (cape-capf-super
-                     #'eglot-completion-at-point
-                     #'cape-file))))
-
-(defun my-enable-corfu ()
-  (require 'orderless)
-  (orderless-define-completion-style orderless-literal-only
-    (orderless-style-dispatchers nil)
-    (orderless-matching-styles '(orderless-literal)))
-
-  (dolist (hook '(prog-mode-hook shell-mode-hook))
-    (add-hook hook #'corfu-mode t))
-
-  (add-hook 'corfu-mode-hook #'my-setup-corfu-mode)
-  (add-hook 'eglot-managed-mode-hook #'my-eglot-capf)
-
-  (require 'kind-icon)
-  (plist-put kind-icon-default-style :height 0.35)
-  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
-
-  (keymap-set corfu-map "<remap> <move-beginning-of-line>" nil)
-  (keymap-set corfu-map "<remap> <move-end-of-line>" nil)
-  (keymap-set corfu-map "<remap> <scroll-down-command>" nil)
-  (keymap-set corfu-map "<remap> <scroll-up-command>" nil)
-
-  (setopt corfu-auto t
-          corfu-popupinfo-delay '(0.3 . 0.01)
-          corfu-popupinfo-hide nil
-          corfu-quit-no-match 'separator
-          global-corfu-minibuffer #'my-global-corfu-minibuffer
-          global-corfu-modes '((not vterm-mode) t)
-          text-mode-ispell-word-completion nil)
-
-  (dolist (el '("delete-backward-char\\'" "\\`backward-delete-char"))
-    (setq corfu-auto-commands (delete el corfu-auto-commands)))
-
-  (corfu-popupinfo-mode)
-  (corfu-prescient-mode)
-  (prescient-persist-mode)
-  (global-corfu-mode))
-
-(my-defer-startup #'my-enable-corfu)
-
-(add-hook 'completion-at-point-functions #'cape-dabbrev)
-(add-hook 'completion-at-point-functions #'cape-elisp-block)
-(add-hook 'completion-at-point-functions #'cape-elisp-symbol)
-(add-hook 'completion-at-point-functions #'cape-file)
-(add-hook 'completion-at-point-functions #'cape-keyword)
-
-(with-eval-after-load "dabbrev"
-  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
-  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
-  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
-  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
 
 ;; Setup info for manually compiled packages
 (add-to-list 'Info-default-directory-list (concat my-emacs-path "share/info"))
