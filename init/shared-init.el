@@ -520,30 +520,31 @@ interactively.
      :description "Sky-T1-32B-Preview-Q4_K_S model"
      :capabilities (media tool json url)
      :context-window 256
-     ;; temperature can go down to 0 for more predictability but less creativity
-     :request-params (:temperature 0.2 :top_p 0.80 :top_k 20))
+     ;; temperature can go up to 0.2 for more creativity but higher chance of
+     ;; syntax errors
+     :request-params (:temperature 0.025 :top_k 20 :top_p 0.95))
     (Sky-T1-32B-Preview-IQ2_XXS
      :description "Sky-T1-32B-Preview-IQ2_XXS model"
      :capabilities (media tool json url)
      :context-window 256
-     :request-params (:temperature 0.025 :top_p 0.80 :top_k 25))
+     :request-params (:temperature 0.025 :top_k 25 :top_p 0.80))
     (FuseO1-DeepSeekR1-QwQ-SkyT1-32B-Preview-IQ4_XS
      :description "FuseO1-DeepSeekR1-QwQ-SkyT1-32B-Preview-IQ4_XS model"
      :capabilities (media reasoning json url)
      :context-window 256
      ;; temperature can go up to 0.5 for more creativity but higher chance of
      ;; syntax errors
-     :request-params (:temperature 0.025 :top_p 0.80 :top_k 25))
+     :request-params (:temperature 0.025 :top_k 25 :top_p 0.80))
     (DeepSeek-R1-Distill-Qwen-32B-Q2_K_L
      :description "DeepSeek-R1-Distill-Qwen-32B-Q2_K_L model"
      :capabilities (media reasoning json url)
      :context-window 256
-     :request-params (:temperature 0.3 :top_p 0.75 :top_k 25))
+     :request-params (:temperature 0.3 :top_k 25 :top_p 0.75))
     (phi-4-Q4_K_M
      :description "phi-4-Q4_K_M model"
      :capabilities (media json url)
      :context-window 256
-     :request-params (:temperature 0.5 :top_p 0.75 :top_k 20))))
+     :request-params (:temperature 0.5 :top_k 20 :top_p 0.75))))
 
 (defun my-auth-source-get-api-key (host &optional user)
   (if-let* ((secret (plist-get
