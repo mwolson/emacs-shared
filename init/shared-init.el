@@ -571,6 +571,21 @@ interactively.
             :stream t
             :key #'gptel-api-key-from-auth-source))
 
+    (setq my-gptel--claude-thinking
+          (gptel-make-anthropic "Claude-Thinking"
+            :key #'gptel-api-key-from-auth-source
+            :stream t
+            :models '(claude-3-7-sonnet-20250219)
+            :header (lambda () (when-let* ((key (gptel--get-api-key)))
+                                 `(("x-api-key" . ,key)
+                                   ("anthropic-version" . "2023-06-01")
+                                   ("anthropic-beta" . "pdfs-2024-09-25")
+                                   ("anthropic-beta" . "output-128k-2025-02-19")
+                                   ("anthropic-beta" . "prompt-caching-2024-07-31"))))
+            :request-params '(:thinking (:type "enabled" :budget_tokens 1024)
+                              :temperature 1
+                              :max_tokens 4096)))
+
     (setq my-gptel--codestral
           (gptel-make-openai "Codestral"
             :stream t
@@ -723,7 +738,8 @@ Rewrite the region instead if one is selected."
   (interactive)
   (unless (use-region-p)
     (gptel-fn-complete-mark-function))
-  (call-interactively #'gptel-rewrite))
+  (let ((gptel-include-reasoning nil))
+    (call-interactively #'gptel-rewrite)))
 
 (defun my-gptel-query-function ()
   "Add the current function to gptel context and query an LLM.
