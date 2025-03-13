@@ -87,8 +87,8 @@
                            nerd-icons-completion nix-ts-mode nsis-mode orderless package-build
                            package-utils plz poly-markdown polymode prisma-ts-mode
                            rainbow-delimiters reformatter rg slime swift-ts-mode terraform-mode
-                           tmux-mode transient vertico vertico-prescient vterm web-mode wgrep
-                           zig-ts-mode))
+                           tmux-mode toc-org transient vertico vertico-prescient vterm web-mode
+                           wgrep zig-ts-mode))
  '(post-jump-header nil)
  '(project-vc-merge-submodules nil)
  '(recentf-mode nil)

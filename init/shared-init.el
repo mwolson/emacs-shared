@@ -1778,6 +1778,11 @@ This prevents the window from later moving back once the minibuffer is done show
   (org-capture nil "n"))
 
 (with-eval-after-load "org"
+  (require 'toc-org)
+  (put 'toc-org-max-depth 'safe-local-variable 'integerp)
+  (add-to-list 'safe-local-variable-values
+               '(eval and (fboundp 'toc-org-mode) (toc-org-mode 1)))
+
   (keymap-set org-mode-map "M-<left>" #'left-word)
   (keymap-set org-mode-map "M-<right>" #'right-word))
 
