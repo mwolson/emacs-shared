@@ -122,7 +122,7 @@ echo
 
 if [[ -n "$BUILD" ]]; then
     pnpm install --quiet
-    pnpm run compile:json-server
+    pnpm run compile:lsp
 fi
 
 emacs_script "$(get_topdir)"/install-packages.el
@@ -201,8 +201,9 @@ if [[ -n "$BUILD" ]]; then
         typescript "" "typescript/src"
 
     tree_sitter_modules="
-        bash c c-sharp clojure cpp dockerfile erlang go gomod java javascript
-        jsdoc json kotlin mermaid nix prisma python rust yaml zig
+        astro bash c c-sharp clojure cpp css dockerfile erlang go gomod html
+        java javascript jsdoc json kotlin mermaid nix prisma python rust yaml
+        zig
     "
     <<< $tree_sitter_modules xargs -P4 -n1 "$(get_topdir)"/install-treesit-grammar.sh
 

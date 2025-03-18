@@ -22,6 +22,10 @@
         path = extra/tree-sitter-module
         shallow = true
         url = https://github.com/casouri/tree-sitter-module.git
+[submodule "extra/tree-sitter-astro"]
+        path = extra/tree-sitter-astro
+        shallow = true
+        url = https://github.com/virchau13/tree-sitter-astro.git
 [submodule "extra/tree-sitter-bash"]
         path = extra/tree-sitter-bash
         shallow = true
@@ -42,6 +46,10 @@
         path = extra/tree-sitter-cpp
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-cpp.git
+[submodule "extra/tree-sitter-css"]
+        path = extra/tree-sitter-css
+        shallow = true
+        url = https://github.com/tree-sitter/tree-sitter-css.git
 [submodule "extra/tree-sitter-dockerfile"]
         path = extra/tree-sitter-dockerfile
         shallow = true
@@ -58,6 +66,10 @@
         path = extra/tree-sitter-gomod
         shallow = true
         url = https://github.com/camdencheek/tree-sitter-go-mod.git
+[submodule "extra/tree-sitter-html"]
+        path = extra/tree-sitter-html
+        shallow = true
+        url = https://github.com/tree-sitter/tree-sitter-html.git
 [submodule "extra/tree-sitter-java"]
         path = extra/tree-sitter-java
         shallow = true

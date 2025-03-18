@@ -7,8 +7,18 @@
     "doc": "doc",
     "test": "test"
   },
+  "bin": {
+    "vscode-css-language-server": "./extra/vscode/extensions/css-language-features/server/bin/vscode-css-languageserver",
+    "vscode-html-language-server": "./extra/vscode/extensions/html-language-features/server/bin/vscode-html-languageserver"
+  },
   "scripts": {
-    "compile:json-server": "cd extra/vscode/extensions/json-language-features/server && pnpm import --quiet && pnpm i && rimraf out && tsc",
+    "compile:lsp": "pnpm run compile:lsp:deps && pnpm run compile:lsp:css && pnpm run compile:lsp:css:bin && pnpm run compile:lsp:json && pnpm run compile:lsp:html && pnpm run compile:lsp:html:bin",
+    "compile:lsp:css": "cd extra/vscode/extensions/css-language-features && npm i && cd server && npm i && npm run compile",
+    "compile:lsp:css:bin": "shx mkdir -p extra/vscode/extensions/css-language-features/server/bin && shx cp -f tpl/lsp-bin/vscode-css-languageserver extra/vscode/extensions/css-language-features/server/bin",
+    "compile:lsp:deps": "cd extra/vscode && npm i --ignore-scripts && cd build && npm i",
+    "compile:lsp:json": "cd extra/vscode/extensions/json-language-features && npm i && cd server && npm i && npm run compile",
+    "compile:lsp:html": "cd extra/vscode/extensions/html-language-features && npm i && cd server && npm i && npm run compile",
+    "compile:lsp:html:bin": "shx mkdir -p extra/vscode/extensions/html-language-features/server/bin && shx cp -f tpl/lsp-bin/vscode-html-languageserver extra/vscode/extensions/html-language-features/server/bin",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -17,13 +27,15 @@
   "dependencies": {
     "@astrojs/language-server": "^2.15.4",
     "@mermaid-js/mermaid-cli": "^11.4.2",
-    "prettier": "^3.4.2",
+    "@mwolson/emacs-shared": "link:.",
+    "prettier": "^3.5.3",
+    "stylelint": "^16.16.0",
     "typescript-eslint-language-service": "^5.0.5",
     "typescript-language-server": "^4.3.3",
     "vscode-json-languageserver": "link:extra/vscode/extensions/json-language-features/server"
   },
   "devDependencies": {
-    "rimraf": "^6.0.1",
+    "shx": "^0.4.0",
     "typescript": "^5.7.3"
   }
 }

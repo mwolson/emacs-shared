@@ -483,9 +483,9 @@ interactively.
     (node-repl-interaction-mode 1)))
 
 (defun inferior-js-mode-hook-setup ()
-  (add-hook 'comint-output-filter-functions 'js-comint-process-output))
+  (add-hook 'comint-output-filter-functions #'js-comint-process-output))
 
-(add-hook 'inferior-js-mode-hook 'inferior-js-mode-hook-setup t)
+(add-hook 'inferior-js-mode-hook #'inferior-js-mode-hook-setup t)
 
 ;; Highlight current line
 (require 'hl-line-plus)
@@ -493,7 +493,7 @@ interactively.
 (toggle-hl-line-when-idle 1)
 
 ;; SMerge mode, for editing files with inline diffs
-(add-hook 'prog-mode-hook 'smerge-mode t)
+(add-hook 'prog-mode-hook #'smerge-mode t)
 
 ;; Transient
 (with-eval-after-load "transient"
@@ -1020,6 +1020,11 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-to-list 'eglot-server-programs
              `(,my-clojure-modes "clojure-lsp"))
 
+;; CSS
+(my-remap-major-mode 'css-mode 'css-ts-mode)
+(add-hook 'css-ts-mode-hook #'my-eglot-ensure t)
+(add-hook 'css-ts-mode-hook #'my-setup-web-ligatures t)
+
 ;; Emacs Lisp
 (autoload #'plist-lisp-indent-install "plist-lisp-indent"
   "Use `plist-lisp-indent-function' to indent in the current Lisp buffer." nil)
@@ -1066,6 +1071,11 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-hook 'go-ts-mode-hook #'my-eglot-ensure)
 (add-hook 'go-mod-ts-mode-hook #'my-eglot-ensure)
 
+;; HTML
+(my-remap-major-mode 'html-mode 'html-ts-mode)
+(add-hook 'html-ts-mode-hook #'my-eglot-ensure)
+(add-hook 'html-ts-mode-hook #'my-setup-web-ligatures t)
+
 ;; Java
 (my-remap-major-mode 'java-mode 'java-ts-mode)
 (add-hook 'java-ts-mode-hook #'my-xref-minor-mode t)
@@ -1083,13 +1093,15 @@ CONTEXT and CALLBACK will be passed to the base function."
 (my-remap-major-mode 'json-mode 'json-ts-mode)
 (add-to-list 'auto-mode-alist '("\\.jsonc?\\'" . json-ts-mode))
 (add-hook 'json-ts-mode-hook #'add-node-modules-path t)
-(add-hook 'json-ts-mode-hook #'my-eglot-ensure t)
+(add-hook 'json-ts-mode-hook #'my-eglot-ensure)
 (add-hook 'json-ts-mode-hook #'my-setup-web-ligatures t)
 
-;; JTSX (Javascript, Typescript, and JSX support)
-(defvar my-jtsx-major-modes '(astro-mode jtsx-jsx-mode jtsx-tsx-mode jtsx-typescript-mode))
+;; JTSX (Astro, Javascript, Typescript, and JSX support)
+(defvar my-jtsx-major-modes
+  '(astro-ts-mode jtsx-jsx-mode jtsx-tsx-mode jtsx-typescript-mode))
 (defvar my-jtsx-ts-major-modes '(jtsx-tsx-mode jtsx-typescript-mode))
 
+(add-to-list 'auto-mode-alist '("\\.astro\\'" . astro-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.[cm]js\\'" . jtsx-jsx-mode))
 (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . jtsx-jsx-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . jtsx-typescript-mode))
@@ -1099,8 +1111,6 @@ CONTEXT and CALLBACK will be passed to the base function."
 (my-remap-major-mode 'js-mode 'jtsx-jsx-mode)
 (my-remap-major-mode 'ts-mode 'jtsx-tsx-mode)
 
-(define-derived-mode astro-mode web-mode "astro")
-(add-to-list 'auto-mode-alist '(".*\\.astro\\'" . astro-mode))
 (add-to-list 'eglot-server-programs
              `(astro-mode . ("astro-ls" "--stdio"
                              :initializationOptions
@@ -1201,8 +1211,12 @@ CONTEXT and CALLBACK will be passed to the base function."
 (autoload #'flymake-stylelint-enable "flymake-stylelint"
   "Enable flymake-stylelint." nil)
 
-(add-hook 'scss-mode-hook 'add-node-modules-path t)
-(add-hook 'scss-mode-hook 'flymake-stylelint-enable t)
+(add-hook 'scss-mode-hook #'add-node-modules-path t)
+(add-hook 'scss-mode-hook #'flymake-stylelint-enable t)
+(add-to-list 'eglot-server-programs
+             '((scss-mode)
+               . ("vscode-css-language-server" "--stdio")))
+(add-hook 'scss-mode-hook #'my-eglot-ensure)
 
 ;; Swift
 (add-to-list 'auto-mode-alist '("\\.swift\\(interface\\)?\\'" . swift-ts-mode))
@@ -1210,7 +1224,6 @@ CONTEXT and CALLBACK will be passed to the base function."
 
 ;; Web Mode
 (add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
 (add-hook 'web-mode-hook #'add-node-modules-path t)
 (add-hook 'web-mode-hook #'my-setup-web-ligatures t)
 
@@ -1287,6 +1300,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
           vertico-mouse-mode t
           vertico-resize nil)
 
+  (keymap-set occur-mode-map "r" #'occur-edit-mode)
   (keymap-set vertico-map "?" #'minibuffer-completion-help)
   (keymap-set vertico-map "/" #'my-vertico-insert-like-ivy)
   (keymap-set vertico-map "C-c C-c" #'vertico-repeat)
@@ -1441,11 +1455,6 @@ This prevents the window from later moving back once the minibuffer is done show
               completion-category-overrides nil
               completion-category-defaults nil))
 
-(defun my-global-corfu-minibuffer ()
-  (not (or (bound-and-true-p mct--active)
-           (bound-and-true-p vertico--input)
-           (eq (current-local-map) read-passwd-map))))
-
 (defun my-eglot-capf ()
   (setq-local completion-at-point-functions
               (list (cape-capf-super
@@ -1477,7 +1486,6 @@ This prevents the window from later moving back once the minibuffer is done show
           corfu-popupinfo-delay '(0.3 . 0.01)
           corfu-popupinfo-hide nil
           corfu-quit-no-match 'separator
-          global-corfu-minibuffer #'my-global-corfu-minibuffer
           global-corfu-modes '((not vterm-mode) t)
           text-mode-ispell-word-completion nil)
 
@@ -1573,7 +1581,7 @@ This prevents the window from later moving back once the minibuffer is done show
 (defun my-ediff-extra-keys ()
   (keymap-set ediff-mode-map "N" #'my-ediff-next-difference)
   (keymap-set ediff-mode-map "P" #'my-ediff-previous-difference))
-(add-hook 'ediff-keymap-setup-hook 'my-ediff-extra-keys t)
+(add-hook 'ediff-keymap-setup-hook #'my-ediff-extra-keys t)
 
 ;; Make TexInfo easier to work with
 (defun my-texinfo-view-file ()
@@ -1590,7 +1598,7 @@ This prevents the window from later moving back once the minibuffer is done show
   "Make texinfo stuff easier to work with."
   (keymap-set texinfo-mode-map "C-c C-p" #'makeinfo-buffer)
   (keymap-set texinfo-mode-map "C-c C-v" #'my-texinfo-view-file))
-(add-hook 'texinfo-mode-hook 'my-texinfo-extra-keys t)
+(add-hook 'texinfo-mode-hook #'my-texinfo-extra-keys t)
 
 ;; Enable wdired on "r"
 (keymap-set dired-mode-map "r" 'wdired-change-to-wdired-mode)
@@ -1619,7 +1627,7 @@ This prevents the window from later moving back once the minibuffer is done show
 (add-hook 'prog-mode-hook #'my-turn-on-display-line-numbers-mode t)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode t)
 
-(add-hook 'lisp-interaction-mode-hook 'my-turn-off-display-line-numbers-mode t)
+(add-hook 'lisp-interaction-mode-hook #'my-turn-off-display-line-numbers-mode t)
 
 (kill-ring-deindent-mode 1)
 
