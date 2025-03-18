@@ -492,6 +492,19 @@ interactively.
 (hl-line-when-idle-interval 0.3)
 (toggle-hl-line-when-idle 1)
 
+;; Highlight changed lines
+(with-eval-after-load "diff-hl"
+  (diff-hl-margin-mode 1)
+  (dolist (el diff-hl-margin-symbols-alist)
+    (setcdr el " "))
+  (setopt diff-hl-draw-borders nil
+          diff-hl-margin-symbols-alist diff-hl-margin-symbols-alist
+          diff-hl-update-async t))
+
+(add-hook 'dired-mode-hook #'diff-hl-dired-mode)
+(add-hook 'prog-mode-hook #'turn-on-diff-hl-mode)
+(add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
+
 ;; SMerge mode, for editing files with inline diffs
 (add-hook 'prog-mode-hook #'smerge-mode t)
 
@@ -1874,6 +1887,9 @@ This prevents the window from later moving back once the minibuffer is done show
 ;; diff-mode: Don't mess with M-q
 (with-eval-after-load "diff-mode"
   (keymap-set diff-mode-map "M-q" 'fill-paragraph))
+
+;; Show keybind options while typing leading keys
+(my-defer-startup #'which-key-mode)
 
 ;; Typo prevention
 (keymap-global-set "C-h C-n" #'describe-gnu-project)

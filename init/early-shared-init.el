@@ -57,7 +57,10 @@
 (defvar my-theme             nil)
 (defvar my-modus-theme       'modus-vivendi-deuteranopia)
 (defvar my-modus-theme-overrides
-  '((bg-main             "#1C1C1C")
+  '((bg-added-fringe     "#335533")
+    (bg-changed-fringe   "#7a6100")
+    (bg-removed-fringe   "#553333")
+    (bg-main             "#1c1c1c")
     (bg-mode-line-active "#484d67")
     (comment             fg-dim)))
 (defvar my-use-themes-p      (boundp 'custom-theme-load-path))
