@@ -495,8 +495,10 @@ interactively.
 ;; Highlight changed lines
 (with-eval-after-load "diff-hl"
   (diff-hl-margin-mode 1)
+
   (dolist (el diff-hl-margin-symbols-alist)
     (setcdr el " "))
+
   (setopt diff-hl-draw-borders nil
           diff-hl-margin-symbols-alist diff-hl-margin-symbols-alist
           diff-hl-update-async t))
@@ -504,6 +506,28 @@ interactively.
 (add-hook 'dired-mode-hook #'diff-hl-dired-mode)
 (add-hook 'prog-mode-hook #'turn-on-diff-hl-mode)
 (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
+
+;; Pulsar, for highlighting current line after a jump-style keybind
+(with-eval-after-load "pulsar"
+  (defface my-pulsar-face
+    '((default :extend t)
+      (t :inherit xref-match))
+    "Face for pulsar."
+    :group 'pulsar-faces)
+
+  (add-to-list 'pulsar-pulse-functions #'diff-hl-next-hunk)
+  (add-to-list 'pulsar-pulse-functions #'diff-hl-previous-hunk)
+  (add-to-list 'pulsar-pulse-functions #'flymake-goto-next-error)
+  (add-to-list 'pulsar-pulse-functions #'flymake-goto-prev-error)
+
+  (with-eval-after-load "consult"
+    (add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
+    (add-hook 'consult-after-jump-hook #'pulsar-reveal-entry))
+
+  (setopt pulsar-delay 0.03
+          pulsar-face 'my-pulsar-face))
+
+(my-defer-startup #'pulsar-global-mode)
 
 ;; SMerge mode, for editing files with inline diffs
 (add-hook 'prog-mode-hook #'smerge-mode t)

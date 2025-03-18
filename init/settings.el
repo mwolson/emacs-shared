@@ -85,7 +85,7 @@
                            gptel hydra js-comint jtsx kind-icon kotlin-ts-mode ligature lua-mode
                            magit marginalia markdown-mode maxframe minions minuet modus-themes
                            nerd-icons-completion nix-ts-mode nsis-mode orderless package-build
-                           package-utils plz poly-markdown polymode prisma-ts-mode
+                           package-utils plz poly-markdown polymode prisma-ts-mode pulsar
                            rainbow-delimiters reformatter rg slime swift-ts-mode terraform-mode
                            tmux-mode toc-org transient vertico vertico-prescient vterm web-mode
                            wgrep zig-ts-mode))
