@@ -358,9 +358,6 @@ When `depth' is provided, pass it to `add-hook'."
 (autoload #'mermaid-ts-mode "mermaid-ts-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.mmd\\'" . mermaid-ts-mode))
 
-;; npmrc conf files
-(add-to-list 'auto-mode-alist '("\\.npmrc\\'" . conf-mode))
-
 ;; SystemD conf files
 (add-to-list 'auto-mode-alist '("\\.service\\'" . conf-mode))
 
@@ -1146,6 +1143,13 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . jtsx-jsx-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . jtsx-typescript-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . jtsx-tsx-mode))
+(add-to-list 'auto-mode-alist '("/\\.babelrc\\'" . json-ts-mode))
+(add-to-list 'auto-mode-alist '("/.eslintignore\\'" . gitignore-mode))
+(add-to-list 'auto-mode-alist '("/\\.graphqlconfig\\'" . json-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.npmrc\\'" . conf-mode))
+(add-to-list 'auto-mode-alist '("/\\.prettierrc\\'" . json-ts-mode))
+(add-to-list 'auto-mode-alist '("/\\yarn.lock\\'" . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.yarnrc\\'" . yaml-ts-mode))
 (add-to-list 'my-polymode-aliases '(javascript . jtsx-jsx-mode))
 (add-to-list 'my-polymode-aliases '(typescript . jtsx-tsx-mode))
 (my-remap-major-mode 'js-mode 'jtsx-jsx-mode)
@@ -1271,6 +1275,13 @@ CONTEXT and CALLBACK will be passed to the base function."
         web-mode-enable-auto-indentation nil
         web-mode-enable-auto-quoting nil
         web-mode-markup-indent-offset 2)
+
+;; YAML
+(defun my-run-prog-mode-hooks ()
+  (run-hooks 'prog-mode-hook))
+
+(add-hook 'yaml-ts-mode-hook #'my-run-prog-mode-hooks t)
+(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
 
 ;; Zig
 (add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-ts-mode))
@@ -1744,15 +1755,6 @@ This prevents the window from later moving back once the minibuffer is done show
 
 ;; tmux support
 (add-to-list 'auto-mode-alist '("\\.?tmux\\.conf\\(\\.[^.]+\\)?\\'" . tmux-mode))
-
-;; YAML changes
-(defun my-run-prog-mode-hooks ()
-  (run-hooks 'prog-mode-hook))
-
-;; YAML mode should be treated like a programming mode, such as showing
-;; line numbers and applying editorconfig standards
-(add-hook 'yaml-ts-mode-hook #'my-run-prog-mode-hooks t)
-(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
 
 ;; Profiling
 (require 'profiler)
