@@ -516,6 +516,8 @@ interactively.
   (add-to-list 'pulsar-pulse-functions #'diff-hl-previous-hunk)
   (add-to-list 'pulsar-pulse-functions #'flymake-goto-next-error)
   (add-to-list 'pulsar-pulse-functions #'flymake-goto-prev-error)
+  (cl-delete #'scroll-down-command pulsar-pulse-functions)
+  (cl-delete #'scroll-up-command pulsar-pulse-functions)
 
   (with-eval-after-load "consult"
     (add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
