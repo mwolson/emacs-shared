@@ -1480,12 +1480,46 @@ This prevents the window from later moving back once the minibuffer is done show
     map)
   "My key customizations for consult with `M-g' prefix.")
 
+(defvar my-consult--source-current-buffer
+  `( :name     "Buffer"
+     :narrow   ?c
+     :category buffer
+     :face     consult-buffer
+     :history  buffer-name-history
+     :state    ,#'consult--buffer-state
+     :default  t
+     :items
+     ,(lambda () (consult--buffer-query :sort 'my-current-buffer
+                                        :as #'consult--buffer-pair)))
+  "Buffer source for `my-consult-kill-buffer'.")
+
+(defun consult--buffer-sort-my-current-buffer (buffers)
+  "Sort BUFFERS by visibility, current buffer first."
+  (let ((current (car (memq (current-buffer) buffers))) visible)
+    (consult--keep! buffers
+      (unless (eq it current)
+        (if (get-buffer-window it 'visible)
+            (progn (push it visible) nil)
+          it)))
+    (nconc (and current (list current)) buffers (nreverse visible))))
+
+(defun my-consult-kill-buffer ()
+  "Variant of `kill-buffer' that uses consult."
+  (interactive)
+  (let ((selected (consult--multi '(my-consult--source-current-buffer)
+                                  :require-match t
+                                  :prompt "Kill buffer: "
+                                  :history 'consult--buffer-history
+                                  :sort nil)))
+    (kill-buffer (car selected))))
+
 (keymap-global-set "C-c C-r" #'vertico-suspend)
 (keymap-global-set "C-c M-x" #'consult-mode-command)
 (keymap-global-set "C-h b" #'embark-bindings)
 (keymap-global-set "C-r" #'my-consult-line)
 (keymap-global-set "C-s" #'my-consult-line)
 (keymap-global-set "C-x b" #'consult-buffer)
+(keymap-global-set "C-x k" #'my-consult-kill-buffer)
 (keymap-global-set "M-g" my-consult-M-g-map)
 (keymap-global-set "M-y" #'consult-yank-pop)
 
