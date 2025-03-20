@@ -82,13 +82,13 @@
                            cape cider clojure-ts-mode color-theme-sanityinc-tomorrow consult corfu
                            corfu-prescient corfu-terminal diff-hl diminish dumb-jump editorconfig
                            el-mock embark embark-consult erlang erlang-ts fish-mode flx git-modes
-                           gptel hydra js-comint jtsx kind-icon kotlin-ts-mode ligature lua-mode
-                           magit marginalia markdown-mode maxframe minions minuet modus-themes
-                           nerd-icons-completion nix-ts-mode nsis-mode orderless package-build
-                           package-utils plz poly-markdown polymode prisma-ts-mode pulsar
-                           rainbow-delimiters reformatter rg slime swift-ts-mode terraform-mode
-                           tmux-mode toc-org transient vertico vertico-prescient vterm web-mode
-                           wgrep zig-ts-mode))
+                           gptel graphql-ts-mode hydra js-comint jtsx kind-icon kotlin-ts-mode
+                           ligature lua-mode magit marginalia markdown-mode maxframe minions minuet
+                           modus-themes nerd-icons-completion nix-ts-mode nsis-mode orderless
+                           package-build package-utils plz poly-markdown polymode prisma-ts-mode
+                           pulsar rainbow-delimiters reformatter rg slime swift-ts-mode
+                           terraform-mode tmux-mode toc-org transient vertico vertico-prescient
+                           vterm web-mode wgrep zig-ts-mode))
  '(post-jump-header nil)
  '(project-vc-merge-submodules nil)
  '(recentf-mode nil)

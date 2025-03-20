@@ -1108,6 +1108,9 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-hook 'go-ts-mode-hook #'my-eglot-ensure)
 (add-hook 'go-mod-ts-mode-hook #'my-eglot-ensure)
 
+;; GraphQL
+(add-to-list 'auto-mode-alist '("\\.\\(graphql\\|gql\\)\\'" . graphql-ts-mode))
+
 ;; HTML
 (my-remap-major-mode 'html-mode 'html-ts-mode)
 (add-hook 'html-ts-mode-hook #'my-eglot-ensure)

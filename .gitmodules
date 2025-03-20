@@ -66,6 +66,10 @@
         path = extra/tree-sitter-gomod
         shallow = true
         url = https://github.com/camdencheek/tree-sitter-go-mod.git
+[submodule "extra/tree-sitter-graphql"]
+        path = extra/tree-sitter-graphql
+        shallow = true
+        url = https://github.com/bkegley/tree-sitter-graphql.git
 [submodule "extra/tree-sitter-html"]
         path = extra/tree-sitter-html
         shallow = true
