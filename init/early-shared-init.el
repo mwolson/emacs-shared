@@ -17,7 +17,7 @@
 (setq gc-cons-threshold most-positive-fixnum)
 
 ;; Show a bell icon instead of beeping
-(defvar my-bell-icon-graphical " 🔔 "
+(defvar my-bell-icon-graphical (if (eq window-system 'ns) " * " " 🔔 ")
   "Bell icon to display in the mode line.")
 
 (defvar my-bell-icon-display ""
