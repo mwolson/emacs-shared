@@ -1466,8 +1466,11 @@ This prevents the window from later moving back once the minibuffer is done show
                    (scroll-up scroll-up-amount)))))))))))
 
 (plist-put minibuffer-prompt-properties 'cursor-intangible t)
+(setopt minibuffer-prompt-properties minibuffer-prompt-properties)
+
 (add-hook 'completion-list-mode #'consult-preview-at-point-mode)
 (add-hook 'minibuffer-setup-hook #'my-minibuffer-move-window-contents-up -100)
+(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode +100)
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-restore-after-exit 100)
 
 (my-defer-startup #'marginalia-mode)
