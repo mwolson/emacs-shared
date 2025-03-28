@@ -11,7 +11,6 @@
 * <kbd>C-c p a s</kbd> to switch Emacs to a local asdf-managed version of node.js or other development program
 * <kbd>C-c p c</kbd> to start a compilation at the top of the current project
 * <kbd>C-c p f</kbd> to find a file within the current project
-* <kbd>C-c p g a</kbd> to start or manage an Aider session for AI coding
 * <kbd>C-c p g g</kbd> to start a Claude AI interaction buffer
 * <kbd>C-c p g p</kbd> to bring up a gptel menu for taking different AI actions
 * <kbd>C-c p k</kbd> to close all files in the current project
@@ -46,6 +45,7 @@
 When you're visiting a source code file, you can use these commands to navigate to the definition of the function that
 the cursor is at.
 
+* <kbd>C-c a a</kbd> to start or manage an Aider session for AI coding
 * <kbd>C-c . a a</kbd> to add the current function as context for a later AI query
 * <kbd>C-c . a f</kbd> to add the current file as context for a later AI query
 * <kbd>C-c . c</kbd> to complete the code at point using Claude AI; if you have a comment near the end, that will better inform the completion

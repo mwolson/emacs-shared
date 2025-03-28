@@ -814,10 +814,17 @@ Use the region instead if one is selected."
 ;; Aidermacs for aider AI integration
 (with-eval-after-load "aidermacs-backends"
   ;; 'vterm is neat, but it crashes frequently on macOS
-  (setopt aidermacs-backend 'comint))
+  (setopt aidermacs-backend 'vterm))
 
 (my-aidermacs-set-editor-model my-aidermacs-model)
 (my-defer-startup #'aidermacs-setup-minor-mode)
+
+(defvar my-aidermacs-map
+  (let ((map (make-sparse-keymap)))
+    (keymap-set map "a" #'aidermacs-transient-menu)
+    map))
+
+(keymap-global-set "C-c a" my-aidermacs-map)
 
 ;; Minuet for AI completion
 (defun my-minuet-maybe-turn-on-auto-suggest ()
@@ -1848,7 +1855,6 @@ This prevents the window from later moving back once the minibuffer is done show
     (keymap-set map "a s" #'my-asdf-vm-init)
     (keymap-set map "c" #'project-compile)
     (keymap-set map "f" #'project-find-file)
-    (keymap-set map "g a" #'aidermacs-transient-menu)
     (keymap-set map "g g" #'my-gptel-start)
     (keymap-set map "g p" #'gptel-menu)
     (keymap-set map "g s" #'gptel-send)
