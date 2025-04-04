@@ -1604,6 +1604,12 @@ This prevents the window from later moving back once the minibuffer is done show
         (cl-remove-if #'(lambda (item) (memq (car item) to-remove))
                       project-switch-commands)))
 
+(defun my-aidermacs-project-menu ()
+  (interactive)
+  (let ((default-directory (my-project-root)))
+    (find-file default-directory)
+    (aidermacs-transient-menu)))
+
 (with-eval-after-load "project"
   (my-remove-project-switch-bindings '(project-eshell
                                        project-find-dir
@@ -1611,6 +1617,9 @@ This prevents the window from later moving back once the minibuffer is done show
                                        project-query-replace-regexp
                                        project-vc-dir))
   (add-to-list 'project-switch-commands '(project-dired "Dired") t)
+  (keymap-set project-prefix-map "a" #'my-aidermacs-project-menu)
+  (add-to-list 'project-switch-commands
+               '(my-aidermacs-project-menu "Aider"))
   (keymap-set project-prefix-map "b" #'consult-project-buffer)
   (keymap-set project-prefix-map "d" #'project-dired)
   (add-to-list 'project-switch-commands '(my-consult-ripgrep "Ripgrep") t)
