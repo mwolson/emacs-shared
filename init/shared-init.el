@@ -1814,6 +1814,8 @@ This prevents the window from later moving back once the minibuffer is done show
 
 (my-defer-startup #'my-preload-magit)
 
+(put 'checkdoc-allow-quoting-nil-and-t 'safe-local-variable 'booleanp)
+
 ;; Map some magit keys globally
 (keymap-global-set "C-x V" nil)
 (keymap-global-set "C-x V a" #'magit-blame)
