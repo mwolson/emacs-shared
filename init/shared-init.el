@@ -1679,7 +1679,8 @@ This prevents the window from later moving back once the minibuffer is done show
 ;; All programming modes
 (defun my-turn-on-display-line-numbers-mode ()
   (interactive)
-  (display-line-numbers-mode 1))
+  (unless (derived-mode-p 'special-mode)
+    (display-line-numbers-mode 1)))
 
 (defun my-turn-off-display-line-numbers-mode ()
   (interactive)
