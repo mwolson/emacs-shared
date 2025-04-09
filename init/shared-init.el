@@ -551,6 +551,7 @@ interactively.
 (defvar my-gptel--groq nil)
 (defvar my-gptel--local-ai nil)
 (defvar my-gptel--mistral nil)
+(defvar my-gptel--openrouter nil)
 (defvar my-gptel-local-models
   '((Sky-T1-32B-Preview-Q4_K_S
      :description "Sky-T1-32B-Preview-Q4_K_S model"
@@ -609,8 +610,8 @@ interactively.
 
     (setq my-gptel--claude-thinking
           (gptel-make-anthropic "Claude-Thinking"
-            :key #'gptel-api-key-from-auth-source
             :stream t
+            :key #'gptel-api-key-from-auth-source
             :models '(claude-3-7-sonnet-20250219)
             :header (lambda () (when-let* ((key (gptel--get-api-key)))
                                  `(("x-api-key" . ,key)
@@ -624,8 +625,8 @@ interactively.
 
     (setq my-gptel--codestral
           (gptel-make-openai "Codestral"
-            :stream t
             :host "codestral.mistral.ai"
+            :stream t
             :key #'gptel-api-key-from-auth-source
             :models '((codestral-latest
                        :description "Official codestral Mistral AI model"
@@ -662,15 +663,15 @@ interactively.
 
     (setq my-gptel--local-ai
           (gptel-make-openai "Local AI Server"
-            :stream t
             :host "localhost:1337"
             :protocol "http"
+            :stream t
             :models my-gptel-local-models))
 
     (setq my-gptel--mistral
           (gptel-make-openai "Mistral"
-            :stream t
             :host "api.mistral.ai"
+            :stream t
             :key #'gptel-api-key-from-auth-source
             :models '((codestral-latest
                        :description "Official codestral Mistral AI model"
@@ -684,6 +685,14 @@ interactively.
                        :description "Official open-mistral-nemo Mistral AI model"
                        :capabilities (tool json url)
                        :context-window 131))))
+
+    (setq my-gptel--openrouter
+          (gptel-make-openai "OpenRouter"
+            :host "openrouter.ai"
+            :endpoint "/api/v1/chat/completions"
+            :stream t
+            :key #'gptel-api-key-from-auth-source
+            :models '(openrouter/quasar-alpha)))
 
     (run-hooks 'my-gptel-ensure-backends-hook))
 
@@ -776,6 +785,17 @@ interactively.
         my-aidermacs-model-remote "gpt-4o"
         my-gptel-backend-remote 'gptel--openai
         my-gptel-model-remote 'o3-mini)
+  (my-gptel-toggle-local))
+
+(defun my-gptel-switch-to-openrouter ()
+  (interactive)
+  (require 'aidermacs)
+  (require 'gptel)
+  (require 'minuet)
+  (setq gptel-backend (symbol-value my-gptel-backend-local)
+        my-aidermacs-model-remote "quasar"
+        my-gptel-backend-remote 'my-gptel--openrouter
+        my-gptel-model-remote 'openrouter/quasar-alpha)
   (my-gptel-toggle-local))
 
 (defun my-gptel-context-save-and-quit ()
