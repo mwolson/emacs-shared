@@ -633,6 +633,19 @@ interactively.
                        :context-window 256))))
 
     (require 'gptel-gemini)
+    (unless (alist-get 'gemini-2.5-pro-preview-03-25 gptel--gemini-models)
+      (add-to-list 'gptel--gemini-models
+                   '(gemini-2.5-pro-preview-03-25
+                     :description "Enhanced thinking and reasoning, multimodal understanding, advanced coding, and more"
+                     :capabilities (tool-use json media)
+                     :mime-types ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
+                                  "application/pdf" "text/plain" "text/csv" "text/html")
+                     :context-window 1000
+                     :input-cost 1.25
+                     :output-cost 10.00
+                     :cutoff-date "2025-01"))
+      (setopt gptel--gemini-models gptel--gemini-models))
+
     (setq my-gptel--gemini
           (gptel-make-gemini "Gemini"
             :stream t
@@ -751,7 +764,7 @@ interactively.
   (setq gptel-backend (symbol-value my-gptel-backend-local)
         my-aidermacs-model-remote "gemini"
         my-gptel-backend-remote 'my-gptel--gemini
-        my-gptel-model-remote 'gemini-2.5-pro-exp-03-25)
+        my-gptel-model-remote 'gemini-2.5-pro-preview-03-25)
   (my-gptel-toggle-local))
 
 (defun my-gptel-switch-to-openai ()
