@@ -743,6 +743,28 @@ interactively.
     (message "gptel backend is now %s, aider %s, and minuet %s"
              backend-sym my-aidermacs-model minuet-provider)))
 
+(defun my-gptel-switch-to-gemini ()
+  (interactive)
+  (require 'aidermacs)
+  (require 'gptel)
+  (require 'minuet)
+  (setq gptel-backend (symbol-value my-gptel-backend-local)
+        my-aidermacs-model-remote "gemini"
+        my-gptel-backend-remote 'my-gptel--gemini
+        my-gptel-model-remote 'gemini-2.5-pro-exp-03-25)
+  (my-gptel-toggle-local))
+
+(defun my-gptel-switch-to-openai ()
+  (interactive)
+  (require 'aidermacs)
+  (require 'gptel)
+  (require 'minuet)
+  (setq gptel-backend (symbol-value my-gptel-backend-local)
+        my-aidermacs-model-remote "gpt-4o"
+        my-gptel-backend-remote 'gptel--openai
+        my-gptel-model-remote 'o3-mini)
+  (my-gptel-toggle-local))
+
 (defun my-gptel-context-save-and-quit ()
   "Apply gptel context changes and quit."
   (interactive)
