@@ -196,8 +196,6 @@ When `depth' is provided, pass it to `add-hook'."
 ;; Long lines support
 (global-so-long-mode 1)
 (add-to-list 'so-long-target-modes 'fundamental-mode)
-(global-visual-wrap-prefix-mode)
-(setopt visual-wrap-extra-indent 2)
 
 ;; Don't slow down ls and don't make dired output too wide on w32 systems
 (setq w32-get-true-file-attributes nil)
