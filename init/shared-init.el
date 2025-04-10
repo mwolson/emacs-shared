@@ -763,7 +763,7 @@ interactively.
     (message "gptel backend is now %s, aider %s, and minuet %s"
              backend-sym my-aidermacs-model minuet-provider)))
 
-(defun my-gptel-switch-to-gemini ()
+(defun my-gptel-toggle-gemini ()
   (interactive)
   (require 'aidermacs)
   (require 'gptel)
@@ -774,7 +774,7 @@ interactively.
         my-gptel-model-remote 'gemini-2.5-pro-preview-03-25)
   (my-gptel-toggle-local))
 
-(defun my-gptel-switch-to-openai ()
+(defun my-gptel-toggle-openai ()
   (interactive)
   (require 'aidermacs)
   (require 'gptel)
@@ -785,7 +785,7 @@ interactively.
         my-gptel-model-remote 'o3-mini)
   (my-gptel-toggle-local))
 
-(defun my-gptel-switch-to-openrouter ()
+(defun my-gptel-toggle-openrouter ()
   (interactive)
   (require 'aidermacs)
   (require 'gptel)
