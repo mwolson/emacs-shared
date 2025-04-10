@@ -763,6 +763,17 @@ interactively.
     (message "gptel backend is now %s, aider %s, and minuet %s"
              backend-sym my-aidermacs-model minuet-provider)))
 
+(defun my-gptel-toggle-claude-thinking ()
+  (interactive)
+  (require 'aidermacs)
+  (require 'gptel)
+  (require 'minuet)
+  (setq gptel-backend (symbol-value my-gptel-backend-local)
+        my-aidermacs-model-remote "anthropic/claude-3-7-sonnet-20250219"
+        my-gptel-backend-remote 'my-gptel--claude-thinking
+        my-gptel-model-remote nil)
+  (my-gptel-toggle-local))
+
 (defun my-gptel-toggle-gemini ()
   (interactive)
   (require 'aidermacs)
