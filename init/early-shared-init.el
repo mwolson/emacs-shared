@@ -72,7 +72,7 @@
 (defvar my-aidermacs-model-remote "anthropic/claude-3-7-sonnet-20250219")
 (defvar my-aidermacs-model   my-aidermacs-model-remote)
 (defvar my-gptel-backend-local 'my-gptel--local-ai)
-(defvar my-gptel-backend-remote 'my-gptel--claude-thinking)
+(defvar my-gptel-backend-remote 'my-gptel--claude)
 (defvar my-gptel-backend     my-gptel-backend-remote)
 (defvar my-gptel-model-local 'Sky-T1-32B-Preview-Q4_K_S)
 (defvar my-gptel-model-remote nil)
