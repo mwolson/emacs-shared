@@ -792,7 +792,7 @@ interactively.
   (require 'gptel)
   (require 'minuet)
   (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote "gemini"
+        my-aidermacs-model-remote "gemini/gemini-2.5-pro-preview-03-25"
         my-gptel-backend-remote 'my-gptel--gemini
         my-gptel-model-remote 'gemini-2.5-pro-preview-03-25)
   (my-gptel-toggle-local))
