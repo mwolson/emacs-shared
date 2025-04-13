@@ -1778,8 +1778,6 @@ This prevents the window from later moving back once the minibuffer is done show
 
 (add-hook 'lisp-interaction-mode-hook #'my-turn-off-display-line-numbers-mode t)
 
-(kill-ring-deindent-mode 1)
-
 ;; Markdown support
 (my-remap-major-mode 'gfm-mode 'poly-gfm-mode)
 (my-remap-major-mode 'markdown-mode 'poly-gfm-mode)
