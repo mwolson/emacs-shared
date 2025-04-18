@@ -1600,7 +1600,15 @@ This prevents the window from later moving back once the minibuffer is done show
                      #'eglot-completion-at-point
                      #'cape-file))))
 
+(defun my-corfu-elisp ()
+  "Configure Corfu completion for Elisp using CAPE backends locally."
+  (add-hook 'completion-at-point-functions #'cape-elisp-block nil t)
+  (add-hook 'completion-at-point-functions #'cape-elisp-symbol nil t))
+
 (defun my-load-corfu ()
+  (with-eval-after-load "elisp-mode"
+    (add-hook 'emacs-lisp-mode-hook #'my-corfu-elisp t))
+
   (require 'orderless)
   (orderless-define-completion-style orderless-literal-only
     (orderless-style-dispatchers nil)
@@ -1620,6 +1628,7 @@ This prevents the window from later moving back once the minibuffer is done show
   (keymap-set corfu-map "<remap> <move-end-of-line>" nil)
   (keymap-set corfu-map "<remap> <scroll-down-command>" nil)
   (keymap-set corfu-map "<remap> <scroll-up-command>" nil)
+  (keymap-set corfu-map "RET" nil)
 
   (setopt corfu-auto t
           corfu-popupinfo-delay '(0.3 . 0.01)
@@ -1638,8 +1647,6 @@ This prevents the window from later moving back once the minibuffer is done show
 (my-defer-startup #'my-load-corfu)
 
 (add-hook 'completion-at-point-functions #'cape-dabbrev)
-(add-hook 'completion-at-point-functions #'cape-elisp-block)
-(add-hook 'completion-at-point-functions #'cape-elisp-symbol)
 (add-hook 'completion-at-point-functions #'cape-file)
 (add-hook 'completion-at-point-functions #'cape-keyword)
 
