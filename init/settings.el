@@ -78,12 +78,13 @@
      ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(add-node-modules-path aidermacs apheleia archive-rpm astro-ts-mode atomic-chrome browse-kill-ring
-                           cape cider clojure-ts-mode color-theme-sanityinc-tomorrow consult corfu
-                           corfu-prescient corfu-terminal diff-hl diminish dumb-jump editorconfig
-                           el-mock embark embark-consult erlang erlang-ts fish-mode flx git-modes
-                           gptel graphql-ts-mode hydra js-comint jtsx kind-icon kotlin-ts-mode
-                           ligature lua-mode magit marginalia markdown-mode maxframe minions minuet
+   '(add-node-modules-path aidermacs apheleia archive-rpm astro-ts-mode atomic-chrome basic-mode
+                           browse-kill-ring cape cider clojure-ts-mode
+                           color-theme-sanityinc-tomorrow consult corfu corfu-prescient
+                           corfu-terminal diff-hl diminish dumb-jump editorconfig el-mock embark
+                           embark-consult erlang erlang-ts fish-mode flx git-modes gptel
+                           graphql-ts-mode hydra js-comint jtsx kind-icon kotlin-ts-mode ligature
+                           lua-mode magit marginalia markdown-mode maxframe minions minuet
                            modus-themes nerd-icons-completion nix-ts-mode nsis-mode orderless
                            package-build package-utils plz poly-markdown polymode prisma-ts-mode
                            pulsar rainbow-delimiters reformatter rg slime swift-ts-mode
