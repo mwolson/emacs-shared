@@ -1482,6 +1482,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
       xref-show-definitions-function #'consult-xref
       xref-show-xrefs-function #'consult-xref)
 
+(with-eval-after-load "grep"
+  (keymap-set grep-mode-map "r" #'wgrep-change-to-wgrep-mode))
+
 (defun my-crm-indicator (args)
   "Work around issue in completing-read-multiple.
 
