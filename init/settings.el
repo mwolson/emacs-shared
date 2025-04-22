@@ -73,6 +73,7 @@
  '(org-default-notes-file "~/Documents/notes.org")
  '(org-startup-folded nil)
  '(org-startup-truncated nil)
+ '(org-yank-folded-subtrees nil)
  '(package-archives
    '(("melpa" . "http://melpa.org/packages/") ("gnu" . "http://elpa.gnu.org/packages/")
      ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
