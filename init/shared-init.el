@@ -308,18 +308,17 @@ When `depth' is provided, pass it to `add-hook'."
 
 ;; Editorconfig support
 (with-eval-after-load "editorconfig"
-  (put 'editorconfig-lisp-use-default-indent 'safe-local-variable #'always))
+  (put 'editorconfig-lisp-use-default-indent 'safe-local-variable #'always)
+
+  (with-eval-after-load "polymode-core"
+    (pm-around-advice #'editorconfig-major-mode-hook
+                      #'polymode-inhibit-in-indirect-buffers)))
 
 (editorconfig-mode 1)
 
 ;; Set up eglot for LSP features
 (require 'eglot)
 (setopt eglot-sync-connect nil)
-
-(defun my-eglot-ensure ()
-  "Ensure that eglot is running, except when in an active polymode."
-  (unless (bound-and-true-p polymode-mode)
-    (eglot-ensure)))
 
 (defvar my-debug-jsonrpc nil
   "Whether to enable log messages for jsonrpc.")
@@ -338,6 +337,9 @@ When `depth' is provided, pass it to `add-hook'."
         (let ((map (make-sparse-keymap)))
           (keymap-set map "<mouse-3>" #'eglot-code-actions-at-mouse)
           map))
+
+  (with-eval-after-load "polymode-core"
+    (pm-around-advice #'eglot-ensure #'polymode-inhibit-in-indirect-buffers))
 
   (keymap-set eglot-mode-map "<f2>" #'eglot-rename)
   (fset #'my-jsonrpc--log-event-real (symbol-function 'jsonrpc--log-event))
@@ -502,6 +504,10 @@ interactively.
 (add-hook 'prog-mode-hook #'turn-on-diff-hl-mode)
 (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
 
+(with-eval-after-load "polymode-core"
+  (pm-around-advice #'turn-on-diff-hl-mode
+                    #'polymode-inhibit-in-indirect-buffers))
+
 ;; Pulsar, for highlighting current line after a jump-style keybind
 (with-eval-after-load "pulsar"
   (defface my-pulsar-face
@@ -528,6 +534,9 @@ interactively.
 
 ;; SMerge mode, for editing files with inline diffs
 (add-hook 'prog-mode-hook #'smerge-mode t)
+
+(with-eval-after-load "polymode-core"
+  (pm-around-advice #'smerge-mode #'polymode-inhibit-in-indirect-buffers))
 
 ;; Transient
 (with-eval-after-load "transient"
@@ -636,6 +645,18 @@ interactively.
     (unless (alist-get 'gemini-2.5-pro-preview-03-25 gptel--gemini-models)
       (add-to-list 'gptel--gemini-models
                    '(gemini-2.5-pro-preview-03-25
+                     :description "Enhanced thinking and reasoning, multimodal understanding, advanced coding, and more"
+                     :capabilities (tool-use json media)
+                     :mime-types ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
+                                  "application/pdf" "text/plain" "text/csv" "text/html")
+                     :context-window 1000
+                     :input-cost 1.25
+                     :output-cost 10.00
+                     :cutoff-date "2025-01"))
+      (setopt gptel--gemini-models gptel--gemini-models))
+    (unless (alist-get 'gemini-2.5-flash-preview-04-17 gptel--gemini-models)
+      (add-to-list 'gptel--gemini-models
+                   '(gemini-2.5-flash-preview-04-17
                      :description "Enhanced thinking and reasoning, multimodal understanding, advanced coding, and more"
                      :capabilities (tool-use json media)
                      :mime-types ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
@@ -1043,6 +1064,10 @@ CONTEXT and CALLBACK will be passed to the base function."
 ;; (add-hook 'prog-mode-hook #'minuet-auto-suggestion-mode)
 (add-hook 'prog-mode-hook #'my-minuet-maybe-turn-on-auto-suggest t)
 
+(with-eval-after-load "polymode-core"
+  (pm-around-advice #'my-minuet-maybe-turn-on-auto-suggest
+                    #'polymode-inhibit-in-indirect-buffers))
+
 (defvar my-minuet-map
   (let ((map (make-sparse-keymap)))
     (keymap-set map "a" #'minuet-auto-suggestion-mode)
@@ -1090,7 +1115,17 @@ CONTEXT and CALLBACK will be passed to the base function."
   "Minor mode for jumping to variable and function definitions"
   :keymap my-xref-minor-mode-map)
 
+(with-eval-after-load "polymode-core"
+  (pm-around-advice #'my-xref-minor-mode #'polymode-inhibit-in-indirect-buffers))
+
 ;; Bash shell script and .env support
+
+(require 'sh-script)
+(fset #'my-real-sh-mode #'sh-mode)
+(add-to-list 'my-polymode-aliases '(bash . my-real-sh-mode))
+(add-to-list 'my-polymode-aliases '(sh . my-real-sh-mode))
+(add-to-list 'my-polymode-aliases '(shell . my-real-sh-mode))
+
 (my-remap-major-mode 'sh-mode 'bash-ts-mode)
 (add-to-list 'auto-mode-alist '("\\.env\\(\\..*\\)?\\'" . bash-ts-mode))
 (setopt sh-shell-file "/bin/bash")
@@ -1099,7 +1134,7 @@ CONTEXT and CALLBACK will be passed to the base function."
 (my-remap-major-mode 'c-mode 'c-ts-mode)
 (my-remap-major-mode 'c++-mode 'c++-ts-mode)
 (my-remap-major-mode 'c-or-c++-mode 'c-or-c++-ts-mode)
-(add-hook 'c-ts-base-mode-hook #'my-eglot-ensure)
+(add-hook 'c-ts-base-mode-hook #'eglot-ensure)
 (add-hook 'c-ts-base-mode-hook #'my-xref-minor-mode t)
 
 ;; C# - requires exactly v0.20.0 of its treesit grammar
@@ -1111,7 +1146,7 @@ CONTEXT and CALLBACK will be passed to the base function."
 (my-remap-major-mode 'csharp-mode 'csharp-ts-mode)
 (add-hook 'csharp-ts-mode-hook #'my-xref-minor-mode t)
 (when (executable-find "omnisharp")
-  (add-hook 'csharp-ts-mode-hook #'my-eglot-ensure))
+  (add-hook 'csharp-ts-mode-hook #'eglot-ensure))
 
 ;; Clojure
 (with-eval-after-load "cider-repl"
@@ -1134,14 +1169,17 @@ CONTEXT and CALLBACK will be passed to the base function."
 (dolist (mode my-clojure-modes)
   (let ((hook (intern (concat (symbol-name mode) "-hook"))))
     (add-hook hook #'cider-mode t)
-    (add-hook hook #'my-eglot-ensure t)))
+    (add-hook hook #'eglot-ensure t)))
+
+(with-eval-after-load "polymode-core"
+  (pm-around-advice #'cider-mode #'polymode-inhibit-in-indirect-buffers))
 
 (add-to-list 'eglot-server-programs
              `(,my-clojure-modes "clojure-lsp"))
 
 ;; CSS
 (my-remap-major-mode 'css-mode 'css-ts-mode)
-(add-hook 'css-ts-mode-hook #'my-eglot-ensure t)
+(add-hook 'css-ts-mode-hook #'eglot-ensure t)
 (add-hook 'css-ts-mode-hook #'my-setup-web-ligatures t)
 
 ;; Emacs Lisp
@@ -1187,15 +1225,15 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
 (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))
 (add-to-list 'my-polymode-aliases '(go . go-ts-mode))
-(add-hook 'go-ts-mode-hook #'my-eglot-ensure)
-(add-hook 'go-mod-ts-mode-hook #'my-eglot-ensure)
+(add-hook 'go-ts-mode-hook #'eglot-ensure)
+(add-hook 'go-mod-ts-mode-hook #'eglot-ensure)
 
 ;; GraphQL
 (add-to-list 'auto-mode-alist '("\\.\\(graphql\\|gql\\)\\'" . graphql-ts-mode))
 
 ;; HTML
 (my-remap-major-mode 'html-mode 'html-ts-mode)
-(add-hook 'html-ts-mode-hook #'my-eglot-ensure)
+(add-hook 'html-ts-mode-hook #'eglot-ensure)
 (add-hook 'html-ts-mode-hook #'my-setup-web-ligatures t)
 
 ;; Java
@@ -1209,19 +1247,22 @@ CONTEXT and CALLBACK will be passed to the base function."
                  ("jdtls" :initializationOptions
                   (:extendedClientCapabilities
                    (:classFileContentsSupport t :skipProjectConfiguration t)))))
-  (add-hook 'java-ts-mode-hook #'my-eglot-ensure))
+  (add-hook 'java-ts-mode-hook #'eglot-ensure))
 
 ;; JSON
 (my-remap-major-mode 'json-mode 'json-ts-mode)
 (add-to-list 'auto-mode-alist '("\\.jsonc?\\'" . json-ts-mode))
 (add-hook 'json-ts-mode-hook #'add-node-modules-path t)
-(add-hook 'json-ts-mode-hook #'my-eglot-ensure)
+(add-hook 'json-ts-mode-hook #'eglot-ensure)
 (add-hook 'json-ts-mode-hook #'my-setup-web-ligatures t)
 
 ;; JTSX (Astro, Javascript, Typescript, and JSX support)
 (defvar my-jtsx-major-modes
   '(astro-ts-mode jtsx-jsx-mode jtsx-tsx-mode jtsx-typescript-mode))
 (defvar my-jtsx-ts-major-modes '(jtsx-tsx-mode jtsx-typescript-mode))
+
+(require 'js)
+(fset #'my-real-js-mode #'js-mode)
 
 (add-to-list 'auto-mode-alist '("\\.astro\\'" . astro-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.[cm]js\\'" . jtsx-jsx-mode))
@@ -1235,8 +1276,10 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-to-list 'auto-mode-alist '("/\\.prettierrc\\'" . json-ts-mode))
 (add-to-list 'auto-mode-alist '("/\\yarn.lock\\'" . conf-mode))
 (add-to-list 'auto-mode-alist '("\\.yarnrc\\'" . yaml-ts-mode))
-(add-to-list 'my-polymode-aliases '(javascript . jtsx-jsx-mode))
-(add-to-list 'my-polymode-aliases '(typescript . jtsx-tsx-mode))
+(add-to-list 'my-polymode-aliases '(javascript . my-real-js-mode))
+(add-to-list 'my-polymode-aliases '(js . my-real-js-mode))
+(add-to-list 'my-polymode-aliases '(ts . my-real-js-mode))
+(add-to-list 'my-polymode-aliases '(typescript . my-real-js-mode))
 (my-remap-major-mode 'js-mode 'jtsx-jsx-mode)
 (my-remap-major-mode 'ts-mode 'jtsx-tsx-mode)
 
@@ -1248,10 +1291,17 @@ CONTEXT and CALLBACK will be passed to the base function."
 (dolist (mode my-jtsx-major-modes)
   (let ((hook (intern (concat (symbol-name mode) "-hook"))))
     (add-hook hook #'add-node-modules-path t)
-    (add-hook hook #'my-eglot-ensure t)
+    (add-hook hook #'eglot-ensure t)
     (add-hook hook #'my-node-repl-setup t)
     (add-hook hook #'my-eslint-setup t)
     (add-hook hook #'my-setup-web-ligatures t)))
+
+(with-eval-after-load "polymode-core"
+  (pm-around-advice
+   '(add-node-modules-path
+     my-node-repl-setup
+     my-eslint-setup)
+   #'polymode-inhibit-in-indirect-buffers))
 
 (defclass eglot-deno (eglot-lsp-server) ()
   :documentation "A custom class for deno lsp.")
@@ -1325,7 +1375,7 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-to-list 'eglot-server-programs
              '((python-ts-mode python-mode)
                "basedpyright-langserver" "--stdio"))
-(add-hook 'python-ts-mode-hook #'my-eglot-ensure) ; uses pyright
+(add-hook 'python-ts-mode-hook #'eglot-ensure) ; uses pyright
 
 ;; Rust
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
@@ -1333,7 +1383,7 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-to-list 'eglot-server-programs
              '((rust-ts-mode rust-mode)
                . ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
-(add-hook 'rust-ts-mode-hook #'my-eglot-ensure)
+(add-hook 'rust-ts-mode-hook #'eglot-ensure)
 
 ;; SCSS
 (add-to-list 'load-path (concat my-emacs-path "elisp/flymake-stylelint"))
@@ -1342,10 +1392,15 @@ CONTEXT and CALLBACK will be passed to the base function."
 
 (add-hook 'scss-mode-hook #'add-node-modules-path t)
 (add-hook 'scss-mode-hook #'flymake-stylelint-enable t)
+
+(with-eval-after-load "polymode-core"
+  (pm-around-advice #'flymake-stylelint-enable
+                    #'polymode-inhibit-in-indirect-buffers))
+
 (add-to-list 'eglot-server-programs
              '((scss-mode)
                . ("vscode-css-language-server" "--stdio")))
-(add-hook 'scss-mode-hook #'my-eglot-ensure)
+(add-hook 'scss-mode-hook #'eglot-ensure)
 
 ;; Swift
 (add-to-list 'auto-mode-alist '("\\.swift\\(interface\\)?\\'" . swift-ts-mode))
@@ -1374,7 +1429,7 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-to-list 'eglot-server-programs
              '((zig-ts-mode) .
                ("zls" :initializationOptions ())))
-(add-hook 'zig-ts-mode-hook #'my-eglot-ensure)
+(add-hook 'zig-ts-mode-hook #'eglot-ensure)
 
 ;; Consult, Embark, Marginalia, Orderless, Prescient, Vertico
 (defvar my-minibuffer-from-consult-line nil)
@@ -1620,6 +1675,9 @@ This prevents the window from later moving back once the minibuffer is done show
   (dolist (hook '(prog-mode-hook shell-mode-hook))
     (add-hook hook #'corfu-mode t))
 
+  (with-eval-after-load "polymode-core"
+    (pm-around-advice #'corfu-mode #'polymode-inhibit-in-indirect-buffers))
+
   (add-hook 'corfu-mode-hook #'my-setup-corfu-mode)
   (add-hook 'eglot-managed-mode-hook #'my-eglot-capf)
 
@@ -1782,9 +1840,13 @@ This prevents the window from later moving back once the minibuffer is done show
   (display-line-numbers-mode -1))
 
 (add-hook 'conf-mode-hook #'my-turn-on-display-line-numbers-mode t)
-
 (add-hook 'prog-mode-hook #'my-turn-on-display-line-numbers-mode t)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode t)
+
+(with-eval-after-load "polymode-core"
+  (pm-around-advice
+   '(my-turn-on-display-line-numbers-mode rainbow-delimiters-mode)
+   #'polymode-inhibit-in-indirect-buffers))
 
 (add-hook 'lisp-interaction-mode-hook #'my-turn-off-display-line-numbers-mode t)
 
