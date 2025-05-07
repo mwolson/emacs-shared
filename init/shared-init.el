@@ -642,9 +642,9 @@ interactively.
                        :context-window 256))))
 
     (require 'gptel-gemini)
-    (unless (alist-get 'gemini-2.5-pro-preview-03-25 gptel--gemini-models)
+    (unless (alist-get 'gemini-2.5-pro-preview-05-06 gptel--gemini-models)
       (add-to-list 'gptel--gemini-models
-                   '(gemini-2.5-pro-preview-03-25
+                   '(gemini-2.5-pro-preview-05-06
                      :description "Enhanced thinking and reasoning, multimodal understanding, advanced coding, and more"
                      :capabilities (tool-use json media)
                      :mime-types ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
@@ -652,7 +652,7 @@ interactively.
                      :context-window 1000
                      :input-cost 1.25
                      :output-cost 10.00
-                     :cutoff-date "2025-01"))
+                     :cutoff-date "2025-05"))
       (setopt gptel--gemini-models gptel--gemini-models))
     (unless (alist-get 'gemini-2.5-flash-preview-04-17 gptel--gemini-models)
       (add-to-list 'gptel--gemini-models
