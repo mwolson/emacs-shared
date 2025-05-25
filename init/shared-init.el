@@ -663,17 +663,17 @@ interactively.
                      :output-cost 10.00
                      :cutoff-date "2025-05"))
       (setopt gptel--gemini-models gptel--gemini-models))
-    (unless (alist-get 'gemini-2.5-flash-preview-04-17 gptel--gemini-models)
+    (unless (alist-get 'gemini-2.5-flash-preview-05-20 gptel--gemini-models)
       (add-to-list 'gptel--gemini-models
-                   '(gemini-2.5-flash-preview-04-17
-                     :description "Enhanced thinking and reasoning, multimodal understanding, advanced coding, and more"
+                   '(gemini-2.5-flash-preview-05-20
+                     :description "Best Gemini model in terms of price-performance, offering well-rounded capabilities"
                      :capabilities (tool-use json media)
                      :mime-types ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
                                   "application/pdf" "text/plain" "text/csv" "text/html")
                      :context-window 1000
-                     :input-cost 1.25
-                     :output-cost 10.00
-                     :cutoff-date "2025-01"))
+                     :input-cost 0.15
+                     :output-cost 0.60 ; 3.50 for thinking
+                     :cutoff-date "2025-04"))
       (setopt gptel--gemini-models gptel--gemini-models))
 
     (setq my-gptel--gemini
@@ -816,15 +816,26 @@ interactively.
         my-gptel-model-remote nil)
   (my-gptel-toggle-local))
 
-(defun my-gptel-toggle-gemini ()
+(defun my-gptel-toggle-gemini-flash ()
   (interactive)
   (require 'aidermacs)
   (require 'gptel)
   (require 'minuet)
   (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote "gemini/gemini-2.5-pro-preview-03-25"
+        my-aidermacs-model-remote "gemini/gemini-2.5-flash-preview-05-20"
         my-gptel-backend-remote 'my-gptel--gemini
-        my-gptel-model-remote 'gemini-2.5-pro-preview-03-25)
+        my-gptel-model-remote 'gemini-2.5-flash-preview-05-20)
+  (my-gptel-toggle-local))
+
+(defun my-gptel-toggle-gemini-pro ()
+  (interactive)
+  (require 'aidermacs)
+  (require 'gptel)
+  (require 'minuet)
+  (setq gptel-backend (symbol-value my-gptel-backend-local)
+        my-aidermacs-model-remote "gemini/gemini-2.5-pro-preview-05-06"
+        my-gptel-backend-remote 'my-gptel--gemini
+        my-gptel-model-remote 'gemini-2.5-pro-preview-05-06)
   (my-gptel-toggle-local))
 
 (defun my-gptel-toggle-openai ()
