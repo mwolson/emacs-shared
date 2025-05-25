@@ -565,6 +565,7 @@ interactively.
 (defvar my-gptel--claude-thinking nil)
 (defvar my-gptel--codestral nil)
 (defvar my-gptel--gemini nil)
+(defvar my-gptel--gemini-lite nil)
 (defvar my-gptel--groq nil)
 (defvar my-gptel--local-ai nil)
 (defvar my-gptel--mistral nil)
@@ -629,14 +630,14 @@ interactively.
           (gptel-make-anthropic "Claude-Thinking"
             :stream t
             :key #'gptel-api-key-from-auth-source
-            :models '(claude-3-7-sonnet-20250219)
             :header (lambda () (when-let* ((key (gptel--get-api-key)))
                                  `(("x-api-key" . ,key)
                                    ("anthropic-version" . "2023-06-01")
                                    ("anthropic-beta" . "pdfs-2024-09-25")
                                    ("anthropic-beta" . "output-128k-2025-02-19")
                                    ("anthropic-beta" . "prompt-caching-2024-07-31"))))
-            :request-params '(:thinking (:type "enabled" :budget_tokens 1024)
+            :request-params `(:thinking (:type "enabled"
+                                         :budget_tokens ,my-gptel-claude-thinking-budget)
                               :temperature 1
                               :max_tokens 4096)))
 
@@ -652,34 +653,44 @@ interactively.
 
     (require 'gptel-gemini)
     (unless (alist-get 'gemini-2.5-pro-preview-05-06 gptel--gemini-models)
-      (add-to-list 'gptel--gemini-models
-                   '(gemini-2.5-pro-preview-05-06
-                     :description "Enhanced thinking and reasoning, multimodal understanding, advanced coding, and more"
-                     :capabilities (tool-use json media)
-                     :mime-types ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
-                                  "application/pdf" "text/plain" "text/csv" "text/html")
-                     :context-window 1000
-                     :input-cost 1.25
-                     :output-cost 10.00
-                     :cutoff-date "2025-05"))
+      (setf (alist-get 'gemini-2.5-pro-preview-05-06 gptel--gemini-models)
+            '(gemini-2.5-pro-preview-05-06
+              :description "Most powerful Gemini thinking model with maximum response accuracy and state-of-the-art performance"
+              :capabilities (tool-use json media)
+              :mime-types ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
+                           "application/pdf" "text/plain" "text/csv" "text/html")
+              :context-window 1000
+              :input-cost 1.25 ; 2.50 for >200k tokens
+              :output-cost 10.00 ; 15 for >200k tokens
+              :cutoff-date "2025-04"))
       (setopt gptel--gemini-models gptel--gemini-models))
+
     (unless (alist-get 'gemini-2.5-flash-preview-05-20 gptel--gemini-models)
-      (add-to-list 'gptel--gemini-models
-                   '(gemini-2.5-flash-preview-05-20
-                     :description "Best Gemini model in terms of price-performance, offering well-rounded capabilities"
-                     :capabilities (tool-use json media)
-                     :mime-types ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
-                                  "application/pdf" "text/plain" "text/csv" "text/html")
-                     :context-window 1000
-                     :input-cost 0.15
-                     :output-cost 0.60 ; 3.50 for thinking
-                     :cutoff-date "2025-04"))
+      (setf (alist-get 'gemini-2.5-flash-preview-05-20 gptel--gemini-models)
+            `(:description "Best Gemini model in terms of price-performance, offering well-rounded capabilities"
+              :capabilities (tool-use json media)
+              :mime-types ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
+                           "application/pdf" "text/plain" "text/csv" "text/html")
+              :context-window 1000
+              :input-cost 0.15
+              :output-cost 0.60 ; 3.50 for thinking
+              :cutoff-date "2025-04"))
       (setopt gptel--gemini-models gptel--gemini-models))
 
     (setq my-gptel--gemini
           (gptel-make-gemini "Gemini"
             :stream t
-            :key #'gptel-api-key-from-auth-source))
+            :key #'gptel-api-key-from-auth-source
+            ;; don't let gptel set temperature
+            :request-params '(:generationConfig)))
+
+    (setq my-gptel--gemini-lite
+          (gptel-make-gemini "Gemini (Lite Thinking)"
+            :stream t
+            :key #'gptel-api-key-from-auth-source
+            :request-params `(:generationConfig
+                              (:thinkingConfig
+                               (:thinkingBudget ,my-gptel-gemini-lite-thinking-budget)))))
 
     (setq my-gptel--groq
           (gptel-make-openai "Groq"
@@ -800,9 +811,9 @@ interactively.
   (require 'gptel)
   (require 'minuet)
   (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote "anthropic/claude-3-7-sonnet-20250219"
+        my-aidermacs-model-remote "anthropic/claude-sonnet-4-20250514"
         my-gptel-backend-remote 'my-gptel--claude
-        my-gptel-model-remote nil)
+        my-gptel-model-remote 'claude-sonnet-4-20250514)
   (my-gptel-toggle-local))
 
 (defun my-gptel-toggle-claude-thinking ()
@@ -811,9 +822,9 @@ interactively.
   (require 'gptel)
   (require 'minuet)
   (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote "anthropic/claude-3-7-sonnet-20250219-thinking"
+        my-aidermacs-model-remote "anthropic/claude-sonnet-4-20250514-thinking"
         my-gptel-backend-remote 'my-gptel--claude-thinking
-        my-gptel-model-remote nil)
+        my-gptel-model-remote 'claude-sonnet-4-20250514)
   (my-gptel-toggle-local))
 
 (defun my-gptel-toggle-gemini-flash ()
@@ -823,7 +834,7 @@ interactively.
   (require 'minuet)
   (setq gptel-backend (symbol-value my-gptel-backend-local)
         my-aidermacs-model-remote "gemini/gemini-2.5-flash-preview-05-20"
-        my-gptel-backend-remote 'my-gptel--gemini
+        my-gptel-backend-remote 'my-gptel--gemini-lite
         my-gptel-model-remote 'gemini-2.5-flash-preview-05-20)
   (my-gptel-toggle-local))
 
