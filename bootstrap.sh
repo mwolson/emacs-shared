@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. "$(dirname $0)/include.sh"
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"/include.sh
 
 NOTICES=()
 OS="$(get_os)"
