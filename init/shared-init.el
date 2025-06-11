@@ -652,17 +652,17 @@ interactively.
                        :context-window 256))))
 
     (require 'gptel-gemini)
-    (unless (alist-get 'gemini-2.5-pro-preview-05-06 gptel--gemini-models)
-      (setf (alist-get 'gemini-2.5-pro-preview-05-06 gptel--gemini-models)
-            '(gemini-2.5-pro-preview-05-06
-              :description "Most powerful Gemini thinking model with maximum response accuracy and state-of-the-art performance"
+    (unless (alist-get 'gemini-2.5-pro-preview-06-05 gptel--gemini-models)
+      (setf (alist-get 'gemini-2.5-pro-preview-06-05 gptel--gemini-models)
+            '(gemini-2.5-pro-preview-06-05
+              :description "Most powerful Gemini thinking model with state-of-the-art performance"
               :capabilities (tool-use json media)
               :mime-types ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
                            "application/pdf" "text/plain" "text/csv" "text/html")
-              :context-window 1000
+              :context-window 1048 ; 65536 output token limit
               :input-cost 1.25 ; 2.50 for >200k tokens
               :output-cost 10.00 ; 15 for >200k tokens
-              :cutoff-date "2025-04"))
+              :cutoff-date "2025-01"))
       (setopt gptel--gemini-models gptel--gemini-models))
 
     (unless (alist-get 'gemini-2.5-flash-preview-05-20 gptel--gemini-models)
@@ -844,9 +844,9 @@ interactively.
   (require 'gptel)
   (require 'minuet)
   (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote "gemini/gemini-2.5-pro-preview-05-06"
+        my-aidermacs-model-remote "gemini/gemini-2.5-pro-preview-06-05"
         my-gptel-backend-remote 'my-gptel--gemini
-        my-gptel-model-remote 'gemini-2.5-pro-preview-05-06)
+        my-gptel-model-remote 'gemini-2.5-pro-preview-06-05)
   (my-gptel-toggle-local))
 
 (defun my-gptel-toggle-openai ()

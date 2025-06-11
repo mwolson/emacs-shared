@@ -69,7 +69,7 @@
 (defvar my-frame-pad-width   (if (eq system-type 'darwin) 65 nil))
 (defvar my-frame-pad-height  (if (eq system-type 'darwin) 15 nil))
 (defvar my-aidermacs-model-local "openai/Sky-T1-32B-Preview-Q4_K_S")
-(defvar my-aidermacs-model-remote "gemini/gemini-2.5-pro-preview-05-06")
+(defvar my-aidermacs-model-remote "gemini/gemini-2.5-pro-preview-06-05")
 (defvar my-aidermacs-model   my-aidermacs-model-remote)
 (defvar my-gptel-backend-local 'my-gptel--local-ai)
 (defvar my-gptel-backend-remote 'my-gptel--claude)
