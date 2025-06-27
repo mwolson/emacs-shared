@@ -74,7 +74,7 @@
 (defvar my-gptel-backend-local 'my-gptel--local-ai)
 (defvar my-gptel-backend-remote 'my-gptel--claude)
 (defvar my-gptel-backend     my-gptel-backend-remote)
-(defvar my-gptel-model-local 'Jan-nano-128k)
+(defvar my-gptel-model-local 'Sky-T1-32B-Preview)
 (defvar my-gptel-model-remote 'claude-sonnet-4-20250514)
 (defvar my-gptel-model       my-gptel-model-remote)
 (defvar my-gptel-system-prompt nil)
