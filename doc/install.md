@@ -130,7 +130,7 @@ You'll need to [install ninja](https://ninja-build.org/) in order to support fas
 It's recommended to do a [manual install of asdf](https://asdf-vm.com/guide/getting-started.html), configure your shell to work with it, restart any open terminals, and then install the latest LTS node.js version and pnpm with:
 
 ```sh
-asdf plugin add nodejs https://github.com/taybart/asdf-nodejs
+asdf plugin add nodejs
 asdf cmd nodejs update-nodebuild
 asdf install nodejs $(asdf cmd nodejs resolve lts --latest-available)
 asdf set -u nodejs $(asdf cmd nodejs resolve lts --latest-installed)
