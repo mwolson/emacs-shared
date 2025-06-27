@@ -571,7 +571,14 @@ interactively.
 (defvar my-gptel--mistral nil)
 (defvar my-gptel--openrouter nil)
 (defvar my-gptel-local-models
-  '((Sky-T1-32B-Preview-Q4_K_S
+  '((Jan-nano-128k
+     :description "Jan-nano-128k model"
+     :capabilities (media tool json url)
+     :context-window 256
+     ;; temperature can go up to 0.2 for more creativity but higher chance of
+     ;; syntax errors
+     :request-params (:temperature 0.025 :top_k 20 :top_p 0.95))
+    (Sky-T1-32B-Preview-Q4_K_S
      :description "Sky-T1-32B-Preview-Q4_K_S model"
      :capabilities (media tool json url)
      :context-window 256
@@ -652,10 +659,10 @@ interactively.
                        :context-window 256))))
 
     (require 'gptel-gemini)
-    (unless (alist-get 'gemini-2.5-pro-preview-06-05 gptel--gemini-models)
-      (setf (alist-get 'gemini-2.5-pro-preview-06-05 gptel--gemini-models)
-            '(gemini-2.5-pro-preview-06-05
-              :description "Most powerful Gemini thinking model with state-of-the-art performance"
+    (unless (alist-get 'gemini-2.5-pro gptel--gemini-models)
+      (setf (alist-get 'gemini-2.5-pro gptel--gemini-models)
+            '(gemini-2.5-pro
+              :description "Most powerful Gemini thinking model with maximum response accuracy and state-of-the-art performance"
               :capabilities (tool-use json media)
               :mime-types ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
                            "application/pdf" "text/plain" "text/csv" "text/html")
@@ -665,8 +672,8 @@ interactively.
               :cutoff-date "2025-01"))
       (setopt gptel--gemini-models gptel--gemini-models))
 
-    (unless (alist-get 'gemini-2.5-flash-preview-05-20 gptel--gemini-models)
-      (setf (alist-get 'gemini-2.5-flash-preview-05-20 gptel--gemini-models)
+    (unless (alist-get 'gemini-2.5-flash gptel--gemini-models)
+      (setf (alist-get 'gemini-2.5-flash gptel--gemini-models)
             `(:description "Best Gemini model in terms of price-performance, offering well-rounded capabilities"
               :capabilities (tool-use json media)
               :mime-types ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
@@ -833,9 +840,9 @@ interactively.
   (require 'gptel)
   (require 'minuet)
   (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote "gemini/gemini-2.5-flash-preview-05-20"
+        my-aidermacs-model-remote "gemini/gemini-2.5-flash"
         my-gptel-backend-remote 'my-gptel--gemini-lite
-        my-gptel-model-remote 'gemini-2.5-flash-preview-05-20)
+        my-gptel-model-remote 'gemini-2.5-flash)
   (my-gptel-toggle-local))
 
 (defun my-gptel-toggle-gemini-pro ()
@@ -844,9 +851,9 @@ interactively.
   (require 'gptel)
   (require 'minuet)
   (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote "gemini/gemini-2.5-pro-preview-06-05"
+        my-aidermacs-model-remote "gemini/gemini-2.5-pro"
         my-gptel-backend-remote 'my-gptel--gemini
-        my-gptel-model-remote 'gemini-2.5-pro-preview-06-05)
+        my-gptel-model-remote 'gemini-2.5-pro)
   (my-gptel-toggle-local))
 
 (defun my-gptel-toggle-openai ()
