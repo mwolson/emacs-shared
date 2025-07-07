@@ -2134,7 +2134,9 @@ This prevents the window from later moving back once the minibuffer is done show
     (keymap-set cider-repl-mode-map "s-p" #'cider-repl-previous-input))
 
   (with-eval-after-load "magit"
+    (keymap-set magit-mode-map "s-1" #'magit-section-show-level-1-all)
     (keymap-set magit-mode-map "s-2" #'magit-section-show-level-2-all)
+    (keymap-set magit-mode-map "s-3" #'magit-section-show-level-3-all)
     (keymap-set magit-mode-map "s-4" #'magit-section-show-level-4-all)
     (keymap-set magit-status-mode-map "s-c" #'my-magit-kill-ring-save)
     (keymap-set magit-status-mode-map "s-w" #'my-magit-kill-ring-save))
