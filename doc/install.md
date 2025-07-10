@@ -54,7 +54,7 @@ makepkg -si
 Minimal install:
 
 ```sh
-sudo paru -S asdf-vm aspell-en base-devel basedpyright clang cmake fd gnutls gopls libssh2-devel make man-db man-pages ninja openssh ripgrep rust-analyzer zls
+sudo paru -S aspell-en base-devel basedpyright clang cmake fd gnutls gopls libssh2-devel make man-db man-pages mise ninja openssh ripgrep rust-analyzer zls
 ```
 
 For a full install, in addition to the above also run:
@@ -127,17 +127,11 @@ You'll need to [install ninja](https://ninja-build.org/) in order to support fas
 
 ## Install node.js
 
-It's recommended to do a [manual install of asdf](https://asdf-vm.com/guide/getting-started.html), configure your shell to work with it, restart any open terminals, and then install the latest LTS node.js version and pnpm with:
+It's recommended to [install mise](https://mise.jdx.dev/getting-started.html), configure your shell to work with it, restart any open terminals, and then install the latest LTS node.js version and pnpm with:
 
 ```sh
-asdf plugin add nodejs
-asdf cmd nodejs update-nodebuild
-asdf install nodejs $(asdf cmd nodejs resolve lts --latest-available)
-asdf set -u nodejs $(asdf cmd nodejs resolve lts --latest-installed)
-
-asdf plugin add pnpm
-asdf install pnpm latest
-asdf set -u pnpm latest
+mise use -g node@lts
+mise use -g pnpm
 ```
 
 ## Install Omnisharp (optional)
@@ -351,9 +345,22 @@ emacs -q early-init.el  # or other editing command
 
 ```elisp
 ;; Configure emacs-shared
+(setq my-emacs-path    "~/emacs-shared/")
 (setq my-email-address "you@example.com")
 (setq my-full-name     "Your Name")
-(setq my-emacs-path    "~/emacs-shared/")
+
+;; Note - change the following to allow mise to automatically enable specific
+;; versions of tools like nodejs from .tool-versions or mise.toml files in project
+;; directories.
+;;
+;; Default value: disable it for all directories:
+;; (setq my-mise-exclude-file-regexps '(".*"))
+;;
+;; Insecure: enable it for all directories:
+;; (setq my-mise-exclude-file-regexps '())
+;;
+;; Better: disable it for a directory tree that has downloaded content:
+;; (setq my-mise-exclude-file-regexps '("devel/github"))
 
 ;; Load shared early init file
 (load-file (concat my-emacs-path "init/early-shared-init.el"))

@@ -1,6 +1,3 @@
-[submodule "elisp/asdf-vm"]
-        path = elisp/asdf-vm
-        url = https://github.com/delonnewman/asdf-vm.el.git
 [submodule "elisp/flymake-stylelint"]
 	path = elisp/flymake-stylelint
 	url = https://github.com/orzechowskid/flymake-stylelint.git

@@ -65,18 +65,22 @@ When `depth' is provided, pass it to `add-hook'."
 
 (my-update-system-paths)
 
-;; Setup asdf, a version manager for node.js and other software
-(add-to-list 'load-path (concat my-emacs-path "elisp/asdf-vm"))
-(require 'asdf-vm)
+;; Setup mise, a version manager for node.js and other software
+(defun my-mise-exclude ()
+  "Return non-nil if current buffer should not obey `global-mise-mode'."
+  (let* ((filename (buffer-file-name)))
+    (or (not filename)
+        (when-let* ((lst my-mise-exclude-file-regexps))
+          (string-match-p
+           (string-join (mapcar (##concat "\\(?:" % "\\)") lst) "\\|")
+           filename))
+        (mise-default-exclude))))
 
-(defun my-asdf-vm-init ()
-  (interactive)
-  (let ((paths (cons asdf-vm-shims-path (asdf-vm--tool-bin-path-listing (asdf-vm-tool-versions)))))
-    (my-update-system-paths paths))
-  (when (called-interactively-p 'interactive)
-    (message "Updated Emacs system paths with asdf")))
+(with-eval-after-load "mise"
+  (setopt mise-exclude-predicate #'my-mise-exclude
+          mise-trust t))
 
-(my-asdf-vm-init)
+(my-defer-startup #'global-mise-mode)
 
 ;; Setup manpage browsing
 (cond ((eq system-type 'darwin)
@@ -2026,7 +2030,6 @@ This prevents the window from later moving back once the minibuffer is done show
 (defvar my-project-command-map
   (let ((map (make-sparse-keymap)))
     (keymap-set map "a a" #'project-remember-projects-under)
-    (keymap-set map "a s" #'my-asdf-vm-init)
     (keymap-set map "c" #'project-compile)
     (keymap-set map "f" #'project-find-file)
     (keymap-set map "g g" #'my-gptel-start)

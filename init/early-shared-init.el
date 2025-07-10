@@ -84,6 +84,7 @@
 (defvar my-minuet-auto-suggest-p nil)
 (defvar my-minuet-provider   'codestral)
 (defvar my-minuet-provider-remote 'codestral)
+(defvar my-mise-exclude-file-regexps '(".*"))
 (defvar my-remap-cmd-key-p   t)
 (defvar my-default-directory "~/")
 (defvar my-changelog-address "user@example.com")

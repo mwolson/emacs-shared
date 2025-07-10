@@ -85,7 +85,7 @@
                            corfu-terminal diff-hl diminish dumb-jump editorconfig el-mock embark
                            embark-consult erlang erlang-ts fish-mode flx git-modes gptel
                            graphql-ts-mode hydra js-comint jtsx kind-icon kotlin-ts-mode ligature
-                           lua-mode magit marginalia markdown-mode maxframe minions minuet
+                           lua-mode magit marginalia markdown-mode maxframe minions minuet mise
                            modus-themes nerd-icons-completion nix-ts-mode nsis-mode orderless
                            package-build package-utils plz poly-markdown polymode prisma-ts-mode
                            pulsar rainbow-delimiters reformatter rg slime swift-ts-mode

@@ -8,7 +8,6 @@
 ## Browsing Projects
 
 * <kbd>C-c p a a</kbd> to locate projects under the given directory
-* <kbd>C-c p a s</kbd> to switch Emacs to a local asdf-managed version of node.js or other development program
 * <kbd>C-c p c</kbd> to start a compilation at the top of the current project
 * <kbd>C-c p f</kbd> to find a file within the current project
 * <kbd>C-c p g g</kbd> to start a Claude AI interaction buffer

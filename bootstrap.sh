@@ -181,7 +181,7 @@ for fullmod in recipes/*; do
 done
 
 file_elisp_submodules="
-    asdf-vm flymake-stylelint gptel-fn-complete mermaid-ts-mode
+    flymake-stylelint gptel-fn-complete mermaid-ts-mode
 "
 for mod in $file_elisp_submodules; do
     update_submodule elisp/"$mod"
