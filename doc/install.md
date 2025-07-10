@@ -132,6 +132,7 @@ It's recommended to [install mise](https://mise.jdx.dev/getting-started.html), c
 ```sh
 mise use -g node@lts
 mise use -g pnpm
+mise settings add idiomatic_version_file_enable_tools node
 ```
 
 ## Install Omnisharp (optional)
