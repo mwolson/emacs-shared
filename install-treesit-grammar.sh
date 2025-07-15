@@ -50,7 +50,7 @@ function install_grammar() {
     if [[ -n "${needs_pnpm}" ]]; then
         echo "Installing ${lang} tree-sitter dependencies..."
         pnpm import --quiet
-        pnpm install --prod --quiet
+        pnpm install --quiet
     fi
 
     qpushd "$subdir"
