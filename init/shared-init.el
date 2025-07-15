@@ -2136,6 +2136,10 @@ This prevents the window from later moving back once the minibuffer is done show
     (keymap-set cider-repl-mode-map "s-n" #'cider-repl-next-input)
     (keymap-set cider-repl-mode-map "s-p" #'cider-repl-previous-input))
 
+  (with-eval-after-load "git-rebase"
+    (keymap-set git-rebase-mode-map "s-n" #'git-rebase-move-line-down)
+    (keymap-set git-rebase-mode-map "s-p" #'git-rebase-move-line-up))
+
   (with-eval-after-load "magit"
     (keymap-set magit-mode-map "s-1" #'magit-section-show-level-1-all)
     (keymap-set magit-mode-map "s-2" #'magit-section-show-level-2-all)
