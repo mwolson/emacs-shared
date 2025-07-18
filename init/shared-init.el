@@ -625,10 +625,12 @@ interactively.
                                    ("anthropic-beta" . "pdfs-2024-09-25")
                                    ("anthropic-beta" . "output-128k-2025-02-19")
                                    ("anthropic-beta" . "prompt-caching-2024-07-31"))))
-            :request-params `(:thinking (:type "enabled"
-                                         :budget_tokens ,my-gptel-claude-thinking-budget)
-                              :temperature 1
-                              :max_tokens 4096)))
+            :request-params
+            `(:thinking
+              (:type "enabled"
+               :budget_tokens ,my-gptel-claude-thinking-budget)
+              :temperature 1
+              :max_tokens 4096)))
 
     (setq my-gptel--codestral
           (gptel-make-openai "Codestral"
@@ -646,8 +648,9 @@ interactively.
             '(gemini-2.5-pro
               :description "Most powerful Gemini thinking model with maximum response accuracy and state-of-the-art performance"
               :capabilities (tool-use json media)
-              :mime-types ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
-                           "application/pdf" "text/plain" "text/csv" "text/html")
+              :mime-types
+              ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
+               "application/pdf" "text/plain" "text/csv" "text/html")
               :context-window 1048 ; 65536 output token limit
               :input-cost 1.25 ; 2.50 for >200k tokens
               :output-cost 10.00 ; 15 for >200k tokens
@@ -658,8 +661,9 @@ interactively.
       (setf (alist-get 'gemini-2.5-flash gptel--gemini-models)
             `(:description "Best Gemini model in terms of price-performance, offering well-rounded capabilities"
               :capabilities (tool-use json media)
-              :mime-types ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
-                           "application/pdf" "text/plain" "text/csv" "text/html")
+              :mime-types
+              ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
+               "application/pdf" "text/plain" "text/csv" "text/html")
               :context-window 1000
               :input-cost 0.15
               :output-cost 0.60 ; 3.50 for thinking
@@ -677,9 +681,10 @@ interactively.
           (gptel-make-gemini "Gemini (Lite Thinking)"
             :stream t
             :key #'gptel-api-key-from-auth-source
-            :request-params `(:generationConfig
-                              (:thinkingConfig
-                               (:thinkingBudget ,my-gptel-gemini-lite-thinking-budget)))))
+            :request-params
+            `(:generationConfig
+              (:thinkingConfig
+               (:thinkingBudget ,my-gptel-gemini-lite-thinking-budget)))))
 
     (setq my-gptel--groq
           (gptel-make-openai "Groq"
@@ -721,7 +726,11 @@ interactively.
             :endpoint "/api/v1/chat/completions"
             :stream t
             :key #'gptel-api-key-from-auth-source
-            :models '(openrouter/quasar-alpha)))
+            :request-params
+            '(:provider (:only ["deepinfra"])
+              :temperature 0.6)
+            :models '(moonshotai/kimi-k2
+                      :description "Kimi K2")))
 
     (run-hooks 'my-gptel-ensure-backends-hook))
 
@@ -849,15 +858,15 @@ interactively.
         my-gptel-model-remote 'o3-mini)
   (my-gptel-toggle-local))
 
-(defun my-gptel-toggle-openrouter ()
+(defun my-gptel-toggle-kimi-k2 ()
   (interactive)
   (require 'aidermacs)
   (require 'gptel)
   (require 'minuet)
   (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote "quasar"
+        my-aidermacs-model-remote "moonshotai/kimi-k2"
         my-gptel-backend-remote 'my-gptel--openrouter
-        my-gptel-model-remote 'openrouter/quasar-alpha)
+        my-gptel-model-remote 'moonshotai/kimi-k2)
   (my-gptel-toggle-local))
 
 (defun my-gptel-context-save-and-quit ()
