@@ -573,7 +573,8 @@ interactively.
 (defvar my-gptel--groq nil)
 (defvar my-gptel--local-ai nil)
 (defvar my-gptel--mistral nil)
-(defvar my-gptel--openrouter nil)
+(defvar my-gptel--openrouter-kimi-k2 nil)
+(defvar my-gptel--openrouter-qwen-3-coder nil)
 (defvar my-gptel-local-models
   '((Jan-nano-128k
      :description "Jan-nano-128k model"
@@ -720,7 +721,7 @@ interactively.
                        :capabilities (tool json url)
                        :context-window 131))))
 
-    (setq my-gptel--openrouter
+    (setq my-gptel--openrouter-kimi-k2
           (gptel-make-openai "OpenRouter"
             :host "openrouter.ai"
             :endpoint "/api/v1/chat/completions"
@@ -731,6 +732,20 @@ interactively.
               :temperature 0.6)
             :models '(moonshotai/kimi-k2
                       :description "Kimi K2")))
+    (setq my-gptel--openrouter-qwen-3-coder
+          (gptel-make-openai "OpenRouter"
+            :host "openrouter.ai"
+            :endpoint "/api/v1/chat/completions"
+            :stream t
+            :key #'gptel-api-key-from-auth-source
+            :request-params
+            '(:provider (:only ["parasail"])
+              :temperature 0.7
+              :top_k 20
+              :top:p 0.8
+              :repetition_penalty 1.05)
+            :models '(qwen/qwen3-coder
+                      :description "Qwen 3 Coder")))
 
     (run-hooks 'my-gptel-ensure-backends-hook))
 
@@ -865,8 +880,19 @@ interactively.
   (require 'minuet)
   (setq gptel-backend (symbol-value my-gptel-backend-local)
         my-aidermacs-model-remote "moonshotai/kimi-k2"
-        my-gptel-backend-remote 'my-gptel--openrouter
+        my-gptel-backend-remote 'my-gptel--openrouter-kimi-k2
         my-gptel-model-remote 'moonshotai/kimi-k2)
+  (my-gptel-toggle-local))
+
+(defun my-gptel-toggle-qwen3-coder ()
+  (interactive)
+  (require 'aidermacs)
+  (require 'gptel)
+  (require 'minuet)
+  (setq gptel-backend (symbol-value my-gptel-backend-local)
+        my-aidermacs-model-remote "qwen/qwen3-coder"
+        my-gptel-backend-remote 'my-gptel--openrouter-qwen-3-coder
+        my-gptel-model-remote 'qwen/qwen3-coder)
   (my-gptel-toggle-local))
 
 (defun my-gptel-context-save-and-quit ()
