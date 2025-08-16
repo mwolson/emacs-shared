@@ -47,7 +47,7 @@ if [[ $OS == Windows ]]; then
     fi
 fi
 
-REQUIRED_EMACS_VERSION=30.1
+REQUIRED_EMACS_VERSION=30.2
 
 # Set this environment variable to rebuild git-for-windows manpages; otherwise use pre-built ones
 : ${BUILD_GIT_MANPAGES:=}

@@ -96,15 +96,6 @@ When `depth' is provided, pass it to `add-hook'."
        (require 'woman)
        (defalias 'man #'woman)))
 
-(with-eval-after-load "man"
-  ;; workaround for emacs 30.1 regression:
-  ;; https://github.com/emacs-mirror/emacs/commit/fc5e905dc90e21b1a381bde42e22c06f45c17e16
-  (setq Man-filter-list
-        (cl-subst "-e '/^[[:cntrl:]][[:cntrl:]]*$/d'"
-                  "-e '/^[\\o001-\\o032][\\o001-\\o032]*$/d'"
-                  Man-filter-list
-                  :test #'equal)))
-
 ;;; Customizations
 
 ;; Load customizations

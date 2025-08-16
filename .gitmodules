@@ -1,143 +1,181 @@
 [submodule "elisp/flymake-stylelint"]
 	path = elisp/flymake-stylelint
+        ignore = dirty
 	url = https://github.com/orzechowskid/flymake-stylelint.git
 [submodule "elisp/gptel-fn-complete"]
 	path = elisp/gptel-fn-complete
+        ignore = dirty
 	url = https://github.com/mwolson/gptel-fn-complete.git
 [submodule "elisp/mermaid-ts-mode"]
 	path = elisp/mermaid-ts-mode
+        ignore = dirty
 	url = https://github.com/kiennq/mermaid-ts-mode.git
 [submodule "extra/emacs"]
         path = extra/emacs
+        ignore = dirty
         shallow = true
+        skipUpdate = true
         url = https://github.com/emacs-mirror/emacs.git
 [submodule "extra/git"]
         path = extra/git
+        ignore = dirty
         shallow = true
+        skipUpdate = true
         url = https://github.com/git-for-windows/git.git
 [submodule "extra/tree-sitter-module"]
         path = extra/tree-sitter-module
+        ignore = dirty
         shallow = true
         url = https://github.com/casouri/tree-sitter-module.git
 [submodule "extra/tree-sitter-astro"]
         path = extra/tree-sitter-astro
+        ignore = dirty
         shallow = true
         url = https://github.com/virchau13/tree-sitter-astro.git
 [submodule "extra/tree-sitter-bash"]
         path = extra/tree-sitter-bash
+        ignore = dirty
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-bash.git
 [submodule "extra/tree-sitter-c"]
 	path = extra/tree-sitter-c
+        ignore = dirty
         shallow = true
 	url = https://github.com/tree-sitter/tree-sitter-c.git
 [submodule "extra/tree-sitter-c-sharp"]
 	path = extra/tree-sitter-c-sharp
+        ignore = dirty
         shallow = true
     	url = https://github.com/tree-sitter/tree-sitter-c-sharp
 [submodule "extra/tree-sitter-clojure"]
         path = extra/tree-sitter-clojure
+        ignore = dirty
         shallow = true
         url = https://github.com/sogaiu/tree-sitter-clojure.git
 [submodule "extra/tree-sitter-cpp"]
         path = extra/tree-sitter-cpp
+        ignore = dirty
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-cpp.git
 [submodule "extra/tree-sitter-css"]
         path = extra/tree-sitter-css
+        ignore = dirty
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-css.git
 [submodule "extra/tree-sitter-dockerfile"]
         path = extra/tree-sitter-dockerfile
+        ignore = dirty
         shallow = true
         url = https://github.com/camdencheek/tree-sitter-dockerfile.git
 [submodule "extra/tree-sitter-erlang"]
         path = extra/tree-sitter-erlang
+        ignore = dirty
         shallow = true
         url = https://github.com/WhatsApp/tree-sitter-erlang.git
 [submodule "extra/tree-sitter-go"]
         path = extra/tree-sitter-go
+        ignore = dirty
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-go.git
 [submodule "extra/tree-sitter-gomod"]
         path = extra/tree-sitter-gomod
+        ignore = dirty
         shallow = true
         url = https://github.com/camdencheek/tree-sitter-go-mod.git
 [submodule "extra/tree-sitter-graphql"]
         path = extra/tree-sitter-graphql
+        ignore = dirty
         shallow = true
         url = https://github.com/bkegley/tree-sitter-graphql.git
 [submodule "extra/tree-sitter-html"]
         path = extra/tree-sitter-html
+        ignore = dirty
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-html.git
 [submodule "extra/tree-sitter-java"]
         path = extra/tree-sitter-java
+        ignore = dirty
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-java.git
 [submodule "extra/tree-sitter-javascript"]
         path = extra/tree-sitter-javascript
+        ignore = dirty
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-javascript
 [submodule "extra/tree-sitter-jsdoc"]
         path = extra/tree-sitter-jsdoc
+        ignore = dirty
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-jsdoc
 [submodule "extra/tree-sitter-json"]
 	path = extra/tree-sitter-json
+        ignore = dirty
         shallow = true
 	url = https://github.com/tree-sitter/tree-sitter-json.git
 [submodule "extra/tree-sitter-kotlin"]
         path = extra/tree-sitter-kotlin
+        ignore = dirty
         shallow = true
         url = https://github.com/fwcd/tree-sitter-kotlin.git
 [submodule "extra/tree-sitter-markdown"]
         path = extra/tree-sitter-markdown
+        ignore = dirty
         shallow = true
         url = https://github.com/tree-sitter-grammars/tree-sitter-markdown.git
         branch = split_parser
 [submodule "extra/tree-sitter-mermaid"]
 	path = extra/tree-sitter-mermaid
+        ignore = dirty
         shallow = true
 	url = https://github.com/monaqa/tree-sitter-mermaid
 [submodule "extra/tree-sitter-nix"]
         path = extra/tree-sitter-nix
+        ignore = dirty
         shallow = true
         url = https://github.com/nix-community/tree-sitter-nix.git
 [submodule "extra/tree-sitter-prisma"]
         path = extra/tree-sitter-prisma
+        ignore = dirty
         shallow = true
         url = https://github.com/victorhqc/tree-sitter-prisma.git
 [submodule "extra/tree-sitter-python"]
         path = extra/tree-sitter-python
+        ignore = dirty
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-python.git
 [submodule "extra/tree-sitter-rust"]
         path = extra/tree-sitter-rust
+        ignore = dirty
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-rust.git
 [submodule "extra/tree-sitter-swift"]
         path = extra/tree-sitter-swift
+        ignore = dirty
         shallow = true
         url = https://github.com/alex-pinkus/tree-sitter-swift.git
 [submodule "extra/tree-sitter-typescript"]
         path = extra/tree-sitter-typescript
+        ignore = dirty
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-typescript
 [submodule "extra/tree-sitter-yaml"]
         path = extra/tree-sitter-yaml
+        ignore = dirty
         shallow = true
         url = https://github.com/tree-sitter-grammars/tree-sitter-yaml.git
 [submodule "extra/tree-sitter-zig"]
         path = extra/tree-sitter-zig
+        ignore = dirty
         shallow = true
         url = https://github.com/mwolson/tree-sitter-zig.git
 [submodule "extra/vscode"]
 	path = extra/vscode
-	ignore = dirty
+        ignore = dirty
         shallow = true
 	url = https://github.com/microsoft/vscode.git
 [submodule "share/man"]
         path = share/man
+        ignore = dirty
         shallow = true
+        skipUpdate = true
         url = https://github.com/mwolson/git-for-windows-manpages.git
