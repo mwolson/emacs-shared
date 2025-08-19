@@ -98,7 +98,6 @@
  '(save-place t nil (saveplace))
  '(save-place-limit 20)
  '(select-enable-clipboard t)
- '(select-enable-primary t)
  '(show-paren-mode t)
  '(show-paren-style 'parenthesis)
  '(sql-product 'postgres)
