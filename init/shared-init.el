@@ -853,15 +853,15 @@ interactively.
         my-gptel-model-remote 'gemini-2.5-pro)
   (my-gptel-toggle-local))
 
-(defun my-gptel-toggle-openai ()
+(defun my-gptel-toggle-gpt-5 ()
   (interactive)
   (require 'aidermacs)
   (require 'gptel)
   (require 'minuet)
   (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote "gpt-4o"
+        my-aidermacs-model-remote "gpt-5"
         my-gptel-backend-remote 'gptel--openai
-        my-gptel-model-remote 'o3-mini)
+        my-gptel-model-remote 'gpt-5)
   (my-gptel-toggle-local))
 
 (defun my-gptel-toggle-kimi-k2 ()
