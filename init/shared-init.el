@@ -2004,8 +2004,6 @@ This prevents the window from later moving back once the minibuffer is done show
   (deactivate-mark))
 
 (with-eval-after-load "magit"
-  ;; magit-log currently has some kind of transient bug, so don't show transient menu
-  (keymap-set magit-mode-map "l" #'magit-log-current)
   (keymap-set magit-mode-map "M-w" #'my-magit-kill-ring-save)
   (keymap-set magit-diff-section-map "RET" #'magit-diff-visit-worktree-file)
   (keymap-set magit-hunk-section-map "RET" #'magit-diff-visit-worktree-file))
