@@ -564,6 +564,7 @@ interactively.
 (defvar my-gptel--groq nil)
 (defvar my-gptel--local-ai nil)
 (defvar my-gptel--mistral nil)
+(defvar my-gptel--openai nil)
 (defvar my-gptel--openrouter-kimi-k2 nil)
 (defvar my-gptel--openrouter-qwen-3-coder nil)
 (defvar my-gptel-local-models
@@ -712,6 +713,12 @@ interactively.
                        :capabilities (tool json url)
                        :context-window 131))))
 
+    (setq my-gptel--openai
+          (gptel-make-openai "ChatGPT"
+            :key #'gptel-api-key-from-auth-source
+            :stream t
+            :models gptel--openai-models))
+
     (setq my-gptel--openrouter-kimi-k2
           (gptel-make-openai "OpenRouter"
             :host "openrouter.ai"
@@ -747,7 +754,7 @@ interactively.
           gptel-temperature my-gptel-temperature)
 
   ;; uncomment to debug gptel:
-  ;; (setq gptel-log-level 'info)
+  ;; (setq gptel-log-level 'debug)
 
   (when my-gptel-system-prompt
     (setq gptel--system-message my-gptel-system-prompt)))
@@ -809,82 +816,59 @@ interactively.
     (message "gptel backend is now %s, aider %s, and minuet %s"
              backend-sym my-aidermacs-model minuet-provider)))
 
-(defun my-gptel-toggle-claude ()
+(defun my-gptel-toggle-model (backend-sym gptel-model-sym aider-model-str)
+  "Switch to a specific AI model."
   (interactive)
   (require 'aidermacs)
   (require 'gptel)
   (require 'minuet)
   (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote "anthropic/claude-sonnet-4-20250514"
-        my-gptel-backend-remote 'my-gptel--claude
-        my-gptel-model-remote 'claude-sonnet-4-20250514)
+        my-aidermacs-model-remote aider-model-str
+        my-gptel-backend-remote backend-sym
+        my-gptel-model-remote gptel-model-sym)
   (my-gptel-toggle-local))
+
+(defun my-gptel-toggle-claude ()
+  (interactive)
+  (my-gptel-toggle-model 'my-gptel--claude
+                         'claude-sonnet-4-20250514
+                         "anthropic/claude-sonnet-4-20250514"))
 
 (defun my-gptel-toggle-claude-thinking ()
   (interactive)
-  (require 'aidermacs)
-  (require 'gptel)
-  (require 'minuet)
-  (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote "anthropic/claude-sonnet-4-20250514-thinking"
-        my-gptel-backend-remote 'my-gptel--claude-thinking
-        my-gptel-model-remote 'claude-sonnet-4-20250514)
-  (my-gptel-toggle-local))
+  (my-gptel-toggle-model 'my-gptel--claude-thinking
+                         'claude-sonnet-4-20250514
+                         "anthropic/claude-sonnet-4-20250514-thinking"))
 
 (defun my-gptel-toggle-gemini-flash ()
   (interactive)
-  (require 'aidermacs)
-  (require 'gptel)
-  (require 'minuet)
-  (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote "gemini/gemini-2.5-flash"
-        my-gptel-backend-remote 'my-gptel--gemini-lite
-        my-gptel-model-remote 'gemini-2.5-flash)
-  (my-gptel-toggle-local))
+  (my-gptel-toggle-model 'my-gptel--gemini-lite
+                         'gemini-2.5-flash
+                         "gemini/gemini-2.5-flash"))
 
 (defun my-gptel-toggle-gemini-pro ()
   (interactive)
-  (require 'aidermacs)
-  (require 'gptel)
-  (require 'minuet)
-  (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote "gemini/gemini-2.5-pro"
-        my-gptel-backend-remote 'my-gptel--gemini
-        my-gptel-model-remote 'gemini-2.5-pro)
-  (my-gptel-toggle-local))
+  (my-gptel-toggle-model 'my-gptel--gemini
+                         'gemini-2.5-pro
+                         "gemini/gemini-2.5-pro"))
 
 (defun my-gptel-toggle-gpt-5 ()
   (interactive)
-  (require 'aidermacs)
-  (require 'gptel)
-  (require 'minuet)
-  (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote "gpt-5"
-        my-gptel-backend-remote 'gptel--openai
-        my-gptel-model-remote 'gpt-5)
-  (my-gptel-toggle-local))
+  (my-gptel-toggle-model 'my-gptel--openai
+                         'gpt-5
+                         "gpt-5"))
 
 (defun my-gptel-toggle-kimi-k2 ()
   (interactive)
-  (require 'aidermacs)
-  (require 'gptel)
-  (require 'minuet)
-  (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote "moonshotai/kimi-k2"
-        my-gptel-backend-remote 'my-gptel--openrouter-kimi-k2
-        my-gptel-model-remote 'moonshotai/kimi-k2)
-  (my-gptel-toggle-local))
+  (my-gptel-toggle-model 'my-gptel--openrouter-kimi-k2
+                         'moonshotai/kimi-k2
+                         "moonshotai/kimi-k2"))
 
 (defun my-gptel-toggle-qwen3-coder ()
   (interactive)
-  (require 'aidermacs)
-  (require 'gptel)
-  (require 'minuet)
-  (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote "qwen/qwen3-coder"
-        my-gptel-backend-remote 'my-gptel--openrouter-qwen-3-coder
-        my-gptel-model-remote 'qwen/qwen3-coder)
-  (my-gptel-toggle-local))
+  (my-gptel-toggle-model 'my-gptel--openrouter-qwen-3-coder
+                         'qwen/qwen3-coder
+                         "qwen/qwen3-coder"))
 
 (defun my-gptel-context-save-and-quit ()
   "Apply gptel context changes and quit."
@@ -1085,7 +1069,7 @@ CONTEXT and CALLBACK will be passed to the base function."
   (my-minuet-sync-options-from-gptel 'claude my-gptel--claude)
   (my-minuet-sync-options-from-gptel 'codestral my-gptel--codestral)
   (my-minuet-sync-options-from-gptel 'groq my-gptel--groq)
-  (my-minuet-sync-options-from-gptel 'openai gptel--openai)
+  (my-minuet-sync-options-from-gptel 'openai my-gptel--openai)
   (my-minuet-sync-options-from-gptel 'openai-compatible my-gptel--local-ai)
   (my-minuet-sync-options-from-gptel 'openai-fim-compatible my-gptel--local-ai)
 
