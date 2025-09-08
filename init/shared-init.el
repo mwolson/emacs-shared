@@ -368,6 +368,10 @@ When `depth' is provided, pass it to `add-hook'."
 ;; SSH conf files
 (add-to-list 'auto-mode-alist '("_config\\'" . conf-mode))
 
+;; /private/etc/ files on macOS
+(add-to-list 'auto-mode-alist '("\\`/private/etc/\\(?:DIR_COLORS\\|ethers\\|.?fstab\\|.*hosts\\|lesskey\\|login\\.?de\\(?:fs\\|vperm\\)\\|magic\\|mtab\\|pam\\.d/.*\\|permissions\\(?:\\.d/.+\\)?\\|protocols\\|rpc\\|services\\)\\'"
+                                . conf-space-mode))
+
 ;; Eslint
 (defun eslint-fix-file ()
   (interactive)
