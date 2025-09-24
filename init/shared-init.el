@@ -569,8 +569,10 @@ interactively.
 (defvar my-gptel--local-ai nil)
 (defvar my-gptel--mistral nil)
 (defvar my-gptel--openai nil)
+(defvar my-gptel--openrouter-grok-4-fast nil)
 (defvar my-gptel--openrouter-kimi-k2 nil)
 (defvar my-gptel--openrouter-qwen-3-coder nil)
+(defvar my-gptel--xai nil)
 (defvar my-gptel-local-models
   '((Jan-nano-128k
      :description "Jan-nano-128k model"
@@ -717,12 +719,35 @@ interactively.
                        :capabilities (tool json url)
                        :context-window 131))))
 
+    (require 'gptel-openai)
+    (unless (alist-get 'gpt-5-codex gptel--openai-models)
+      (setf (alist-get 'gpt-5-codex gptel--openai-models)
+            '(gpt-5-codex
+              :description "Flagship model for coding, reasoning, and agentic tasks across domains"
+              :capabilities (media tool-use json url)
+              :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
+              :context-window 400
+              :input-cost 1.25
+              :output-cost 10
+              :cutoff-date "2024-09"))
+      (setopt gptel--openai-models gptel--openai-models))
+
     (setq my-gptel--openai
           (gptel-make-openai "ChatGPT"
             :key #'gptel-api-key-from-auth-source
             :stream t
             :models gptel--openai-models))
 
+    (setq my-gptel--openrouter-grok-4-fast
+          (gptel-make-openai "OpenRouter"
+            :host "openrouter.ai"
+            :endpoint "/api/v1/chat/completions"
+            :stream t
+            :key #'gptel-api-key-from-auth-source
+            :request-params
+            '(:provider (:only ["xai"]))
+            :models '(x-ai/grok-4-fast:free
+                      :description "Grok 4 Fast")))
     (setq my-gptel--openrouter-kimi-k2
           (gptel-make-openai "OpenRouter"
             :host "openrouter.ai"
@@ -748,6 +773,18 @@ interactively.
               :repetition_penalty 1.05)
             :models '(qwen/qwen3-coder
                       :description "Qwen 3 Coder")))
+
+    (require 'gptel-openai-extras)
+    (setq my-gptel--xai
+          (gptel-make-xai "xAI"
+            :key #'gptel-api-key-from-auth-source
+            :stream t
+            :models '((grok-4-fast
+                       :description "Fast reasoning model"
+                       :capabilities '(tool-use json reasoning)
+                       :context-window 256
+                       :input-cost 0.2
+                       :output-cost 1.5))))
 
     (run-hooks 'my-gptel-ensure-backends-hook))
 
@@ -861,6 +898,12 @@ interactively.
   (my-gptel-toggle-model 'my-gptel--openai
                          'gpt-5
                          "gpt-5"))
+
+(defun my-gptel-toggle-grok-4-fast ()
+  (interactive)
+  (my-gptel-toggle-model 'my-gptel--openrouter-grok-4-fast
+                         'x-ai/grok-4-fast:free
+                         "x-ai/grok-4-fast:free"))
 
 (defun my-gptel-toggle-kimi-k2 ()
   (interactive)
