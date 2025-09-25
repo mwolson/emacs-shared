@@ -296,7 +296,46 @@ When `depth' is provided, pass it to `add-hook'."
 
 (defvar my-polymode-aliases '())
 
-;; Apheleia for automatic running of prettier
+;; Apheleia for automatic code formatting
+(defun my-detect-js-formatter ()
+  "Detect whether to use Biome or Prettier based on project configuration."
+  (let* ((root (or (my-project-root) default-directory))
+         (biome-json (expand-file-name "biome.json" root))
+         (biome-jsonc (expand-file-name "biome.jsonc" root))
+         (prettier-config (expand-file-name ".prettierrc" root))
+         (prettier-config-js (expand-file-name ".prettierrc.js" root))
+         (prettier-config-json (expand-file-name ".prettierrc.json" root))
+         (prettier-config-yaml (expand-file-name ".prettierrc.yaml" root))
+         (prettier-config-yml (expand-file-name ".prettierrc.yml" root))
+         (package-json (expand-file-name "package.json" root)))
+    (cond
+     ((or (file-exists-p biome-json)
+          (file-exists-p biome-jsonc))
+      'biome)
+     ((or (file-exists-p prettier-config)
+          (file-exists-p prettier-config-js)
+          (file-exists-p prettier-config-json)
+          (file-exists-p prettier-config-yaml)
+          (file-exists-p prettier-config-yml))
+      'prettier)
+     ((and package-json
+           (file-exists-p package-json)
+           (with-temp-buffer
+             (insert-file-contents package-json)
+             (re-search-forward "\"biome\"" nil t)))
+      'biome)
+     ((and package-json
+           (file-exists-p package-json)
+           (with-temp-buffer
+             (insert-file-contents package-json)
+             (re-search-forward "\"prettier\"" nil t)))
+      'prettier)
+     (t nil))))
+
+(defun my-apheleia-set-js-formatter ()
+  "Set apheleia JS formatter based on project configuration."
+  (setq-local apheleia-formatter (my-detect-js-formatter)))
+
 (apheleia-global-mode 1)
 
 ;; Atomic Chrome: Edit Server support for launching Emacs from browsers
@@ -1307,6 +1346,7 @@ CONTEXT and CALLBACK will be passed to the base function."
 
 ;; GraphQL
 (add-to-list 'auto-mode-alist '("\\.\\(graphql\\|gql\\)\\'" . graphql-ts-mode))
+(add-hook 'graphql-ts-mode-hook #'my-apheleia-set-js-formatter)
 
 ;; HTML
 (my-remap-major-mode 'html-mode 'html-ts-mode)
@@ -1332,6 +1372,7 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-hook 'json-ts-mode-hook #'add-node-modules-path t)
 (add-hook 'json-ts-mode-hook #'eglot-ensure)
 (add-hook 'json-ts-mode-hook #'my-setup-web-ligatures t)
+(add-hook 'json-ts-mode-hook #'my-apheleia-set-js-formatter)
 
 ;; JTSX (Astro, Javascript, Typescript, and JSX support)
 (defvar my-jtsx-major-modes
@@ -1371,13 +1412,15 @@ CONTEXT and CALLBACK will be passed to the base function."
     (add-hook hook #'eglot-ensure t)
     (add-hook hook #'my-node-repl-setup t)
     (add-hook hook #'my-eslint-setup t)
-    (add-hook hook #'my-setup-web-ligatures t)))
+    (add-hook hook #'my-setup-web-ligatures t)
+    (add-hook hook #'my-apheleia-set-js-formatter)))
 
 (with-eval-after-load "polymode-core"
   (pm-around-advice
    '(add-node-modules-path
      my-node-repl-setup
-     my-eslint-setup)
+     my-eslint-setup
+     my-apheleia-set-js-formatter)
    #'polymode-inhibit-in-indirect-buffers))
 
 (defclass eglot-deno (eglot-lsp-server) ()
