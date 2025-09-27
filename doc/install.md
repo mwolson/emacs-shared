@@ -130,8 +130,7 @@ You'll need to [install ninja](https://ninja-build.org/) in order to support fas
 It's recommended to [install mise](https://mise.jdx.dev/getting-started.html), configure your shell to work with it, restart any open terminals, and then install the latest LTS node.js version and pnpm with:
 
 ```sh
-mise use -g node@lts
-mise use -g pnpm
+mise use -g node@lts pnpm@latest
 mise settings add idiomatic_version_file_enable_tools node
 ```
 
@@ -467,6 +466,7 @@ To keep up-to-date on the latest `emacs-shared` changes, do:
 
 ```sh
 cd ~/emacs-shared
+git config submodule.recurse false
 git pull
 ./bootstrap.sh
 ```
