@@ -297,44 +297,55 @@ When `depth' is provided, pass it to `add-hook'."
 (defvar my-polymode-aliases '())
 
 ;; Apheleia for automatic code formatting
+(defun my-detect-biome ()
+  "Detect whether to use Biome based on project configuration.
+
+Returns the config filename if one is found, `t' if found in package.json"
+  (let ((root (or (my-project-root) default-directory)))
+    (or (file-exists-p (expand-file-name "biome.json" root))
+        (file-exists-p (expand-file-name "biome.jsonc" root))
+        (and (file-exists-p (expand-file-name "package.json" root))
+             (with-temp-buffer
+               (insert-file-contents (expand-file-name "package.json" root))
+               (re-search-forward "\"biome\"" nil t))
+             t))))
+
+(defun my-detect-prettier ()
+  "Detect whether to use Prettier based on project configuration.
+
+Returns the config filename if one is found, `t' if found in package.json"
+  (let ((root (or (my-project-root) default-directory)))
+    (or (file-exists-p (expand-file-name ".prettierrc.js" root))
+        (file-exists-p (expand-file-name ".prettierrc.json" root))
+        (file-exists-p (expand-file-name ".prettierrc" root))
+        (file-exists-p (expand-file-name ".prettierrc.yaml" root))
+        (file-exists-p (expand-file-name ".prettierrc.yml" root))
+        (and (file-exists-p (expand-file-name "package.json" root))
+             (with-temp-buffer
+               (insert-file-contents (expand-file-name "package.json" root))
+               (re-search-forward "\"prettier\"" nil t))
+             t))))
+
 (defun my-detect-js-formatter ()
   "Detect whether to use Biome or Prettier based on project configuration."
-  (let* ((root (or (my-project-root) default-directory))
-         (biome-json (expand-file-name "biome.json" root))
-         (biome-jsonc (expand-file-name "biome.jsonc" root))
-         (prettier-config (expand-file-name ".prettierrc" root))
-         (prettier-config-js (expand-file-name ".prettierrc.js" root))
-         (prettier-config-json (expand-file-name ".prettierrc.json" root))
-         (prettier-config-yaml (expand-file-name ".prettierrc.yaml" root))
-         (prettier-config-yml (expand-file-name ".prettierrc.yml" root))
-         (package-json (expand-file-name "package.json" root)))
-    (cond
-     ((or (file-exists-p biome-json)
-          (file-exists-p biome-jsonc))
-      'biome)
-     ((or (file-exists-p prettier-config)
-          (file-exists-p prettier-config-js)
-          (file-exists-p prettier-config-json)
-          (file-exists-p prettier-config-yaml)
-          (file-exists-p prettier-config-yml))
-      'prettier)
-     ((and package-json
-           (file-exists-p package-json)
-           (with-temp-buffer
-             (insert-file-contents package-json)
-             (re-search-forward "\"biome\"" nil t)))
-      'biome)
-     ((and package-json
-           (file-exists-p package-json)
-           (with-temp-buffer
-             (insert-file-contents package-json)
-             (re-search-forward "\"prettier\"" nil t)))
-      'prettier)
-     (t nil))))
+  (cond
+   ((my-detect-biome) 'biome)
+   ((my-detect-prettier) 'prettier)
+   (t nil)))
+
+(defun my-detect-markdown-formatter ()
+  "Detect whether to use Prettier based on project configuration."
+  (cond
+   ((my-detect-prettier) 'prettier)
+   (t nil)))
 
 (defun my-apheleia-set-js-formatter ()
   "Set apheleia JS formatter based on project configuration."
   (setq-local apheleia-formatter (my-detect-js-formatter)))
+
+(defun my-apheleia-set-markdown-formatter ()
+  "Set apheleia markdown formatter based on project configuration."
+  (setq-local apheleia-formatter (my-detect-markdown-formatter)))
 
 (apheleia-global-mode 1)
 
@@ -2024,6 +2035,7 @@ This prevents the window from later moving back once the minibuffer is done show
   (keymap-set markdown-mode-map "M-<right>" #'forward-word))
 
 (add-hook 'markdown-mode-hook #'my-markdown-mode-keys t)
+(add-hook 'markdown-mode-hook #'my-apheleia-set-markdown-formatter)
 
 ;; Support for .nsh files
 (setq auto-mode-alist (append '(("\\.[Nn][Ss][HhIi]\\'" . nsis-mode)) auto-mode-alist))
