@@ -339,6 +339,12 @@ Returns the config filename if one is found, `t' if found in package.json"
    ((my-detect-prettier) 'prettier)
    (t nil)))
 
+(defun my-detect-yaml-formatter ()
+  "Detect whether to use Prettier based on project configuration."
+  (cond
+   ((my-detect-prettier) 'prettier)
+   (t nil)))
+
 (defun my-apheleia-set-js-formatter ()
   "Set apheleia JS formatter based on project configuration."
   (setq-local apheleia-formatter (my-detect-js-formatter)))
@@ -346,6 +352,10 @@ Returns the config filename if one is found, `t' if found in package.json"
 (defun my-apheleia-set-markdown-formatter ()
   "Set apheleia markdown formatter based on project configuration."
   (setq-local apheleia-formatter (my-detect-markdown-formatter)))
+
+(defun my-apheleia-set-yaml-formatter ()
+  "Set apheleia yaml formatter based on project configuration."
+  (setq-local apheleia-formatter (my-detect-yaml-formatter)))
 
 (apheleia-global-mode 1)
 
@@ -1552,6 +1562,7 @@ CONTEXT and CALLBACK will be passed to the base function."
   (run-hooks 'prog-mode-hook))
 
 (add-hook 'yaml-ts-mode-hook #'my-run-prog-mode-hooks t)
+(add-hook 'yaml-ts-mode-hook #'my-apheleia-set-yaml-formatter)
 (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
 
 ;; Zig
