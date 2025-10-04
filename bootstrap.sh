@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. "$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"/include.sh
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"/scripts/include.sh
 
 NOTICES=()
 OS="$(get_os)"
@@ -41,7 +41,8 @@ if [[ $OS == Windows ]]; then
     compile_check ninja
 
     if ! uname_grep 'MINGW64_NT'; then
-        # Symptom of building in Git Bash is that Emacs will crash when trying to use magit
+        # Symptom of building in Git Bash is that Emacs will crash when
+        # trying to use magit
         notify "Warning: Cannot compile binaries unless you are in an MSYS2 MinGW 64-bit terminal, skipped compilation"
         BUILD=
     fi
@@ -49,7 +50,8 @@ fi
 
 REQUIRED_EMACS_VERSION=30.2
 
-# Set this environment variable to rebuild git-for-windows manpages; otherwise use pre-built ones
+# Set this environment variable to rebuild git-for-windows manpages;
+# otherwise use pre-built ones
 : ${BUILD_GIT_MANPAGES:=}
 
 if [[ $OS == Windows ]]; then
@@ -125,11 +127,11 @@ if [[ -n "$BUILD" ]]; then
     pnpm run compile:lsp
 fi
 
-emacs_script "$(get_topdir)"/install-packages.el
+emacs_script "$(get_topdir)"/scripts/install-packages.el
 
 if [[ -n "$BUILD" ]]; then
     echo "Compiling vterm..."
-    emacs_script "$(get_topdir)"/install-vterm.el
+    emacs_script "$(get_topdir)"/scripts/install-vterm.el
 fi
 
 set_treesit_dir
@@ -165,7 +167,8 @@ if [[ -n "$BUILD_GIT_MANPAGES" ]]; then
       /ucrt64/share/xml/docbook/xml-dtd-4.5 \
       /etc/xml/catalog
 
-    # see also end of INSTALL doc at https://github.com/git-for-windows/git/blob/main/INSTALL#L229
+    # see also end of INSTALL doc at
+    # https://github.com/git-for-windows/git/blob/main/INSTALL#L229
     make prefix=$DESTDIR install-man
 
     notify "Built manpages, make sure to check them in"
@@ -191,13 +194,13 @@ done
 update_submodule extra/emacs
 
 if [[ -n "$BUILD" ]]; then
-    "$(get_topdir)"/install-treesit-grammar.sh \
+    "$(get_topdir)"/scripts/install-treesit-grammar.sh \
         markdown_inline markdown "tree-sitter-markdown-inline/src"
 
-    "$(get_topdir)"/install-treesit-grammar.sh \
+    "$(get_topdir)"/scripts/install-treesit-grammar.sh \
         tsx typescript "tsx/src"
 
-    "$(get_topdir)"/install-treesit-grammar.sh \
+    "$(get_topdir)"/scripts/install-treesit-grammar.sh \
         typescript "" "typescript/src"
 
     tree_sitter_modules="
@@ -205,9 +208,10 @@ if [[ -n "$BUILD" ]]; then
         html java javascript jsdoc json kotlin mermaid nix prisma python rust
         yaml zig
     "
-    <<< $tree_sitter_modules xargs -P4 -n1 "$(get_topdir)"/install-treesit-grammar.sh
+    <<< $tree_sitter_modules xargs -P4 -n1 \
+        "$(get_topdir)"/scripts/install-treesit-grammar.sh
 
-    "$(get_topdir)"/install-treesit-grammar.sh swift "" "" pnpm
+    "$(get_topdir)"/scripts/install-treesit-grammar.sh swift "" "" pnpm
 else
     notify "Warning: tree-sitter modules will not be built, some major modes will not work"
 fi

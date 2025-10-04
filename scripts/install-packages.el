@@ -1,6 +1,6 @@
 ;; install-packages.el --- -*- lexical-binding: t -*-
 
-(load-file (concat (file-name-directory load-file-name) "init/settings.el"))
+(load-file (concat (file-name-directory load-file-name) "../init/settings.el"))
 
 (require 'treesit) ; to silence an autoload warning, seems like emacs bug
 (require 'package)

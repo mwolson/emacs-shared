@@ -1,6 +1,6 @@
 ;; get-treesit-dir.el --- -*- lexical-binding: t -*-
 
-(load-file (concat (file-name-directory load-file-name) "init/settings.el"))
+(load-file (concat (file-name-directory load-file-name) "../init/settings.el"))
 
 (require 'treesit)
 (require 'package)

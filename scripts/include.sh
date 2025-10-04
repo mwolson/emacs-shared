@@ -32,7 +32,7 @@ function get_topdir() {
     if [[ -n "${_DOTFILES_TOPDIR}" ]]; then
         echo "${_DOTFILES_TOPDIR}"
     else
-        qpushd "$(dirname $0)"
+        qpushd "$(dirname "${BASH_SOURCE[0]}")/.."
         echo "$PWD"
         qpopd
     fi
@@ -62,11 +62,11 @@ function byte_compile() {
         echo "Warning: unknown type for $2"
     fi
 
-    emacs_script "$(get_topdir)"/byte-compile-local.el "$@"
+    emacs_script "$(get_topdir)"/scripts/byte-compile-local.el "$@"
 }
 
 function set_treesit_dir() {
-    emacs_script "$(get_topdir)"/get-treesit-dir.el "$@" > \
+    emacs_script "$(get_topdir)"/scripts/get-treesit-dir.el "$@" > \
         "$(get_topdir)"/build/.treesit-dir
 }
 
@@ -74,6 +74,3 @@ function get_treesit_dir() {
     cat "$(get_topdir)"/build/.treesit-dir
 }
 
-function install_treesit_grammar() {
-    emacs_script "$(get_topdir)"/install-treesit-grammar.el "$@"
-}
