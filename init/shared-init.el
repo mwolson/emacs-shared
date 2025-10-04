@@ -932,14 +932,14 @@ interactively.
 (defun my-gptel-toggle-claude ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--claude
-                         'claude-sonnet-4-20250514
-                         "anthropic/claude-sonnet-4-20250514"))
+                         'claude-sonnet-4-5-20250929
+                         "anthropic/claude-sonnet-4-5-20250929"))
 
 (defun my-gptel-toggle-claude-thinking ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--claude-thinking
-                         'claude-sonnet-4-20250514
-                         "anthropic/claude-sonnet-4-20250514-thinking"))
+                         'claude-sonnet-4-5-20250929
+                         "anthropic/claude-sonnet-4-5-20250929-thinking"))
 
 (defun my-gptel-toggle-gemini-flash ()
   (interactive)
