@@ -1413,6 +1413,7 @@ CONTEXT and CALLBACK will be passed to the base function."
 (add-to-list 'auto-mode-alist '("/\\.graphqlconfig\\'" . json-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.npmrc\\'" . conf-mode))
 (add-to-list 'auto-mode-alist '("/\\.prettierrc\\'" . json-ts-mode))
+(add-to-list 'auto-mode-alist '("/\\.prettierignore\\'" . gitignore-mode))
 (add-to-list 'auto-mode-alist '("/\\yarn.lock\\'" . conf-mode))
 (add-to-list 'auto-mode-alist '("\\.yarnrc\\'" . yaml-ts-mode))
 (add-to-list 'my-polymode-aliases '(javascript . my-real-js-mode))
