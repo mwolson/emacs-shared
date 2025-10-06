@@ -1422,6 +1422,13 @@ CONTEXT and CALLBACK will be passed to the base function."
 (my-remap-major-mode 'js-mode 'jtsx-jsx-mode)
 (my-remap-major-mode 'ts-mode 'jtsx-tsx-mode)
 
+(defun my-apheleia-skip-bun ()
+  (when (string-match-p "/bun\\.lock\\'" (or buffer-file-name ""))
+    (setq apheleia-inhibit t)))
+
+(add-to-list 'auto-mode-alist '("/bun\\.lock\\'" . json-ts-mode))
+(add-hook 'json-ts-mode-hook #'my-apheleia-skip-bun -100)
+
 (add-to-list 'eglot-server-programs
              `(astro-mode . ("astro-ls" "--stdio"
                              :initializationOptions
@@ -1511,7 +1518,7 @@ CONTEXT and CALLBACK will be passed to the base function."
 
   (add-hook 'project-find-functions #'my-project-find-python-project))
 
-(add-to-list 'auto-mode-alist '("/uv\\.lock\\'" . conf-toml-mode))
+(add-to-list 'auto-mode-alist '("/uv\\.lock\\'" . toml-ts-mode))
 (my-remap-major-mode 'python-mode 'python-ts-mode)
 (add-to-list 'eglot-server-programs
              '((python-ts-mode python-mode)
@@ -1546,6 +1553,9 @@ CONTEXT and CALLBACK will be passed to the base function."
 ;; Swift
 (add-to-list 'auto-mode-alist '("\\.swift\\(interface\\)?\\'" . swift-ts-mode))
 (add-to-list 'my-polymode-aliases '(swift . swift-ts-mode))
+
+;; TOML
+(add-to-list 'auto-mode-alist '("\\.toml\\'" . toml-ts-mode))
 
 ;; Web Mode
 (add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
@@ -2049,7 +2059,7 @@ This prevents the window from later moving back once the minibuffer is done show
 (add-hook 'markdown-mode-hook #'my-apheleia-set-markdown-formatter)
 
 ;; Support for .nsh files
-(setq auto-mode-alist (append '(("\\.[Nn][Ss][HhIi]\\'" . nsis-mode)) auto-mode-alist))
+(add-to-list 'auto-mode-alist '("\\.[Nn][Ss][HhIi]\\'" . nsis-mode))
 
 ;; Support for .plist files from https://www.emacswiki.org/emacs/MacOSXPlist
 (add-to-list 'jka-compr-compression-info-list

@@ -153,6 +153,11 @@
         ignore = dirty
         shallow = true
         url = https://github.com/alex-pinkus/tree-sitter-swift.git
+[submodule "extra/tree-sitter-toml"]
+	path = extra/tree-sitter-toml
+        ignore = dirty
+        shallow = true
+	url = https://github.com/tree-sitter-grammars/tree-sitter-toml.git
 [submodule "extra/tree-sitter-typescript"]
         path = extra/tree-sitter-typescript
         ignore = dirty

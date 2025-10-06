@@ -206,7 +206,7 @@ if [[ -n "$BUILD" ]]; then
     tree_sitter_modules="
         astro bash c c-sharp clojure cpp css dockerfile erlang go gomod graphql
         html java javascript jsdoc json kotlin mermaid nix prisma python rust
-        yaml zig
+        toml yaml zig
     "
     <<< $tree_sitter_modules xargs -P4 -n1 \
         "$(get_topdir)"/scripts/install-treesit-grammar.sh
