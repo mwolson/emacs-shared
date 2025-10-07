@@ -10,6 +10,10 @@
 	path = elisp/mermaid-ts-mode
         ignore = dirty
 	url = https://github.com/kiennq/mermaid-ts-mode.git
+[submodule "elisp/vue-ts-mode"]
+	path = elisp/vue-ts-mode
+        ignore = dirty
+	url = https://github.com/8uff3r/vue-ts-mode.git
 [submodule "extra/emacs"]
         path = extra/emacs
         ignore = dirty
@@ -163,6 +167,11 @@
         ignore = dirty
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-typescript
+[submodule "extra/tree-sitter-vue"]
+	path = extra/tree-sitter-vue
+        ignore = dirty
+        shallow = true
+	url = https://github.com/ikatyang/tree-sitter-vue.git
 [submodule "extra/tree-sitter-yaml"]
         path = extra/tree-sitter-yaml
         ignore = dirty

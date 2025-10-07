@@ -1558,6 +1558,11 @@ CONTEXT and CALLBACK will be passed to the base function."
 ;; TOML
 (add-to-list 'auto-mode-alist '("\\.toml\\'" . toml-ts-mode))
 
+;; Vue
+(add-to-list 'load-path (concat my-emacs-path "elisp/vue-ts-mode"))
+(autoload #'vue-ts-mode "vue-ts-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.vue\\'" . vue-ts-mode))
+
 ;; Web Mode
 (add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
 (add-hook 'web-mode-hook #'add-node-modules-path t)
