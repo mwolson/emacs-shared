@@ -1563,6 +1563,12 @@ CONTEXT and CALLBACK will be passed to the base function."
 (autoload #'vue-ts-mode "vue-ts-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.vue\\'" . vue-ts-mode))
 
+(defun my-vue-ts-set-fontify-css-colors ()
+  (setq-local font-lock-fontify-region-function #'css--fontify-region))
+
+(with-eval-after-load "vue-ts-mode"
+  (add-hook 'vue-ts-mode-hook #'my-vue-ts-set-fontify-css-colors))
+
 ;; Web Mode
 (add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
 (add-hook 'web-mode-hook #'add-node-modules-path t)
