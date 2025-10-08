@@ -1882,9 +1882,10 @@ This prevents the window from later moving back once the minibuffer is done show
   (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
 
 ;; Set up project.el
-(defun my-project-root ()
+(defun my-project-root (&optional maybe-prompt)
   "Return root directory of the current project."
-  (project-root (project-current t)))
+  (when-let* ((proj (project-current maybe-prompt)))
+    (project-root proj)))
 
 ;; Support copying paths relative to the current buffer
 (defun my-path-of-current-buffer ()
@@ -1898,7 +1899,8 @@ This prevents the window from later moving back once the minibuffer is done show
 
 (defun my-copy-project-relative-path-of-current-buffer ()
   (interactive)
-  (let ((filepath (file-relative-name (my-path-of-current-buffer) (my-project-root))))
+  (let ((filepath (file-relative-name
+                   (my-path-of-current-buffer) (my-project-root))))
     (kill-new filepath)
     (message "Copied '%s' to clipboard" filepath)))
 
@@ -1914,7 +1916,7 @@ This prevents the window from later moving back once the minibuffer is done show
 
 (defun my-aidermacs-project-menu ()
   (interactive)
-  (let ((default-directory (my-project-root)))
+  (let ((default-directory (my-project-root t)))
     (find-file default-directory)
     (aidermacs-transient-menu)))
 
