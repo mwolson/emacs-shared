@@ -9,7 +9,7 @@ function qpushd() {
 }
 
 function qwhich() {
-    which "$1" > /dev/null 2>&1
+    command -v "$1" >/dev/null 2>&1
 }
 
 function uname_grep() {
