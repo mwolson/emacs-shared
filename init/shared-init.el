@@ -363,6 +363,15 @@ Returns the config filename if one is found, `t' if found in package.json"
 (when my-server-start-p
   (my-defer-startup #'atomic-chrome-start-server))
 
+;; Caddy conf files
+(define-derived-mode my-caddyfile-mode conf-space-mode "Caddy"
+  "Minor mode for highlighting caddy config files."
+  (setq-local indent-tabs-mode t)
+  (setq-local tab-width 4))
+
+(add-to-list 'auto-mode-alist '("/caddy\\.conf\\'" . my-caddyfile-mode))
+(add-to-list 'auto-mode-alist '("/Caddyfile\\'" . my-caddyfile-mode))
+
 ;; Compile buffers
 (with-eval-after-load "compile"
   (keymap-set compilation-mode-map "M-g" #'recompile)
