@@ -2,11 +2,11 @@
 
 ## Install git
 
-*Windows*
+_Windows_
 
 On Windows, the best way to do this is to install [Git for Windows](https://git-scm.com/download/win). Enabling cache during installation is recommended for a massive speedup.
 
-*macOS*
+_macOS_
 
 On macOS, the best way to do this is to install Xcode from App Store.
 
@@ -21,11 +21,13 @@ It's recommended to do an [individual install of Chocolatey](https://chocolatey.
 ## (Windows only) Install MSYS2
 
 You'll need a working version of `make.exe` in order to complete the bootstrap script. Here's the recommended steps for that:
-* Download the [MSYS2 installer](https://www.msys2.org/#installation), choosing the one for `x86_64`
-* Run the installer, choosing the default install location (or if you change it, replacing paths as appropriate below)
-* Close the command prompt that came with the installer
-* Use the Start Menu to search for and open the task `Edit the System Environment Variables`. It may pop behind any open windows - if so, bring it to the front. Click `Environment Variables`. In the `System variables` section, double-click on `Path`. Add entries for `C:\msys64\usr\bin` and `C:\msys64\ucrt64\bin` (in that order) and move them to the very bottom of the list. Click `OK` until all of those windows close.
-* Open an "MSYS2 MinGW 64-bit" window and run these commands:
+
+- Download the [MSYS2 installer](https://www.msys2.org/#installation), choosing the one for `x86_64`
+- Run the installer, choosing the default install location (or if you change it, replacing paths as appropriate below)
+- Close the command prompt that came with the installer
+- Use the Start Menu to search for and open the task `Edit the System Environment Variables`. It may pop behind any open windows - if so, bring it to the front. Click `Environment Variables`. In the `System variables` section, double-click on `Path`. Add entries for `C:\msys64\usr\bin` and `C:\msys64\ucrt64\bin` (in that order) and move them to the very bottom of the list. Click `OK` until all of those windows close.
+- Open an "MSYS2 MinGW 64-bit" window and run these commands:
+
 ```sh
 pacman -Sy pacman
 pacman -Syu
@@ -33,7 +35,9 @@ pacman -Su
 pacman -S --needed base-devel libssh2-devel msys/man-db xmlto
 pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,cmake,fd,gcc,gnutls,go,gopls,make,ninja,ripgrep,rust}
 ```
-* Make sure you do not have git installed through MSYS2 (we want it to come from Git For Windows instead so we get caching) by running this and ignoring any "target not found" errors:
+
+- Make sure you do not have git installed through MSYS2 (we want it to come from Git For Windows instead so we get caching) by running this and ignoring any "target not found" errors:
+
 ```sh
 pacman -R git
 ```
@@ -62,16 +66,6 @@ For a full install, in addition to the above also run:
 ```sh
 sudo paru -S clojure clojure-lsp-bin jdtls leiningen omnisharp-roslyn-bin zprint-bin
 ```
-
-## (Optional) Install aider
-
-You'll need to [install aider](https://aider.chat/docs/install.html) in order to use some AI features with `aidermacs`. It's recommended to [install uv](https://docs.astral.sh/uv/getting-started/installation/) first, and then do:
-
-```sh
-uv tool install --force --python python3.12 aider-chat@latest
-```
-
-Make sure to also add `export PATH=~/.local/bin:"$PATH"` or similar to your `.bashrc` or `.zshenv` file and then restart the shell to make the `aider` command available.
 
 ## Install basedpyright
 
@@ -138,15 +132,15 @@ mise settings add idiomatic_version_file_enable_tools node
 
 Since this requires installing a .NET SDK, it's optional.
 
-*Windows*
+_Windows_
 
 Run `choco install omnisharp`
 
-*Mac OS*
+_Mac OS_
 
 Run:
 
-``` sh
+```sh
 brew install omnisharp/omnisharp-roslyn/omnisharp-mono
 sudo mkdir -p /usr/local/opt
 sudo ln -s /opt/homebrew/opt/omnisharp-mono /usr/local/opt
@@ -154,7 +148,7 @@ sudo ln -s /opt/homebrew/opt/omnisharp-mono /usr/local/opt
 
 Confirm that you can run `omnisharp --help` and get a help menu. If you get "assembly not found", make sure to create `/usr/local/opt` and set up the symlink as above.
 
-*Arch Linux*
+_Arch Linux_
 
 Run `paru -S omnisharp-roslyn-bin`
 
@@ -193,6 +187,7 @@ The recommended version is Emacs 30.2. The recommended ways to install Emacs for
   - Relaunch any open Git Bash or MSYS2 windows
 
 If upgrading:
+
 - Unpin any pinned Emacs icons
 - Change any existing desktop icons to point to `C:\Program Files\Emacs\emacs-30.2\bin\runemacs.exe`.
 
@@ -212,11 +207,11 @@ You'll also probably want to go into System Settings -> Privacy & Security -> Fu
 
 ### Install Emacs on Arch Linux
 
-* If you want Emacs to be hyper-fast and stable but require a bit of extra setup, install the `emacs-lucid` AUR package.
-* If you want Emacs to be reasonably fast, install the `emacs` package.
-* If you are on Wayland (the default window system) and want better font hinting at the cost of much slower editing, install the `emacs-wayland` package.
+- If you want Emacs to be hyper-fast and stable but require a bit of extra setup, install the `emacs-lucid` AUR package.
+- If you want Emacs to be reasonably fast, install the `emacs` package.
+- If you are on Wayland (the default window system) and want better font hinting at the cost of much slower editing, install the `emacs-wayland` package.
 
-*Emacs Lucid Setup*
+_Emacs Lucid Setup_
 
 If you're using `emacs-lucid`, you'll probably want [Xresource settings](https://www.gnu.org/software/emacs/manual/html_node/emacs/Lucid-Resources.html) like this for dark background menus on a 4k hi-res display, stored in a file called `~/.Xresources`:
 
@@ -233,9 +228,9 @@ To apply the changes, run `xrdb -merge ~/.Xresources` and then restart Emacs. On
 
 We'll build from scratch, since no PPAs have consistently had latest version releases in a timely way.
 
-* Uninstall any versions of Emacs that were previously installed by `apt` or `dpkg`.
-* Edit `/etc/apt/sources.list` and uncomment all `#deb-src` lines that match `deb` lines and run `sudo apt update`.
-* Follow these instructions, derived from [this post](https://practical.li/blog/posts/build-emacs-28-on-ubuntu/):
+- Uninstall any versions of Emacs that were previously installed by `apt` or `dpkg`.
+- Edit `/etc/apt/sources.list` and uncomment all `#deb-src` lines that match `deb` lines and run `sudo apt update`.
+- Follow these instructions, derived from [this post](https://practical.li/blog/posts/build-emacs-28-on-ubuntu/):
 
 ```sh
 sudo apt build-dep -y emacs
@@ -253,21 +248,21 @@ sudo make install
 
 Typically we install the Fira Code font. This can be configured with the `my-default-font` setting.
 
-*macOS*
+_macOS_
 
 Download [Fira Code](https://github.com/tonsky/FiraCode#download--install), open the zip, open the `ttf` folder, select all fonts, control-click and choose Open to install them.
 
-*Windows*
+_Windows_
 
 Download [Fira Code](https://github.com/tonsky/FiraCode#download--install) and follow the instructions.
 
-*Arch Linux*
+_Arch Linux_
 
 ```sh
 paru -S ttf-fira-code
 ```
 
-*Ubuntu*
+_Ubuntu_
 
 ```sh
 apt-get install fonts-firacode
@@ -279,9 +274,10 @@ apt-get install fonts-firacode
 cd ~/
 git clone https://github.com/mwolson/emacs-shared.git
 ```
+
 ## Set up PATH
 
-*macOS*
+_macOS_
 
 You'll want to make sure that your path includes the correct version of Emacs and some helper scripts, ahead of the ancient version that comes with macOS. To do this, edit `~/.profile` and add:
 
@@ -291,7 +287,7 @@ export PATH=~/emacs-shared/bin:~/bin:"$PATH"
 
 Restart your Terminal app to make the change take effect. Sourcing the file is not enough, since macOS seems to perform indexing of location on program name.
 
-*Linux*
+_Linux_
 
 You'll want to make sure that your path includes the correct version of Emacs and some helper scripts. To do this, edit `~/.bashrc` and add:
 
@@ -301,15 +297,17 @@ export PATH=~/emacs-shared/bin:~/bin:"$PATH"
 
 Restart your Terminal program to make the change take effect, or source the file.
 
-*Windows*
+_Windows_
 
 We already took care of this earlier before setting up MSYS2.
 
 ## Run bootstrap.sh
 
 On Windows:
-* You will need to do the "Set up PATH" step first, otherwise it will fail.
-* For Git Bash and MSYS2 support, you may need to add something like this to `.bashrc` and restart any open Terminal windows:
+
+- You will need to do the "Set up PATH" step first, otherwise it will fail.
+- For Git Bash and MSYS2 support, you may need to add something like this to `.bashrc` and restart any open Terminal windows:
+
 ```sh
 if uname | grep "MINGW64_NT" > /dev/null 2>&1; then
     # for MSYS2
@@ -319,8 +317,9 @@ elif uname | grep "MSYS_NT" > /dev/null 2>&1; then
     export PATH="/c/Windows/System32/OpenSSH":"$PATH"
 fi
 ```
-* Check `.bashrc` and update any `PATH` entries which have a different version of Emacs to instead point to `/c/Program Files/Emacs/emacs-30.2/bin` and restart Terminal.
-* You will want to open an "MSYS2 MinGW 64-bit" window (not Git Bash) and run the commands from there.
+
+- Check `.bashrc` and update any `PATH` entries which have a different version of Emacs to instead point to `/c/Program Files/Emacs/emacs-30.2/bin` and restart Terminal.
+- You will want to open an "MSYS2 MinGW 64-bit" window (not Git Bash) and run the commands from there.
 
 Commands to run regardless of OS:
 
@@ -384,24 +383,25 @@ emacs -q init.el  # or other editing command
 
 ## Start Emacs
 
-*Windows*
+_Windows_
 
 Open `Start Menu -> Emacs`. This should point to the file `C:\Program Files\Emacs\emacs-30.2\bin\runemacs.exe`.
 
-*Windows Taskbar*
+_Windows Taskbar_
 
 To pin Emacs to the Taskbar / Quick Launch bar and have it behave correctly:
+
 - If an older version is already there, unpin Emacs from the launcher menu
 - Run Emacs from Start menu or a desktop shortcut
 - Pin it
 - Then right-click its Taskbar button, right-click "Emacs", click "Properties"
 - Change "C:\Program Files\Emacs\emacs-30.2\bin\emacs.exe" to "C:\Program Files\Emacs\emacs-30.2\bin\runemacs.exe"
 
-*macOS*
+_macOS_
 
 Open `Applications -> Emacs`.
 
-*Linux*
+_Linux_
 
 GUI frame:
 

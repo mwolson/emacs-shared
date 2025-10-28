@@ -79,7 +79,7 @@
      ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(add-node-modules-path aidermacs apheleia archive-rpm astro-ts-mode atomic-chrome basic-mode
+   '(add-node-modules-path apheleia archive-rpm astro-ts-mode atomic-chrome basic-mode
                            browse-kill-ring cape cider clojure-ts-mode
                            color-theme-sanityinc-tomorrow consult corfu corfu-prescient
                            corfu-terminal diff-hl diminish dumb-jump editorconfig el-mock embark

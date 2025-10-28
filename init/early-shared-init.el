@@ -68,9 +68,6 @@
 (defvar my-frame-maximize-p  t)
 (defvar my-frame-pad-width   (if (eq system-type 'darwin) 65 nil))
 (defvar my-frame-pad-height  (if (eq system-type 'darwin) 15 nil))
-(defvar my-aidermacs-model-local "openai/Jan-nano-128k")
-(defvar my-aidermacs-model-remote "gemini/gemini-2.5-pro")
-(defvar my-aidermacs-model   my-aidermacs-model-remote)
 (defvar my-gptel-backend-local 'my-gptel--local-ai)
 (defvar my-gptel-backend-remote 'my-gptel--claude)
 (defvar my-gptel-backend     my-gptel-backend-remote)
@@ -81,9 +78,10 @@
 (defvar my-gptel-temperature 0.0)
 (defvar my-gptel-claude-thinking-budget 1024)
 (defvar my-gptel-gemini-lite-thinking-budget 578)
-(defvar my-minuet-auto-suggest-p nil)
-(defvar my-minuet-provider   'codestral)
-(defvar my-minuet-provider-remote 'codestral)
+(defvar my-minuet-auto-suggest-p t)
+(defvar my-minuet-exclude-file-regexps '(".*"))
+(defvar my-minuet-provider   'claude)
+(defvar my-minuet-provider-remote 'claude)
 (defvar my-mise-exclude-file-regexps '(".*"))
 (defvar my-remap-cmd-key-p   t)
 (defvar my-default-directory "~/")
@@ -228,7 +226,14 @@
     (if my-modus-theme
         (progn
           (setopt modus-themes-common-palette-overrides my-modus-theme-overrides)
-          (modus-themes-select my-modus-theme))
+          (let ((real-color-dark-p (symbol-function 'color-dark-p)))
+            ;; fix stacktrace in modus-themes from 10/24/2025
+            (cl-letf (((symbol-function 'color-dark-p)
+                       (lambda (color)
+                         (condition-case nil
+                             (real-color-dark-p color)
+                           (error nil)))))
+              (modus-themes-select my-modus-theme))))
       (load-theme my-theme t))))
 
 ;; Support for font ligatures

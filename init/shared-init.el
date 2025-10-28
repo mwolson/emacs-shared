@@ -631,7 +631,6 @@ interactively.
 (defvar my-gptel--backends-defined nil)
 (defvar my-gptel--claude nil)
 (defvar my-gptel--claude-thinking nil)
-(defvar my-gptel--codestral nil)
 (defvar my-gptel--gemini nil)
 (defvar my-gptel--gemini-lite nil)
 (defvar my-gptel--groq nil)
@@ -643,14 +642,7 @@ interactively.
 (defvar my-gptel--openrouter-qwen-3-coder nil)
 (defvar my-gptel--xai nil)
 (defvar my-gptel-local-models
-  '((Jan-nano-128k
-     :description "Jan-nano-128k model"
-     :capabilities (media tool json url)
-     :context-window 256
-     ;; temperature can go up to 0.2 for more creativity but higher chance of
-     ;; syntax errors
-     :request-params (:temperature 0.025 :top_k 20 :top_p 0.95))
-    (Sky-T1-32B-Preview
+  '((Sky-T1-32B-Preview
      :description "Sky-T1-32B-Preview model"
      :capabilities (media tool json url)
      :context-window 256
@@ -699,16 +691,6 @@ interactively.
                :budget_tokens ,my-gptel-claude-thinking-budget)
               :temperature 1
               :max_tokens 4096)))
-
-    (setq my-gptel--codestral
-          (gptel-make-openai "Codestral"
-            :host "codestral.mistral.ai"
-            :stream t
-            :key #'gptel-api-key-from-auth-source
-            :models '((codestral-latest
-                       :description "Official codestral Mistral AI model"
-                       :capabilities (tool json)
-                       :context-window 256))))
 
     (require 'gptel-gemini)
     (unless (alist-get 'gemini-2.5-pro gptel--gemini-models)
@@ -883,18 +865,10 @@ interactively.
   (let ((backend-name (format "*%s*" (gptel-backend-name gptel-backend))))
     (switch-to-buffer (gptel backend-name nil ""))))
 
-(defun my-aidermacs-set-editor-model (model)
-  (setopt aidermacs-default-model model
-          aidermacs-editor-model model
-          aidermacs-extra-args (list "--model" model)
-          my-aidermacs-model model))
-
 (defun my-gptel-toggle-local ()
   "Toggle between local AI and remote AI."
   (interactive)
-  (require 'aidermacs)
   (require 'gptel)
-  (require 'minuet)
   (let* ((use-local (cond ((eq gptel-backend (symbol-value my-gptel-backend-local))
                            nil)
                           ((eq gptel-backend (symbol-value my-gptel-backend-remote))
@@ -903,37 +877,20 @@ interactively.
          (backend-sym
           (if use-local my-gptel-backend-local my-gptel-backend-remote))
          (backend (symbol-value backend-sym))
-         (backend-name
-          (format "*%s*" (gptel-backend-name backend)))
+         (backend-name (format "*%s*" (gptel-backend-name backend)))
          (model (or (if use-local my-gptel-model-local my-gptel-model-remote)
                     (car (gptel-backend-models backend)))))
     (setq gptel-backend backend
           my-gptel-backend backend-sym
           gptel-model model
           my-gptel-model model)
-    (if use-local
-        (progn
-          (my-aidermacs-set-editor-model my-aidermacs-model-local)
-          (setq minuet-provider 'openai-compatible
-                my-minuet-provider 'openai-compatible)
-          (setf (plist-get minuet-openai-compatible-options :optional)
-                (copy-sequence (gptel--model-request-params gptel-model)))
-          (minuet-set-optional-options minuet-openai-compatible-options
-                                       :max_tokens 128))
-      (my-aidermacs-set-editor-model my-aidermacs-model-remote)
-      (setq minuet-provider my-minuet-provider-remote
-            my-minuet-provider my-minuet-provider-remote))
-    (message "gptel backend is now %s, aider %s, and minuet %s"
-             backend-sym my-aidermacs-model minuet-provider)))
+    (message "gptel backend is now %s" backend-sym)))
 
-(defun my-gptel-toggle-model (backend-sym gptel-model-sym aider-model-str)
+(defun my-gptel-toggle-model (backend-sym gptel-model-sym)
   "Switch to a specific AI model."
   (interactive)
-  (require 'aidermacs)
   (require 'gptel)
-  (require 'minuet)
   (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-aidermacs-model-remote aider-model-str
         my-gptel-backend-remote backend-sym
         my-gptel-model-remote gptel-model-sym)
   (my-gptel-toggle-local))
@@ -941,50 +898,42 @@ interactively.
 (defun my-gptel-toggle-claude ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--claude
-                         'claude-sonnet-4-5-20250929
-                         "anthropic/claude-sonnet-4-5-20250929"))
+                         'claude-sonnet-4-5-20250929))
 
 (defun my-gptel-toggle-claude-thinking ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--claude-thinking
-                         'claude-sonnet-4-5-20250929
-                         "anthropic/claude-sonnet-4-5-20250929-thinking"))
+                         'claude-sonnet-4-5-20250929))
 
 (defun my-gptel-toggle-gemini-flash ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--gemini-lite
-                         'gemini-2.5-flash
-                         "gemini/gemini-2.5-flash"))
+                         'gemini-2.5-flash))
 
 (defun my-gptel-toggle-gemini-pro ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--gemini
-                         'gemini-2.5-pro
-                         "gemini/gemini-2.5-pro"))
+                         'gemini-2.5-pro))
 
 (defun my-gptel-toggle-gpt-5 ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--openai
-                         'gpt-5
-                         "gpt-5"))
+                         'gpt-5))
 
 (defun my-gptel-toggle-grok-4-fast ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--openrouter-grok-4-fast
-                         'x-ai/grok-4-fast:free
-                         "x-ai/grok-4-fast:free"))
+                         'x-ai/grok-4-fast:free))
 
 (defun my-gptel-toggle-kimi-k2 ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--openrouter-kimi-k2
-                         'moonshotai/kimi-k2
-                         "moonshotai/kimi-k2"))
+                         'moonshotai/kimi-k2))
 
 (defun my-gptel-toggle-qwen3-coder ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--openrouter-qwen-3-coder
-                         'qwen/qwen3-coder
-                         "qwen/qwen3-coder"))
+                         'qwen/qwen3-coder))
 
 (defun my-gptel-context-save-and-quit ()
   "Apply gptel context changes and quit."
@@ -1054,70 +1003,21 @@ Use the region instead if one is selected."
 (autoload #'gptel-fn-complete-mark-function "gptel-fn-complete"
   "Put mark at end of this function, point at beginning." t)
 
-;; Aidermacs for aider AI integration
-(with-eval-after-load "aidermacs-backends"
-  ;; 'vterm is neat, but it crashes frequently on macOS
-  (setopt aidermacs-backend 'vterm))
-
-(my-aidermacs-set-editor-model my-aidermacs-model)
-(my-defer-startup #'aidermacs-setup-minor-mode)
-
-(defvar my-aidermacs-map
-  (let ((map (make-sparse-keymap)))
-    (keymap-set map "a" #'aidermacs-transient-menu)
-    map))
-
-(keymap-global-set "C-c a" my-aidermacs-map)
-
 ;; Minuet for AI completion
+(defun my-minuet-exclude ()
+  (let* ((filename (buffer-file-name)))
+    (or (not filename)
+        (when-let* ((lst my-minuet-exclude-file-regexps))
+          (string-match-p
+           (string-join (mapcar (##concat "\\(?:" % "\\)") lst) "\\|")
+           filename)))))
+
 (defun my-minuet-maybe-turn-on-auto-suggest ()
-  (when my-minuet-auto-suggest-p
+  (when (and my-minuet-auto-suggest-p (not (my-minuet-exclude)))
     (minuet-auto-suggestion-mode 1)))
-
-(defun my-minuet-get-longest (it1 it2)
-  (if (< (length it1) (length it2)) it2 it1))
-
-(defun my-minuet-complete-2 (items)
-  (minuet--cleanup-suggestion t)
-  (setq items (list (-reduce #'my-minuet-get-longest items)))
-  ;; close current minibuffer session, if any
-  (when (active-minibuffer-window)
-    (abort-recursive-edit))
-  (completion-in-region (point) (point) items))
-
-(defun my-minuet-complete-1 ()
-  "Complete code in region with LLM."
-  (interactive)
-  (let ((current-buffer (current-buffer))
-        (available-p-fn (intern (format "minuet--%s-available-p" minuet-provider)))
-        (complete-fn (intern (format "minuet--%s-complete" minuet-provider)))
-        (context (minuet--get-context)))
-    (unless (funcall available-p-fn)
-      (minuet--log (format "Minuet provider %s is not available" minuet-provider))
-      (error "Minuet provider %s is not available" minuet-provider))
-    (funcall complete-fn
-             context
-             `(lambda (items)
-                (with-current-buffer ,current-buffer
-                  (when (and items (not (minuet--cursor-moved-p)))
-                    (my-minuet-complete-2 items)))))))
-
-(defun my-minuet-complete ()
-  (interactive)
-  (require 'minuet)
-  (let ((minuet-n-completions 1)
-        (minuet-add-single-line-entry nil))
-    ;; (minuet-complete-with-minibuffer)
-    (my-minuet-complete-1)))
 
 (defun my-minuet-get-api-key (backend)
   (my-auth-source-get-api-key (gptel-backend-host backend)))
-
-(defun my-minuet-llama-cpp-fim-qwen-prompt-function (ctx)
-  (format "<|fim_prefix|>%s\n%s<|fim_suffix|>%s<|fim_middle|>"
-          (plist-get ctx :language-and-tab)
-          (plist-get ctx :before-cursor)
-          (plist-get ctx :after-cursor)))
 
 (defun my-minuet-sync-options-from-gptel (m-backend g-backend)
   (let* ((options-name (format "minuet-%s-options" (symbol-name m-backend)))
@@ -1127,16 +1027,15 @@ Use the region instead if one is selected."
       (plist-put options :name (gptel-backend-name g-backend))
       (setf (plist-get options :optional)
             (copy-sequence (gptel--model-request-params gptel-model)))
-      (minuet-set-optional-options options :max_tokens 128))
+      (minuet-set-optional-options options :max_tokens 128)
+      (plist-put options :model
+                 (symbol-name (car (gptel-backend-models g-backend)))))
     (cond ((eq m-backend 'openai-fim-compatible)
            (plist-put options :end-point
                       (format "%s://%s%s"
                               (gptel-backend-protocol g-backend)
                               (gptel-backend-host g-backend)
-                              "/v1/completions"))
-           (plist-put options :template
-                      '(:prompt my-minuet-llama-cpp-fim-qwen-prompt-function
-                        :suffix nil)))
+                              "/v1/completions")))
           ((eq m-backend 'openai-compatible)
            (plist-put options :end-point
                       (format "%s://%s%s"
@@ -1144,58 +1043,17 @@ Use the region instead if one is selected."
                               (gptel-backend-host g-backend)
                               (gptel-backend-endpoint g-backend))))
           (t
-           (plist-put options :api-key `(lambda () (my-minuet-get-api-key ,g-backend)))))
-    (plist-put options :model (symbol-name (car (gptel-backend-models g-backend))))))
-
-(defvar minuet-groq-options nil)
-
-(defun minuet--groq-available-p ()
-  "Check if Groq is available."
-  (when-let* ((options minuet-groq-options)
-              (env-var (plist-get options :api-key))
-              (end-point (plist-get options :end-point))
-              (model (plist-get options :model)))
-    (minuet--get-api-key env-var)))
-
-(defun minuet--groq-complete (context callback)
-  "Complete code with Groq.
-CONTEXT and CALLBACK will be passed to the base function."
-  (minuet--openai-complete-base
-   (copy-tree minuet-groq-options) context callback))
+           (plist-put options :api-key `(lambda () (my-minuet-get-api-key ,g-backend)))))))
 
 (with-eval-after-load "minuet"
   (my-gptel-ensure-backends)
-  (setq minuet-groq-options
-        `(:end-point "https://api.groq.com/openai/v1/chat/completions"
-          :api-key "GROQ_API_KEY"
-          :model "llama-3.3-70b-versatile"
-          :system
-          (:template minuet-default-system-template
-           :prompt minuet-default-prompt
-           :guidelines minuet-default-guidelines
-           :n-completions-template minuet-default-n-completion-template)
-          :fewshots minuet-default-fewshots
-          :chat-input
-          (:template minuet-default-chat-input-template
-           :language-and-tab minuet--default-chat-input-language-and-tab-function
-           :context-before-cursor minuet--default-chat-input-before-cursor-function
-           :context-after-cursor minuet--default-chat-input-after-cursor-function)
-          :optional nil))
-
   (my-minuet-sync-options-from-gptel 'claude my-gptel--claude)
-  (my-minuet-sync-options-from-gptel 'codestral my-gptel--codestral)
-  (my-minuet-sync-options-from-gptel 'groq my-gptel--groq)
   (my-minuet-sync-options-from-gptel 'openai my-gptel--openai)
   (my-minuet-sync-options-from-gptel 'openai-compatible my-gptel--local-ai)
   (my-minuet-sync-options-from-gptel 'openai-fim-compatible my-gptel--local-ai)
 
-  ;; per minuet's README.md, prevent request timeout from too many tokens
-  (minuet-set-optional-options minuet-codestral-options :stop ["\n\n"])
-  (minuet-set-optional-options minuet-codestral-options :max_tokens 256)
-
   (setopt minuet-add-single-line-entry nil
-          minuet-auto-suggestion-debounce-delay 0.5
-          minuet-context-window 1384
+          minuet-auto-suggestion-debounce-delay 0.4
           minuet-n-completions 1)
   (setq minuet-provider my-minuet-provider)
 
@@ -1203,8 +1061,7 @@ CONTEXT and CALLBACK will be passed to the base function."
   (keymap-set minuet-active-mode-map "C-c C-k" #'minuet-dismiss-suggestion)
   (keymap-set minuet-active-mode-map "C-c C-n" #'minuet-next-suggestion)
   (keymap-set minuet-active-mode-map "C-c C-p" #'minuet-previous-suggestion)
-  (keymap-set minuet-active-mode-map "<backtab>" #'minuet-previous-suggestion)
-  (keymap-set minuet-active-mode-map "<tab>" #'minuet-next-suggestion)
+  (keymap-set minuet-active-mode-map "<tab>" #'minuet-accept-suggestion-line)
   (keymap-set minuet-active-mode-map "<return>" #'minuet-accept-suggestion))
 
 ;; (add-hook 'prog-mode-hook #'minuet-auto-suggestion-mode)
@@ -1217,7 +1074,7 @@ CONTEXT and CALLBACK will be passed to the base function."
 (defvar my-minuet-map
   (let ((map (make-sparse-keymap)))
     (keymap-set map "a" #'minuet-auto-suggestion-mode)
-    (keymap-set map "c" #'my-minuet-complete)
+    (keymap-set map "c" #'minuet-complete-with-minibuffer)
     (keymap-set map "m" #'minuet-complete-with-minibuffer)
     map)
   "My key customizations for minuet.")
@@ -1923,12 +1780,6 @@ This prevents the window from later moving back once the minibuffer is done show
         (cl-remove-if #'(lambda (item) (memq (car item) to-remove))
                       project-switch-commands)))
 
-(defun my-aidermacs-project-menu ()
-  (interactive)
-  (let ((default-directory (my-project-root t)))
-    (find-file default-directory)
-    (aidermacs-transient-menu)))
-
 (with-eval-after-load "project"
   (my-remove-project-switch-bindings '(project-eshell
                                        project-find-dir
@@ -1936,9 +1787,6 @@ This prevents the window from later moving back once the minibuffer is done show
                                        project-query-replace-regexp
                                        project-vc-dir))
   (add-to-list 'project-switch-commands '(project-dired "Dired") t)
-  (keymap-set project-prefix-map "a" #'my-aidermacs-project-menu)
-  (add-to-list 'project-switch-commands
-               '(my-aidermacs-project-menu "Aider"))
   (keymap-set project-prefix-map "b" #'consult-project-buffer)
   (keymap-set project-prefix-map "d" #'project-dired)
   (add-to-list 'project-switch-commands '(my-consult-ripgrep "Ripgrep") t)
