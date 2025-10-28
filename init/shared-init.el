@@ -1061,6 +1061,7 @@ Use the region instead if one is selected."
   (keymap-set minuet-active-mode-map "C-c C-k" #'minuet-dismiss-suggestion)
   (keymap-set minuet-active-mode-map "C-c C-n" #'minuet-next-suggestion)
   (keymap-set minuet-active-mode-map "C-c C-p" #'minuet-previous-suggestion)
+  (keymap-set minuet-active-mode-map "C-g" #'minuet-dismiss-suggestion)
   (keymap-set minuet-active-mode-map "<tab>" #'minuet-accept-suggestion-line)
   (keymap-set minuet-active-mode-map "<return>" #'minuet-accept-suggestion))
 
