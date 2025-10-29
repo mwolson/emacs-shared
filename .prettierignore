@@ -1,0 +1,6 @@
+bin/
+build/
+elisp/
+extra/
+share/
+**/node_modules/

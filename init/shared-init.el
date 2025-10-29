@@ -637,7 +637,7 @@ interactively.
 (defvar my-gptel--local-ai nil)
 (defvar my-gptel--mistral nil)
 (defvar my-gptel--openai nil)
-(defvar my-gptel--openrouter-grok-4-fast nil)
+(defvar my-gptel--opencode-zen nil)
 (defvar my-gptel--openrouter-kimi-k2 nil)
 (defvar my-gptel--openrouter-qwen-3-coder nil)
 (defvar my-gptel--xai nil)
@@ -788,17 +788,6 @@ interactively.
             :key #'gptel-api-key-from-auth-source
             :stream t
             :models gptel--openai-models))
-
-    (setq my-gptel--openrouter-grok-4-fast
-          (gptel-make-openai "OpenRouter"
-            :host "openrouter.ai"
-            :endpoint "/api/v1/chat/completions"
-            :stream t
-            :key #'gptel-api-key-from-auth-source
-            :request-params
-            '(:provider (:only ["xai"]))
-            :models '(x-ai/grok-4-fast:free
-                      :description "Grok 4 Fast")))
     (setq my-gptel--openrouter-kimi-k2
           (gptel-make-openai "OpenRouter"
             :host "openrouter.ai"
@@ -836,6 +825,61 @@ interactively.
                        :context-window 256
                        :input-cost 0.2
                        :output-cost 1.5))))
+
+    (setq my-gptel--opencode-zen
+          (gptel-make-openai "OpenCode Zen"
+            :host "opencode.ai"
+            :endpoint "/zen/v1/chat/completions"
+            :stream t
+            :key #'gptel-api-key-from-auth-source
+            :models '((claude-sonnet-4-5
+                       :description "Latest Claude Sonnet 4.5 model with enhanced capabilities"
+                       :capabilities (tool-use json media)
+                       :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
+                       :context-window 200
+                       :input-cost 3.0
+                       :output-cost 15.0
+                       :cutoff-date "2024-09")
+                      (claude-haiku-4-5
+                       :description "Claude Haiku 4.5 model"
+                       :capabilities (tool-use json)
+                       :context-window 200
+                       :input-cost 1.0
+                       :output-cost 5.0)
+                      (gpt-5
+                       :description "GPT-5 model"
+                       :capabilities (media tool-use json url)
+                       :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
+                       :context-window 200
+                       :input-cost 1.25
+                       :output-cost 10.0
+                       :cutoff-date "2024-09")
+                      (gpt-5-codex
+                       :description "GPT-5 Codex model optimized for coding"
+                       :capabilities (media tool-use json url)
+                       :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
+                       :context-window 200
+                       :input-cost 1.25
+                       :output-cost 10.0
+                       :cutoff-date "2024-09")
+                      (grok-code
+                       :description "Grok Code Fast 1 model - currently free"
+                       :capabilities (tool-use json)
+                       :context-window 200
+                       :input-cost 0.0
+                       :output-cost 0.0)
+                      (kimi-k2
+                       :description "Kimi K2 model"
+                       :capabilities (tool-use json)
+                       :context-window 200
+                       :input-cost 0.6
+                       :output-cost 2.5)
+                      (glm-4.6
+                       :description "GLM 4.6 model"
+                       :capabilities (tool-use json)
+                       :context-window 200
+                       :input-cost 0.6
+                       :output-cost 1.9))))
 
     (run-hooks 'my-gptel-ensure-backends-hook))
 
@@ -886,14 +930,26 @@ interactively.
           my-gptel-model model)
     (message "gptel backend is now %s" backend-sym)))
 
-(defun my-gptel-toggle-model (backend-sym gptel-model-sym)
+(defun my-gptel-toggle-model (gptel-backend-sym gptel-model-sym)
   "Switch to a specific AI model."
   (interactive)
   (require 'gptel)
-  (setq gptel-backend (symbol-value my-gptel-backend-local)
-        my-gptel-backend-remote backend-sym
-        my-gptel-model-remote gptel-model-sym)
-  (my-gptel-toggle-local))
+  (let* ((use-preferred (not (eq my-gptel-preferred-provider 'default)))
+         (backend-sym (if use-preferred
+                          my-gptel-preferred-provider
+                        gptel-backend-sym))
+         (model-sym (if use-preferred
+                        (pcase gptel-model-sym
+                          ('claude-sonnet-4-5-20250929 'claude-sonnet-4-5)
+                          ('grok-code-fast-1 'grok-code)
+                          ('moonshotai/kimi-k2 'kimi-k2)
+                          ('qwen/qwen3-coder 'qwen3-coder)
+                          (_ gptel-model-sym))
+                      gptel-model-sym)))
+    (setq gptel-backend (symbol-value my-gptel-backend-local)
+          my-gptel-backend-remote backend-sym
+          my-gptel-model-remote model-sym)
+    (my-gptel-toggle-local)))
 
 (defun my-gptel-toggle-claude ()
   (interactive)
@@ -915,15 +971,20 @@ interactively.
   (my-gptel-toggle-model 'my-gptel--gemini
                          'gemini-2.5-pro))
 
+(defun my-gptel-toggle-glm-4-6 ()
+  (interactive)
+  (my-gptel-toggle-model 'my-gptel--opencode-zen
+                         'glm-4.6))
+
 (defun my-gptel-toggle-gpt-5 ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--openai
                          'gpt-5))
 
-(defun my-gptel-toggle-grok-4-fast ()
+(defun my-gptel-toggle-grok-code-fast ()
   (interactive)
-  (my-gptel-toggle-model 'my-gptel--openrouter-grok-4-fast
-                         'x-ai/grok-4-fast:free))
+  (my-gptel-toggle-model 'my-gptel--xai
+                         'grok-code-fast-1))
 
 (defun my-gptel-toggle-kimi-k2 ()
   (interactive)
@@ -1030,17 +1091,26 @@ Criteria:
             (not (bolp))
             (looking-at-p "\s*$"))))
 
-(defun my-minuet-sync-options-from-gptel (m-backend g-backend)
+(defun my-minuet-sync-options-from-gptel (m-backend g-backend &optional g-model)
+  "Synchronize Minuet provider options from the current gptel backend.
+
+M-BACKEND is the Minuet backend symbol.
+G-BACKEND is the gptel backend instance.
+optional G-MODEL is the gptel model symbol to use."
   (let* ((options-name (format "minuet-%s-options" (symbol-name m-backend)))
-         (options (symbol-value (intern options-name))))
+         (options (symbol-value (intern options-name)))
+         (model (or g-model (car (gptel-backend-models g-backend)))))
     (when (memq m-backend '(openai-compatible openai-fim-compatible))
-      (plist-put options :api-key #'(lambda () "local-ai"))
       (plist-put options :name (gptel-backend-name g-backend))
       (setf (plist-get options :optional)
             (copy-sequence (gptel--model-request-params gptel-model)))
-      (minuet-set-optional-options options :max_tokens 128)
-      (plist-put options :model
-                 (symbol-name (car (gptel-backend-models g-backend)))))
+      (plist-put options :model (symbol-name model)))
+    (cond (my-minuet-provider-local-p
+           (minuet-set-optional-options options :max_tokens 128)
+           (plist-put options :api-key #'(lambda () "local-ai")))
+          (t
+           (plist-put options :api-key
+                      `(lambda () (my-minuet-get-api-key ,g-backend)))))
     (cond ((eq m-backend 'openai-fim-compatible)
            (plist-put options :end-point
                       (format "%s://%s%s"
@@ -1052,21 +1122,27 @@ Criteria:
                       (format "%s://%s%s"
                               (gptel-backend-protocol g-backend)
                               (gptel-backend-host g-backend)
-                              (gptel-backend-endpoint g-backend))))
-          (t
-           (plist-put options :api-key `(lambda () (my-minuet-get-api-key ,g-backend)))))))
+                              (gptel-backend-endpoint g-backend)))))))
+
+(defun my-minuet-init-provider ()
+  "Initialize Minuet provider settings based on current gptel backend."
+  (interactive)
+  (my-gptel-ensure-backends)
+  (let* ((g-provider (pcase my-minuet-provider
+                       ('claude my-gptel--claude)
+                       ('openai my-gptel--openai)
+                       ((or 'openai-compatible 'openai-compatible-fim)
+                        (symbol-value my-gptel-preferred-provider)))))
+    (my-minuet-sync-options-from-gptel my-minuet-provider
+                                       g-provider
+                                       my-minuet-model)
+    (setq minuet-provider my-minuet-provider)))
 
 (with-eval-after-load "minuet"
-  (my-gptel-ensure-backends)
-  (my-minuet-sync-options-from-gptel 'claude my-gptel--claude)
-  (my-minuet-sync-options-from-gptel 'openai my-gptel--openai)
-  (my-minuet-sync-options-from-gptel 'openai-compatible my-gptel--local-ai)
-  (my-minuet-sync-options-from-gptel 'openai-fim-compatible my-gptel--local-ai)
-
+  (my-minuet-init-provider)
   (setopt minuet-add-single-line-entry nil
           minuet-auto-suggestion-debounce-delay 0.3
           minuet-n-completions 1)
-  (setq minuet-provider my-minuet-provider)
 
   (add-hook 'minuet-auto-suggestion-block-functions
             #'my-minuet-block-suggestions -100)

@@ -1,0 +1,18 @@
+.common-excludes: &common_excludes
+  - "/bin"
+  - "/build"
+  - "/elisp"
+  - "/extra"
+  - "**/node_modules"
+  - "/share"
+
+pre-commit:
+  parallel: true
+  output: true
+  commands:
+    md-format:
+      priority: 1
+      glob: "*.md"
+      exclude: *common_excludes
+      run: mise x -- pnpm run fix:md:file {staged_files}
+      stage_fixed: true
