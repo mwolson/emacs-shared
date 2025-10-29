@@ -46,7 +46,8 @@ the cursor is at.
 
 - <kbd>C-c . a a</kbd> to add the current function as context for a later AI query
 - <kbd>C-c . a f</kbd> to add the current file as context for a later AI query
-- <kbd>C-c . c</kbd> to complete the code at point using Claude AI; if you have a comment near the end, that will better inform the completion
+- <kbd>C-c . c</kbd> to show a multi-line AI autocomplete suggestion; use <kbd>TAB</kbd> to accept just one line of it, or <kbd>RET</kbd> to accept the entire suggestion.
+- <kbd>C-c . f</kbd> to complete the function or code block at point using AI; if you have a comment near the end, that will better inform the completion
 - <kbd>C-c . k</kbd> to fully clear the AI context
 - <kbd>C-c . l</kbd> to switch from Claude to a local AI server or vice versa
 - <kbd>C-c . q</kbd> to bring up a Claude AI query on the side with the current function or region added to the AI context

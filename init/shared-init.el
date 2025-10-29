@@ -1019,6 +1019,17 @@ Use the region instead if one is selected."
 (defun my-minuet-get-api-key (backend)
   (my-auth-source-get-api-key (gptel-backend-host backend)))
 
+(defun my-minuet-block-suggestions ()
+  "Return nil if we should show suggestions, t (blocked) otherwise.
+
+Criteria:
+- File must be writable
+- Cursor must not be at beginning of line
+- Cursor must be at the end of line (ignoring whitespace)."
+  (not (and (not buffer-read-only)
+            (not (bolp))
+            (looking-at-p "\s*$"))))
+
 (defun my-minuet-sync-options-from-gptel (m-backend g-backend)
   (let* ((options-name (format "minuet-%s-options" (symbol-name m-backend)))
          (options (symbol-value (intern options-name))))
@@ -1053,9 +1064,12 @@ Use the region instead if one is selected."
   (my-minuet-sync-options-from-gptel 'openai-fim-compatible my-gptel--local-ai)
 
   (setopt minuet-add-single-line-entry nil
-          minuet-auto-suggestion-debounce-delay 0.4
+          minuet-auto-suggestion-debounce-delay 0.3
           minuet-n-completions 1)
   (setq minuet-provider my-minuet-provider)
+
+  (add-hook 'minuet-auto-suggestion-block-functions
+            #'my-minuet-block-suggestions -100)
 
   (keymap-set minuet-active-mode-map "C-c C-a" #'minuet-accept-suggestion)
   (keymap-set minuet-active-mode-map "C-c C-k" #'minuet-dismiss-suggestion)
@@ -1072,17 +1086,6 @@ Use the region instead if one is selected."
   (pm-around-advice #'my-minuet-maybe-turn-on-auto-suggest
                     #'polymode-inhibit-in-indirect-buffers))
 
-(defvar my-minuet-map
-  (let ((map (make-sparse-keymap)))
-    (keymap-set map "a" #'minuet-auto-suggestion-mode)
-    (keymap-set map "c" #'minuet-complete-with-minibuffer)
-    (keymap-set map "m" #'minuet-complete-with-minibuffer)
-    map)
-  "My key customizations for minuet.")
-
-(keymap-global-set "C-c m" my-minuet-map)
-(keymap-global-set "C-x m" my-minuet-map)
-
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
 (require 'dumb-jump)
 (setopt dumb-jump-selector 'completing-read)
@@ -1092,7 +1095,8 @@ Use the region instead if one is selected."
   (let ((map (make-sparse-keymap)))
     (keymap-set map "a a" #'my-gptel-add-function)
     (keymap-set map "a f" #'my-gptel-add-current-file)
-    (keymap-set map "c" #'gptel-fn-complete)
+    (keymap-set map "c" #'minuet-show-suggestion)
+    (keymap-set map "f" #'gptel-fn-complete)
     (keymap-set map "k" #'my-gptel-context-remove-all)
     (keymap-set map "l" #'my-gptel-toggle-local)
     (keymap-set map "q" #'my-gptel-query-function)
