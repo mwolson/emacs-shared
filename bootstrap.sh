@@ -129,11 +129,6 @@ fi
 
 emacs_script "$(get_topdir)"/scripts/install-packages.el
 
-if [[ -n "$BUILD" ]]; then
-    echo "Compiling vterm..."
-    emacs_script "$(get_topdir)"/scripts/install-vterm.el
-fi
-
 set_treesit_dir
 
 qpushd share/man

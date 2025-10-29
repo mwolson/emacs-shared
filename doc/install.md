@@ -46,7 +46,7 @@ pacman -Sy pacman
 pacman -Syu
 pacman -Su
 pacman -S --needed base-devel libssh2-devel msys/man-db xmlto
-pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,cmake,fd,gcc,gnutls,go,gopls,make,ninja,ripgrep,rust}
+pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,fd,gcc,gnutls,go,gopls,make,ninja,ripgrep,rust}
 ```
 
 - Make sure you do not have git installed through MSYS2 (we want it to come from
@@ -74,7 +74,7 @@ makepkg -si
 Minimal install:
 
 ```sh
-sudo paru -S aspell-en base-devel basedpyright clang cmake fd gnutls gopls libssh2-devel make man-db man-pages mise ninja openssh ripgrep rust-analyzer zls
+sudo paru -S aspell-en base-devel basedpyright clang fd gnutls gopls libssh2-devel make man-db man-pages mise ninja openssh ripgrep rust-analyzer zls
 ```
 
 For a full install, in addition to the above also run:
@@ -126,12 +126,6 @@ You'll also want to create a `~/.zprintrc` file with these contents:
 ;; -*- clojure -*-
 {:search-config? true, :style [:how-to-ns]}
 ```
-
-## Install cmake
-
-You'll need to install [cmake](https://cmake.org/download/) in order to build
-vterm, a terminal emulator for Emacs. On Mac, install the `cmake` and `libtool`
-packages from homebrew.
 
 ## Install fd
 
@@ -214,11 +208,6 @@ You'll need to
 in order to support language server features for Rust. On Mac, install the
 `rust` and `rust-analyzer` packages from homebrew. For Windows, we've already
 done this for Windows in the `Install MSYS2` section.
-
-## (Optional) Install vterm shell integration
-
-In order to get the most use out of vterm, be sure to
-[configure your shell for vterm](https://github.com/akermu/emacs-libvterm#shell-side-configuration).
 
 ## Install zls
 

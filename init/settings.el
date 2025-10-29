@@ -90,7 +90,7 @@
                            package-build package-utils plz poly-markdown polymode prisma-ts-mode
                            pulsar rainbow-delimiters reformatter rg slime swift-ts-mode
                            terraform-mode tmux-mode toc-org transient vcl-mode vertico
-                           vertico-prescient vterm web-mode wgrep zig-ts-mode))
+                           vertico-prescient web-mode wgrep zig-ts-mode))
  '(post-jump-header nil)
  '(project-vc-merge-submodules nil)
  '(recentf-mode nil)

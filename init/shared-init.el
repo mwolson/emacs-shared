@@ -623,10 +623,6 @@ interactively.
 (with-eval-after-load "treesit"
   (setopt treesit-font-lock-level 4))
 
-;; VTerm, a fast but sometimes unstable terminal emulator
-(with-eval-after-load "vterm"
-  (setq vterm-timer-delay 0.05))
-
 ;; Set up gptel
 (defvar my-gptel--backends-defined nil)
 (defvar my-gptel--claude nil)
@@ -1806,7 +1802,7 @@ This prevents the window from later moving back once the minibuffer is done show
           corfu-popupinfo-delay '(0.3 . 0.01)
           corfu-popupinfo-hide nil
           corfu-quit-no-match 'separator
-          global-corfu-modes '((not vterm-mode) t)
+          global-corfu-modes t
           text-mode-ispell-word-completion nil)
 
   (dolist (el '("delete-backward-char\\'" "\\`backward-delete-char"))
