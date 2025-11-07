@@ -1392,7 +1392,9 @@ optional G-MODEL is the gptel model symbol to use."
    '(add-node-modules-path
      my-node-repl-setup
      my-eslint-setup
-     my-apheleia-set-js-formatter)
+     my-apheleia-set-js-formatter
+     my-apheleia-set-markdown-formatter
+     my-apheleia-set-yaml-formatter)
    #'polymode-inhibit-in-indirect-buffers))
 
 (defclass eglot-deno (eglot-lsp-server) ()
