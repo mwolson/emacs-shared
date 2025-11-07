@@ -199,9 +199,9 @@ if [[ -n "$BUILD" ]]; then
         typescript "" "typescript/src"
 
     tree_sitter_modules="
-        astro bash c c-sharp clojure cpp css dockerfile erlang go gomod graphql
-        html java javascript jsdoc json kotlin mermaid nix prisma python rust
-        toml vue yaml zig
+        astro bash c c-sharp clojure cpp css dockerfile erlang go gomod
+        graphql html java javascript jsdoc json kotlin mermaid nix prisma
+        python regex rust toml vue yaml zig
     "
     <<< $tree_sitter_modules xargs -P4 -n1 \
         "$(get_topdir)"/scripts/install-treesit-grammar.sh

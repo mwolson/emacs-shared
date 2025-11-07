@@ -147,6 +147,11 @@
         ignore = dirty
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-python.git
+[submodule "extra/tree-sitter-regex"]
+	path = extra/tree-sitter-regex
+        ignore = dirty
+        shallow = true
+	url = https://github.com/tree-sitter/tree-sitter-regex.git
 [submodule "extra/tree-sitter-rust"]
         path = extra/tree-sitter-rust
         ignore = dirty
