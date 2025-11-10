@@ -74,7 +74,8 @@ makepkg -si
 Minimal install:
 
 ```sh
-sudo paru -S aspell-en base-devel basedpyright clang fd gnutls gopls libssh2-devel make man-db man-pages mise ninja openssh ripgrep rust-analyzer zls
+sudo paru -S aspell-en base-devel basedpyright clang fd gnutls gopls \
+  libssh2-devel make man-db man-pages mise ninja openssh ripgrep rust-analyzer zls
 ```
 
 For a full install, in addition to the above also run:

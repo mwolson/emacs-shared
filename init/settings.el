@@ -64,6 +64,7 @@
  '(mail-interactive t)
  '(mail-user-agent 'gnus-user-agent)
  '(markdown-command "npx marked")
+ '(markdown-fontify-code-blocks-natively t)
  '(max-lisp-eval-depth 1000)
  '(max-specpdl-size 1000 t)
  '(message-log-max 500)
@@ -79,18 +80,17 @@
      ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
  '(package-check-signature nil)
  '(package-selected-packages
-   '(add-node-modules-path apheleia archive-rpm astro-ts-mode atomic-chrome basic-mode
-                           browse-kill-ring cape cider clojure-ts-mode
-                           color-theme-sanityinc-tomorrow consult corfu corfu-prescient
-                           corfu-terminal diff-hl diminish dumb-jump editorconfig el-mock embark
-                           embark-consult erlang erlang-ts fish-mode flx git-modes gptel
-                           graphql-ts-mode hydra js-comint jtsx kind-icon kotlin-ts-mode ligature
-                           lua-mode magit marginalia markdown-mode maxframe minions minuet mise
-                           modus-themes nerd-icons-completion nix-ts-mode nsis-mode orderless
-                           package-build package-utils plz poly-markdown polymode prisma-ts-mode
-                           pulsar rainbow-delimiters reformatter rg slime swift-ts-mode
-                           terraform-mode tmux-mode toc-org transient vcl-mode vertico
-                           vertico-prescient web-mode wgrep zig-ts-mode))
+   '(add-node-modules-path apheleia archive-rpm astro-ts-mode atomic-chrome basic-mode browse-kill-ring
+                           cape cider clojure-ts-mode color-theme-sanityinc-tomorrow consult corfu
+                           corfu-prescient corfu-terminal diff-hl diminish dumb-jump edit-indirect
+                           editorconfig el-mock embark embark-consult erlang erlang-ts fish-mode flx
+                           git-modes gptel graphql-ts-mode hydra js-comint jtsx kind-icon
+                           kotlin-ts-mode ligature lua-mode magit marginalia markdown-mode maxframe
+                           minions minuet mise modus-themes nerd-icons-completion nix-ts-mode
+                           nsis-mode orderless package-build package-utils plz prisma-ts-mode pulsar
+                           rainbow-delimiters reformatter rg slime swift-ts-mode terraform-mode
+                           tmux-mode toc-org transient vcl-mode vertico vertico-prescient web-mode
+                           wgrep zig-ts-mode))
  '(post-jump-header nil)
  '(project-vc-merge-submodules nil)
  '(recentf-mode nil)

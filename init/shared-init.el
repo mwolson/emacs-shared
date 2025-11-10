@@ -294,7 +294,32 @@ When `depth' is provided, pass it to `add-hook'."
 
 ;;; Programming Modes and Features
 
-(defvar my-polymode-aliases '())
+(defvar my-md-code-aliases '())
+
+(defun my-around-advice (fun advice)
+  "Apply around ADVICE to FUN.
+If FUN is a list, apply ADVICE to each element of it."
+  (cond ((listp fun)
+         (dolist (el fun) (my-around-advice el advice)))
+        ((and (symbolp fun)
+              (not (advice-member-p advice fun)))
+         (advice-add fun :around advice))))
+
+(defun my-in-indirect-md-buffer-p ()
+  "Return non-nil if the current buffer is an indirect buffer created from a markdown buffer."
+  (when-let* ((buf (buffer-base-buffer)))
+    (and (buffer-live-p buf)
+         (with-current-buffer buf
+           (derived-mode-p 'markdown-mode)))))
+
+(defun my-inhibit-in-indirect-md-buffers (orig-fun &rest args)
+  "Don't run ORIG-FUN (with ARGS) in indirect markdown buffers.
+Use this function to around advice delicate functions:
+   (advice-add \\='xyz :around #\\='my-inhibit-in-indirect-md-buffers)
+or with `my-around-advice' which allows for multiple advises at once:
+   (my-around-advice \\='(foo bar) #\\='my-inhibit-in-indirect-md-buffers)"
+  (unless (my-in-indirect-md-buffer-p)
+    (apply orig-fun args)))
 
 ;; Apheleia for automatic code formatting
 (defun my-detect-biome ()
@@ -382,10 +407,8 @@ Returns the config filename if one is found, `t' if found in package.json"
 ;; Editorconfig support
 (with-eval-after-load "editorconfig"
   (put 'editorconfig-lisp-use-default-indent 'safe-local-variable #'always)
-
-  (with-eval-after-load "polymode-core"
-    (pm-around-advice #'editorconfig-major-mode-hook
-                      #'polymode-inhibit-in-indirect-buffers)))
+  (my-around-advice #'editorconfig-major-mode-hook
+                    #'my-inhibit-in-indirect-md-buffers))
 
 (editorconfig-mode 1)
 
@@ -411,9 +434,7 @@ Returns the config filename if one is found, `t' if found in package.json"
           (keymap-set map "<mouse-3>" #'eglot-code-actions-at-mouse)
           map))
 
-  (with-eval-after-load "polymode-core"
-    (pm-around-advice #'eglot-ensure #'polymode-inhibit-in-indirect-buffers))
-
+  (my-around-advice #'eglot-ensure #'my-inhibit-in-indirect-md-buffers)
   (keymap-set eglot-mode-map "<f2>" #'eglot-rename)
   (fset #'my-jsonrpc--log-event-real (symbol-function 'jsonrpc--log-event))
   (fset #'jsonrpc--log-event #'my-jsonrpc--log-event)
@@ -461,11 +482,12 @@ Returns the config filename if one is found, `t' if found in package.json"
   (set (make-local-variable 'my-eslint-fix-enabled-p) nil))
 
 (defun my-eslint-setup ()
-  (unless (bound-and-true-p polymode-mode)
-    (node-repl-interaction-mode 1)
-    (when (and (not (string-match-p "/node_modules/" default-directory))
-               (executable-find "eslint"))
-      (add-hook 'after-save-hook #'eslint-fix-file-and-revert-maybe t t))))
+  (node-repl-interaction-mode 1)
+  (when (and (not (string-match-p "/node_modules/" default-directory))
+             (executable-find "eslint"))
+    (add-hook 'after-save-hook #'eslint-fix-file-and-revert-maybe t t)))
+
+(my-around-advice #'my-eslint-setup #'my-inhibit-in-indirect-md-buffers)
 
 ;; Flymake
 (defvar my-flymake-mode-map
@@ -553,8 +575,9 @@ interactively.
    (t nil)))
 
 (defun my-node-repl-setup ()
-  (unless (bound-and-true-p polymode-mode)
-    (node-repl-interaction-mode 1)))
+  (node-repl-interaction-mode 1))
+
+(my-around-advice #'my-node-repl-setup #'my-inhibit-in-indirect-md-buffers)
 
 (defun inferior-js-mode-hook-setup ()
   (add-hook 'comint-output-filter-functions #'js-comint-process-output))
@@ -580,10 +603,7 @@ interactively.
 (add-hook 'dired-mode-hook #'diff-hl-dired-mode)
 (add-hook 'prog-mode-hook #'turn-on-diff-hl-mode)
 (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
-
-(with-eval-after-load "polymode-core"
-  (pm-around-advice #'turn-on-diff-hl-mode
-                    #'polymode-inhibit-in-indirect-buffers))
+(my-around-advice #'turn-on-diff-hl-mode #'my-inhibit-in-indirect-md-buffers)
 
 ;; Pulsar, for highlighting current line after a jump-style keybind
 (with-eval-after-load "pulsar"
@@ -611,9 +631,7 @@ interactively.
 
 ;; SMerge mode, for editing files with inline diffs
 (add-hook 'prog-mode-hook #'smerge-mode t)
-
-(with-eval-after-load "polymode-core"
-  (pm-around-advice #'smerge-mode #'polymode-inhibit-in-indirect-buffers))
+(my-around-advice #'smerge-mode #'my-inhibit-in-indirect-md-buffers)
 
 ;; Transient
 (with-eval-after-load "transient"
@@ -1151,12 +1169,9 @@ optional G-MODEL is the gptel model symbol to use."
   (keymap-set minuet-active-mode-map "<tab>" #'minuet-accept-suggestion-line)
   (keymap-set minuet-active-mode-map "<return>" #'minuet-accept-suggestion))
 
-;; (add-hook 'prog-mode-hook #'minuet-auto-suggestion-mode)
 (add-hook 'prog-mode-hook #'my-minuet-maybe-turn-on-auto-suggest t)
-
-(with-eval-after-load "polymode-core"
-  (pm-around-advice #'my-minuet-maybe-turn-on-auto-suggest
-                    #'polymode-inhibit-in-indirect-buffers))
+(my-around-advice #'my-minuet-maybe-turn-on-auto-suggest
+                  #'my-inhibit-in-indirect-md-buffers)
 
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
 (require 'dumb-jump)
@@ -1195,16 +1210,15 @@ optional G-MODEL is the gptel model symbol to use."
   "Minor mode for jumping to variable and function definitions"
   :keymap my-xref-minor-mode-map)
 
-(with-eval-after-load "polymode-core"
-  (pm-around-advice #'my-xref-minor-mode #'polymode-inhibit-in-indirect-buffers))
+(my-around-advice #'my-xref-minor-mode #'my-inhibit-in-indirect-md-buffers)
 
 ;; Bash shell script and .env support
 
 (require 'sh-script)
 (fset #'my-real-sh-mode #'sh-mode)
-(add-to-list 'my-polymode-aliases '(bash . my-real-sh-mode))
-(add-to-list 'my-polymode-aliases '(sh . my-real-sh-mode))
-(add-to-list 'my-polymode-aliases '(shell . my-real-sh-mode))
+(add-to-list 'my-md-code-aliases '(bash . my-real-sh-mode))
+(add-to-list 'my-md-code-aliases '(sh . my-real-sh-mode))
+(add-to-list 'my-md-code-aliases '(shell . my-real-sh-mode))
 
 (my-remap-major-mode 'sh-mode 'bash-ts-mode)
 (add-to-list 'auto-mode-alist '("\\.env\\(\\..*\\)?\\'" . bash-ts-mode))
@@ -1251,8 +1265,7 @@ optional G-MODEL is the gptel model symbol to use."
     (add-hook hook #'cider-mode t)
     (add-hook hook #'eglot-ensure t)))
 
-(with-eval-after-load "polymode-core"
-  (pm-around-advice #'cider-mode #'polymode-inhibit-in-indirect-buffers))
+(my-around-advice #'cider-mode #'my-inhibit-in-indirect-md-buffers)
 
 (add-to-list 'eglot-server-programs
              `(,my-clojure-modes "clojure-lsp"))
@@ -1304,7 +1317,7 @@ optional G-MODEL is the gptel model symbol to use."
 
 (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
 (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))
-(add-to-list 'my-polymode-aliases '(go . go-ts-mode))
+(add-to-list 'my-md-code-aliases '(go . go-ts-mode))
 (add-hook 'go-ts-mode-hook #'eglot-ensure)
 (add-hook 'go-mod-ts-mode-hook #'eglot-ensure)
 
@@ -1359,10 +1372,10 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'auto-mode-alist '("/\\.prettierignore\\'" . gitignore-mode))
 (add-to-list 'auto-mode-alist '("/\\yarn.lock\\'" . conf-mode))
 (add-to-list 'auto-mode-alist '("\\.yarnrc\\'" . yaml-ts-mode))
-(add-to-list 'my-polymode-aliases '(javascript . my-real-js-mode))
-(add-to-list 'my-polymode-aliases '(js . my-real-js-mode))
-(add-to-list 'my-polymode-aliases '(ts . my-real-js-mode))
-(add-to-list 'my-polymode-aliases '(typescript . my-real-js-mode))
+(add-to-list 'my-md-code-aliases '(javascript . my-real-js-mode))
+(add-to-list 'my-md-code-aliases '(js . my-real-js-mode))
+(add-to-list 'my-md-code-aliases '(ts . my-real-js-mode))
+(add-to-list 'my-md-code-aliases '(typescript . my-real-js-mode))
 (my-remap-major-mode 'js-mode 'jtsx-jsx-mode)
 (my-remap-major-mode 'ts-mode 'jtsx-tsx-mode)
 
@@ -1387,15 +1400,14 @@ optional G-MODEL is the gptel model symbol to use."
     (add-hook hook #'my-setup-web-ligatures t)
     (add-hook hook #'my-apheleia-set-js-formatter)))
 
-(with-eval-after-load "polymode-core"
-  (pm-around-advice
-   '(add-node-modules-path
-     my-node-repl-setup
-     my-eslint-setup
-     my-apheleia-set-js-formatter
-     my-apheleia-set-markdown-formatter
-     my-apheleia-set-yaml-formatter)
-   #'polymode-inhibit-in-indirect-buffers))
+(my-around-advice
+ '(add-node-modules-path
+   my-node-repl-setup
+   my-eslint-setup
+   my-apheleia-set-js-formatter
+   my-apheleia-set-markdown-formatter
+   my-apheleia-set-yaml-formatter)
+ #'my-inhibit-in-indirect-md-buffers)
 
 (defclass eglot-deno (eglot-lsp-server) ()
   :documentation "A custom class for deno lsp.")
@@ -1419,7 +1431,7 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; Kotlin
 (add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-ts-mode))
-(add-to-list 'my-polymode-aliases '(kotlin . kotlin-ts-mode))
+(add-to-list 'my-md-code-aliases '(kotlin . kotlin-ts-mode))
 
 ;; Lisp
 (require 'slime)
@@ -1438,7 +1450,7 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; Nix
 (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
-(add-to-list 'my-polymode-aliases '(nix . nix-ts-mode))
+(add-to-list 'my-md-code-aliases '(nix . nix-ts-mode))
 
 ;; Node.js
 (defvar my-nodejs-compilation-regexp
@@ -1473,7 +1485,7 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; Rust
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
-(add-to-list 'my-polymode-aliases '(rust . rust-ts-mode))
+(add-to-list 'my-md-code-aliases '(rust . rust-ts-mode))
 (add-to-list 'eglot-server-programs
              '((rust-ts-mode rust-mode)
                . ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
@@ -1486,10 +1498,8 @@ optional G-MODEL is the gptel model symbol to use."
 
 (add-hook 'scss-mode-hook #'add-node-modules-path t)
 (add-hook 'scss-mode-hook #'flymake-stylelint-enable t)
-
-(with-eval-after-load "polymode-core"
-  (pm-around-advice #'flymake-stylelint-enable
-                    #'polymode-inhibit-in-indirect-buffers))
+(my-around-advice #'flymake-stylelint-enable
+                  #'my-inhibit-in-indirect-md-buffers)
 
 (add-to-list 'eglot-server-programs
              '((scss-mode)
@@ -1498,7 +1508,7 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; Swift
 (add-to-list 'auto-mode-alist '("\\.swift\\(interface\\)?\\'" . swift-ts-mode))
-(add-to-list 'my-polymode-aliases '(swift . swift-ts-mode))
+(add-to-list 'my-md-code-aliases '(swift . swift-ts-mode))
 
 ;; TOML
 (add-to-list 'auto-mode-alist '("\\.toml\\'" . toml-ts-mode))
@@ -1534,7 +1544,7 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; Zig
 (add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-ts-mode))
-(add-to-list 'my-polymode-aliases '(zig . zig-ts-mode))
+(add-to-list 'my-md-code-aliases '(zig . zig-ts-mode))
 (add-to-list 'eglot-server-programs
              '((zig-ts-mode) .
                ("zls" :initializationOptions ())))
@@ -1784,9 +1794,7 @@ This prevents the window from later moving back once the minibuffer is done show
   (dolist (hook '(prog-mode-hook shell-mode-hook))
     (add-hook hook #'corfu-mode t))
 
-  (with-eval-after-load "polymode-core"
-    (pm-around-advice #'corfu-mode #'polymode-inhibit-in-indirect-buffers))
-
+  (my-around-advice #'corfu-mode #'my-inhibit-in-indirect-md-buffers)
   (add-hook 'corfu-mode-hook #'my-setup-corfu-mode)
   (add-hook 'eglot-managed-mode-hook #'my-eglot-capf)
 
@@ -1944,68 +1952,65 @@ This prevents the window from later moving back once the minibuffer is done show
 (add-hook 'conf-mode-hook #'my-turn-on-display-line-numbers-mode t)
 (add-hook 'prog-mode-hook #'my-turn-on-display-line-numbers-mode t)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode t)
-
-(with-eval-after-load "polymode-core"
-  (pm-around-advice
-   '(my-turn-on-display-line-numbers-mode rainbow-delimiters-mode)
-   #'polymode-inhibit-in-indirect-buffers))
+(my-around-advice
+ '(my-turn-on-display-line-numbers-mode rainbow-delimiters-mode)
+ #'my-inhibit-in-indirect-md-buffers)
 
 (add-hook 'lisp-interaction-mode-hook #'my-turn-off-display-line-numbers-mode t)
 
 ;; Markdown support
-(my-remap-major-mode 'gfm-mode 'poly-gfm-mode)
-(my-remap-major-mode 'markdown-mode 'poly-gfm-mode)
-(my-remap-major-mode 'poly-markdown-mode 'poly-gfm-mode)
+(my-remap-major-mode 'markdown-mode 'gfm-mode)
 
 (with-eval-after-load "gptel"
-  (setopt gptel-default-mode #'poly-gfm-mode)
-  (add-to-list 'gptel-prompt-prefix-alist '(poly-gfm-mode . "### ")))
+  (setopt gptel-default-mode #'gfm-mode)
+  (add-to-list 'gptel-prompt-prefix-alist '(gfm-mode . "### ")))
 
 (defun my-replace-mode-in-symbol (mode-sym)
   (intern
    (replace-regexp-in-string "-mode\\'" ""
                              (symbol-name mode-sym))))
 
-(defun my-polymode-install-aliases ()
+(defun my-markdown-install-aliases ()
   (dolist (to-remap major-mode-remap-alist)
     (let ((from (my-replace-mode-in-symbol (car to-remap)))
           (to (cdr to-remap)))
-      (unless (eq to 'poly-gfm-mode)
-        (add-to-list 'polymode-mode-name-aliases (cons from to)))))
-  (dolist (alias my-polymode-aliases)
-    (add-to-list 'polymode-mode-name-aliases alias)))
+      (unless (eq to 'gfm-mode)
+        (add-to-list 'markdown-code-lang-modes (cons from to)))))
+  (dolist (alias my-md-code-aliases)
+    (add-to-list 'markdown-code-lang-modes alias)))
 
-(defun my-polymode-yank-chunk ()
+(defun my-markdown-yank-chunk ()
   (interactive)
   (save-excursion
-    (unless (buffer-narrowed-p)
-      (polymode-toggle-chunk-narrowing))
-    (set-mark (point-min))
-    (goto-char (point-max))
-    (call-interactively #'kill-ring-save)
-    (widen)))
+    (if-let* ((bounds (markdown-get-enclosing-fenced-block-construct))
+              (fence-begin (nth 0 bounds))
+              (fence-end (nth 1 bounds)))
+        (let* ((begin (progn (goto-char fence-begin)
+                             (line-beginning-position 2)))
+               (indentation (current-indentation))
+               (end (progn (goto-char fence-end)
+                           (line-beginning-position 1)))
+               (contents (buffer-substring-no-properties begin end)))
+          (with-temp-buffer
+            (insert contents)
+            (when (> indentation 0)
+              (indent-rigidly (point-min) (point-max) (- indentation)))
+            (copy-region-as-kill (point-min) (point-max)))
+          (message "Yanked fenced code block"))
+      (user-error "Not inside a GFM or tilde fenced code block"))))
 
-(with-eval-after-load "polymode"
-  (keymap-set polymode-map "k" #'polymode-kill-chunk)
-  (keymap-set polymode-map "w" #'my-polymode-yank-chunk)
-  (keymap-set polymode-map "C-w" #'my-polymode-yank-chunk)
-  (keymap-set polymode-minor-mode-map "C-c n" polymode-map)
-  (easy-menu-add-item polymode-menu
+(with-eval-after-load "markdown-mode"
+  (my-markdown-install-aliases)
+  (my-replace-cdrs-in-alist 'sh-mode 'bash-ts-mode
+                            'markdown-code-lang-modes)
+  (my-replace-cdrs-in-alist 'shell-script-mode 'bash-ts-mode
+                            'markdown-code-lang-modes)
+  (keymap-set markdown-mode-map "C-c C-w" #'my-markdown-yank-chunk)
+  (easy-menu-add-item markdown-mode-menu
                       nil
-                      '["Yank chunk" my-polymode-yank-chunk]
-                      "--"))
+                      '["Yank Code Block" my-markdown-yank-chunk]
+                      "Kill Element"))
 
-(with-eval-after-load "polymode-core"
-  (my-polymode-install-aliases)
-  (my-replace-cdrs-in-alist 'sh-mode 'bash-ts-mode 'polymode-mode-name-aliases)
-  (my-replace-cdrs-in-alist 'shell-script-mode 'bash-ts-mode 'polymode-mode-name-aliases))
-
-;; Don't mess with keys that I'm used to
-(defun my-markdown-mode-keys ()
-  (keymap-set markdown-mode-map "M-<left>" #'backward-word)
-  (keymap-set markdown-mode-map "M-<right>" #'forward-word))
-
-(add-hook 'markdown-mode-hook #'my-markdown-mode-keys t)
 (add-hook 'markdown-mode-hook #'my-apheleia-set-markdown-formatter)
 
 ;; Support for .nsh files
@@ -2229,9 +2234,6 @@ This prevents the window from later moving back once the minibuffer is done show
     (keymap-set magit-mode-map "s-4" #'magit-section-show-level-4-all)
     (keymap-set magit-status-mode-map "s-c" #'my-magit-kill-ring-save)
     (keymap-set magit-status-mode-map "s-w" #'my-magit-kill-ring-save))
-
-  (with-eval-after-load "polymode"
-    (keymap-set polymode-minor-mode-map "s-n" 'polymode-map))
 
   (keymap-global-set "s-:" #'eval-expression)
   (keymap-global-set "s-;" #'eval-expression)
