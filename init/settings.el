@@ -7,7 +7,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(Man-notify-method 'bully)
+ '(Man-notify-method 'pushy)
  '(add-log-keep-changes-together t)
  '(apropos-do-all t)
  '(auto-compression-mode t nil (jka-compr))
