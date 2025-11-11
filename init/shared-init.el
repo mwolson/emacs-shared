@@ -390,7 +390,7 @@ Returns the config filename if one is found, `t' if found in package.json"
 
 ;; Caddy conf files
 (define-derived-mode my-caddyfile-mode conf-space-mode "Caddy"
-  "Minor mode for highlighting caddy config files."
+  "Major mode for highlighting caddy config files."
   (setq-local indent-tabs-mode t)
   (setq-local tab-width 4))
 
@@ -1268,7 +1268,7 @@ optional G-MODEL is the gptel model symbol to use."
 (my-around-advice #'cider-mode #'my-inhibit-in-indirect-md-buffers)
 
 (add-to-list 'eglot-server-programs
-             `(,my-clojure-modes "clojure-lsp"))
+             `(,my-clojure-modes . ("clojure-lsp")))
 
 ;; CSS
 (my-remap-major-mode 'css-mode 'css-ts-mode)
@@ -1333,14 +1333,17 @@ optional G-MODEL is the gptel model symbol to use."
 ;; Java
 (my-remap-major-mode 'java-mode 'java-ts-mode)
 (add-hook 'java-ts-mode-hook #'my-xref-minor-mode t)
+
 (when (executable-find "jdtls")
   ;; see https://gist.github.com/rosholger/e519c04243ae7ccb5bbf7ebef3f1cec2
   ;; and the eglot-java package for more options / alternatives
   (add-to-list 'eglot-server-programs
-               '((java-ts-mode java-mode) .
-                 ("jdtls" :initializationOptions
-                  (:extendedClientCapabilities
-                   (:classFileContentsSupport t :skipProjectConfiguration t)))))
+               '((java-ts-mode java-mode)
+                 . ("jdtls"
+                    :initializationOptions
+                    (:extendedClientCapabilities
+                     (:classFileContentsSupport t
+                      :skipProjectConfiguration t)))))
   (add-hook 'java-ts-mode-hook #'eglot-ensure))
 
 ;; JSON
@@ -1351,7 +1354,7 @@ optional G-MODEL is the gptel model symbol to use."
 (add-hook 'json-ts-mode-hook #'my-setup-web-ligatures t)
 (add-hook 'json-ts-mode-hook #'my-apheleia-set-js-formatter)
 
-;; JTSX (Astro, Javascript, Typescript, and JSX support)
+;; JTSX (Astro, Javascript, JSX, Typescript, and TSX support)
 (defvar my-jtsx-major-modes
   '(astro-ts-mode jtsx-jsx-mode jtsx-tsx-mode jtsx-typescript-mode))
 (defvar my-jtsx-ts-major-modes '(jtsx-tsx-mode jtsx-typescript-mode))
@@ -1386,10 +1389,14 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'auto-mode-alist '("/bun\\.lock\\'" . json-ts-mode))
 (add-hook 'json-ts-mode-hook #'my-apheleia-skip-bun -100)
 
-(add-to-list 'eglot-server-programs
-             `(astro-mode . ("astro-ls" "--stdio"
-                             :initializationOptions
-                             (:typescript (:tsdk ,(concat my-emacs-path "node_modules/typescript/lib"))))))
+(add-to-list
+ 'eglot-server-programs
+ `((astro-mode)
+   . ("astro-ls" "--stdio"
+      :initializationOptions
+      (:contentIntellisense t
+       :typescript
+       (:tsdk ,(concat my-emacs-path "node_modules/typescript/lib"))))))
 
 (dolist (mode my-jtsx-major-modes)
   (let ((hook (intern (concat (symbol-name mode) "-hook"))))
@@ -1409,18 +1416,19 @@ optional G-MODEL is the gptel model symbol to use."
    my-apheleia-set-yaml-formatter)
  #'my-inhibit-in-indirect-md-buffers)
 
-(defclass eglot-deno (eglot-lsp-server) ()
-  :documentation "A custom class for deno lsp.")
-
-(cl-defmethod eglot-initialization-options ((server eglot-deno))
-  "Passes through required deno initialization options"
-  (list :enable t
-        :lint t))
-
+;; (defclass eglot-deno (eglot-lsp-server) ()
+;;   :documentation "A custom class for deno lsp.")
+;;
+;; (cl-defmethod eglot-initialization-options ((server eglot-deno))
+;;   "Passes through required deno initialization options"
+;;   (list :enable t
+;;         :lint t))
+;;
 ;; (if (executable-find "deno")
 ;;     (add-to-list 'eglot-server-programs
 ;;                  `(,my-jtsx-ts-major-modes
 ;;                    . (eglot-deno "deno" "lsp")))
+;;
 (add-to-list 'eglot-server-programs
              `(,my-jtsx-ts-major-modes
                . ("typescript-language-server" "--stdio"
@@ -1448,6 +1456,80 @@ optional G-MODEL is the gptel model symbol to use."
 (put 'Base 'safe-local-variable 'integerp)
 (put 'base 'safe-local-variable 'integerp)
 
+;; Markdown support
+(my-remap-major-mode 'markdown-mode 'gfm-mode)
+
+(with-eval-after-load "gptel"
+  (setopt gptel-default-mode #'gfm-mode)
+  (add-to-list 'gptel-prompt-prefix-alist '(gfm-mode . "### ")))
+
+(defun my-replace-mode-in-symbol (mode-sym)
+  (intern
+   (replace-regexp-in-string "-mode\\'" ""
+                             (symbol-name mode-sym))))
+
+(defun my-markdown-install-aliases ()
+  (dolist (to-remap major-mode-remap-alist)
+    (let ((from (my-replace-mode-in-symbol (car to-remap)))
+          (to (cdr to-remap)))
+      (unless (eq to 'gfm-mode)
+        (add-to-list 'markdown-code-lang-modes (cons from to)))))
+  (dolist (alias my-md-code-aliases)
+    (add-to-list 'markdown-code-lang-modes alias)))
+
+(defun my-markdown-yank-chunk ()
+  (interactive)
+  (save-excursion
+    (if-let* ((bounds (markdown-get-enclosing-fenced-block-construct))
+              (fence-begin (nth 0 bounds))
+              (fence-end (nth 1 bounds)))
+        (let* ((begin (progn (goto-char fence-begin)
+                             (line-beginning-position 2)))
+               (indentation (current-indentation))
+               (end (progn (goto-char fence-end)
+                           (line-beginning-position 1)))
+               (contents (buffer-substring-no-properties begin end)))
+          (with-temp-buffer
+            (insert contents)
+            (when (> indentation 0)
+              (indent-rigidly (point-min) (point-max) (- indentation)))
+            (copy-region-as-kill (point-min) (point-max)))
+          (message "Yanked fenced code block"))
+      (user-error "Not inside a GFM or tilde fenced code block"))))
+
+(with-eval-after-load "markdown-mode"
+  (my-markdown-install-aliases)
+  (my-replace-cdrs-in-alist 'sh-mode 'bash-ts-mode
+                            'markdown-code-lang-modes)
+  (my-replace-cdrs-in-alist 'shell-script-mode 'bash-ts-mode
+                            'markdown-code-lang-modes)
+  (keymap-set markdown-mode-map "C-c C-w" #'my-markdown-yank-chunk)
+  (easy-menu-add-item markdown-mode-menu
+                      nil
+                      '["Yank Code Block" my-markdown-yank-chunk]
+                      "Kill Element"))
+
+(add-hook 'markdown-mode-mode #'add-node-modules-path t)
+(add-hook 'markdown-mode-hook #'eglot-ensure)
+(add-hook 'markdown-mode-hook #'my-setup-web-ligatures t)
+(add-hook 'markdown-mode-hook #'my-apheleia-set-markdown-formatter)
+
+(add-to-list
+ 'eglot-server-programs
+ `((gfm-mode markdown-mode my-mdx-mode)
+   . ("mdx-language-server" "--stdio"
+      :initializationOptions
+      (:typescript
+       (:enabled t
+        :tsdk ,(concat my-emacs-path "node_modules/typescript/lib"))))))
+
+;; MDX
+(define-derived-mode my-mdx-mode gfm-mode "MDX"
+  "Major mode for highlighting MDX files.")
+
+(add-to-list 'auto-mode-alist '("\\.mdx\\'" . my-mdx-mode))
+(add-to-list 'my-md-code-aliases '(mdx . my-mdx-mode))
+
 ;; Nix
 (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
 (add-to-list 'my-md-code-aliases '(nix . nix-ts-mode))
@@ -1461,6 +1543,20 @@ optional G-MODEL is the gptel model symbol to use."
   (add-to-list 'compilation-error-regexp-alist-alist
                (cons 'nodejs my-nodejs-compilation-regexp))
   (add-to-list 'compilation-error-regexp-alist 'nodejs))
+
+;; NSIS (.nsh files)
+(add-to-list 'auto-mode-alist '("\\.[Nn][Ss][HhIi]\\'" . nsis-mode))
+
+;; .plist files: from https://www.emacswiki.org/emacs/MacOSXPlist
+(add-to-list 'jka-compr-compression-info-list
+             ["\\.plist$"
+              "converting text XML to binary plist"
+              "plutil"
+              ("-convert" "binary1" "-o" "-" "-")
+              "converting binary plist to text XML"
+              "plutil"
+              ("-convert" "xml1" "-o" "-" "-")
+              nil nil "bplist"])
 
 ;; Prisma support (a JS DB framework)
 (add-to-list 'auto-mode-alist '("\\.prisma\\'" . prisma-ts-mode))
@@ -1480,7 +1576,7 @@ optional G-MODEL is the gptel model symbol to use."
 (my-remap-major-mode 'python-mode 'python-ts-mode)
 (add-to-list 'eglot-server-programs
              '((python-ts-mode python-mode)
-               "basedpyright-langserver" "--stdio"))
+               . ("basedpyright-langserver" "--stdio")))
 (add-hook 'python-ts-mode-hook #'eglot-ensure) ; uses pyright
 
 ;; Rust
@@ -1488,7 +1584,9 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'my-md-code-aliases '(rust . rust-ts-mode))
 (add-to-list 'eglot-server-programs
              '((rust-ts-mode rust-mode)
-               . ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
+               . ("rust-analyzer"
+                  :initializationOptions
+                  (:check (:command "clippy")))))
 (add-hook 'rust-ts-mode-hook #'eglot-ensure)
 
 ;; SCSS
@@ -1546,8 +1644,8 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-ts-mode))
 (add-to-list 'my-md-code-aliases '(zig . zig-ts-mode))
 (add-to-list 'eglot-server-programs
-             '((zig-ts-mode) .
-               ("zls" :initializationOptions ())))
+             '((zig-ts-mode)
+               . ("zls" :initializationOptions ())))
 (add-hook 'zig-ts-mode-hook #'eglot-ensure)
 
 ;; Consult, Embark, Marginalia, Orderless, Prescient, Vertico
@@ -1957,75 +2055,6 @@ This prevents the window from later moving back once the minibuffer is done show
  #'my-inhibit-in-indirect-md-buffers)
 
 (add-hook 'lisp-interaction-mode-hook #'my-turn-off-display-line-numbers-mode t)
-
-;; Markdown support
-(my-remap-major-mode 'markdown-mode 'gfm-mode)
-
-(with-eval-after-load "gptel"
-  (setopt gptel-default-mode #'gfm-mode)
-  (add-to-list 'gptel-prompt-prefix-alist '(gfm-mode . "### ")))
-
-(defun my-replace-mode-in-symbol (mode-sym)
-  (intern
-   (replace-regexp-in-string "-mode\\'" ""
-                             (symbol-name mode-sym))))
-
-(defun my-markdown-install-aliases ()
-  (dolist (to-remap major-mode-remap-alist)
-    (let ((from (my-replace-mode-in-symbol (car to-remap)))
-          (to (cdr to-remap)))
-      (unless (eq to 'gfm-mode)
-        (add-to-list 'markdown-code-lang-modes (cons from to)))))
-  (dolist (alias my-md-code-aliases)
-    (add-to-list 'markdown-code-lang-modes alias)))
-
-(defun my-markdown-yank-chunk ()
-  (interactive)
-  (save-excursion
-    (if-let* ((bounds (markdown-get-enclosing-fenced-block-construct))
-              (fence-begin (nth 0 bounds))
-              (fence-end (nth 1 bounds)))
-        (let* ((begin (progn (goto-char fence-begin)
-                             (line-beginning-position 2)))
-               (indentation (current-indentation))
-               (end (progn (goto-char fence-end)
-                           (line-beginning-position 1)))
-               (contents (buffer-substring-no-properties begin end)))
-          (with-temp-buffer
-            (insert contents)
-            (when (> indentation 0)
-              (indent-rigidly (point-min) (point-max) (- indentation)))
-            (copy-region-as-kill (point-min) (point-max)))
-          (message "Yanked fenced code block"))
-      (user-error "Not inside a GFM or tilde fenced code block"))))
-
-(with-eval-after-load "markdown-mode"
-  (my-markdown-install-aliases)
-  (my-replace-cdrs-in-alist 'sh-mode 'bash-ts-mode
-                            'markdown-code-lang-modes)
-  (my-replace-cdrs-in-alist 'shell-script-mode 'bash-ts-mode
-                            'markdown-code-lang-modes)
-  (keymap-set markdown-mode-map "C-c C-w" #'my-markdown-yank-chunk)
-  (easy-menu-add-item markdown-mode-menu
-                      nil
-                      '["Yank Code Block" my-markdown-yank-chunk]
-                      "Kill Element"))
-
-(add-hook 'markdown-mode-hook #'my-apheleia-set-markdown-formatter)
-
-;; Support for .nsh files
-(add-to-list 'auto-mode-alist '("\\.[Nn][Ss][HhIi]\\'" . nsis-mode))
-
-;; Support for .plist files from https://www.emacswiki.org/emacs/MacOSXPlist
-(add-to-list 'jka-compr-compression-info-list
-             ["\\.plist$"
-              "converting text XML to binary plist"
-              "plutil"
-              ("-convert" "binary1" "-o" "-" "-")
-              "converting binary plist to text XML"
-              "plutil"
-              ("-convert" "xml1" "-o" "-" "-")
-              nil nil "bplist"])
 
 (jka-compr-update)
 
