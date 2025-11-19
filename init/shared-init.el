@@ -388,15 +388,6 @@ Returns the config filename if one is found, `t' if found in package.json"
 (when my-server-start-p
   (my-defer-startup #'atomic-chrome-start-server))
 
-;; Caddy conf files
-(define-derived-mode my-caddyfile-mode conf-space-mode "Caddy"
-  "Major mode for highlighting caddy config files."
-  (setq-local indent-tabs-mode t)
-  (setq-local tab-width 4))
-
-(add-to-list 'auto-mode-alist '("/caddy\\.conf\\'" . my-caddyfile-mode))
-(add-to-list 'auto-mode-alist '("/Caddyfile\\'" . my-caddyfile-mode))
-
 ;; Compile buffers
 (with-eval-after-load "compile"
   (keymap-set compilation-mode-map "M-g" #'recompile)
@@ -443,24 +434,6 @@ Returns the config filename if one is found, `t' if found in package.json"
   ;; (setq my-debug-jsonrpc t)
   (setopt eglot-extend-to-xref t
           eglot-send-changes-idle-time 0.2))
-
-;; MariaDB/MySQL conf files
-(add-to-list 'auto-mode-alist '("\\.cnf\\'" . conf-mode))
-
-;; Mermaid diagrams
-(add-to-list 'load-path (concat my-emacs-path "elisp/mermaid-ts-mode"))
-(autoload #'mermaid-ts-mode "mermaid-ts-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.mmd\\'" . mermaid-ts-mode))
-
-;; SystemD conf files
-(add-to-list 'auto-mode-alist '("\\.service\\'" . conf-mode))
-
-;; SSH conf files
-(add-to-list 'auto-mode-alist '("_config\\'" . conf-mode))
-
-;; /private/etc/ files on macOS
-(add-to-list 'auto-mode-alist '("\\`/private/etc/\\(?:DIR_COLORS\\|ethers\\|.?fstab\\|.*hosts\\|lesskey\\|login\\.?de\\(?:fs\\|vperm\\)\\|magic\\|mtab\\|pam\\.d/.*\\|permissions\\(?:\\.d/.+\\)?\\|protocols\\|rpc\\|services\\)\\'"
-                                . conf-space-mode))
 
 ;; Eslint
 (defun eslint-fix-file ()
@@ -1270,6 +1243,15 @@ optional G-MODEL is the gptel model symbol to use."
 (when (executable-find "omnisharp")
   (add-hook 'csharp-ts-mode-hook #'eglot-ensure))
 
+;; Caddy conf files
+(define-derived-mode my-caddyfile-mode conf-space-mode "Caddy"
+  "Major mode for highlighting caddy config files."
+  (setq-local indent-tabs-mode t)
+  (setq-local tab-width 4))
+
+(add-to-list 'auto-mode-alist '("/caddy\\.conf\\'" . my-caddyfile-mode))
+(add-to-list 'auto-mode-alist '("/Caddyfile\\'" . my-caddyfile-mode))
+
 ;; Clojure
 (with-eval-after-load "cider-repl"
   (keymap-set cider-repl-mode-map "C-d" #'cider-quit))
@@ -1297,6 +1279,20 @@ optional G-MODEL is the gptel model symbol to use."
 
 (add-to-list 'eglot-server-programs
              `(,my-clojure-modes . ("clojure-lsp")))
+
+;; Conf files
+
+;; Markdown code block rendering
+(add-to-list 'my-md-code-aliases '("ini" . conf-mode))
+;; MariaDB/MySQL conf files
+(add-to-list 'auto-mode-alist '("\\.cnf\\'" . conf-mode))
+;; SystemD conf files
+(add-to-list 'auto-mode-alist '("\\.service\\'" . conf-mode))
+;; SSH conf files
+(add-to-list 'auto-mode-alist '("_config\\'" . conf-mode))
+;; /private/etc/ files on macOS
+(add-to-list 'auto-mode-alist '("\\`/private/etc/\\(?:DIR_COLORS\\|ethers\\|.?fstab\\|.*hosts\\|lesskey\\|login\\.?de\\(?:fs\\|vperm\\)\\|magic\\|mtab\\|pam\\.d/.*\\|permissions\\(?:\\.d/.+\\)?\\|protocols\\|rpc\\|services\\)\\'"
+                                . conf-space-mode))
 
 ;; CSS
 (my-remap-major-mode 'css-mode 'css-ts-mode)
@@ -1557,6 +1553,11 @@ optional G-MODEL is the gptel model symbol to use."
 
 (add-to-list 'auto-mode-alist '("\\.mdx\\'" . my-mdx-mode))
 (add-to-list 'my-md-code-aliases '(mdx . my-mdx-mode))
+
+;; Mermaid diagrams
+(add-to-list 'load-path (concat my-emacs-path "elisp/mermaid-ts-mode"))
+(autoload #'mermaid-ts-mode "mermaid-ts-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.mmd\\'" . mermaid-ts-mode))
 
 ;; Nix
 (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
