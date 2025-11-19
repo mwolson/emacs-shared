@@ -846,8 +846,14 @@ interactively.
             :endpoint "/zen/v1/chat/completions"
             :stream t
             :key #'gptel-api-key-from-auth-source
-            :models '((claude-sonnet-4-5
-                       :description "Latest Claude Sonnet 4.5 model with enhanced capabilities"
+            :models '((big-pickle
+                       :description "Big Pickle model - currently free"
+                       :capabilities (tool-use json)
+                       :context-window 200
+                       :input-cost 0.0
+                       :output-cost 0.0)
+                      (claude-sonnet-4-5
+                       :description "Claude Sonnet 4.5 model with enhanced capabilities"
                        :capabilities (tool-use json media)
                        :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
                        :context-window 200
@@ -860,16 +866,38 @@ interactively.
                        :context-window 200
                        :input-cost 1.0
                        :output-cost 5.0)
-                      (gpt-5
-                       :description "GPT-5 model"
+                      (claude-opus-4-1
+                       :description "Claude Opus 4.1 model - most powerful Claude model"
+                       :capabilities (tool-use json media)
+                       :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
+                       :context-window 200
+                       :input-cost 15.0
+                       :output-cost 75.0
+                       :cutoff-date "2024-09")
+                      (gemini-3-pro
+                       :description "Gemini 3.0 Pro model - most intelligent model with state-of-the-art reasoning and multimodal capabilities"
+                       :capabilities (tool-use json media)
+                       :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp" "image/heic" "image/heif" "application/pdf" "text/plain" "text/csv" "text/html" "video/mp4" "video/webm")
+                       :context-window 1000
+                       :input-cost 1.25
+                       :output-cost 10.0
+                       :cutoff-date "2025-01")
+                      (glm-4.6
+                       :description "GLM 4.6 model"
+                       :capabilities (tool-use json)
+                       :context-window 200
+                       :input-cost 0.6
+                       :output-cost 2.2)
+                      (gpt-5-1
+                       :description "GPT 5.1 model - latest GPT model"
                        :capabilities (media tool-use json url)
                        :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
                        :context-window 200
                        :input-cost 1.25
                        :output-cost 10.0
                        :cutoff-date "2024-09")
-                      (gpt-5-codex
-                       :description "GPT-5 Codex model optimized for coding"
+                      (gpt-5-1-codex
+                       :description "GPT 5.1 Codex model optimized for coding"
                        :capabilities (media tool-use json url)
                        :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
                        :context-window 200
@@ -888,12 +916,12 @@ interactively.
                        :context-window 200
                        :input-cost 0.6
                        :output-cost 2.5)
-                      (glm-4.6
-                       :description "GLM 4.6 model"
+                      (qwen3-coder
+                       :description "Qwen3 Coder 480B model"
                        :capabilities (tool-use json)
                        :context-window 200
-                       :input-cost 0.6
-                       :output-cost 1.9))))
+                       :input-cost 0.45
+                       :output-cost 1.5))))
 
     (run-hooks 'my-gptel-ensure-backends-hook))
 
@@ -983,7 +1011,7 @@ interactively.
 (defun my-gptel-toggle-gemini-pro ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--gemini
-                         'gemini-2.5-pro))
+                         'gemini-3-pro))
 
 (defun my-gptel-toggle-glm-4-6 ()
   (interactive)
