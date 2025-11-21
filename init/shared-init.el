@@ -1274,7 +1274,7 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; Conf files
 
-;; Markdown code block rendering
+;; ini files in markdown code blocks
 (add-to-list 'my-md-code-aliases '("ini" . conf-mode))
 ;; MariaDB/MySQL conf files
 (add-to-list 'auto-mode-alist '("\\.cnf\\'" . conf-mode))
@@ -1513,6 +1513,24 @@ optional G-MODEL is the gptel model symbol to use."
           (message "Yanked fenced code block"))
       (user-error "Not inside a GFM or tilde fenced code block"))))
 
+(quail-define-package
+ "Arrows" "UTF-8" "→" nil
+ "Arrow input mode"
+ nil t t nil nil nil nil nil nil nil t)
+
+(quail-define-rules
+ ("->" ?→))
+
+(defun my-turn-on-arrow-input ()
+  "Turn on arrow input mode."
+  (interactive)
+  (set-input-method 'Arrows))
+
+(defun my-turn-off-arrow-input ()
+  "Turn off arrow input mode."
+  (interactive)
+  (deactivate-input-method))
+
 (with-eval-after-load "markdown-mode"
   (my-markdown-install-aliases)
   (my-replace-cdrs-in-alist 'sh-mode 'bash-ts-mode
@@ -1528,7 +1546,11 @@ optional G-MODEL is the gptel model symbol to use."
 (add-hook 'markdown-mode-mode #'add-node-modules-path t)
 (add-hook 'markdown-mode-hook #'eglot-ensure)
 (add-hook 'markdown-mode-hook #'my-setup-web-ligatures t)
+(add-hook 'markdown-mode-hook #'my-turn-on-arrow-input t)
 (add-hook 'markdown-mode-hook #'my-apheleia-set-markdown-formatter)
+
+(my-around-advice #'my-turn-on-arrow-input
+                  #'my-inhibit-in-indirect-md-buffers)
 
 (add-to-list
  'eglot-server-programs
