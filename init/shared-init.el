@@ -314,10 +314,7 @@ If FUN is a list, apply ADVICE to each element of it."
 
 (defun my-inhibit-in-indirect-md-buffers (orig-fun &rest args)
   "Don't run ORIG-FUN (with ARGS) in indirect markdown buffers.
-Use this function to around advice delicate functions:
-   (advice-add \\='xyz :around #\\='my-inhibit-in-indirect-md-buffers)
-or with `my-around-advice' which allows for multiple advises at once:
-   (my-around-advice \\='(foo bar) #\\='my-inhibit-in-indirect-md-buffers)"
+Use this to advise functions that could be problematic."
   (unless (my-in-indirect-md-buffer-p)
     (apply orig-fun args)))
 
