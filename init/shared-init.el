@@ -822,6 +822,14 @@ interactively.
                        :context-window 200
                        :input-cost 0.0
                        :output-cost 0.0)
+                      (claude-opus-4-5
+                       :description "Claude Opus 4.5 model - most powerful Claude model"
+                       :capabilities (tool-use json media)
+                       :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
+                       :context-window 200
+                       :input-cost 15.0
+                       :output-cost 75.0
+                       :cutoff-date "2025-02")
                       (claude-sonnet-4-5
                        :description "Claude Sonnet 4.5 model with enhanced capabilities"
                        :capabilities (tool-use json media)
@@ -835,15 +843,8 @@ interactively.
                        :capabilities (tool-use json)
                        :context-window 200
                        :input-cost 1.0
-                       :output-cost 5.0)
-                      (claude-opus-4-1
-                       :description "Claude Opus 4.1 model - most powerful Claude model"
-                       :capabilities (tool-use json media)
-                       :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
-                       :context-window 200
-                       :input-cost 15.0
-                       :output-cost 75.0
-                       :cutoff-date "2024-09")
+                       :output-cost 5.0
+                       :cutoff-date "2025-01")
                       (gemini-3-pro
                        :description "Gemini 3.0 Pro model - most intelligent model with state-of-the-art reasoning and multimodal capabilities"
                        :capabilities (tool-use json media)
@@ -944,6 +945,7 @@ interactively.
                         gptel-backend-sym))
          (model-sym (if use-preferred
                         (pcase gptel-model-sym
+                          ('claude-opus-4-5-20251101 'claude-opus-4-5)
                           ('claude-sonnet-4-5-20250929 'claude-sonnet-4-5)
                           ('grok-code-fast-1 'grok-code)
                           ('moonshotai/kimi-k2 'kimi-k2)
@@ -954,16 +956,6 @@ interactively.
           my-gptel-backend-remote backend-sym
           my-gptel-model-remote model-sym)
     (my-gptel-toggle-local)))
-
-(defun my-gptel-toggle-claude ()
-  (interactive)
-  (my-gptel-toggle-model 'my-gptel--claude
-                         'claude-sonnet-4-5-20250929))
-
-(defun my-gptel-toggle-claude-thinking ()
-  (interactive)
-  (my-gptel-toggle-model 'my-gptel--claude-thinking
-                         'claude-sonnet-4-5-20250929))
 
 (defun my-gptel-toggle-gemini-flash ()
   (interactive)
@@ -995,10 +987,30 @@ interactively.
   (my-gptel-toggle-model 'my-gptel--openrouter-kimi-k2
                          'moonshotai/kimi-k2))
 
+(defun my-gptel-toggle-opus ()
+  (interactive)
+  (my-gptel-toggle-model 'my-gptel--claude
+                         'claude-opus-4-5-20251101))
+
+(defun my-gptel-toggle-opus-thinking ()
+  (interactive)
+  (my-gptel-toggle-model 'my-gptel--claude-thinking
+                         'claude-opus-4-5-20251101))
+
 (defun my-gptel-toggle-qwen3-coder ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--openrouter-qwen-3-coder
                          'qwen/qwen3-coder))
+
+(defun my-gptel-toggle-sonnet ()
+  (interactive)
+  (my-gptel-toggle-model 'my-gptel--claude
+                         'claude-sonnet-4-5-20250929))
+
+(defun my-gptel-toggle-sonnet-thinking ()
+  (interactive)
+  (my-gptel-toggle-model 'my-gptel--claude-thinking
+                         'claude-sonnet-4-5-20250929))
 
 (defun my-gptel-context-save-and-quit ()
   "Apply gptel context changes and quit."

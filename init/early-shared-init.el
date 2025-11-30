@@ -72,7 +72,7 @@
 (defvar my-gptel-backend-remote 'my-gptel--opencode-zen)
 (defvar my-gptel-backend     my-gptel-backend-remote)
 (defvar my-gptel-model-local 'Sky-T1-32B-Preview)
-(defvar my-gptel-model-remote 'claude-sonnet-4-5)
+(defvar my-gptel-model-remote 'claude-opus-4-5)
 (defvar my-gptel-model       my-gptel-model-remote)
 (defvar my-gptel-preferred-provider 'my-gptel--opencode-zen)
 (defvar my-gptel-system-prompt nil)
