@@ -64,6 +64,7 @@
  '(mail-interactive t)
  '(mail-user-agent 'gnus-user-agent)
  '(markdown-command "npx marked")
+ '(markdown-enable-wiki-links t)
  '(markdown-fontify-code-blocks-natively t)
  '(max-lisp-eval-depth 1000)
  '(max-specpdl-size 1000 t)
