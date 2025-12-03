@@ -1163,13 +1163,12 @@ optional G-MODEL is the gptel model symbol to use."
   (add-hook 'minuet-auto-suggestion-block-functions
             #'my-minuet-block-suggestions -100)
 
-  (keymap-set minuet-active-mode-map "C-c C-a" #'minuet-accept-suggestion)
+  (keymap-set minuet-active-mode-map "C-c C-c" #'minuet-accept-suggestion)
   (keymap-set minuet-active-mode-map "C-c C-k" #'minuet-dismiss-suggestion)
   (keymap-set minuet-active-mode-map "C-c C-n" #'minuet-next-suggestion)
   (keymap-set minuet-active-mode-map "C-c C-p" #'minuet-previous-suggestion)
   (keymap-set minuet-active-mode-map "C-g" #'minuet-dismiss-suggestion)
-  (keymap-set minuet-active-mode-map "<tab>" #'minuet-accept-suggestion-line)
-  (keymap-set minuet-active-mode-map "<return>" #'minuet-accept-suggestion))
+  (keymap-set minuet-active-mode-map "<tab>" #'minuet-accept-suggestion-line))
 
 (add-hook 'prog-mode-hook #'my-minuet-maybe-turn-on-auto-suggest t)
 (my-around-advice #'my-minuet-maybe-turn-on-auto-suggest
