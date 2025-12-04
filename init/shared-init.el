@@ -1164,7 +1164,6 @@ optional G-MODEL is the gptel model symbol to use."
             #'my-minuet-block-suggestions -100)
 
   (keymap-set minuet-active-mode-map "C-c C-c" #'minuet-accept-suggestion)
-  (keymap-set minuet-active-mode-map "C-c C-k" #'minuet-dismiss-suggestion)
   (keymap-set minuet-active-mode-map "C-c C-n" #'minuet-next-suggestion)
   (keymap-set minuet-active-mode-map "C-c C-p" #'minuet-previous-suggestion)
   (keymap-set minuet-active-mode-map "C-g" #'minuet-dismiss-suggestion)
