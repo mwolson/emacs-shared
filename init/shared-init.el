@@ -2346,6 +2346,7 @@ This prevents the window from later moving back once the minibuffer is done show
   (interactive)
   (keymap-global-set "<home>" #'beginning-of-line)
   (keymap-global-set "<end>" #'end-of-line)
+  (keymap-global-set "s-q" #'my-kill-emacs)
   (keymap-global-set "s-<up>" #'scroll-down-command)
   (keymap-global-set "s-<down>" #'scroll-up-command)
   (keymap-global-set "s-<left>" #'beginning-of-line)
