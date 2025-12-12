@@ -755,16 +755,16 @@ interactively.
                        :context-window 131))))
 
     (require 'gptel-openai)
-    (unless (alist-get 'gpt-5.1 gptel--openai-models)
-      (setf (alist-get 'gpt-5.1 gptel--openai-models)
-            '(gpt-5.1
+    (unless (alist-get 'gpt-5.2 gptel--openai-models)
+      (setf (alist-get 'gpt-5.2 gptel--openai-models)
+            '(gpt-5.2
               :description "Flagship model for coding, reasoning, and agentic tasks across domains"
               :capabilities (media tool-use json url)
               :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
               :context-window 400
-              :input-cost 1.25
-              :output-cost 10
-              :cutoff-date "2025-06"))
+              :input-cost 1.75
+              :output-cost 14.0
+              :cutoff-date "2025-08"))
       (setopt gptel--openai-models gptel--openai-models))
 
     (setq my-gptel--openai
@@ -859,14 +859,14 @@ interactively.
                        :context-window 200
                        :input-cost 0.6
                        :output-cost 2.2)
-                      (gpt-5.1
-                       :description "GPT 5.1 model - latest GPT model"
+                      (gpt-5.2
+                       :description "GPT 5.2 model - latest GPT model"
                        :capabilities (media tool-use json url)
                        :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
                        :context-window 200
-                       :input-cost 1.25
-                       :output-cost 10.0
-                       :cutoff-date "2025-06")
+                       :input-cost 1.75
+                       :output-cost 14.0
+                       :cutoff-date "2025-08")
                       (grok-code
                        :description "Grok Code Fast 1 model - currently free"
                        :capabilities (tool-use json)
@@ -967,15 +967,15 @@ interactively.
   (my-gptel-toggle-model 'my-gptel--gemini
                          'gemini-3-pro))
 
-(defun my-gptel-toggle-glm-4-6 ()
+(defun my-gptel-toggle-glm ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--opencode-zen
                          'glm-4.6))
 
-(defun my-gptel-toggle-gpt-5.1 ()
+(defun my-gptel-toggle-gpt ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--openai
-                         'gpt-5.1))
+                         'gpt-5.2))
 
 (defun my-gptel-toggle-grok-code-fast ()
   (interactive)
