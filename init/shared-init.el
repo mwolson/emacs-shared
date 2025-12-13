@@ -319,6 +319,19 @@ Use this to advise functions that could be problematic."
     (apply orig-fun args)))
 
 ;; Apheleia for automatic code formatting
+(defun my-detect-oxfmt ()
+  "Detect whether to use Oxfmt based on project configuration.
+
+Returns the config filename if one is found, `t' if found in package.json"
+  (let ((root (or (my-project-root) default-directory)))
+    (or (file-exists-p (expand-file-name ".oxfmtrc.json" root))
+        (file-exists-p (expand-file-name ".oxfmtrc.jsonc" root))
+        (and (file-exists-p (expand-file-name "package.json" root))
+             (with-temp-buffer
+               (insert-file-contents (expand-file-name "package.json" root))
+               (re-search-forward "\"oxfmt\"" nil t))
+             t))))
+
 (defun my-detect-biome ()
   "Detect whether to use Biome based on project configuration.
 
@@ -331,6 +344,12 @@ Returns the config filename if one is found, `t' if found in package.json"
                (insert-file-contents (expand-file-name "package.json" root))
                (re-search-forward "\"biome\"" nil t))
              t))))
+
+(with-eval-after-load "apheleia-formatters"
+  ;; Note: oxfmt does not support stdin/stdout formatting. Apheleia's `inplace'
+  ;; integration uses a temp file with the correct extension.
+  (setf (alist-get 'oxfmt apheleia-formatters)
+        '("apheleia-npx" "oxfmt" inplace)))
 
 (defun my-detect-prettier ()
   "Detect whether to use Prettier based on project configuration.
@@ -349,8 +368,9 @@ Returns the config filename if one is found, `t' if found in package.json"
              t))))
 
 (defun my-detect-js-formatter ()
-  "Detect whether to use Biome or Prettier based on project configuration."
+  "Detect whether to use Oxfmt, Biome, or Prettier based on project configuration."
   (cond
+   ((my-detect-oxfmt) 'oxfmt)
    ((my-detect-biome) 'biome)
    ((my-detect-prettier) 'prettier)
    (t nil)))
@@ -431,33 +451,6 @@ Returns the config filename if one is found, `t' if found in package.json"
   ;; (setq my-debug-jsonrpc t)
   (setopt eglot-extend-to-xref t
           eglot-send-changes-idle-time 0.2))
-
-;; Eslint
-(defun eslint-fix-file ()
-  (interactive)
-  (message "Running eslint --fix")
-  (redisplay t)
-  (call-process "eslint" nil nil nil "--fix" (buffer-file-name))
-  (message "Running eslint --fix...done"))
-
-(defun eslint-fix-file-and-revert-maybe ()
-  (interactive)
-  (when (and my-eslint-fix-enabled-p (fboundp #'flymake-diagnostics))
-    (eslint-fix-file)
-    (revert-buffer t t)))
-
-(defun my-eslint-disable-in-current-buffer ()
-  (interactive)
-  (flymake-mode nil)
-  (set (make-local-variable 'my-eslint-fix-enabled-p) nil))
-
-(defun my-eslint-setup ()
-  (node-repl-interaction-mode 1)
-  (when (and (not (string-match-p "/node_modules/" default-directory))
-             (executable-find "eslint"))
-    (add-hook 'after-save-hook #'eslint-fix-file-and-revert-maybe t t)))
-
-(my-around-advice #'my-eslint-setup #'my-inhibit-in-indirect-md-buffers)
 
 ;; Flymake
 (defvar my-flymake-mode-map
@@ -1426,14 +1419,12 @@ optional G-MODEL is the gptel model symbol to use."
     (add-hook hook #'add-node-modules-path t)
     (add-hook hook #'eglot-ensure t)
     (add-hook hook #'my-node-repl-setup t)
-    (add-hook hook #'my-eslint-setup t)
     (add-hook hook #'my-setup-web-ligatures t)
     (add-hook hook #'my-apheleia-set-js-formatter)))
 
 (my-around-advice
  '(add-node-modules-path
    my-node-repl-setup
-   my-eslint-setup
    my-apheleia-set-js-formatter
    my-apheleia-set-markdown-formatter
    my-apheleia-set-yaml-formatter)

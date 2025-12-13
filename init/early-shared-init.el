@@ -61,7 +61,6 @@
     (bg-mode-line-active "#484d67")
     (comment             fg-dim)))
 (defvar my-use-themes-p      (boundp 'custom-theme-load-path))
-(defvar my-eslint-fix-enabled-p nil)
 (defvar my-frame-height      50)
 (defvar my-frame-width       120)
 (defvar my-frame-maximize-if-pixel-width-lte 1440)
