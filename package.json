@@ -8,13 +8,17 @@
   },
   "bin": {
     "vscode-css-language-server": "./extra/vscode/extensions/css-language-features/server/bin/vscode-css-languageserver",
+    "vscode-eslint-language-server": "./extra/vscode-eslint/server/bin/vscode-eslint-languageserver",
     "vscode-html-language-server": "./extra/vscode/extensions/html-language-features/server/bin/vscode-html-languageserver"
   },
   "scripts": {
-    "compile:lsp": "pnpm run compile:lsp:deps && pnpm run compile:lsp:css && pnpm run compile:lsp:css:bin && pnpm run compile:lsp:json && pnpm run compile:lsp:html && pnpm run compile:lsp:html:bin",
+    "compile:lsp": "pnpm run compile:lsp:deps:vscode && pnpm run compile:lsp:deps:vscode-eslint && pnpm run compile:lsp:css && pnpm run compile:lsp:css:bin && pnpm run compile:lsp:eslint && pnpm run compile:lsp:eslint:bin && pnpm run compile:lsp:json && pnpm run compile:lsp:html && pnpm run compile:lsp:html:bin",
     "compile:lsp:css": "cd extra/vscode/extensions/css-language-features && npm i && cd server && npm i && npm run compile",
     "compile:lsp:css:bin": "shx mkdir -p extra/vscode/extensions/css-language-features/server/bin && shx cp -f tpl/lsp-bin/vscode-css-languageserver extra/vscode/extensions/css-language-features/server/bin",
-    "compile:lsp:deps": "cd extra/vscode && npm i --ignore-scripts && cd build && npm i",
+    "compile:lsp:deps:vscode": "cd extra/vscode && npm i --ignore-scripts && cd build && npm i",
+    "compile:lsp:deps:vscode-eslint": "cd extra/vscode-eslint && npm i --ignore-scripts && cd server && npm i",
+    "compile:lsp:eslint": "cd extra/vscode-eslint && npm run compile:server",
+    "compile:lsp:eslint:bin": "shx mkdir -p extra/vscode-eslint/server/bin && shx cp -f tpl/lsp-bin/vscode-eslint-languageserver extra/vscode-eslint/server/bin",
     "compile:lsp:json": "cd extra/vscode/extensions/json-language-features && npm i && cd server && npm i && npm run compile",
     "compile:lsp:html": "cd extra/vscode/extensions/html-language-features && npm i && cd server && npm i && npm run compile",
     "compile:lsp:html:bin": "shx mkdir -p extra/vscode/extensions/html-language-features/server/bin && shx cp -f tpl/lsp-bin/vscode-html-languageserver extra/vscode/extensions/html-language-features/server/bin",
@@ -34,6 +38,7 @@
     "@mdx-js/language-server": "^0.6.3",
     "@mermaid-js/mermaid-cli": "^11.12.0",
     "@mwolson/emacs-shared": "link:",
+    "@tailwindcss/language-server": "^0.14.29",
     "oxlint": "^1.32.0",
     "prettier": "^3.7.4",
     "stylelint": "^16.26.1",

@@ -192,6 +192,11 @@
         ignore = dirty
         shallow = true
 	url = https://github.com/microsoft/vscode.git
+[submodule "extra/vscode-eslint"]
+	path = extra/vscode-eslint
+        ignore = dirty
+        shallow = true
+	url = https://github.com/microsoft/vscode-eslint.git
 [submodule "share/man"]
         path = share/man
         ignore = dirty

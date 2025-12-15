@@ -23,6 +23,9 @@ importers:
       '@mwolson/emacs-shared':
         specifier: 'link:'
         version: 'link:'
+      '@tailwindcss/language-server':
+        specifier: ^0.14.29
+        version: 0.14.29
       oxlint:
         specifier: ^1.32.0
         version: 1.32.0
@@ -376,6 +379,11 @@ packages:
   '@puppeteer/browsers@2.6.1':
     resolution: {integrity: sha512-aBSREisdsGH890S2rQqK82qmQYU3uFpSH8wcZWHgHzl3LfzsxAKbLNiAG9mO8v1Y0UICBeClICxPJvyr0rcuxg==}
     engines: {node: '>=18'}
+    hasBin: true
+
+  '@tailwindcss/language-server@0.14.29':
+    resolution: {integrity: sha512-aZ3/XyTNmsoIyhs09Fghlw6D6y7o70aIxHmQEYPFiJPe/1k3HqtxXqhn7g7a5UpA1yeGOyKK9HRNJ8ghZqIclg==}
+    engines: {node: '>=18.0.0'}
     hasBin: true
 
   '@tanstack/virtual-core@3.12.0':
@@ -3012,6 +3020,8 @@ snapshots:
       - bare-buffer
       - react-native-b4a
       - supports-color
+
+  '@tailwindcss/language-server@0.14.29': {}
 
   '@tanstack/virtual-core@3.12.0': {}
 
