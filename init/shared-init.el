@@ -319,6 +319,35 @@ Use this to advise functions that could be problematic."
     (apply orig-fun args)))
 
 ;; Apheleia for automatic code formatting
+(defun my-detect-biome ()
+  "Detect whether to use Biome based on project configuration.
+
+Returns the config filename if one is found, `t' if found in package.json"
+  (let ((root (or (my-project-root) default-directory)))
+    (or (file-exists-p (expand-file-name "biome.json" root))
+        (file-exists-p (expand-file-name "biome.jsonc" root))
+        (and (file-exists-p (expand-file-name "package.json" root))
+             (with-temp-buffer
+               (insert-file-contents (expand-file-name "package.json" root))
+               (re-search-forward "\"biome\"" nil t))
+             t))))
+
+(defun my-detect-eslint ()
+  "Detect whether to use ESLint based on project configuration."
+  (let ((root (or (my-project-root) default-directory)))
+    (or (file-exists-p (expand-file-name "eslint.config.js" root))
+        (file-exists-p (expand-file-name "eslint.config.mjs" root))
+        (file-exists-p (expand-file-name "eslint.config.cjs" root))
+        (file-exists-p (expand-file-name ".eslintrc.js" root))
+        (file-exists-p (expand-file-name ".eslintrc.cjs" root))
+        (file-exists-p (expand-file-name ".eslintrc.json" root))
+        (file-exists-p (expand-file-name ".eslintrc" root))
+        (and (file-exists-p (expand-file-name "package.json" root))
+             (with-temp-buffer
+               (insert-file-contents (expand-file-name "package.json" root))
+               (re-search-forward "\"eslintConfig\"" nil t))
+             t))))
+
 (defun my-detect-oxfmt ()
   "Detect whether to use Oxfmt based on project configuration.
 
@@ -332,17 +361,16 @@ Returns the config filename if one is found, `t' if found in package.json"
                (re-search-forward "\"oxfmt\"" nil t))
              t))))
 
-(defun my-detect-biome ()
-  "Detect whether to use Biome based on project configuration.
+(defun my-detect-oxlint ()
+  "Detect whether to use Oxlint based on project configuration.
 
 Returns the config filename if one is found, `t' if found in package.json"
   (let ((root (or (my-project-root) default-directory)))
-    (or (file-exists-p (expand-file-name "biome.json" root))
-        (file-exists-p (expand-file-name "biome.jsonc" root))
+    (or (file-exists-p (expand-file-name ".oxlintrc.json" root))
         (and (file-exists-p (expand-file-name "package.json" root))
              (with-temp-buffer
                (insert-file-contents (expand-file-name "package.json" root))
-               (re-search-forward "\"biome\"" nil t))
+               (re-search-forward "\"oxlint\"" nil t))
              t))))
 
 (with-eval-after-load "apheleia-formatters"
