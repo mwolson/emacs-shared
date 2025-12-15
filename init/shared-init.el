@@ -1378,6 +1378,10 @@ optional G-MODEL is the gptel model symbol to use."
 (require 'js)
 (fset #'my-real-js-mode #'js-mode)
 
+;; load this early (astro-ts-mode dependency) so that we can override the
+;; auto-mode-alist entries that it makes
+(require 'typescript-ts-mode)
+
 (add-to-list 'auto-mode-alist '("\\.astro\\'" . astro-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.[cm]js\\'" . jtsx-jsx-mode))
 (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . jtsx-jsx-mode))
@@ -1407,7 +1411,7 @@ optional G-MODEL is the gptel model symbol to use."
 
 (add-to-list
  'eglot-server-programs
- `((astro-mode)
+ `((astro-ts-mode)
    . ("astro-ls" "--stdio"
       :initializationOptions
       (:contentIntellisense t
