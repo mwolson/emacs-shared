@@ -448,37 +448,51 @@ Returns the config filename if one is found, `t' if found in package.json"
 
 (editorconfig-mode 1)
 
-;; Set up eglot for LSP features
-(require 'eglot)
-(setopt eglot-sync-connect nil)
+;; Set up lsp-mode for LSP features
+(require 'lsp-mode)
 
-(defvar my-debug-jsonrpc nil
-  "Whether to enable log messages for jsonrpc.")
+(defvar my-debug-lsp nil
+  "Whether to enable log messages for LSP.")
 
-(defun my-jsonrpc--log-event-real (&rest args)
-  "Placeholder for `jsonrpc--log-event'."
-  nil)
-
-(defun my-jsonrpc--log-event (&rest args)
-  "Control whether jsonrpc events are logged."
-  (when my-debug-jsonrpc
-    (apply #'my-jsonrpc--log-event-real args)))
-
-(with-eval-after-load "eglot"
-  (setq eglot-diagnostics-map
+(with-eval-after-load "lsp-mode"
+  (setq lsp-diagnostics-map
         (let ((map (make-sparse-keymap)))
-          (keymap-set map "<mouse-3>" #'eglot-code-actions-at-mouse)
+          (keymap-set map "<mouse-3>" #'lsp-execute-code-action-at-point)
           map))
 
-  (my-around-advice #'eglot-ensure #'my-inhibit-in-indirect-md-buffers)
-  (keymap-set eglot-mode-map "<f2>" #'eglot-rename)
-  (fset #'my-jsonrpc--log-event-real (symbol-function 'jsonrpc--log-event))
-  (fset #'jsonrpc--log-event #'my-jsonrpc--log-event)
+  (my-around-advice #'lsp #'my-inhibit-in-indirect-md-buffers)
+  (keymap-set lsp-mode-map "<f2>" #'lsp-rename)
+  (keymap-set lsp-mode-map "<remap> <xref-find-apropos>"
+              #'consult-lsp-symbols)
 
-  ;; to debug eglot:
-  ;; (setq my-debug-jsonrpc t)
-  (setopt eglot-extend-to-xref t
-          eglot-send-changes-idle-time 0.2))
+  ;; to debug lsp:
+  ;; (setq my-debug-lsp t
+  ;;       lsp-log-io t)
+  (setq lsp-auto-guess-root t
+        lsp-idle-delay 0.2
+        lsp-enable-file-watchers nil
+        lsp-enable-folding nil
+        lsp-enable-snippet nil
+        lsp-enable-symbol-highlighting nil
+        lsp-enable-textdocument-color nil
+        lsp-enable-semantic-highlighting nil
+        lsp-modeline-code-actions-enable nil
+        lsp-modeline-diagnostics-enable nil
+        lsp-eldoc-enable-hover nil
+        lsp-signature-auto-activate nil
+        lsp-completion-enable-additional-text-edit nil))
+
+;; Set up lsp-deferred for better startup performance
+(defun my-lsp-deferred ()
+  "Start LSP deferred, with safety checks."
+  (unless (my-in-indirect-md-buffer-p)
+    (lsp-deferred)))
+
+;; Performance optimizations
+(setq gc-cons-threshold (* 100 1024 1024)  ; 100MB
+      read-process-output-max (* 1024 1024)  ; 1MB
+      lsp-use-plists t
+      lsp-completion-provider :capf)
 
 ;; Flymake
 (defvar my-flymake-mode-map
@@ -1249,7 +1263,7 @@ optional G-MODEL is the gptel model symbol to use."
 (my-remap-major-mode 'c-mode 'c-ts-mode)
 (my-remap-major-mode 'c++-mode 'c++-ts-mode)
 (my-remap-major-mode 'c-or-c++-mode 'c-or-c++-ts-mode)
-(add-hook 'c-ts-base-mode-hook #'eglot-ensure)
+(add-hook 'c-ts-base-mode-hook #'my-lsp-deferred)
 (add-hook 'c-ts-base-mode-hook #'my-xref-minor-mode t)
 
 ;; C# - requires exactly v0.20.0 of its treesit grammar
@@ -1261,7 +1275,7 @@ optional G-MODEL is the gptel model symbol to use."
 (my-remap-major-mode 'csharp-mode 'csharp-ts-mode)
 (add-hook 'csharp-ts-mode-hook #'my-xref-minor-mode t)
 (when (executable-find "omnisharp")
-  (add-hook 'csharp-ts-mode-hook #'eglot-ensure))
+  (add-hook 'csharp-ts-mode-hook #'my-lsp-deferred))
 
 ;; Caddy conf files
 (define-derived-mode my-caddyfile-mode conf-space-mode "Caddy"
@@ -1293,12 +1307,12 @@ optional G-MODEL is the gptel model symbol to use."
 (dolist (mode my-clojure-modes)
   (let ((hook (intern (concat (symbol-name mode) "-hook"))))
     (add-hook hook #'cider-mode t)
-    (add-hook hook #'eglot-ensure t)))
+    (add-hook hook #'my-lsp-deferred t)))
 
 (my-around-advice #'cider-mode #'my-inhibit-in-indirect-md-buffers)
 
-(add-to-list 'eglot-server-programs
-             `(,my-clojure-modes . ("clojure-lsp")))
+(with-eval-after-load "lsp-clojure"
+  (setq lsp-clojure-server-command '("clojure-lsp")))
 
 ;; Conf files
 
@@ -1316,7 +1330,7 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; CSS
 (my-remap-major-mode 'css-mode 'css-ts-mode)
-(add-hook 'css-ts-mode-hook #'eglot-ensure t)
+(add-hook 'css-ts-mode-hook #'my-lsp-deferred t)
 (add-hook 'css-ts-mode-hook #'my-setup-web-ligatures t)
 
 ;; Emacs Lisp
@@ -1371,7 +1385,7 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; HTML
 (my-remap-major-mode 'html-mode 'html-ts-mode)
-(add-hook 'html-ts-mode-hook #'eglot-ensure)
+(add-hook 'html-ts-mode-hook #'my-lsp-deferred)
 (add-hook 'html-ts-mode-hook #'my-setup-web-ligatures t)
 
 ;; Java
@@ -1380,21 +1394,21 @@ optional G-MODEL is the gptel model symbol to use."
 
 (when (executable-find "jdtls")
   ;; see https://gist.github.com/rosholger/e519c04243ae7ccb5bbf7ebef3f1cec2
-  ;; and the eglot-java package for more options / alternatives
-  (add-to-list 'eglot-server-programs
-               '((java-ts-mode java-mode)
-                 . ("jdtls"
-                    :initializationOptions
-                    (:extendedClientCapabilities
-                     (:classFileContentsSupport t
-                      :skipProjectConfiguration t)))))
-  (add-hook 'java-ts-mode-hook #'eglot-ensure))
+  ;; and the lsp-java package for more options / alternatives
+  (with-eval-after-load "lsp-java"
+    (setq lsp-java-server-command '("jdtls")
+          lsp-java-java-path "java"
+          lsp-java-workspace-dir-replace "~/.cache/lsp-java"
+          lsp-java-extended-client-capabilities
+          '(:class_file_contents_support t
+            :skip_project_configuration t)))
+  (add-hook 'java-ts-mode-hook #'my-lsp-deferred))
 
 ;; JSON
 (my-remap-major-mode 'json-mode 'json-ts-mode)
 (add-to-list 'auto-mode-alist '("\\.jsonc?\\'" . json-ts-mode))
 (add-hook 'json-ts-mode-hook #'add-node-modules-path t)
-(add-hook 'json-ts-mode-hook #'eglot-ensure)
+(add-hook 'json-ts-mode-hook #'my-lsp-deferred)
 (add-hook 'json-ts-mode-hook #'my-setup-web-ligatures t)
 (add-hook 'json-ts-mode-hook #'my-apheleia-set-js-formatter)
 
@@ -1437,19 +1451,83 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'auto-mode-alist '("/bun\\.lock\\'" . json-ts-mode))
 (add-hook 'json-ts-mode-hook #'my-apheleia-skip-bun -100)
 
-(add-to-list
- 'eglot-server-programs
- `((astro-ts-mode)
-   . ("astro-ls" "--stdio"
-      :initializationOptions
-      (:contentIntellisense t
-       :typescript
-       (:tsdk ,(concat my-emacs-path "node_modules/typescript/lib"))))))
+;; Multi-LSP configuration for JavaScript/TypeScript/Astro
+(defun my-setup-multi-lsp ()
+  "Set up multiple LSP servers for JS/TS/Astro based on project configuration."
+  (let ((secondary-servers '()))
+    ;; Detect secondary linters/formatters
+    (when (and (memq major-mode '(astro-ts-mode jtsx-tsx-mode jtsx-typescript-mode))
+               (my-detect-biome))
+      (push 'biome-ls secondary-servers))
+    (when (and (memq major-mode '(astro-ts-mode jtsx-tsx-mode jtsx-typescript-mode))
+               (my-detect-eslint))
+      (push 'eslint-ls secondary-servers))
+    (when (and (memq major-mode '(astro-ts-mode jtsx-tsx-mode jtsx-typescript-mode))
+               (my-detect-oxlint))
+      (push 'oxlint-ls secondary-servers))
+
+    ;; Start primary LSP
+    (cond
+     ((eq major-mode 'astro-ts-mode)
+      (lsp-deferred))
+     ((memq major-mode '(jtsx-tsx-mode jtsx-typescript-mode))
+      (lsp-deferred)))
+
+    ;; Start secondary servers after a delay
+    (when secondary-servers
+      (run-with-timer 2 nil
+                      (lambda ()
+                        (dolist (server secondary-servers)
+                          (let ((lsp-auto-guess-root nil)
+                                (lsp-buffer-uri (lsp--path-to-uri buffer-file-name)))
+                            (pcase server
+                              ('biome-ls (lsp-biome--start))
+                              ('eslint-ls (lsp-eslint--start))
+                              ('oxlint-ls (lsp-oxlint--start))))))))))
+
+;; Astro LSP configuration
+(with-eval-after-load "lsp-astro"
+  (setq lsp-astro-server-command '("astro-ls" "--stdio")
+        lsp-astro-server-extra-args '()
+        lsp-astro-initialization-options
+        '(:contentIntellisense t
+          :typescript (:tsdk ,(concat my-emacs-path "node_modules/typescript/lib")))))
+
+;; TypeScript LSP configuration
+(with-eval-after-load "lsp-typescript"
+  (setq lsp-typescript-server-command '("typescript-language-server" "--stdio")
+        lsp-typescript-suggest-auto-imports t
+        lsp-typescript-suggest-complete-function-calls t
+        lsp-typescript-references-code-lens-enable t))
+
+;; Register Biome as secondary language server
+(lsp-register-client
+ (make-lsp-client :new-connection (lsp-stdio-connection '("biome" "lsp-proxy"))
+                  :major-modes '(astro-ts-mode jtsx-tsx-mode jtsx-typescript-mode)
+                  :server-id 'biome-ls
+                  :add-on? t
+                  :activation-fn (lambda (&rest _) (when (my-detect-biome) t))))
+
+;; Register ESLint as secondary language server
+(lsp-register-client
+ (make-lsp-client :new-connection (lsp-stdio-connection '("vscode-eslint-language-server" "--stdio"))
+                  :major-modes '(astro-ts-mode jtsx-tsx-mode jtsx-typescript-mode)
+                  :server-id 'eslint-ls
+                  :add-on? t
+                  :activation-fn (lambda (&rest _) (when (my-detect-eslint) t))))
+
+;; Register Oxlint as secondary language server
+(lsp-register-client
+ (make-lsp-client :new-connection (lsp-stdio-connection '("oxlint" "--lsp"))
+                  :major-modes '(astro-ts-mode jtsx-tsx-mode jtsx-typescript-mode)
+                  :server-id 'oxlint-ls
+                  :add-on? t
+                  :activation-fn (lambda (&rest _) (when (my-detect-oxlint) t))))
 
 (dolist (mode my-jtsx-major-modes)
   (let ((hook (intern (concat (symbol-name mode) "-hook"))))
     (add-hook hook #'add-node-modules-path t)
-    (add-hook hook #'eglot-ensure t)
+    (add-hook hook #'my-setup-multi-lsp)
     (add-hook hook #'my-node-repl-setup t)
     (add-hook hook #'my-setup-web-ligatures t)
     (add-hook hook #'my-apheleia-set-js-formatter)))
@@ -1461,27 +1539,6 @@ optional G-MODEL is the gptel model symbol to use."
    my-apheleia-set-markdown-formatter
    my-apheleia-set-yaml-formatter)
  #'my-inhibit-in-indirect-md-buffers)
-
-;; (defclass eglot-deno (eglot-lsp-server) ()
-;;   :documentation "A custom class for deno lsp.")
-;;
-;; (cl-defmethod eglot-initialization-options ((server eglot-deno))
-;;   "Passes through required deno initialization options"
-;;   (list :enable t
-;;         :lint t))
-;;
-;; (if (executable-find "deno")
-;;     (add-to-list 'eglot-server-programs
-;;                  `(,my-jtsx-ts-major-modes
-;;                    . (eglot-deno "deno" "lsp")))
-;;
-(add-to-list 'eglot-server-programs
-             `(,my-jtsx-ts-major-modes
-               . ("typescript-language-server" "--stdio"
-                  :initializationOptions
-                  (:plugins [(:name "typescript-eslint-language-service"
-                              :location ,my-emacs-path)]))))
-;;)
 
 ;; Kotlin
 (add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-ts-mode))
@@ -1574,7 +1631,7 @@ optional G-MODEL is the gptel model symbol to use."
                       "Kill Element"))
 
 (add-hook 'markdown-mode-mode #'add-node-modules-path t)
-(add-hook 'markdown-mode-hook #'eglot-ensure)
+(add-hook 'markdown-mode-hook #'my-lsp-deferred)
 (add-hook 'markdown-mode-hook #'my-setup-web-ligatures t)
 (add-hook 'markdown-mode-hook #'my-turn-on-arrow-input t)
 (add-hook 'markdown-mode-hook #'my-apheleia-set-markdown-formatter)
@@ -1582,14 +1639,11 @@ optional G-MODEL is the gptel model symbol to use."
 (my-around-advice #'my-turn-on-arrow-input
                   #'my-inhibit-in-indirect-md-buffers)
 
-(add-to-list
- 'eglot-server-programs
- `((gfm-mode markdown-mode my-mdx-mode)
-   . ("mdx-language-server" "--stdio"
-      :initializationOptions
-      (:typescript
-       (:enabled t
-        :tsdk ,(concat my-emacs-path "node_modules/typescript/lib"))))))
+(with-eval-after-load "lsp-markdown"
+  (setq lsp-markdown-server-command '("mdx-language-server" "--stdio")
+        lsp-markdown-initialization-options
+        '(:typescript (:enabled t
+                       :tsdk ,(concat my-emacs-path "node_modules/typescript/lib")))))
 
 ;; MDX
 (define-derived-mode my-mdx-mode gfm-mode "MDX"
@@ -1647,20 +1701,21 @@ optional G-MODEL is the gptel model symbol to use."
 
 (add-to-list 'auto-mode-alist '("/uv\\.lock\\'" . toml-ts-mode))
 (my-remap-major-mode 'python-mode 'python-ts-mode)
-(add-to-list 'eglot-server-programs
-             '((python-ts-mode python-mode)
-               . ("basedpyright-langserver" "--stdio")))
-(add-hook 'python-ts-mode-hook #'eglot-ensure) ; uses pyright
+(with-eval-after-load "lsp-pyright"
+  (setq lsp-pyright-langserver-command "basedpyright-langserver"
+        lsp-pyright-organize-imports t
+        lsp-pyright-auto-import-completions t
+        lsp-pyright-type-checking-mode "basic"))
+(add-hook 'python-ts-mode-hook #'my-lsp-deferred) ; uses basedpyright
 
 ;; Rust
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
 (add-to-list 'my-md-code-aliases '(rust . rust-ts-mode))
-(add-to-list 'eglot-server-programs
-             '((rust-ts-mode rust-mode)
-               . ("rust-analyzer"
-                  :initializationOptions
-                  (:check (:command "clippy")))))
-(add-hook 'rust-ts-mode-hook #'eglot-ensure)
+(with-eval-after-load "lsp-rust"
+  (setq lsp-rust-analyzer-server-command '("rust-analyzer")
+        lsp-rust-analyzer-cargo-load-out-dirs-from-check t
+        lsp-rust-analyzer-cargo-watch-command "clippy"))
+(add-hook 'rust-ts-mode-hook #'my-lsp-deferred)
 
 ;; SCSS
 (add-to-list 'load-path (concat my-emacs-path "elisp/flymake-stylelint"))
@@ -1672,10 +1727,9 @@ optional G-MODEL is the gptel model symbol to use."
 (my-around-advice #'flymake-stylelint-enable
                   #'my-inhibit-in-indirect-md-buffers)
 
-(add-to-list 'eglot-server-programs
-             '((scss-mode)
-               . ("vscode-css-language-server" "--stdio")))
-(add-hook 'scss-mode-hook #'eglot-ensure)
+(with-eval-after-load "lsp-css"
+  (setq lsp-css-server-command '("vscode-css-language-server" "--stdio")))
+(add-hook 'scss-mode-hook #'my-lsp-deferred)
 
 ;; Swift
 (add-to-list 'auto-mode-alist '("\\.swift\\(interface\\)?\\'" . swift-ts-mode))
@@ -1716,10 +1770,10 @@ optional G-MODEL is the gptel model symbol to use."
 ;; Zig
 (add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-ts-mode))
 (add-to-list 'my-md-code-aliases '(zig . zig-ts-mode))
-(add-to-list 'eglot-server-programs
-             '((zig-ts-mode)
-               . ("zls" :initializationOptions ())))
-(add-hook 'zig-ts-mode-hook #'eglot-ensure)
+(with-eval-after-load "lsp-zig"
+  (setq lsp-zig-zls-executable "zls"
+        lsp-zig-zls-settings '()))
+(add-hook 'zig-ts-mode-hook #'my-lsp-deferred)
 
 ;; Consult, Embark, Marginalia, Orderless, Prescient, Vertico
 (defvar my-minibuffer-from-consult-line nil)
@@ -1942,10 +1996,10 @@ This prevents the window from later moving back once the minibuffer is done show
               completion-category-overrides nil
               completion-category-defaults nil))
 
-(defun my-eglot-capf ()
+(defun my-lsp-capf ()
   (setq-local completion-at-point-functions
               (list (cape-capf-super
-                     #'eglot-completion-at-point
+                     #'lsp-completion-at-point
                      #'cape-file))))
 
 (defun my-corfu-elisp ()
@@ -1967,7 +2021,7 @@ This prevents the window from later moving back once the minibuffer is done show
 
   (my-around-advice #'corfu-mode #'my-inhibit-in-indirect-md-buffers)
   (add-hook 'corfu-mode-hook #'my-setup-corfu-mode)
-  (add-hook 'eglot-managed-mode-hook #'my-eglot-capf)
+  (add-hook 'lsp-mode-hook #'my-lsp-capf)
 
   (require 'kind-icon)
   (plist-put kind-icon-default-style :height 0.35)
