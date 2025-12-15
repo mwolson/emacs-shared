@@ -125,6 +125,7 @@ echo
 if [[ -n "$BUILD" ]]; then
     pnpm install --quiet
     pnpm run compile:lsp
+    pnpm install --quiet
 fi
 
 emacs_script "$(get_topdir)"/scripts/install-packages.el
