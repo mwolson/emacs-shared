@@ -287,11 +287,6 @@ When `depth' is provided, pass it to `add-hook'."
       (replace-regexp-in-string "/bin/env" "/\\(?:usr/\\)?bin/\\(?:with-cont\\)?env"
                                 auto-mode-interpreter-regexp t t))
 
-;; Tree-sitter
-(defun my-remap-major-mode (from-mode to-mode)
-  "Remap one major mode to another, mostly for tree-sitter support."
-  (add-to-list 'major-mode-remap-alist `(,from-mode . ,to-mode)))
-
 ;;; Programming Modes and Features
 
 (defvar my-md-code-aliases '())
@@ -1240,15 +1235,14 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'my-md-code-aliases '(bash . my-real-sh-mode))
 (add-to-list 'my-md-code-aliases '(sh . my-real-sh-mode))
 (add-to-list 'my-md-code-aliases '(shell . my-real-sh-mode))
-
-(my-remap-major-mode 'sh-mode 'bash-ts-mode)
+(add-to-list 'major-mode-remap-alist '(sh-mode . bash-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.env\\(\\..*\\)?\\'" . bash-ts-mode))
 (setopt sh-shell-file "/bin/bash")
 
 ;; C/C++
-(my-remap-major-mode 'c-mode 'c-ts-mode)
-(my-remap-major-mode 'c++-mode 'c++-ts-mode)
-(my-remap-major-mode 'c-or-c++-mode 'c-or-c++-ts-mode)
+(add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
+(add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
+(add-to-list 'major-mode-remap-alist '(c-or-c++-mode . c-or-c++-ts-mode))
 (add-hook 'c-ts-base-mode-hook #'eglot-ensure)
 (add-hook 'c-ts-base-mode-hook #'my-xref-minor-mode t)
 
@@ -1258,7 +1252,7 @@ optional G-MODEL is the gptel model symbol to use."
 (with-eval-after-load "csharp-ts-mode"
   (keymap-set csharp-mode-map "C-c ." nil))
 
-(my-remap-major-mode 'csharp-mode 'csharp-ts-mode)
+(add-to-list 'major-mode-remap-alist '(csharp-mode . csharp-ts-mode))
 (add-hook 'csharp-ts-mode-hook #'my-xref-minor-mode t)
 (when (executable-find "omnisharp")
   (add-hook 'csharp-ts-mode-hook #'eglot-ensure))
@@ -1286,9 +1280,11 @@ optional G-MODEL is the gptel model symbol to use."
     (setf (alist-get mode apheleia-mode-alist)
           'zprint)))
 
-(my-remap-major-mode 'clojure-mode 'clojure-ts-mode)
-(my-remap-major-mode 'clojurec-mode 'clojure-ts-clojurec-mode)
-(my-remap-major-mode 'clojurescript-mode 'clojure-ts-clojurescript-mode)
+(add-to-list 'major-mode-remap-alist '(clojure-mode . clojure-ts-mode))
+(add-to-list 'major-mode-remap-alist
+             '(clojurec-mode . clojure-ts-clojurec-mode))
+(add-to-list 'major-mode-remap-alist
+             '(clojurescript-mode . clojure-ts-clojurescript-mode))
 
 (dolist (mode my-clojure-modes)
   (let ((hook (intern (concat (symbol-name mode) "-hook"))))
@@ -1315,7 +1311,8 @@ optional G-MODEL is the gptel model symbol to use."
                                 . conf-space-mode))
 
 ;; CSS
-(my-remap-major-mode 'css-mode 'css-ts-mode)
+(add-to-list 'major-mode-remap-alist '(css-mode . css-ts-mode))
+
 (add-hook 'css-ts-mode-hook #'eglot-ensure t)
 (add-hook 'css-ts-mode-hook #'my-setup-web-ligatures t)
 
@@ -1345,7 +1342,8 @@ optional G-MODEL is the gptel model symbol to use."
 (keymap-global-set "C-M-;" #'ielm)
 
 ;; Erlang
-(my-remap-major-mode 'erlang-mode 'erlang-ts-mode)
+(add-to-list 'major-mode-remap-alist '(erlang-mode . erlang-ts-mode))
+
 
 ;; Go
 (defun my-project-find-go-module (dir)
@@ -1370,12 +1368,13 @@ optional G-MODEL is the gptel model symbol to use."
 (add-hook 'graphql-ts-mode-hook #'my-apheleia-set-js-formatter)
 
 ;; HTML
-(my-remap-major-mode 'html-mode 'html-ts-mode)
+(add-to-list 'major-mode-remap-alist '(html-mode . html-ts-mode))
+
 (add-hook 'html-ts-mode-hook #'eglot-ensure)
 (add-hook 'html-ts-mode-hook #'my-setup-web-ligatures t)
 
 ;; Java
-(my-remap-major-mode 'java-mode 'java-ts-mode)
+(add-to-list 'major-mode-remap-alist '(java-mode . java-ts-mode))
 (add-hook 'java-ts-mode-hook #'my-xref-minor-mode t)
 
 (when (executable-find "jdtls")
@@ -1391,7 +1390,7 @@ optional G-MODEL is the gptel model symbol to use."
   (add-hook 'java-ts-mode-hook #'eglot-ensure))
 
 ;; JSON
-(my-remap-major-mode 'json-mode 'json-ts-mode)
+(add-to-list 'major-mode-remap-alist '(json-mode . json-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.jsonc?\\'" . json-ts-mode))
 (add-hook 'json-ts-mode-hook #'add-node-modules-path t)
 (add-hook 'json-ts-mode-hook #'eglot-ensure)
@@ -1427,8 +1426,8 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'my-md-code-aliases '(js . my-real-js-mode))
 (add-to-list 'my-md-code-aliases '(ts . my-real-js-mode))
 (add-to-list 'my-md-code-aliases '(typescript . my-real-js-mode))
-(my-remap-major-mode 'js-mode 'jtsx-jsx-mode)
-(my-remap-major-mode 'ts-mode 'jtsx-tsx-mode)
+(add-to-list 'major-mode-remap-alist '(js-mode . jtsx-jsx-mode))
+(add-to-list 'major-mode-remap-alist '(ts-mode . jtsx-tsx-mode))
 
 (defun my-apheleia-skip-bun ()
   (when (string-match-p "/bun\\.lock\\'" (or buffer-file-name ""))
@@ -1503,7 +1502,7 @@ optional G-MODEL is the gptel model symbol to use."
 (put 'base 'safe-local-variable 'integerp)
 
 ;; Markdown support
-(my-remap-major-mode 'markdown-mode 'gfm-mode)
+(add-to-list 'major-mode-remap-alist '(markdown-mode . gfm-mode))
 
 (with-eval-after-load "gptel"
   (setopt gptel-default-mode #'gfm-mode)
@@ -1646,7 +1645,7 @@ optional G-MODEL is the gptel model symbol to use."
   (add-hook 'project-find-functions #'my-project-find-python-project))
 
 (add-to-list 'auto-mode-alist '("/uv\\.lock\\'" . toml-ts-mode))
-(my-remap-major-mode 'python-mode 'python-ts-mode)
+(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
 (add-to-list 'eglot-server-programs
              '((python-ts-mode python-mode)
                . ("ty" "server")))
