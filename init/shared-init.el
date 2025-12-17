@@ -1649,8 +1649,8 @@ optional G-MODEL is the gptel model symbol to use."
 (my-remap-major-mode 'python-mode 'python-ts-mode)
 (add-to-list 'eglot-server-programs
              '((python-ts-mode python-mode)
-               . ("basedpyright-langserver" "--stdio")))
-(add-hook 'python-ts-mode-hook #'eglot-ensure) ; uses pyright
+               . ("ty" "server")))
+(add-hook 'python-ts-mode-hook #'eglot-ensure)
 
 ;; Rust
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))

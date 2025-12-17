@@ -74,8 +74,8 @@ makepkg -si
 Minimal install:
 
 ```sh
-sudo paru -S aspell-en base-devel basedpyright clang fd gnutls gopls \
-  libssh2-devel make man-db man-pages mise ninja openssh ripgrep rust-analyzer zls
+sudo paru -S aspell-en base-devel clang fd gnutls gopls libssh2-devel make \
+    man-db man-pages mise ninja openssh ripgrep rust-analyzer ty zls
 ```
 
 For a full install, in addition to the above also run:
@@ -83,13 +83,6 @@ For a full install, in addition to the above also run:
 ```sh
 sudo paru -S clojure clojure-lsp-bin jdtls leiningen omnisharp-roslyn-bin zprint-bin
 ```
-
-## Install basedpyright
-
-You'll need to
-[install basedpyright](https://docs.basedpyright.com/latest/installation/command-line-and-language-server/)
-in order to support language server features for Python. On Mac, install the
-`basedpyright` package from homebrew.
 
 ## Install clangd
 
@@ -209,6 +202,13 @@ You'll need to
 in order to support language server features for Rust. On Mac, install the
 `rust` and `rust-analyzer` packages from homebrew. For Windows, we've already
 done this for Windows in the `Install MSYS2` section.
+
+## Install ty
+
+You'll need to
+[install ty](https://docs.astral.sh/ty/installation/#installing-with-the-standalone-installer)
+in order to support language server features for Python. On Mac, install the
+`ty` package from homebrew.
 
 ## Install zls
 
