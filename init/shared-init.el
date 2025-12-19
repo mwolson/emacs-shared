@@ -1634,8 +1634,13 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'auto-mode-alist '("\\.prisma\\'" . prisma-ts-mode))
 
 ;; Python
+(defun my-python-root-p (dir)
+  (seq-some (lambda (file)
+              (file-exists-p (expand-file-name file dir)))
+            '("pyproject.toml" "requirements.txt")))
+
 (defun my-project-find-python-project (dir)
-  (when-let ((root (locate-dominating-file dir "pyproject.toml")))
+  (when-let ((root (locate-dominating-file dir #'my-python-root-p)))
     (cons 'python-project root)))
 
 (with-eval-after-load "project"
