@@ -986,7 +986,7 @@ interactively.
 (defun my-gptel-toggle-glm ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--opencode-zen
-                         'glm-4.7))
+                         'glm-4.7-free))
 
 (defun my-gptel-toggle-gpt ()
   (interactive)
