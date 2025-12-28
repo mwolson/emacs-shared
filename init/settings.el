@@ -58,7 +58,7 @@
  '(ls-lisp-verbosity '(uid gid))
  '(magit-define-global-key-bindings nil)
  '(magit-diff-refine-hunk t)
- '(magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1)
+ '(magit-display-buffer-function 'magit-display-buffer-fullcolumn-most-v1)
  '(magit-log-section-commit-count 1)
  '(magit-prefer-remote-upstream t)
  '(mail-interactive t)

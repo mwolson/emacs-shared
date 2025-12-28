@@ -1344,7 +1344,6 @@ optional G-MODEL is the gptel model symbol to use."
 ;; Erlang
 (add-to-list 'major-mode-remap-alist '(erlang-mode . erlang-ts-mode))
 
-
 ;; Go
 (defun my-project-find-go-module (dir)
   (when-let ((root (locate-dominating-file dir "go.mod")))
