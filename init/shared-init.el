@@ -838,6 +838,13 @@ interactively.
                        :context-window 200
                        :input-cost 0.0
                        :output-cost 0.0)
+                      (claude-haiku-4-5
+                       :description "Claude Haiku 4.5 model"
+                       :capabilities (tool-use json)
+                       :context-window 200
+                       :input-cost 1.0
+                       :output-cost 5.0
+                       :cutoff-date "2025-01")
                       (claude-opus-4-5
                        :description "Claude Opus 4.5 model - most powerful Claude model"
                        :capabilities (tool-use json media)
@@ -854,13 +861,6 @@ interactively.
                        :input-cost 3.0
                        :output-cost 15.0
                        :cutoff-date "2024-09")
-                      (claude-haiku-4-5
-                       :description "Claude Haiku 4.5 model"
-                       :capabilities (tool-use json)
-                       :context-window 200
-                       :input-cost 1.0
-                       :output-cost 5.0
-                       :cutoff-date "2025-01")
                       (gemini-3-pro
                        :description "Gemini 3.0 Pro model - most intelligent model with state-of-the-art reasoning and multimodal capabilities"
                        :capabilities (tool-use json media)
@@ -869,8 +869,8 @@ interactively.
                        :input-cost 1.25
                        :output-cost 10.0
                        :cutoff-date "2025-01")
-                      (glm-4.6
-                       :description "GLM 4.6 model"
+                      (glm-4.7-free
+                       :description "GLM 4.7 model (free)"
                        :capabilities (tool-use json)
                        :context-window 200
                        :input-cost 0.6
@@ -986,7 +986,7 @@ interactively.
 (defun my-gptel-toggle-glm ()
   (interactive)
   (my-gptel-toggle-model 'my-gptel--opencode-zen
-                         'glm-4.6))
+                         'glm-4.7))
 
 (defun my-gptel-toggle-gpt ()
   (interactive)
