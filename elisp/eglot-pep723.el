@@ -15,7 +15,8 @@
   :group 'eglot-pep723)
 
 ;;;###autoload
-(defcustom eglot-pep723-python-project-markers '("pyproject.toml" "requirements.txt")
+(defcustom eglot-pep723-python-project-markers
+  '("pyproject.toml" "requirements.txt")
   "Files that indicate a Python project root."
   :type '(repeat string)
   :group 'eglot-pep723)
@@ -65,9 +66,10 @@ Returns the Python path, or nil if uv is not available."
        ((and env-dir (string-prefix-p env-dir python-path))
         python-path)
        (t
-        (display-warning 'eglot-pep723
-                         "Environment not synced. Run M-x eglot-pep723-sync-environment"
-                         :warning)
+        (display-warning
+         'eglot-pep723
+         "Environment not synced. Run M-x eglot-pep723-sync-environment"
+         :warning)
         python-path)))))
 
 (defun eglot-pep723--python-env-dir (python-path)
@@ -116,8 +118,9 @@ Includes initializationOptions for ty with PEP-723 scripts."
   "Get the site-packages directory for PYTHON-PATH."
   (when python-path
     (let* ((output (shell-command-to-string
-                    (format "%s -c \"import site; print(site.getsitepackages()[0])\""
-                            (shell-quote-argument python-path))))
+                    (format
+                     "%s -c \"import site; print(site.getsitepackages()[0])\""
+                     (shell-quote-argument python-path))))
            (site-packages (string-trim output)))
       (when (and (not (string-empty-p site-packages))
                  (file-directory-p site-packages))
@@ -169,8 +172,9 @@ Otherwise, returns (python-project . ROOT) if DIR is inside a Python project."
    ((and (memq major-mode '(python-mode python-ts-mode))
          (eglot-pep723-has-metadata-p))
     (cons 'python-project (file-name-directory (buffer-file-name))))
-   ((locate-dominating-file dir #'eglot-pep723--python-project-root-p)
-    (cons 'python-project (locate-dominating-file dir #'eglot-pep723--python-project-root-p)))))
+   ((when-let* ((root (locate-dominating-file
+                       dir #'eglot-pep723--python-project-root-p)))
+      (cons 'python-project root)))))
 
 (cl-defmethod project-root ((project (head python-project)))
   (cdr project))
@@ -217,7 +221,8 @@ Configures `eglot-server-programs' based on `eglot-pep723-lsp-server'.
 Call this after loading Eglot."
   (interactive)
   (add-to-list 'eglot-server-programs
-               '((python-ts-mode python-mode) . eglot-pep723--server-contact))
+               '((python-ts-mode python-mode) .
+                 eglot-pep723--server-contact))
   (add-hook 'project-find-functions #'eglot-pep723--project-find)
   ;; basedpyright needs workspace configuration via global function
   ;; Save original value so we can fall back to it for non-PEP-723 files
