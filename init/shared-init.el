@@ -1646,8 +1646,6 @@ optional G-MODEL is the gptel model symbol to use."
 (setopt eglot-pep723-lsp-server 'ty)
 (eglot-pep723-setup)
 
-(add-hook 'python-ts-mode-hook #'eglot-ensure)
-
 ;; Rust
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
 (add-to-list 'my-md-code-aliases '(rust . rust-ts-mode))

@@ -61,12 +61,12 @@
           (princ "FAIL\n")
           (kill-emacs 1)))))
 
-  (princ "Test 6: Workspace config (basedpyright)... ")
+  (princ "Test 6: Workspace config hash table (basedpyright)... ")
   (let ((eglot-pep723-lsp-server 'basedpyright))
     (with-temp-buffer
       (setq buffer-file-name my-pep723-test-script)
       (eglot-pep723--setup-buffer)
-      ;; Config is now stored in hash table, look it up
+      ;; Config is stored in hash table keyed by directory
       (let* ((script-dir (file-name-as-directory
                           (expand-file-name (file-name-directory my-pep723-test-script))))
              (config (gethash script-dir eglot-pep723--workspace-configs)))
@@ -75,7 +75,7 @@
           (princ "FAIL\n")
           (kill-emacs 1)))))
 
-  (princ "Test 7: Eglot temp buffer lookup (basedpyright)... ")
+  (princ "Test 7: Workspace config lookup via function (basedpyright)... ")
   (let ((eglot-pep723-lsp-server 'basedpyright))
     ;; First, register the config by simulating opening the file
     (with-temp-buffer
@@ -84,7 +84,7 @@
     ;; Now call eglot-pep723-setup to install our function as default
     (eglot-pep723-setup)
     ;; Simulate what Eglot does: create a temp buffer, set default-directory,
-    ;; and call eglot-workspace-configuration (see eglot.el:2764-2777)
+    ;; and call eglot-workspace-configuration
     (let* ((script-dir (file-name-as-directory
                         (expand-file-name (file-name-directory my-pep723-test-script))))
            (config (with-temp-buffer
@@ -97,7 +97,7 @@
         (princ (format "FAIL (got %S)\n" config))
         (kill-emacs 1))))
 
-  (princ "Test 8: Eglot temp buffer lookup (non-PEP-723 dir)... ")
+  (princ "Test 8: Non-PEP-723 dir returns nil (basedpyright)... ")
   (let ((eglot-pep723-lsp-server 'basedpyright))
     ;; Simulate Eglot looking up config for a directory with no PEP-723 script
     (let* ((other-dir (file-name-as-directory (expand-file-name "/tmp")))
@@ -106,7 +106,6 @@
                      (if (functionp eglot-workspace-configuration)
                          (funcall eglot-workspace-configuration nil)
                        eglot-workspace-configuration))))
-      ;; Should return nil (or original config) for non-PEP-723 directories
       (if (null config)
           (princ "PASS\n")
         (princ (format "FAIL (expected nil, got %S)\n" config))

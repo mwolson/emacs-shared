@@ -87,6 +87,20 @@ Given a path like /path/to/env/bin/python3, return /path/to/env/."
   "Hash table mapping directory paths to workspace configurations.
 Used by basedpyright to look up PEP-723 script configurations.")
 
+(defvar eglot-pep723--original-workspace-configuration nil
+  "Original value of `eglot-workspace-configuration' before we modified it.")
+
+(defun eglot-pep723--workspace-config-fn (server)
+  "Return workspace configuration for the current `default-directory'.
+Looks up configuration from `eglot-pep723--workspace-configs'.
+Falls back to original `eglot-workspace-configuration' for non-PEP-723 dirs."
+  (let ((dir (file-name-as-directory (expand-file-name default-directory))))
+    (or (gethash dir eglot-pep723--workspace-configs)
+        (when eglot-pep723--original-workspace-configuration
+          (if (functionp eglot-pep723--original-workspace-configuration)
+              (funcall eglot-pep723--original-workspace-configuration server)
+            eglot-pep723--original-workspace-configuration)))))
+
 (defun eglot-pep723--init-options ()
   "Return initializationOptions for ty LSP server.
 For PEP-723 scripts, includes environment configuration.
@@ -126,25 +140,9 @@ Includes initializationOptions for ty with PEP-723 scripts."
                  (file-directory-p site-packages))
         site-packages))))
 
-(defvar eglot-pep723--original-workspace-configuration nil
-  "Original value of `eglot-workspace-configuration' before we modified it.")
-
-(defun eglot-pep723--workspace-config-fn (server)
-  "Return workspace configuration, merging PEP-723 config if applicable.
-Looks up configuration from `eglot-pep723--workspace-configs' based on
-`default-directory', which Eglot sets before calling this function.
-Falls back to original `eglot-workspace-configuration' for non-PEP-723 dirs."
-  (let ((dir (file-name-as-directory (expand-file-name default-directory))))
-    (or (gethash dir eglot-pep723--workspace-configs)
-        ;; Fall back to original configuration
-        (when eglot-pep723--original-workspace-configuration
-          (if (functionp eglot-pep723--original-workspace-configuration)
-              (funcall eglot-pep723--original-workspace-configuration server)
-            eglot-pep723--original-workspace-configuration)))))
-
 (defun eglot-pep723--setup-buffer ()
-  "Configure buffer-local Eglot settings for a PEP-723 script.
-Registers configuration in `eglot-pep723--workspace-configs' for basedpyright."
+  "Configure Eglot settings for a PEP-723 script.
+For basedpyright, registers configuration in `eglot-pep723--workspace-configs'."
   (when (eq eglot-pep723-lsp-server 'basedpyright)
     (when-let* ((file (buffer-file-name))
                 ((eglot-pep723-has-metadata-p file))
@@ -152,7 +150,6 @@ Registers configuration in `eglot-pep723--workspace-configs' for basedpyright."
                              (expand-file-name (file-name-directory file))))
                 (python-path (eglot-pep723-get-python-path file))
                 (site-packages (eglot-pep723--get-site-packages python-path)))
-      ;; Register config in global hash table keyed by directory
       (puthash script-dir
                `(:python (:pythonPath ,python-path)
                  :basedpyright.analysis (:extraPaths [,site-packages]))
@@ -213,6 +210,8 @@ Runs `uv sync --script' on the current file."
     (let ((default-directory (file-name-directory script-path)))
       (compile (format "uv run %s" (shell-quote-argument script-path))))))
 
+(declare-function eglot-ensure "eglot")
+
 ;;;###autoload
 (defun eglot-pep723-setup ()
   "Set up PEP-723 support for Python modes.
@@ -225,7 +224,6 @@ Call this after loading Eglot."
                  eglot-pep723--server-contact))
   (add-hook 'project-find-functions #'eglot-pep723--project-find)
   ;; basedpyright needs workspace configuration via global function
-  ;; Save original value so we can fall back to it for non-PEP-723 files
   (when (eq eglot-pep723-lsp-server 'basedpyright)
     (unless (eq (default-value 'eglot-workspace-configuration)
                 #'eglot-pep723--workspace-config-fn)
@@ -233,8 +231,10 @@ Call this after loading Eglot."
             (default-value 'eglot-workspace-configuration))
       (setq-default eglot-workspace-configuration
                     #'eglot-pep723--workspace-config-fn)))
-  (add-hook 'python-mode-hook #'eglot-pep723--setup-buffer)
-  (add-hook 'python-ts-mode-hook #'eglot-pep723--setup-buffer))
+  (add-hook 'python-mode-hook #'eglot-pep723--setup-buffer t)
+  (add-hook 'python-ts-mode-hook #'eglot-pep723--setup-buffer t)
+  (add-hook 'python-mode-hook #'eglot-ensure t)
+  (add-hook 'python-ts-mode-hook #'eglot-ensure t))
 
 (provide 'eglot-pep723)
 ;;; eglot-pep723.el ends here
