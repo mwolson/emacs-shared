@@ -82,3 +82,8 @@ configurations):
 
 - **Incremental testing**: Build up the JSON structure piece by piece to isolate
   where serialization fails.
+
+### Deprecated macros
+
+- **`when-let` and `if-let`**: These are deprecated in favor of `when-let*` and
+  `if-let*`. Always use the starred versions.

@@ -1346,7 +1346,7 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; Go
 (defun my-project-find-go-module (dir)
-  (when-let ((root (locate-dominating-file dir "go.mod")))
+  (when-let* ((root (locate-dominating-file dir "go.mod")))
     (cons 'go-module root)))
 
 (with-eval-after-load "project"
@@ -1633,26 +1633,19 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'auto-mode-alist '("\\.prisma\\'" . prisma-ts-mode))
 
 ;; Python
-(defun my-python-root-p (dir)
-  (seq-some (lambda (file)
-              (file-exists-p (expand-file-name file dir)))
-            '("pyproject.toml" "requirements.txt")))
-
-(defun my-project-find-python-project (dir)
-  (when-let ((root (locate-dominating-file dir #'my-python-root-p)))
-    (cons 'python-project root)))
-
-(with-eval-after-load "project"
-  (cl-defmethod project-root ((project (head python-project)))
-    (cdr project))
-
-  (add-hook 'project-find-functions #'my-project-find-python-project))
-
 (add-to-list 'auto-mode-alist '("/uv\\.lock\\'" . toml-ts-mode))
 (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-(add-to-list 'eglot-server-programs
-             '((python-ts-mode python-mode)
-               . ("ty" "server")))
+
+;; - eglot-pep723: PEP-723 inline script metadata support + Python project detection
+(autoload #'eglot-pep723-setup "eglot-pep723")
+(autoload #'eglot-pep723-sync-environment "eglot-pep723"
+  "Sync PEP-723 environment and restart Eglot." t)
+(autoload #'eglot-pep723-run-script "eglot-pep723"
+  "Run current file as PEP-723 script." t)
+;; (setopt eglot-pep723-lsp-server 'basedpyright)
+(setopt eglot-pep723-lsp-server 'ty)
+(eglot-pep723-setup)
+
 (add-hook 'python-ts-mode-hook #'eglot-ensure)
 
 ;; Rust
