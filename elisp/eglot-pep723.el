@@ -128,18 +128,6 @@ Includes initializationOptions for ty with PEP-723 scripts."
         `(,@command :initializationOptions ,init-options)
       command)))
 
-(defun eglot-pep723--get-site-packages (python-path)
-  "Get the site-packages directory for PYTHON-PATH."
-  (when python-path
-    (let* ((output (shell-command-to-string
-                    (format
-                     "%s -c \"import site; print(site.getsitepackages()[0])\""
-                     (shell-quote-argument python-path))))
-           (site-packages (string-trim output)))
-      (when (and (not (string-empty-p site-packages))
-                 (file-directory-p site-packages))
-        site-packages))))
-
 (defun eglot-pep723--setup-buffer ()
   "Configure Eglot settings for a PEP-723 script.
 For basedpyright, registers configuration in `eglot-pep723--workspace-configs'."
@@ -148,11 +136,9 @@ For basedpyright, registers configuration in `eglot-pep723--workspace-configs'."
                 ((eglot-pep723-has-metadata-p file))
                 (script-dir (file-name-as-directory
                              (expand-file-name (file-name-directory file))))
-                (python-path (eglot-pep723-get-python-path file))
-                (site-packages (eglot-pep723--get-site-packages python-path)))
+                (python-path (eglot-pep723-get-python-path file)))
       (puthash script-dir
-               `(:python (:pythonPath ,python-path)
-                 :basedpyright.analysis (:extraPaths [,site-packages]))
+               `(:python (:pythonPath ,python-path))
                eglot-pep723--workspace-configs))))
 
 (defun eglot-pep723--python-project-root-p (dir)
