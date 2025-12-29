@@ -2,6 +2,13 @@
 
 (require 'cl-lib)
 
+(declare-function eglot-current-server "eglot")
+(declare-function eglot-ensure "eglot")
+(declare-function eglot-shutdown "eglot")
+
+(defvar eglot-server-programs)
+(defvar eglot-workspace-configuration)
+
 (defgroup eglot-pep723 nil
   "PEP-723 support for Eglot."
   :group 'eglot
@@ -79,9 +86,6 @@ Given a path like /path/to/env/bin/python3, return /path/to/env/."
     (let ((bin-dir (file-name-directory python-path)))
       (when (string-match-p "/bin/?$" bin-dir)
         (file-name-directory (directory-file-name bin-dir))))))
-
-(defvar eglot-server-programs)
-(defvar eglot-workspace-configuration)
 
 (defvar eglot-pep723--workspace-configs (make-hash-table :test 'equal)
   "Hash table mapping directory paths to workspace configurations.
@@ -165,7 +169,9 @@ Otherwise, returns (python-project . ROOT) if DIR is inside a Python project."
 ;;;###autoload
 (defun eglot-pep723-sync-environment ()
   "Sync the current PEP-723 script's environment, then restart Eglot.
-Runs `uv sync --script' on the current file."
+Runs `uv sync --script' on the current file.
+Uses shutdown + eglot-ensure instead of reconnect so that
+initializationOptions are recomputed (needed for ty)."
   (interactive)
   (let ((script-path (buffer-file-name)))
     (unless script-path
@@ -181,7 +187,8 @@ Runs `uv sync --script' on the current file."
           (progn
             (message "Environment synced successfully")
             (when-let* ((server (eglot-current-server)))
-              (eglot-reconnect server)))
+              (eglot-shutdown server))
+            (eglot-ensure))
         (message "Failed to sync environment (exit code: %s)" status)))))
 
 ;;;###autoload
@@ -195,8 +202,6 @@ Runs `uv sync --script' on the current file."
       (user-error "Buffer does not contain PEP-723 metadata"))
     (let ((default-directory (file-name-directory script-path)))
       (compile (format "uv run %s" (shell-quote-argument script-path))))))
-
-(declare-function eglot-ensure "eglot")
 
 ;;;###autoload
 (defun eglot-pep723-setup ()
