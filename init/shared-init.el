@@ -1638,9 +1638,14 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; - eglot-python-preset: Python project detection and PEP-723 support
 (add-to-list 'load-path (concat my-emacs-path "elisp/eglot-python-preset"))
-;; (add-to-list 'load-path "~/devel/projects/eglot-python-preset")
+;; (add-to-list 'load-path (expand-file-name "~/devel/projects/eglot-python-preset"))
 (require 'eglot-python-preset)
 ;; (setopt eglot-python-preset-lsp-server 'basedpyright)
+;; (setopt eglot-workspace-configuration
+;;         (plist-put eglot-workspace-configuration
+;;                    :basedpyright.analysis
+;;                    '(:autoImportCompletions :json-false
+;;                      :typeCheckingMode "basic")))
 (setopt eglot-python-preset-lsp-server 'ty)
 (eglot-python-preset-setup)
 
