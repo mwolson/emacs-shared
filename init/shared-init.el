@@ -1636,15 +1636,13 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'auto-mode-alist '("/uv\\.lock\\'" . toml-ts-mode))
 (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
 
-;; - eglot-pep723: PEP-723 inline script metadata support + Python project detection
-(autoload #'eglot-pep723-setup "eglot-pep723")
-(autoload #'eglot-pep723-sync-environment "eglot-pep723"
-  "Sync PEP-723 environment and restart Eglot." t)
-(autoload #'eglot-pep723-run-script "eglot-pep723"
-  "Run current file as PEP-723 script." t)
-;; (setopt eglot-pep723-lsp-server 'basedpyright)
-(setopt eglot-pep723-lsp-server 'ty)
-(eglot-pep723-setup)
+;; - eglot-python-preset: Python project detection and PEP-723 support
+(add-to-list 'load-path (concat my-emacs-path "elisp/eglot-python-preset"))
+;; (add-to-list 'load-path "~/devel/projects/eglot-python-preset")
+(require 'eglot-python-preset)
+;; (setopt eglot-python-preset-lsp-server 'basedpyright)
+(setopt eglot-python-preset-lsp-server 'ty)
+(eglot-python-preset-setup)
 
 ;; Rust
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))

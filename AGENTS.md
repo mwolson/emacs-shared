@@ -2,6 +2,10 @@
 
 This repository is mostly an Emacs config.
 
+## Planning
+
+Prefer to write plans in the `plans/` directory.
+
 ## Dev loop tools
 
 Here are some strategies to obtain a reliable “dev loop” for validating
