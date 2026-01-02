@@ -3,8 +3,9 @@
   - "/build"
   - "/elisp"
   - "/extra"
-  - "**/node_modules"
   - "/share"
+  - "**/node_modules"
+  - "pnpm-lock.yaml"
 
 pre-commit:
   parallel: true
@@ -15,4 +16,10 @@ pre-commit:
       glob: "*.md"
       exclude: *common_excludes
       run: mise x -- pnpm run fix:md:file {staged_files}
+      stage_fixed: true
+    yaml-format:
+      priority: 1
+      glob: "*.yaml"
+      exclude: *common_excludes
+      run: mise x -- pnpm run fix:yaml:file {staged_files}
       stage_fixed: true

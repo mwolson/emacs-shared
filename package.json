@@ -24,8 +24,12 @@
     "compile:lsp:html:bin": "shx mkdir -p extra/vscode/extensions/html-language-features/server/bin && shx cp -f tpl/lsp-bin/vscode-html-languageserver extra/vscode/extensions/html-language-features/server/bin",
     "init": "pnpm run up && pnpm run init:hooks",
     "init:hooks": "lefthook install",
+    "hooks:pre-commit": "lefthook run pre-commit",
+    "hooks:pre-commit:all": "lefthook run pre-commit --all-files",
     "fix:md": "prettier --write '**/*.md'",
     "fix:md:file": "prettier --write",
+    "fix:yaml": "prettier --write '**/*.yaml'",
+    "fix:yaml:file": "prettier --write",
     "test": "echo \"Error: no test specified\" && exit 1",
     "up": "mise use -g node@lts pnpm@latest && mise install && pnpm install"
   },
