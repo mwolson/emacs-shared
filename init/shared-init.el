@@ -1846,6 +1846,7 @@ Not needed in Emacs 31 or higher."
   "Ensure that the window is moved to leave room for minibuffer under cursor.
 
 This prevents the window from later moving back once the minibuffer is done showing."
+  (require 'vertico)
   (let* ((prior-win (minibuffer-selected-window))
          (prior-buf (and prior-win (window-buffer prior-win))))
     (when (and prior-win (= (minibuffer-depth) 1))
@@ -1976,6 +1977,7 @@ This prevents the window from later moving back once the minibuffer is done show
   (keymap-set corfu-map "<remap> <scroll-up-command>" nil)
   (keymap-set corfu-map "RET" nil)
 
+  (require 'corfu-auto)
   (setopt corfu-auto t
           corfu-popupinfo-delay '(0.3 . 0.01)
           corfu-popupinfo-hide nil
