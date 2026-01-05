@@ -1,15 +1,7 @@
-[submodule "elisp/eglot-python-preset"]
-	path = elisp/eglot-python-preset
-        ignore = dirty
-	url = https://github.com/mwolson/eglot-python-preset.git
 [submodule "elisp/flymake-stylelint"]
 	path = elisp/flymake-stylelint
         ignore = dirty
 	url = https://github.com/orzechowskid/flymake-stylelint.git
-[submodule "elisp/gptel-fn-complete"]
-	path = elisp/gptel-fn-complete
-        ignore = dirty
-	url = https://github.com/mwolson/gptel-fn-complete.git
 [submodule "elisp/mermaid-ts-mode"]
 	path = elisp/mermaid-ts-mode
         ignore = dirty

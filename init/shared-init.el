@@ -1090,11 +1090,13 @@ Use the region instead if one is selected."
 (autoload #'gptel-context-remove-all "gptel-context"
   "Remove all gptel context." t)
 
-(add-to-list 'load-path (concat my-emacs-path "elisp/gptel-fn-complete"))
-(autoload #'gptel-fn-complete "gptel-fn-complete"
-  "Complete function at point using an LLM." t)
-(autoload #'gptel-fn-complete-mark-function "gptel-fn-complete"
-  "Put mark at end of this function, point at beginning." t)
+;; for local development and testing:
+;;
+;; (add-to-list 'load-path (expand-file-name "~/devel/projects/gptel-fn-complete"))
+;; (autoload #'gptel-fn-complete "gptel-fn-complete"
+;;   "Complete function at point using an LLM." t)
+;; (autoload #'gptel-fn-complete-mark-function "gptel-fn-complete"
+;;   "Put mark at end of this function, point at beginning." t)
 
 ;; Minuet for AI completion
 (defun my-minuet-exclude ()
@@ -1637,9 +1639,11 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
 
 ;; - eglot-python-preset: Python project detection and PEP-723 support
-(add-to-list 'load-path (concat my-emacs-path "elisp/eglot-python-preset"))
+;;
+;; for local development and testing:
+;;
 ;; (add-to-list 'load-path (expand-file-name "~/devel/projects/eglot-python-preset"))
-(require 'eglot-python-preset)
+;; (require 'eglot-python-preset)
 ;; (setopt eglot-python-preset-lsp-server 'basedpyright)
 ;; (setopt eglot-workspace-configuration
 ;;         (plist-put eglot-workspace-configuration

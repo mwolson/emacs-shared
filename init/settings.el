@@ -84,14 +84,14 @@
    '(add-node-modules-path apheleia archive-rpm astro-ts-mode atomic-chrome basic-mode browse-kill-ring
                            cape cider clojure-ts-mode color-theme-sanityinc-tomorrow consult corfu
                            corfu-prescient corfu-terminal diff-hl diminish dumb-jump edit-indirect
-                           editorconfig el-mock embark embark-consult erlang erlang-ts fish-mode flx
-                           git-modes gptel graphql-ts-mode hydra js-comint jtsx kind-icon
-                           kotlin-ts-mode ligature lua-mode magit marginalia markdown-mode maxframe
-                           minions minuet mise modus-themes nerd-icons-completion nix-ts-mode
-                           nsis-mode orderless package-build package-utils plz prisma-ts-mode pulsar
-                           rainbow-delimiters reformatter rg slime swift-ts-mode terraform-mode
-                           tmux-mode toc-org transient vcl-mode vertico vertico-prescient web-mode
-                           wgrep zig-ts-mode))
+                           editorconfig eglot-python-preset el-mock embark embark-consult erlang
+                           erlang-ts fish-mode flx git-modes gptel gptel-fn-complete graphql-ts-mode
+                           hydra js-comint jtsx kind-icon kotlin-ts-mode ligature lua-mode magit
+                           marginalia markdown-mode maxframe minions minuet mise modus-themes
+                           nerd-icons-completion nix-ts-mode nsis-mode orderless package-build
+                           package-utils plz prisma-ts-mode pulsar rainbow-delimiters reformatter rg
+                           slime swift-ts-mode terraform-mode tmux-mode toc-org transient vcl-mode
+                           vertico vertico-prescient web-mode wgrep zig-ts-mode))
  '(post-jump-header nil)
  '(project-vc-merge-submodules nil)
  '(recentf-mode nil)
