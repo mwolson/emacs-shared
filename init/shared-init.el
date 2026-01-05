@@ -1960,6 +1960,9 @@ This prevents the window from later moving back once the minibuffer is done show
   (add-hook 'completion-at-point-functions #'cape-elisp-block nil t)
   (add-hook 'completion-at-point-functions #'cape-elisp-symbol nil t))
 
+(defun my-corfu-terminal-start ()
+  (unless window-system (corfu-terminal-mode 1)))
+
 (defun my-load-corfu ()
   (with-eval-after-load "elisp-mode"
     (add-hook 'emacs-lisp-mode-hook #'my-corfu-elisp t))
@@ -1998,7 +2001,8 @@ This prevents the window from later moving back once the minibuffer is done show
   (dolist (el '("delete-backward-char\\'" "\\`backward-delete-char"))
     (setq corfu-auto-commands (delete el corfu-auto-commands)))
 
-  (unless window-system (corfu-terminal-mode 1))
+  (my-corfu-terminal-start)
+  (add-hook 'my-init-client-display-hook #'my-corfu-terminal-start t)
   (corfu-popupinfo-mode)
   (corfu-prescient-mode)
   (global-corfu-mode))
@@ -2256,6 +2260,10 @@ This prevents the window from later moving back once the minibuffer is done show
   (interactive)
   (let* ((confirm-kill-emacs 'y-or-n-p)
          (cur-proc (frame-parameter nil 'client))
+         (all-terminals (cl-remove-if-not
+                         (lambda (term)
+                           (terminal-live-p term))
+                         (terminal-list)))
          (all-procs (cl-remove-if-not
                      (lambda (proc)
                        (terminal-live-p (process-get proc 'terminal)))
@@ -2266,10 +2274,12 @@ This prevents the window from later moving back once the minibuffer is done show
                                 (let ((frame (process-get proc 'frame)))
                                   (frame-parameter frame 'tty))))
                           all-procs))
-         (kill-cmd (if (and cur-proc
+         (kill-cmd (if (and (not window-system)
+                            cur-proc
                             (processp cur-proc)
-                            (> (length all-procs) 1)
-                            (>= (length other-graphics) 1))
+                            (or (and (> (length all-procs) 1)
+                                     (>= (length other-graphics) 1))
+                                (> (length all-terminals) 1)))
                        'save-buffers-kill-terminal
                      'save-buffers-kill-emacs)))
     (call-interactively kill-cmd t)))

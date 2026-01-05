@@ -267,6 +267,9 @@
   (global-ligature-mode t))
 
 ;; Initialize client displays
+(defvar my-init-client-display-hook '()
+  "Functions called after Emacs is started or a server frame is displayed.")
+
 (defun my-init-client-display ()
   (interactive)
   (if window-system
@@ -286,6 +289,7 @@
     (set-frame-parameter nil 'menu-bar-lines 0)
     (setq menu-bar-mode nil)
     (require 'mwheel))
+  (run-hooks 'my-init-client-display-hook)
   (add-to-list 'default-frame-alist '(tool-bar-lines . 0))
   (add-to-list 'default-frame-alist '(horizontal-scroll-bars))
   (add-to-list 'default-frame-alist '(vertical-scroll-bars))
