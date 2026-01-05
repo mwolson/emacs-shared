@@ -13,8 +13,12 @@
   (load-file (concat (file-name-as-directory (expand-file-name my-emacs-path))
                      "init/early-shared-init.el")))
 
+(eval-and-compile
+  (package-initialize))
+
 ;; Add shared elisp directory (but prefer system libs)
-(add-to-list 'load-path (concat my-emacs-path "elisp") t)
+(eval-and-compile
+  (add-to-list 'load-path (concat my-emacs-path "elisp") t))
 
 ;; Display initial screen quickly
 (my-init-client-display)
@@ -31,7 +35,8 @@ When `depth' is provided, pass it to `add-hook'."
 
 (defun my-run-deferred-tasks ()
   (unless (eq system-type 'windows-nt)
-    (run-hooks 'my-deferred-startup-hook)))
+    (run-hooks 'my-deferred-startup-hook))
+  (setq my-deferred-startup-hook nil))
 
 (run-with-idle-timer 0.2 nil #'my-run-deferred-tasks)
 
@@ -1964,6 +1969,7 @@ This prevents the window from later moving back once the minibuffer is done show
     (orderless-style-dispatchers nil)
     (orderless-matching-styles '(orderless-literal)))
 
+  (require 'corfu)
   (dolist (hook '(prog-mode-hook shell-mode-hook))
     (add-hook hook #'corfu-mode t))
 
@@ -1992,6 +1998,7 @@ This prevents the window from later moving back once the minibuffer is done show
   (dolist (el '("delete-backward-char\\'" "\\`backward-delete-char"))
     (setq corfu-auto-commands (delete el corfu-auto-commands)))
 
+  (unless window-system (corfu-terminal-mode 1))
   (corfu-popupinfo-mode)
   (corfu-prescient-mode)
   (global-corfu-mode))

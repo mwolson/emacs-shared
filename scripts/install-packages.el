@@ -4,6 +4,7 @@
 
 (require 'treesit) ; to silence an autoload warning, seems like emacs bug
 (require 'package)
+(setq package-native-compile t)
 (package-initialize)
 (package-refresh-contents)
 

@@ -1,5 +1,7 @@
 ;; byte-compile-local.el --- -*- lexical-binding: t -*-
 
+(setq my-emacs-path (expand-file-name "../.." load-file-name))
+
 (load-file (concat (file-name-directory load-file-name) "../init/settings.el"))
 
 (require 'treesit) ; to silence an autoload warning, seems like emacs bug

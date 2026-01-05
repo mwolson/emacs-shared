@@ -65,6 +65,10 @@ function byte_compile() {
     emacs_script "$(get_topdir)"/scripts/byte-compile-local.el "$@"
 }
 
+function native_comp_all() {
+    emacs_script "$(get_topdir)"/scripts/native-comp-all.el
+}
+
 function set_treesit_dir() {
     emacs_script "$(get_topdir)"/scripts/get-treesit-dir.el "$@" > \
         "$(get_topdir)"/build/.treesit-dir

@@ -212,6 +212,8 @@ else
     notify "Warning: tree-sitter modules will not be built, some major modes will not work"
 fi
 
+native_comp_all
+
 for idx in ${!NOTICES[@]}; do
     echo -e >&2 "\n${NOTICES[$idx]}"
 done

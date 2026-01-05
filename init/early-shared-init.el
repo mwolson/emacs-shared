@@ -40,11 +40,32 @@
 
 (setq ring-bell-function #'my-flash-bell-icon)
 
-;; Initialize packages so we get access to the theme
+;; Initialize early packages
 (require 'cl-seq)
 (require 'package)
 (require 'treesit)
-(package-initialize)
+
+(defun my-preload-package (sym)
+  (when-let*
+      ((regexp (format "^%s-\\([0-9]+\\)" (regexp-quote (symbol-name sym))))
+       (pkg-dir (car (directory-files package-user-dir t regexp)))
+       ((file-directory-p pkg-dir))
+       (pkg-desc (package-load-descriptor pkg-dir)))
+    (load (package--autoloads-file-name pkg-desc) nil t)))
+
+(dolist (sym '(compile-angel ligature modus-themes))
+  (my-preload-package sym))
+
+(defvar my-native-comp-enable nil
+  "Whether to natively compile libraries with `compile-angel'.")
+
+(if my-native-comp-enable
+    (progn
+      ;; Ensure Emacs loads the most recent byte-compiled files.
+      (setq load-prefer-newer t)
+      (compile-angel-on-load-mode 1))
+  (setq native-comp-async-report-warnings-errors 'silent
+        native-comp-jit-compilation nil))
 
 ;;; Options that change behavior of this repo
 
@@ -264,8 +285,7 @@
     (add-to-list 'default-frame-alist '(menu-bar-lines . 0))
     (set-frame-parameter nil 'menu-bar-lines 0)
     (setq menu-bar-mode nil)
-    (require 'mwheel)
-    (corfu-terminal-mode 1))
+    (require 'mwheel))
   (add-to-list 'default-frame-alist '(tool-bar-lines . 0))
   (add-to-list 'default-frame-alist '(horizontal-scroll-bars))
   (add-to-list 'default-frame-alist '(vertical-scroll-bars))
@@ -289,12 +309,12 @@
       (insert (substitute-command-keys initial-scratch-message))
       (set-buffer-modified-p nil))))
 
-;;(my-reset-theme)
-(pop-to-buffer-same-window (messages-buffer))
-(my-populate-scratch-buffer)
-(my-init-client-display)
-(add-hook 'server-after-make-frame-hook #'my-init-client-display t)
-(setq native-comp-async-report-warnings-errors 'silent)
+(unless my-native-comp-enable
+  ;;(my-reset-theme)
+  (pop-to-buffer-same-window (messages-buffer))
+  (my-populate-scratch-buffer)
+  (my-init-client-display)
+  (add-hook 'server-after-make-frame-hook #'my-init-client-display t))
 
 (provide 'early-shared-init)
 ;;; early-shared-init.el ends here

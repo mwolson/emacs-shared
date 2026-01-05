@@ -1,4 +1,4 @@
-;;; edit-list.el --- edit a single list
+;;; edit-list.el --- edit a single list -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2008  Michael Olson
 
