@@ -51,6 +51,8 @@ When `depth' is provided, pass it to `add-hook'."
 ;;; OS Setup
 
 (setq source-directory "~/emacs-shared/extra/emacs")
+(setq find-function-C-source-directory
+      (expand-file-name "src" source-directory))
 
 ;; Make it easier to use find-library to get to this file
 (add-to-list 'load-path (concat my-emacs-path "init"))
