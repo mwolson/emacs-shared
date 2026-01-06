@@ -45,16 +45,25 @@
 (require 'package)
 (require 'treesit)
 
-(defun my-preload-package (sym)
-  (when-let*
-      ((regexp (format "^%s-\\([0-9]+\\)" (regexp-quote (symbol-name sym))))
-       (pkg-dir (car (directory-files package-user-dir t regexp)))
-       ((file-directory-p pkg-dir))
-       (pkg-desc (package-load-descriptor pkg-dir)))
-    (load (package--autoloads-file-name pkg-desc) nil t)))
+(defun my-preload-packages (syms)
+  "Preload autoloads for packages in SYMS."
+  (let ((pkg-dirs (and (file-directory-p package-user-dir)
+                       (directory-files package-user-dir t "\\`[^.]"))))
+    (dolist (sym syms)
+      (when-let* ((sym-name (symbol-name sym))
+                  (regexp (format "\\`%s-[0-9]" (regexp-quote sym-name)))
+                  (pkg-dir (cl-find-if
+                            (lambda (d)
+                              (let ((file (file-name-nondirectory d)))
+                                (string-match-p regexp file)))
+                            pkg-dirs))
+                  ((file-directory-p pkg-dir))
+                  (autoload-name (expand-file-name
+                                  (format "%s-autoloads" sym-name)
+                                  pkg-dir)))
+        (load autoload-name nil t)))))
 
-(dolist (sym '(compile-angel ligature modus-themes))
-  (my-preload-package sym))
+(my-preload-packages '(compile-angel ligature modus-themes))
 
 (defvar my-native-comp-enable nil
   "Whether to natively compile libraries with `compile-angel'.")
@@ -248,14 +257,7 @@
     (if my-modus-theme
         (progn
           (setopt modus-themes-common-palette-overrides my-modus-theme-overrides)
-          (let ((real-color-dark-p (symbol-function 'color-dark-p)))
-            ;; fix stacktrace in modus-themes from 10/24/2025
-            (cl-letf (((symbol-function 'color-dark-p)
-                       (lambda (color)
-                         (condition-case nil
-                             (real-color-dark-p color)
-                           (error nil)))))
-              (modus-themes-select my-modus-theme))))
+          (modus-themes-select my-modus-theme))
       (load-theme my-theme t))))
 
 ;; Support for font ligatures
@@ -307,8 +309,7 @@
 (defun my-populate-scratch-buffer ()
   (interactive)
   (get-scratch-buffer-create)
-  (get-buffer "*scratch*")
-  (with-current-buffer "*scratch*"
+  (with-current-buffer (get-buffer "*scratch*")
     (when (zerop (buffer-size))
       (insert (substitute-command-keys initial-scratch-message))
       (set-buffer-modified-p nil))))
