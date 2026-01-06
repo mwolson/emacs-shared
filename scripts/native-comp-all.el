@@ -6,6 +6,7 @@
                      (concat (file-name-directory load-file-name) "../")))
 
 (message "Native-compiling all files...")
+(load-file (concat my-emacs-path "init/settings.el"))
 (load-file (concat my-emacs-path "init/early-shared-init.el"))
 (load-file (concat my-emacs-path "init/shared-init.el"))
 (my-run-deferred-tasks)

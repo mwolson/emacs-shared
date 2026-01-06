@@ -10,8 +10,7 @@
 
 ;; Early init
 (unless (featurep 'early-shared-init)
-  (load-file (concat (file-name-as-directory (expand-file-name my-emacs-path))
-                     "init/early-shared-init.el")))
+  (load (concat my-emacs-path "init/early-shared-init") nil nil nil t))
 
 (eval-and-compile
   (package-initialize))
@@ -67,7 +66,8 @@ When `depth' is provided, pass it to `add-hook'."
                               (if (eq system-type 'windows-nt)
                                   (replace-regexp-in-string "/" "\\\\" path)
                                 path))
-                            (append extra-paths my-system-paths (list my-original-env-path))
+                            (append extra-paths my-system-paths
+                                    (list my-original-env-path))
                             (if (eq system-type 'windows-nt) ";" ":"))))
 
 (my-update-system-paths)
@@ -79,7 +79,8 @@ When `depth' is provided, pass it to `add-hook'."
     (or (not filename)
         (when-let* ((lst my-mise-exclude-file-regexps))
           (string-match-p
-           (string-join (mapcar (##concat "\\(?:" % "\\)") lst) "\\|")
+           (string-join (mapcar (lambda (x)
+                                  (concat "\\(?:" x "\\)")) lst) "\\|")
            filename))
         (mise-default-exclude))))
 
@@ -107,10 +108,9 @@ When `depth' is provided, pass it to `add-hook'."
 
 ;; Load customizations
 (setq custom-file (if my-settings-shared-p
-                      (concat my-emacs-path "init/settings.el")
-                    (locate-user-emacs-file "settings.el")))
-(when (file-exists-p custom-file)
-  (load custom-file))
+                      (concat my-emacs-path "init/settings")
+                    (locate-user-emacs-file "settings")))
+(load custom-file nil nil nil t)
 
 ;;; Functions
 
@@ -1111,7 +1111,8 @@ Use the region instead if one is selected."
     (or (not filename)
         (when-let* ((lst my-minuet-exclude-file-regexps))
           (string-match-p
-           (string-join (mapcar (##concat "\\(?:" % "\\)") lst) "\\|")
+           (string-join (mapcar (lambda (x)
+                                  (concat "\\(?:" x "\\)")) lst) "\\|")
            filename)))))
 
 (defun my-minuet-maybe-turn-on-auto-suggest ()
@@ -1768,7 +1769,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (with-eval-after-load "consult"
   (with-eval-after-load "minuet"
-    (consult-customize minuet-complete-with-minibuffer)))
+    (eval-and-compile
+      (require 'consult)
+      (consult-customize minuet-complete-with-minibuffer))))
 
 (with-eval-after-load "embark"
   (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
@@ -1946,7 +1949,19 @@ This prevents the window from later moving back once the minibuffer is done show
 (keymap-global-set "M-y" #'consult-yank-pop)
 
 ;; Corfu, Cape, Dabbrev for auto-completion
+(defvar my-orderless-done-p nil)
+
+(defun my-setup-orderless ()
+  (unless my-orderless-done-p
+    (eval-and-compile
+      (setq my-orderless-done-p t)
+      (require 'orderless)
+      (orderless-define-completion-style orderless-literal-only
+        (orderless-style-dispatchers nil)
+        (orderless-matching-styles '(orderless-literal))))))
+
 (defun my-setup-corfu-mode ()
+  (my-setup-orderless)
   (setq-local completion-styles '(orderless-literal-only basic)
               completion-category-overrides nil
               completion-category-defaults nil))
@@ -1968,11 +1983,6 @@ This prevents the window from later moving back once the minibuffer is done show
 (defun my-load-corfu ()
   (with-eval-after-load "elisp-mode"
     (add-hook 'emacs-lisp-mode-hook #'my-corfu-elisp t))
-
-  (require 'orderless)
-  (orderless-define-completion-style orderless-literal-only
-    (orderless-style-dispatchers nil)
-    (orderless-matching-styles '(orderless-literal)))
 
   (require 'corfu)
   (dolist (hook '(prog-mode-hook shell-mode-hook))

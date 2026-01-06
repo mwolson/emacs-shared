@@ -6,8 +6,9 @@ These can be customized using `(setq ...)`. For example:
 (setq my-frame-maximize-p t)
 (setq my-emacs-path "~/emacs-shared/")
 
-;; customizations must be made before this line
-(load-file (concat my-emacs-path "init/shared-init.el"))
+;; customizations must be made before these lines
+(setq load-prefer-newer t)
+(load (concat my-emacs-path "init/early-shared-init") nil nil nil t)
 ```
 
 Most of the settings are optional, except for `my-emacs-path`.

@@ -70,7 +70,6 @@
 
 (if my-native-comp-enable
     (progn
-      ;; Ensure Emacs loads the most recent byte-compiled files.
       (setq load-prefer-newer t)
       (compile-angel-on-load-mode 1))
   (setq native-comp-async-report-warnings-errors 'silent

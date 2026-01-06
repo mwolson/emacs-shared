@@ -450,7 +450,8 @@ emacs -q early-init.el  # or other editing command
 ;; (setq my-mise-exclude-file-regexps '("devel/github"))
 
 ;; Load shared early init file
-(load-file (concat my-emacs-path "init/early-shared-init.el"))
+(setq load-prefer-newer t)
+(load (concat my-emacs-path "init/early-shared-init") nil nil nil t)
 ```
 
 ## Create a ~/.emacs.d/init.el file
@@ -468,7 +469,7 @@ emacs -q init.el  # or other editing command
 (setopt auth-sources '("~/.emacs.d/.authinfo"))
 
 ;; Load shared init file
-(load-file (concat my-emacs-path "init/shared-init.el"))
+(load (concat my-emacs-path "init/shared-init") nil nil nil t)
 ```
 
 ## Start Emacs
