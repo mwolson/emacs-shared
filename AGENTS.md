@@ -28,6 +28,20 @@ Emacs:
 - Check parentheses balance after edits:
   - `emacs -Q --batch --eval '(progn (with-temp-buffer (insert-file-contents "init/shared-init.el") (check-parens)))'`
 
+### Native compilation check
+
+Run native compilation on all config files to catch warnings and errors:
+
+- `./scripts/native-comp-all.sh`
+
+This ensures all changes will compile cleanly. Look for warnings about:
+
+- Obsolete macros/functions (e.g., `defadvice`, `when-let`, `incf`)
+- Unused lexical variables/arguments
+- References to free variables (usually fine in `with-eval-after-load` blocks)
+- Unknown functions (usually fine when using autoloads or
+  `with-eval-after-load`)
+
 ### One-off batch harnesses
 
 When iterating on a small part of the config (a single function, hook, or
@@ -91,3 +105,66 @@ configurations):
 
 - **`when-let` and `if-let`**: These are deprecated in favor of `when-let*` and
   `if-let*`. Always use the starred versions.
+
+### Compile-time vs runtime evaluation
+
+When silencing byte-compilation warnings about unknown functions or variables,
+prefer `eval-when-compile` with `require` over `declare-function` or `defvar`.
+This ensures we catch deprecations and API changes during compilation.
+
+Key points about `eval-when-compile` vs `eval-and-compile`:
+
+- Both forms run at compile time even when placed inside a function body
+- `eval-when-compile`: runs at compile time only; the return value is baked into
+  the compiled code
+- `eval-and-compile`: runs at both compile time and runtime
+
+Use cases:
+
+- **Macro expansion**: Use `(eval-when-compile (require 'pkg))` before code that
+  uses macros from `pkg`. The macro will expand at compile time. If the code
+  also calls functions from `pkg` at runtime, add a separate `(require 'pkg)`.
+
+- **Top-level compile-time checks**: Use `(eval-when-compile (require 'pkg))` at
+  the top-level of a file to catch deprecation warnings for packages used in
+  `with-eval-after-load` blocks. This also helps compile-angel pick up these
+  references for automatic compilation.
+
+- **Function-only calls**: If code only calls functions (no macros), a plain
+  `(require 'pkg)` inside the function is sufficient - no compile-time require
+  needed.
+
+- **Package initialization**: Use `(eval-and-compile (package-initialize))` or
+  similar when the side effects must happen at both compile time and runtime.
+
+- **Settings file**: Load the settings file (which contains package
+  customizations) at compile time before requiring packages:
+
+  ```elisp
+  (eval-when-compile
+    (load (concat my-emacs-path "init/settings") nil t)
+    (require 'some-package))
+  ```
+
+- **Functions not in ELPA packages**: Use `declare-function` for functions from
+  packages that aren't installed via ELPA and have compile-time issues:
+  ```elisp
+  (declare-function my-fn "my-package")
+  ```
+
+### Customize type validation warnings
+
+Rarely, some packages define defcustoms with types like `(repeat function)` but
+use default values containing symbols for packages that do not match the type
+due to not being loaded (e.g., `evil-goto-line`). When using `setopt` with such
+variables, the customize system validates the value and warns if any symbols
+aren't recognized as functions.
+
+To avoid these spurious warnings, use `setq` instead of `setopt` for such
+variables, with a comment explaining why:
+
+```elisp
+;; Use setq instead of setopt: pkg's defcustom type is (repeat function),
+;; but its default includes symbols for packages not always loaded.
+(setq pkg-some-variable modified-value)
+```

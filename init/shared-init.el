@@ -19,6 +19,10 @@
 (eval-and-compile
   (add-to-list 'load-path (concat my-emacs-path "elisp") t))
 
+;; Load settings at compile time so package customizations are available
+(eval-when-compile
+  (load (concat my-emacs-path "init/settings") nil t nil t))
+
 ;; Display initial screen quickly
 (my-init-client-display)
 (pop-to-buffer-same-window (scratch-buffer))
@@ -84,6 +88,7 @@ When `depth' is provided, pass it to `add-hook'."
            filename))
         (mise-default-exclude))))
 
+(eval-when-compile (require 'mise))
 (with-eval-after-load "mise"
   (setopt mise-exclude-predicate #'my-mise-exclude
           mise-trust t))
@@ -214,14 +219,19 @@ When `depth' is provided, pass it to `add-hook'."
 ;; Make shell commands run in unique buffer so we can have multiple at once, and run all shell
 ;; asynchronously.  Taken in part from EmacsWiki: ExecuteExternalCommand page.
 
-(defadvice erase-buffer (around erase-buffer-noop disable)
-  "Make erase-buffer do nothing; only used in conjunction with shell-command.")
+(defvar my-erase-buffer-noop nil
+  "When non-nil, `erase-buffer' becomes a no-op.")
 
-(defadvice shell-command (around shell-command-unique-buffer activate)
-  (if (or current-prefix-arg
-          output-buffer)
+(define-advice erase-buffer (:around (orig-fn) my-noop)
+  "Make erase-buffer do nothing when `my-erase-buffer-noop' is non-nil."
+  (unless my-erase-buffer-noop
+    (funcall orig-fn)))
+
+(define-advice shell-command (:around (orig-fn command &optional output-buffer error-buffer) my-unique-buffer)
+  "Run shell commands in unique buffers asynchronously."
+  (if (or current-prefix-arg output-buffer)
       ;; if this is used programmatically, allow it to be synchronous
-      ad-do-it
+      (funcall orig-fn command output-buffer error-buffer)
 
     (save-match-data
       (let ((lisp-exp (and (string-match "\\`[[:blank:]]*([^&|]+)[[:blank:]]*\\'" command)
@@ -255,12 +265,10 @@ When `depth' is provided, pass it to `add-hook'."
                     (make-string (- (window-width) 1) ?\~)
                     "\n\n")
 
-            ;; temporarily blow away erase-buffer while doing it, to avoid erasing the above
-            (ad-activate-regexp "erase-buffer-noop")
-            (unwind-protect
-                (let ((process-environment (cons "PAGER=" process-environment)))
-                  ad-do-it)
-              (ad-deactivate-regexp "erase-buffer-noop"))))))))
+            ;; temporarily disable erase-buffer while doing it, to avoid erasing the above
+            (let ((my-erase-buffer-noop t)
+                  (process-environment (cons "PAGER=" process-environment)))
+              (funcall orig-fn command output-buffer error-buffer))))))))
 
 ;; Docker support
 (defun my-docker-machine-env ()
@@ -277,7 +285,7 @@ When `depth' is provided, pass it to `add-hook'."
         (when (string-match "\\`export \\([^=]+\\)=\"\\(.+\\)\"\\'" line)
           (let ((env-var (match-string 1 line))
                 (env-setting (match-string 2 line)))
-            (incf changes)
+            (cl-incf changes)
             (setenv env-var env-setting)))))
     (if (= changes 0)
         (message "Could not load docker changes, output:\n%s" out)
@@ -375,6 +383,7 @@ Returns the config filename if one is found, `t' if found in package.json"
                (re-search-forward "\"oxlint\"" nil t))
              t))))
 
+(eval-when-compile (require 'apheleia))
 (with-eval-after-load "apheleia-formatters"
   ;; Note: oxfmt does not support stdin/stdout formatting. Apheleia's `inplace'
   ;; integration uses a temp file with the correct extension.
@@ -457,7 +466,7 @@ Returns the config filename if one is found, `t' if found in package.json"
 (defvar my-debug-jsonrpc nil
   "Whether to enable log messages for jsonrpc.")
 
-(defun my-jsonrpc--log-event-real (&rest args)
+(defun my-jsonrpc--log-event-real (&rest _args)
   "Placeholder for `jsonrpc--log-event'."
   nil)
 
@@ -498,10 +507,14 @@ Returns the config filename if one is found, `t' if found in package.json"
   (keymap-set flymake-mode-map "C-x f" my-flymake-mode-map))
 
 ;; NodeJS REPL
+(eval-when-compile
+  (require 'gptel-fn-complete)
+  (require 'js-comint))
 (defun my-js-comint-send-defun (start end)
   "Send the function at point to the inferior Javascript process."
   (interactive "r")
   (unless (region-active-p)
+    (require 'gptel-fn-complete)
     (save-mark-and-excursion
       (gptel-fn-complete--mark-function-treesit)
       (setq start (point)
@@ -572,17 +585,13 @@ interactively.
 
 (my-around-advice #'my-node-repl-setup #'my-inhibit-in-indirect-md-buffers)
 
-(defun inferior-js-mode-hook-setup ()
-  (add-hook 'comint-output-filter-functions #'js-comint-process-output))
-
-(add-hook 'inferior-js-mode-hook #'inferior-js-mode-hook-setup t)
-
 ;; Highlight current line
 (require 'hl-line-plus)
 (hl-line-when-idle-interval 0.3)
 (toggle-hl-line-when-idle 1)
 
 ;; Highlight changed lines
+(eval-when-compile (require 'diff-hl))
 (with-eval-after-load "diff-hl"
   (diff-hl-margin-mode 1)
 
@@ -599,6 +608,7 @@ interactively.
 (my-around-advice #'turn-on-diff-hl-mode #'my-inhibit-in-indirect-md-buffers)
 
 ;; Pulsar, for highlighting current line after a jump-style keybind
+(eval-when-compile (require 'pulsar))
 (with-eval-after-load "pulsar"
   (defface my-pulsar-face
     '((default :extend t)
@@ -606,12 +616,16 @@ interactively.
     "Face for pulsar."
     :group 'pulsar-faces)
 
-  (add-to-list 'pulsar-pulse-functions #'diff-hl-next-hunk)
-  (add-to-list 'pulsar-pulse-functions #'diff-hl-previous-hunk)
-  (add-to-list 'pulsar-pulse-functions #'flymake-goto-next-error)
-  (add-to-list 'pulsar-pulse-functions #'flymake-goto-prev-error)
-  (cl-delete #'scroll-down-command pulsar-pulse-functions)
-  (cl-delete #'scroll-up-command pulsar-pulse-functions)
+  ;; Use setq instead of setopt: pulsar's defcustom type is (repeat function),
+  ;; but its default includes symbols for packages not always loaded (evil, logos).
+  ;; The type check fails for these, causing a spurious warning.
+  (setq pulsar-pulse-functions
+        (append '(diff-hl-next-hunk
+                  diff-hl-previous-hunk
+                  flymake-goto-next-error
+                  flymake-goto-prev-error)
+                (cl-set-difference pulsar-pulse-functions
+                                   '(scroll-down-command scroll-up-command))))
 
   (with-eval-after-load "consult"
     (add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
@@ -627,6 +641,7 @@ interactively.
 (my-around-advice #'smerge-mode #'my-inhibit-in-indirect-md-buffers)
 
 ;; Transient
+(eval-when-compile (require 'transient))
 (with-eval-after-load "transient"
   (transient-bind-q-to-quit))
 
@@ -635,6 +650,9 @@ interactively.
   (setopt treesit-font-lock-level 4))
 
 ;; Set up gptel
+(eval-when-compile
+  (require 'gptel)
+  (require 'gptel-context))
 (defvar my-gptel--backends-defined nil)
 (defvar my-gptel--claude nil)
 (defvar my-gptel--claude-thinking nil)
@@ -949,7 +967,6 @@ interactively.
          (backend-sym
           (if use-local my-gptel-backend-local my-gptel-backend-remote))
          (backend (symbol-value backend-sym))
-         (backend-name (format "*%s*" (gptel-backend-name backend)))
          (model (or (if use-local my-gptel-model-local my-gptel-model-remote)
                     (car (gptel-backend-models backend)))))
     (setq gptel-backend backend
@@ -1059,6 +1076,7 @@ Use the region instead if one is selected."
   (interactive)
   (gptel-context--buffer-setup))
 
+(eval-when-compile (require 'gptel-request))
 (defun my-gptel-rewrite-function ()
   "Rewrite or refactor the current function using an LLM.
 
@@ -1075,10 +1093,9 @@ Rewrite the region instead if one is selected."
 Use the region instead if one is selected."
   (interactive)
   (my-gptel-add-function)
-  (let ((buf (current-buffer)))
-    (split-window-right)
-    (other-window 1)
-    (call-interactively #'my-gptel-start)))
+  (split-window-right)
+  (other-window 1)
+  (call-interactively #'my-gptel-start))
 
 (defun my-gptel-context-remove-all ()
   (interactive)
@@ -1106,6 +1123,7 @@ Use the region instead if one is selected."
 ;;   "Put mark at end of this function, point at beginning." t)
 
 ;; Minuet for AI completion
+(eval-when-compile (require 'minuet))
 (defun my-minuet-exclude ()
   (let* ((filename (buffer-file-name)))
     (or (not filename)
@@ -1186,7 +1204,7 @@ optional G-MODEL is the gptel model symbol to use."
           minuet-auto-suggestion-debounce-delay 0.3
           minuet-n-completions 1)
 
-  (add-hook 'minuet-auto-suggestion-block-functions
+  (add-hook 'minuet-auto-suggestion-block-predicates
             #'my-minuet-block-suggestions -100)
 
   (keymap-set minuet-active-mode-map "C-c C-c" #'minuet-accept-suggestion)
@@ -1259,6 +1277,7 @@ optional G-MODEL is the gptel model symbol to use."
 ;; C# - requires exactly v0.20.0 of its treesit grammar
 ;; `C-c . .` doesn't currently work, see this for ideas:
 ;; https://github.com/theschmocker/dotfiles/blob/33944638a5a59ddba01b64066daf50d46e5f0c3a/emacs/.doom.d/config.el#L807
+(eval-when-compile (require 'csharp-mode))
 (with-eval-after-load "csharp-ts-mode"
   (keymap-set csharp-mode-map "C-c ." nil))
 
@@ -1277,6 +1296,7 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'auto-mode-alist '("/Caddyfile\\'" . my-caddyfile-mode))
 
 ;; Clojure
+(eval-when-compile (require 'cider-repl))
 (with-eval-after-load "cider-repl"
   (keymap-set cider-repl-mode-map "C-d" #'cider-quit))
 
@@ -1333,6 +1353,7 @@ optional G-MODEL is the gptel model symbol to use."
 (with-eval-after-load "elisp-mode"
   (add-hook 'emacs-lisp-mode-hook #'plist-lisp-indent-install t))
 
+(eval-when-compile (require 'ielm))
 (defun my-ielm-setup ()
   (let ((map (copy-keymap inferior-emacs-lisp-mode-map)))
     (keymap-set map "C-d" #'kill-buffer-and-window)
@@ -1522,6 +1543,7 @@ optional G-MODEL is the gptel model symbol to use."
    (replace-regexp-in-string "-mode\\'" ""
                              (symbol-name mode-sym))))
 
+(eval-when-compile (require 'markdown-mode))
 (defun my-markdown-install-aliases ()
   (dolist (to-remap major-mode-remap-alist)
     (let ((from (my-replace-mode-in-symbol (car to-remap)))
@@ -1698,7 +1720,9 @@ optional G-MODEL is the gptel model symbol to use."
 (autoload #'vue-ts-mode "vue-ts-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.vue\\'" . vue-ts-mode))
 
+(eval-when-compile (require 'css-mode))
 (defun my-vue-ts-set-fontify-css-colors ()
+  (require 'css-mode)
   (setq-local font-lock-fontify-region-function #'css--fontify-region))
 
 (with-eval-after-load "vue-ts-mode"
@@ -1731,6 +1755,7 @@ optional G-MODEL is the gptel model symbol to use."
 (add-hook 'zig-ts-mode-hook #'eglot-ensure)
 
 ;; Consult, Embark, Marginalia, Orderless, Prescient, Vertico
+(eval-when-compile (require 'consult))
 (defvar my-minibuffer-from-consult-line nil)
 
 (defun my-consult-line ()
@@ -1748,7 +1773,7 @@ optional G-MODEL is the gptel model symbol to use."
 
 (defvar my-default-ripgrep-args "--hidden -i --no-ignore-vcs --ignore-file=.gitignore --glob=!.git/")
 
-(defun my-consult-ripgrep (regexp rg-args &optional arg)
+(defun my-consult-ripgrep (regexp rg-args)
   "Run a Consult Ripgrep search with `REGEXP' rooted at the current project root.
 
 With \\[universal-argument], also prompt for extra rg arguments and set into RG-ARGS."
@@ -1769,12 +1794,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (with-eval-after-load "consult"
   (with-eval-after-load "minuet"
-    (eval-and-compile
-      (require 'consult))
     (consult-customize minuet-complete-with-minibuffer)))
-
-(with-eval-after-load "embark"
-  (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
 
 (with-eval-after-load "marginalia"
   (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup t))
@@ -1787,6 +1807,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
           ((file-directory-p (vertico--candidate)) (vertico-insert))
           (t (self-insert-command 1 ?/)))))
 
+(eval-when-compile (require 'vertico))
 (with-eval-after-load "vertico"
   (setopt vertico-count 10
           vertico-mouse-mode t
@@ -1838,9 +1859,13 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
       xref-show-definitions-function #'consult-xref
       xref-show-xrefs-function #'consult-xref)
 
+(eval-when-compile
+  (require 'grep)
+  (require 'wgrep))
 (with-eval-after-load "grep"
   (keymap-set grep-mode-map "r" #'wgrep-change-to-wgrep-mode))
 
+(eval-when-compile (require 'crm))
 (defun my-crm-indicator (args)
   "Work around issue in completing-read-multiple.
 
@@ -1911,7 +1936,6 @@ This prevents the window from later moving back once the minibuffer is done show
 (plist-put minibuffer-prompt-properties 'cursor-intangible t)
 (setopt minibuffer-prompt-properties minibuffer-prompt-properties)
 
-(add-hook 'completion-list-mode #'consult-preview-at-point-mode)
 (add-hook 'minibuffer-setup-hook #'my-minibuffer-move-window-contents-up -100)
 (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode +100)
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-restore-after-exit 100)
@@ -1951,14 +1975,16 @@ This prevents the window from later moving back once the minibuffer is done show
 ;; Corfu, Cape, Dabbrev for auto-completion
 (defvar my-orderless-done-p nil)
 
+(eval-when-compile
+  (require 'orderless))
+
 (defun my-setup-orderless ()
   (unless my-orderless-done-p
     (setq my-orderless-done-p t)
-    (eval-and-compile
-      (require 'orderless)
-      (orderless-define-completion-style orderless-literal-only
-        (orderless-style-dispatchers nil)
-        (orderless-matching-styles '(orderless-literal))))))
+    (require 'orderless)
+    (orderless-define-completion-style orderless-literal-only
+      (orderless-style-dispatchers nil)
+      (orderless-matching-styles '(orderless-literal)))))
 
 (defun my-setup-corfu-mode ()
   (my-setup-orderless)
@@ -1980,6 +2006,10 @@ This prevents the window from later moving back once the minibuffer is done show
 (defun my-corfu-terminal-start ()
   (unless window-system (corfu-terminal-mode 1)))
 
+(eval-when-compile
+  (require 'corfu)
+  (require 'corfu-auto)
+  (require 'kind-icon))
 (defun my-load-corfu ()
   (with-eval-after-load "elisp-mode"
     (add-hook 'emacs-lisp-mode-hook #'my-corfu-elisp t))
@@ -2025,6 +2055,7 @@ This prevents the window from later moving back once the minibuffer is done show
 (add-hook 'completion-at-point-functions #'cape-file)
 (add-hook 'completion-at-point-functions #'cape-keyword)
 
+(eval-when-compile (require 'dabbrev))
 (with-eval-after-load "dabbrev"
   (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
   (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
@@ -2086,17 +2117,19 @@ This prevents the window from later moving back once the minibuffer is done show
 
 (setq rg-command-line-flags-function #'my-rg-command-line-flags)
 
+(eval-when-compile (require 'rg))
 (with-eval-after-load "rg"
   (keymap-set rg-mode-map "e" #'rg-rerun-change-regexp)
   (keymap-set rg-mode-map "r" #'wgrep-change-to-wgrep-mode))
 
 ;; Bind N and P in ediff so that I don't leave the control buffer
-(defun my-ediff-next-difference (&rest args)
+(eval-when-compile (require 'ediff))
+(defun my-ediff-next-difference (&rest _args)
   (interactive)
   (save-selected-window
     (call-interactively 'ediff-next-difference)))
 
-(defun my-ediff-previous-difference (&rest args)
+(defun my-ediff-previous-difference (&rest _args)
   (interactive)
   (save-selected-window
     (call-interactively 'ediff-previous-difference)))
@@ -2107,6 +2140,7 @@ This prevents the window from later moving back once the minibuffer is done show
 (add-hook 'ediff-keymap-setup-hook #'my-ediff-extra-keys t)
 
 ;; Make TexInfo easier to work with
+(eval-when-compile (require 'texinfo))
 (defun my-texinfo-view-file ()
   "View the published version of the current file."
   (interactive)
@@ -2183,6 +2217,9 @@ This prevents the window from later moving back once the minibuffer is done show
 (add-to-list 'Info-default-directory-list (concat my-emacs-path "share/info"))
 
 ;; Magit settings
+(eval-when-compile
+  (require 'git-commit)
+  (require 'magit))
 (with-eval-after-load "git-commit"
   (setopt git-commit-major-mode 'org-mode)
   (remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill))
@@ -2222,6 +2259,7 @@ This prevents the window from later moving back once the minibuffer is done show
 (minions-mode 1)
 
 ;; Org Mode settings
+(eval-when-compile (require 'org))
 (defun my-org-find-notes-file ()
   (interactive)
   (require 'org)
@@ -2268,6 +2306,7 @@ This prevents the window from later moving back once the minibuffer is done show
 (keymap-global-set "C-x r r" #'rectangle-mark-mode)
 (keymap-global-set "C-x p" #'other-window)
 
+(eval-when-compile (require 'server))
 (defun my-kill-emacs ()
   (interactive)
   (let* ((confirm-kill-emacs 'y-or-n-p)
@@ -2312,6 +2351,7 @@ This prevents the window from later moving back once the minibuffer is done show
 (keymap-global-set "C-x F" my-find-things-map)
 (keymap-global-set "C-x f" my-find-things-map)
 
+(eval-when-compile (require 'view))
 (with-eval-after-load "view"
   ;; Make the `q' key bury the current buffer when viewing help
   (keymap-set view-mode-map "q" 'bury-buffer)
@@ -2351,6 +2391,7 @@ This prevents the window from later moving back once the minibuffer is done show
   (setopt ns-alternate-modifier 'meta)
   (setopt ns-command-modifier 'super))
 
+(eval-when-compile (require 'git-rebase))
 (defun my-set-super-bindings ()
   (interactive)
   (with-eval-after-load "cider-repl"

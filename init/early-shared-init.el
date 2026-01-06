@@ -247,8 +247,7 @@
     (cond ((and maximize-p (memq window-system '(pgtk ns x w32)))
            (set-frame-parameter nil 'fullscreen 'maximized))
           (maximize-p
-           (eval-and-compile
-             (require 'maxframe))
+           (require 'maxframe)
            (maximize-frame))
           (t
            (dolist (param '(width height))
@@ -260,8 +259,7 @@
   (when my-use-themes-p
     (if my-modus-theme
         (progn
-          (eval-and-compile
-            (require 'modus-themes))
+          (require 'modus-themes)
           (setopt modus-themes-common-palette-overrides
                   my-modus-theme-overrides)
           (modus-themes-select my-modus-theme))
@@ -271,8 +269,7 @@
 (defun my-enable-ligatures ()
   ;; Enable ligatures in programming modes
   (interactive)
-  (eval-and-compile
-    (require 'ligature))
+  (require 'ligature)
   (ligature-set-ligatures 'markdown-mode my-prog-mode-ligatures)
   (ligature-set-ligatures 'prog-mode my-prog-mode-ligatures)
   (global-ligature-mode t))
