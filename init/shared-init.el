@@ -1770,8 +1770,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 (with-eval-after-load "consult"
   (with-eval-after-load "minuet"
     (eval-and-compile
-      (require 'consult)
-      (consult-customize minuet-complete-with-minibuffer))))
+      (require 'consult))
+    (consult-customize minuet-complete-with-minibuffer)))
 
 (with-eval-after-load "embark"
   (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
@@ -1953,8 +1953,8 @@ This prevents the window from later moving back once the minibuffer is done show
 
 (defun my-setup-orderless ()
   (unless my-orderless-done-p
+    (setq my-orderless-done-p t)
     (eval-and-compile
-      (setq my-orderless-done-p t)
       (require 'orderless)
       (orderless-define-completion-style orderless-literal-only
         (orderless-style-dispatchers nil)

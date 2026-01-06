@@ -42,8 +42,6 @@
 
 ;; Initialize early packages
 (require 'cl-seq)
-(require 'package)
-(require 'treesit)
 
 (defun my-preload-packages (syms)
   "Preload autoloads for packages in SYMS."
@@ -63,17 +61,20 @@
                                   pkg-dir)))
         (load autoload-name nil t)))))
 
-(my-preload-packages '(compile-angel ligature modus-themes))
+(my-preload-packages '(compile-angel ligature maxframe modus-themes))
 
 (defvar my-native-comp-enable nil
   "Whether to natively compile libraries with `compile-angel'.")
 
-(if my-native-comp-enable
-    (progn
-      (setq load-prefer-newer t)
-      (compile-angel-on-load-mode 1))
-  (setq native-comp-async-report-warnings-errors 'silent
-        native-comp-jit-compilation nil))
+(eval-and-compile
+  (if my-native-comp-enable
+      (progn
+        (setq load-prefer-newer t)
+        (require 'compile-angel)
+        (compile-angel-on-load-mode 1))
+    (require 'comp-run)
+    (setq native-comp-async-report-warnings-errors 'silent
+          native-comp-jit-compilation nil)))
 
 ;;; Options that change behavior of this repo
 
@@ -241,21 +242,28 @@
   (interactive)
   (let ((maximize-p my-frame-maximize-p))
     (when (and maximize-p my-frame-maximize-if-pixel-width-lte)
-      (setq maximize-p (<= (display-pixel-width) my-frame-maximize-if-pixel-width-lte)))
+      (setq maximize-p (<= (display-pixel-width)
+                           my-frame-maximize-if-pixel-width-lte)))
     (cond ((and maximize-p (memq window-system '(pgtk ns x w32)))
            (set-frame-parameter nil 'fullscreen 'maximized))
           (maximize-p
+           (eval-and-compile
+             (require 'maxframe))
            (maximize-frame))
           (t
            (dolist (param '(width height))
-             (set-frame-parameter nil param (cdr (assoc param default-frame-alist))))))))
+             (set-frame-parameter
+              nil param (cdr (assoc param default-frame-alist))))))))
 
 (defun my-reset-theme ()
   (interactive)
   (when my-use-themes-p
     (if my-modus-theme
         (progn
-          (setopt modus-themes-common-palette-overrides my-modus-theme-overrides)
+          (eval-and-compile
+            (require 'modus-themes))
+          (setopt modus-themes-common-palette-overrides
+                  my-modus-theme-overrides)
           (modus-themes-select my-modus-theme))
       (load-theme my-theme t))))
 
@@ -263,6 +271,8 @@
 (defun my-enable-ligatures ()
   ;; Enable ligatures in programming modes
   (interactive)
+  (eval-and-compile
+    (require 'ligature))
   (ligature-set-ligatures 'markdown-mode my-prog-mode-ligatures)
   (ligature-set-ligatures 'prog-mode my-prog-mode-ligatures)
   (global-ligature-mode t))
@@ -278,7 +288,8 @@
         (my-reset-font)
         (add-to-list 'default-frame-alist
                      `(font . ,(cdr (assq 'font (frame-parameters)))))
-        (when (or (not my-frame-maximize-p) my-frame-maximize-if-pixel-width-lte)
+        (when (or (not my-frame-maximize-p)
+                  my-frame-maximize-if-pixel-width-lte)
           (add-to-list 'default-frame-alist `(height . ,my-frame-height))
           (add-to-list 'default-frame-alist `(width . ,my-frame-width)))
         (when (memq window-system '(ns pgtk w32 x))
