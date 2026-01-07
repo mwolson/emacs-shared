@@ -329,6 +329,22 @@ Use this to advise functions that could be problematic."
     (apply orig-fun args)))
 
 ;; Apheleia for automatic code formatting
+(defvar my-js-project-markers '("package.json")
+  "Files that indicate a JS project root.")
+
+(defun my-js--project-root-p (dir)
+  "Return non-nil if DIR contains a Python project marker file."
+  (seq-some (lambda (file)
+              (file-exists-p (expand-file-name file dir)))
+            my-js-project-markers))
+
+(defun my-js--project-find (dir)
+  "Project detection for JS files.
+
+Returns (python-project . ROOT) if DIR is inside a JS project."
+  (when-let* ((root (locate-dominating-file dir #'my-js--project-root-p)))
+    (cons 'python-project root)))
+
 (defun my-detect-biome ()
   "Detect whether to use Biome based on project configuration.
 
@@ -1465,6 +1481,13 @@ optional G-MODEL is the gptel model symbol to use."
 
 (add-to-list 'auto-mode-alist '("/bun\\.lock\\'" . json-ts-mode))
 (add-hook 'json-ts-mode-hook #'my-apheleia-skip-bun -100)
+
+(with-eval-after-load "project"
+  (cl-defmethod project-root ((project (head js-project)))
+    "Return root directory of PROJECT."
+    (cdr project))
+
+  (add-hook 'project-find-functions #'my-js--project-find))
 
 (add-to-list
  'eglot-server-programs
