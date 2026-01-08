@@ -317,10 +317,10 @@ If FUN is a list, apply ADVICE to each element of it."
 
 (defun my-in-indirect-md-buffer-p ()
   "Return non-nil if the current buffer is an indirect buffer created from a markdown buffer."
-  (when-let* ((buf (buffer-base-buffer)))
-    (and (buffer-live-p buf)
-         (with-current-buffer buf
-           (derived-mode-p 'markdown-mode)))))
+  (when-let* ((buf (buffer-base-buffer))
+              ((buffer-live-p buf)))
+    (with-current-buffer buf
+      (derived-mode-p 'markdown-mode))))
 
 (defun my-inhibit-in-indirect-md-buffers (orig-fun &rest args)
   "Don't run ORIG-FUN (with ARGS) in indirect markdown buffers.
@@ -333,10 +333,13 @@ Use this to advise functions that could be problematic."
   "Files that indicate a JS project root.")
 
 (defun my-js--project-root-p (dir)
-  "Return non-nil if DIR contains a Python project marker file."
-  (seq-some (lambda (file)
-              (file-exists-p (expand-file-name file dir)))
-            my-js-project-markers))
+  "Return non-nil if DIR contains a JS project marker file."
+  (when (and (not (my-in-indirect-md-buffer-p))
+             (or (derived-mode-p 'js-base-mode)
+                 (derived-mode-p 'typescript-ts-base-mode)))
+    (seq-some (lambda (file)
+                (file-exists-p (expand-file-name file dir)))
+              my-js-project-markers)))
 
 (defun my-js--project-find (dir)
   "Project detection for JS files.
