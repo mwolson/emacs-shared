@@ -2274,6 +2274,7 @@ This prevents the window from later moving back once the minibuffer is done show
 (keymap-global-set "C-x V a" #'magit-blame)
 (keymap-global-set "C-x V b" #'magit-show-refs-current)
 (keymap-global-set "C-x V f" #'magit-file-dispatch)
+(keymap-global-set "C-x V j" #'majutsu-log)
 (keymap-global-set "C-x V l" #'magit-log-head)
 (keymap-global-set "C-x V s" #'magit-status)
 (keymap-global-set "C-x V v" #'magit-dispatch)

@@ -2,6 +2,10 @@
 	path = elisp/flymake-stylelint
         ignore = dirty
 	url = https://github.com/orzechowskid/flymake-stylelint.git
+[submodule "elisp/majutsu"]
+	path = elisp/majutsu
+        ignore = dirty
+	url = https://github.com/0WD0/majutsu.git
 [submodule "elisp/mermaid-ts-mode"]
 	path = elisp/mermaid-ts-mode
         ignore = dirty
