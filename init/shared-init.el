@@ -2088,6 +2088,16 @@ This prevents the window from later moving back once the minibuffer is done show
   (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
 
+;; Set up majutsu
+(with-eval-after-load "majutsu"
+  (my-replace-cdrs-in-alist 'pop-to-buffer 'switch-to-buffer
+                            'majutsu-display-functions)
+  (setopt majutsu-default-display-function #'switch-to-buffer))
+
+(defun my-majutsu-log ()
+  (interactive)
+  (majutsu-log (or (my-project-root) default-directory)))
+
 ;; Set up project.el
 (defun my-project-root (&optional maybe-prompt)
   "Return root directory of the current project."
@@ -2131,6 +2141,8 @@ This prevents the window from later moving back once the minibuffer is done show
   (keymap-set project-prefix-map "b" #'consult-project-buffer)
   (keymap-set project-prefix-map "d" #'project-dired)
   (add-to-list 'project-switch-commands '(my-consult-ripgrep "Ripgrep") t)
+  (keymap-set project-prefix-map "j" #'my-majutsu-log)
+  (add-to-list 'project-switch-commands '(my-majutsu-log "jj log") t)
   (keymap-set project-prefix-map "r" #'my-consult-ripgrep)
   (keymap-set project-prefix-map "s" #'my-consult-ripgrep)
   (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
@@ -2274,7 +2286,7 @@ This prevents the window from later moving back once the minibuffer is done show
 (keymap-global-set "C-x V a" #'magit-blame)
 (keymap-global-set "C-x V b" #'magit-show-refs-current)
 (keymap-global-set "C-x V f" #'magit-file-dispatch)
-(keymap-global-set "C-x V j" #'majutsu-log)
+(keymap-global-set "C-x V j" #'my-majutsu-log)
 (keymap-global-set "C-x V l" #'magit-log-head)
 (keymap-global-set "C-x V s" #'magit-status)
 (keymap-global-set "C-x V v" #'magit-dispatch)
