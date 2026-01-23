@@ -165,11 +165,11 @@ When `depth' is provided, pass it to `add-hook'."
             (goto-char (point-min)))
           (switch-to-buffer ,outer))))))
 
-(defun my-replace-cdrs-in-alist (old-mode new-mode alist)
-  "Replace cdr instances of OLD-MODE with NEW-MODE in ALIST."
+(defun my-replace-cdrs-in-alist (old-el new-el alist)
+  "Replace cdr instances of OLD-EL with NEW-EL in ALIST."
   (mapc #'(lambda (el)
-            (when (eq (cdr el) old-mode)
-              (setcdr el new-mode)))
+            (when (eq (cdr el) old-el)
+              (setcdr el new-el)))
         (symbol-value alist)))
 
 ;;; Base Programs and Features
