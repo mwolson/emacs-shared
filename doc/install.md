@@ -253,12 +253,11 @@ If upgrading:
 ### Install Emacs on macOS
 
 We'll install the
-[emacs-plus version from Homebrew](https://github.com/d12frosted/homebrew-emacs-plus):
+[emacs-plus cask from Homebrew](https://github.com/d12frosted/homebrew-emacs-plus):
 
 ```sh
 brew tap d12frosted/emacs-plus
-brew install emacs-plus@30
-osascript -e 'tell application "Finder" to make alias file to posix file "/opt/homebrew/opt/emacs-plus@30/Emacs.app" at posix file "/Applications" with properties {name:"Emacs.app"}'
+brew install --cask emacs-plus-app
 ```
 
 If you get an error when starting Emacs like
