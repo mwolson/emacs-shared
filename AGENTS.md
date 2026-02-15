@@ -56,6 +56,20 @@ explicitly with `-l`. Some errors only occur with a live display (e.g., color
 resolution, frame parameters) and cannot be reproduced in `--batch` mode; ask
 the user to run `emacs --debug-init` and share the backtrace in those cases.
 
+To reproduce display-dependent early-init issues from the CLI (e.g., when
+`color-values` returns nil before the GUI frame is ready), launch GUI Emacs with
+an isolated init directory and capture stderr:
+
+- Create a minimal repro under `tmp/`, e.g. `tmp/repro/early-init.el`.
+- Symlink packages if needed: `ln -s ~/.emacs.d/elpa tmp/repro/elpa`
+- Launch with nohup (macOS example):
+  - `EMACS_BIN="/opt/homebrew/Caskroom/emacs-plus-app/30.2-*/Emacs.app/Contents/MacOS/Emacs"`
+  - `nohup $EMACS_BIN --init-directory=tmp/repro --debug-init > tmp/repro/nohup.out 2>&1 &`
+- Check `tmp/repro/nohup.out` for the backtrace.
+- To probe state interactively, add `(setq debug-on-error t)` to the
+  `early-init.el` so that Emacs drops into the debugger in the GUI window
+  instead of just logging to stderr.
+
 After fixing issues in `init/*.el` files, always recompile native code:
 
 - `./scripts/native-comp-all.sh`

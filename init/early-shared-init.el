@@ -256,17 +256,17 @@
 
 ;; Workaround: on some Emacs builds (e.g. Homebrew cask), color-name-to-rgb
 ;; signals an error or returns nil for hex colors during early init before the
-;; display is ready.  Provide a pure-elisp fallback for hex color strings.
+;; display is ready.  Fall back to color-values-from-color-spec, a C built-in
+;; (since Emacs 28.1) that parses numeric color specs without needing a display.
+;; Bug report: https://github.com/protesilaos/modus-themes/issues/198
 (defun my-color-name-to-rgb-fallback (orig-fn color &rest args)
   "Advice around `color-name-to-rgb' to handle hex colors when display is unavailable."
   (or (condition-case nil
           (apply orig-fn color args)
         (error nil))
-      (when (and (stringp color)
-                 (string-match "\\`#\\([0-9a-fA-F]\\{2\\}\\)\\([0-9a-fA-F]\\{2\\}\\)\\([0-9a-fA-F]\\{2\\}\\)\\'" color))
-        (list (/ (string-to-number (match-string 1 color) 16) 255.0)
-              (/ (string-to-number (match-string 2 color) 16) 255.0)
-              (/ (string-to-number (match-string 3 color) 16) 255.0)))))
+      (when-let* ((vals (and (stringp color)
+                             (color-values-from-color-spec color))))
+        (mapcar (lambda (x) (/ x 65535.0)) vals))))
 
 (advice-add 'color-name-to-rgb :around #'my-color-name-to-rgb-fallback)
 
