@@ -254,6 +254,22 @@
              (set-frame-parameter
               nil param (cdr (assoc param default-frame-alist))))))))
 
+;; Workaround: on some Emacs builds (e.g. Homebrew cask), color-name-to-rgb
+;; signals an error or returns nil for hex colors during early init before the
+;; display is ready.  Provide a pure-elisp fallback for hex color strings.
+(defun my-color-name-to-rgb-fallback (orig-fn color &rest args)
+  "Advice around `color-name-to-rgb' to handle hex colors when display is unavailable."
+  (or (condition-case nil
+          (apply orig-fn color args)
+        (error nil))
+      (when (and (stringp color)
+                 (string-match "\\`#\\([0-9a-fA-F]\\{2\\}\\)\\([0-9a-fA-F]\\{2\\}\\)\\([0-9a-fA-F]\\{2\\}\\)\\'" color))
+        (list (/ (string-to-number (match-string 1 color) 16) 255.0)
+              (/ (string-to-number (match-string 2 color) 16) 255.0)
+              (/ (string-to-number (match-string 3 color) 16) 255.0)))))
+
+(advice-add 'color-name-to-rgb :around #'my-color-name-to-rgb-fallback)
+
 (defun my-reset-theme ()
   (interactive)
   (when my-use-themes-p

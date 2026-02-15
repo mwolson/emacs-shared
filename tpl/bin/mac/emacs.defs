@@ -1,3 +1,16 @@
 # -*- sh -*-
+
+EMACS_DEFS_PATTERN="/opt/homebrew/Caskroom/emacs-plus-app/30.2-*/Emacs.app/Contents/MacOS/Emacs"
+EMACS_DEFS_MATCHES=( $EMACS_DEFS_PATTERN )
+
+if [[ ${#EMACS_DEFS_MATCHES[@]} -eq 0 || ! -e "${EMACS_DEFS_MATCHES[0]}" ]]; then
+    echo >&2 "Error: Could not find Emacs Homebrew cask installation matching ${EMACS_DEFS_PATTERN}"
+    exit 1
+elif [[ ${#EMACS_DEFS_MATCHES[@]} -gt 1 ]]; then
+    echo >&2 "Error: Found multiple Emacs Homebrew cask installations matching ${EMACS_DEFS_PATTERN}:"
+    printf >&2 "  %s\n" "${EMACS_DEFS_MATCHES[@]}"
+    exit 1
+fi
+
 CLIENT=/opt/homebrew/bin/emacsclient
-DAEMON=/opt/homebrew/opt/emacs-plus@30/Emacs.app/Contents/MacOS/Emacs
+DAEMON="${EMACS_DEFS_MATCHES[0]}"

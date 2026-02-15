@@ -68,8 +68,16 @@ elif [[ $OS == macOS ]]; then
         echo >&2 "Error: Emacs does not seem to be installed in Applications"
         exit 1
     fi
-    if [[ ! -e /opt/homebrew/opt/emacs-plus@30/Emacs.app/Contents/MacOS/Emacs ]]; then
-        echo >&2 "Error: Could not find Emacs Homebrew installation"
+
+    EMACS_CASK_PATTERN="/opt/homebrew/Caskroom/emacs-plus-app/${REQUIRED_EMACS_VERSION}-*/Emacs.app/Contents/MacOS/Emacs"
+    EMACS_CASK_MATCHES=( $EMACS_CASK_PATTERN )
+
+    if [[ ${#EMACS_CASK_MATCHES[@]} -eq 0 || ! -e "${EMACS_CASK_MATCHES[0]}" ]]; then
+        echo >&2 "Error: Could not find Emacs Homebrew cask installation matching ${EMACS_CASK_PATTERN}"
+        exit 1
+    elif [[ ${#EMACS_CASK_MATCHES[@]} -gt 1 ]]; then
+        echo >&2 "Error: Found multiple Emacs Homebrew cask installations matching ${EMACS_CASK_PATTERN}:"
+        printf >&2 "  %s\n" "${EMACS_CASK_MATCHES[@]}"
         exit 1
     fi
 elif [[ $OS_VARIANT == Ubuntu ]]; then

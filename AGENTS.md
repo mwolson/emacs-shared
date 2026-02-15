@@ -42,6 +42,27 @@ This ensures all changes will compile cleanly. Look for warnings about:
 - Unknown functions (usually fine when using autoloads or
   `with-eval-after-load`)
 
+### Debugging init errors
+
+The user's `~/.emacs.d/early-init.el` loads `init/early-shared-init.el`, and
+`~/.emacs.d/init.el` loads `init/shared-init.el`.
+
+To run the full user init headlessly:
+
+- `emacs --batch -l ~/.emacs.d/early-init.el -l ~/.emacs.d/init.el`
+
+Note: `--batch` alone does not load user init files; you must pass them
+explicitly with `-l`. Some errors only occur with a live display (e.g., color
+resolution, frame parameters) and cannot be reproduced in `--batch` mode; ask
+the user to run `emacs --debug-init` and share the backtrace in those cases.
+
+After fixing issues in `init/*.el` files, always recompile native code:
+
+- `./scripts/native-comp-all.sh`
+
+Stale `.eln` files will keep running old code even after the `.el` source is
+fixed. This is a common gotcha when the user reports "my fix didn't work."
+
 ### One-off batch harnesses
 
 When iterating on a small part of the config (a single function, hook, or
