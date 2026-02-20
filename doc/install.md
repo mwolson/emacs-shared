@@ -46,7 +46,7 @@ pacman -Sy pacman
 pacman -Syu
 pacman -Su
 pacman -S --needed base-devel libssh2-devel msys/man-db xmlto
-pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,fd,gcc,gnutls,go,gopls,make,ninja,ripgrep,rust}
+pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,fd,gcc,gnutls,go,make,ninja,ripgrep,rust,ty}
 ```
 
 - Make sure you do not have git installed through MSYS2 (we want it to come from
