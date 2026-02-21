@@ -46,7 +46,7 @@ pacman -Sy pacman
 pacman -Syu
 pacman -Su
 pacman -S --needed base-devel libssh2-devel msys/man-db xmlto
-pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,fd,gcc,gnutls,go,make,ninja,ripgrep,rust,ty}
+pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,cmake,fd,gcc,gnutls,go,libgccjit,make,ninja,ripgrep,rust,ty}
 ```
 
 - Make sure you do not have git installed through MSYS2 (we want it to come from
@@ -56,6 +56,16 @@ pacman -S --needed mingw-w64-ucrt-x86_64-{asciidoc,aspell-en,clang-tools-extra,f
 ```sh
 pacman -R git
 ```
+
+## (Windows only) Install Visual Studio Build tools
+
+In an Administrator PowerShell, run:
+
+```sh
+winget install --id Microsoft.VisualStudio.2022.BuildTools -e --source winget --override "--add Microsoft.VisualStudio.Component.Windows11SDK.22621 --add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.VC.Runtimes.x86.x64.Spectre --add Microsoft.VisualStudio.Component.VC.ATL.Spectre --add Microsoft.VisualStudio.Component.VC.ATLMFC.Spectre"
+```
+
+Note: This is taken from the [VSCode build instructions](https://github.com/microsoft/vscode/wiki/How-to-Contribute).
 
 ## (Arch Linux only) Install utilities
 
@@ -74,14 +84,14 @@ makepkg -si
 Minimal install:
 
 ```sh
-sudo paru -S aspell-en base-devel clang fd gnutls gopls libssh2-devel make \
-    man-db man-pages mise ninja openssh ripgrep rust-analyzer ty zls
+paru -S aspell-en base-devel clang cmake fd gnutls gopls make man-db man-pages \
+    mise ninja openssh python ripgrep rust-analyzer ty zls
 ```
 
 For a full install, in addition to the above also run:
 
 ```sh
-sudo paru -S clojure clojure-lsp-bin jdtls leiningen omnisharp-roslyn-bin zprint-bin
+paru -S clojure clojure-lsp-bin jdtls leiningen omnisharp-roslyn-bin zprint-bin
 ```
 
 ## Install clangd
