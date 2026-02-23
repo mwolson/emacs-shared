@@ -2464,6 +2464,7 @@ This prevents the window from later moving back once the minibuffer is done show
   (keymap-global-set "s-c" #'kill-ring-save)
   (keymap-global-set "s-g" my-consult-M-g-map)
   (keymap-global-set "s-m" (lambda () (interactive)))
+  (keymap-global-set "M-s-p" #'project-switch-project)
   (keymap-global-set "s-p" #'project-find-file)
   (keymap-global-set "s-q" #'my-kill-emacs)
   (keymap-global-set "s-w" #'kill-ring-save)
