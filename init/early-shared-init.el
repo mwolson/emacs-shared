@@ -100,7 +100,7 @@
 (defvar my-gptel-backend-local 'my-gptel--local-ai)
 (defvar my-gptel-backend-remote 'my-gptel--opencode-zen)
 (defvar my-gptel-backend     my-gptel-backend-remote)
-(defvar my-gptel-model-local 'Sky-T1-32B-Preview)
+(defvar my-gptel-model-local 'Qwen3.5-35B-A3B-UD-Q8_K_XL)
 (defvar my-gptel-model-remote 'claude-opus-4-5)
 (defvar my-gptel-model       my-gptel-model-remote)
 (defvar my-gptel-preferred-provider 'my-gptel--opencode-zen)

@@ -683,16 +683,32 @@ interactively.
 (defvar my-gptel--openai nil)
 (defvar my-gptel--opencode-zen nil)
 (defvar my-gptel--openrouter-kimi-k2 nil)
-(defvar my-gptel--openrouter-qwen-3-coder nil)
 (defvar my-gptel--xai nil)
 (defvar my-gptel-local-models
-  '((Sky-T1-32B-Preview
-     :description "Sky-T1-32B-Preview model"
+  '((Qwen3.5-35B-A3B-UD-Q8_K_XL
+     :description "Local default: Qwen3.5-35B-A3B-UD-Q8_K_XL"
      :capabilities (media tool json url)
-     :context-window 256
-     ;; temperature can go up to 0.2 for more creativity but higher chance of
-     ;; syntax errors
-     :request-params (:temperature 0.025 :top_k 20 :top_p 0.95))))
+     :context-window 262144
+     :request-params
+     (:temperature 0.6
+      :top_k 20
+      :top_p 0.95
+      :min_p 0.0
+      :presence_penalty 0.0
+      :frequency_penalty 0.0
+      :repetition_penalty 1.0))
+    (Qwen3.5-122B-A10B-UD-Q5_K_XL
+     :description "Local alternate: Qwen3.5-122B-A10B-UD-Q5_K_XL"
+     :capabilities (media tool json url)
+     :context-window 262144
+     :request-params
+     (:temperature 0.6
+      :top_k 20
+      :top_p 0.95
+      :min_p 0.0
+      :presence_penalty 0.0
+      :frequency_penalty 0.0
+      :repetition_penalty 1.0))))
 
 (defun my-auth-source-get-api-key (host &optional user)
   (if-let* ((secret (plist-get
@@ -843,20 +859,6 @@ interactively.
               :temperature 0.6)
             :models '(moonshotai/kimi-k2
                       :description "Kimi K2")))
-    (setq my-gptel--openrouter-qwen-3-coder
-          (gptel-make-openai "OpenRouter"
-            :host "openrouter.ai"
-            :endpoint "/api/v1/chat/completions"
-            :stream t
-            :key #'gptel-api-key-from-auth-source
-            :request-params
-            '(:provider (:only ["parasail"])
-              :temperature 0.7
-              :top_k 20
-              :top:p 0.8
-              :repetition_penalty 1.05)
-            :models '(qwen/qwen3-coder
-                      :description "Qwen 3 Coder")))
 
     (require 'gptel-openai-extras)
     (setq my-gptel--xai
@@ -1008,7 +1010,6 @@ interactively.
                           ('claude-sonnet-4-5-20250929 'claude-sonnet-4-5)
                           ('grok-code-fast-1 'grok-code)
                           ('moonshotai/kimi-k2 'kimi-k2)
-                          ('qwen/qwen3-coder 'qwen3-coder)
                           (_ gptel-model-sym))
                       gptel-model-sym)))
     (setq gptel-backend (symbol-value my-gptel-backend-local)
@@ -1055,11 +1056,6 @@ interactively.
   (interactive)
   (my-gptel-toggle-model 'my-gptel--claude-thinking
                          'claude-opus-4-5-20251101))
-
-(defun my-gptel-toggle-qwen3-coder ()
-  (interactive)
-  (my-gptel-toggle-model 'my-gptel--openrouter-qwen-3-coder
-                         'qwen/qwen3-coder))
 
 (defun my-gptel-toggle-sonnet ()
   (interactive)
