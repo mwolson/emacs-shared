@@ -2337,9 +2337,22 @@ This prevents the window from later moving back once the minibuffer is done show
 
 (keymap-global-set "C-c p" my-project-command-map)
 (keymap-global-set "C-c C-p" my-project-command-map)
+
+;; Other keybinds
+(defun my-other-frame-or-window (&rest _args)
+  (interactive)
+  (let* ((old-window (selected-window))
+         (window (next-window old-window)))
+    (if (and (eq window old-window)
+             window-system
+             (string= (getenv "XDG_CURRENT_DESKTOP") "niri"))
+        (call-interactively #'other-frame)
+      (call-interactively #'other-window))))
+
 (keymap-global-set "C-x g" #'mark-whole-buffer)
 (keymap-global-set "C-x r r" #'rectangle-mark-mode)
-(keymap-global-set "C-x p" #'other-window)
+(keymap-global-set "C-x o" #'my-other-frame-or-window)
+(keymap-global-set "C-x p" #'my-other-frame-or-window)
 
 (eval-when-compile (require 'server))
 (defun my-kill-emacs ()
