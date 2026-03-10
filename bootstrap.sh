@@ -132,6 +132,13 @@ echo
 
 if [[ -n "$BUILD" ]]; then
     pnpm install --quiet
+    export PATH="$(get_topdir)/node_modules/.bin:$PATH"
+
+    if ! qwhich tree-sitter; then
+        echo >&2 "Error: Could not find \"tree-sitter\" in node_modules/.bin after pnpm install"
+        exit 1
+    fi
+
     pnpm run compile:lsp
     pnpm install --quiet
 fi
@@ -215,7 +222,7 @@ if [[ -n "$BUILD" ]]; then
     <<< $tree_sitter_modules xargs -P4 -n1 \
         "$(get_topdir)"/scripts/install-treesit-grammar.sh
 
-    "$(get_topdir)"/scripts/install-treesit-grammar.sh swift "" "" pnpm
+    "$(get_topdir)"/scripts/install-treesit-grammar.sh swift "" "" generate
 else
     notify "Warning: tree-sitter modules will not be built, some major modes will not work"
 fi

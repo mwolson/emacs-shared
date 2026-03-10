@@ -65,7 +65,8 @@ In an Administrator PowerShell, run:
 winget install --id Microsoft.VisualStudio.2022.BuildTools -e --source winget --override "--add Microsoft.VisualStudio.Component.Windows11SDK.22621 --add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.VC.Runtimes.x86.x64.Spectre --add Microsoft.VisualStudio.Component.VC.ATL.Spectre --add Microsoft.VisualStudio.Component.VC.ATLMFC.Spectre"
 ```
 
-Note: This is taken from the [VSCode build instructions](https://github.com/microsoft/vscode/wiki/How-to-Contribute).
+Note: This is taken from the
+[VSCode build instructions](https://github.com/microsoft/vscode/wiki/How-to-Contribute).
 
 ## (Arch Linux only) Install utilities
 
