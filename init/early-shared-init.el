@@ -94,7 +94,9 @@
 (defvar my-frame-height      50)
 (defvar my-frame-width       120)
 (defvar my-frame-maximize-if-pixel-width-lte 1440)
-(defvar my-frame-maximize-p  t)
+(defvar my-frame-maximize-p
+  (and window-system
+       (not (string= (getenv "XDG_CURRENT_DESKTOP") "niri"))))
 (defvar my-frame-pad-width   (if (eq system-type 'darwin) 65 nil))
 (defvar my-frame-pad-height  (if (eq system-type 'darwin) 15 nil))
 (defvar my-gptel-backend-local 'my-gptel--local-ai)

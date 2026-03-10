@@ -2258,6 +2258,51 @@ This prevents the window from later moving back once the minibuffer is done show
   (setopt git-commit-major-mode 'org-mode)
   (remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill))
 
+(defun my-magit-balance-windows-25/75 (top-window bottom-window)
+  (let* ((total-height (+ (window-total-height top-window)
+                          (window-total-height bottom-window)))
+         (min-height window-min-height)
+         (desired-top-height
+          (max min-height
+               (min (round (* total-height 0.25))
+                    (- total-height min-height))))
+         (delta (- desired-top-height
+                   (window-total-height top-window))))
+    (unless (zerop delta)
+      (window-resize top-window delta nil 'safe))))
+
+(defun my-magit-display-buffer-below-selected (buffer alist)
+  (let ((top-window (selected-window)))
+    (when-let* ((window (or (display-buffer-reuse-window buffer alist)
+                            (display-buffer-below-selected buffer alist))))
+      (when (and (not (eq top-window window))
+                 (eq top-window (window-in-direction 'above window)))
+        (my-magit-balance-windows-25/75 top-window window))
+      window)))
+
+(defun my-magit-display-buffer-top25-bottom75-v1 (buffer)
+  (let ((detail-buffer-p
+         (with-current-buffer buffer
+           (derived-mode-p 'magit-diff-mode
+                           'magit-process-mode
+                           'magit-revision-mode
+                           'magit-stash-mode)))
+        (current-detail-p
+         (derived-mode-p 'magit-diff-mode
+                         'magit-process-mode
+                         'magit-revision-mode
+                         'magit-stash-mode)))
+    (display-buffer
+     buffer
+     (cond ((eq (with-current-buffer buffer major-mode)
+                'magit-status-mode)
+            '(magit--display-buffer-fullcolumn))
+           (detail-buffer-p
+            (if current-detail-p
+                '(display-buffer-same-window)
+              '(my-magit-display-buffer-below-selected)))
+           ('(display-buffer-same-window))))))
+
 ;; Don't overwrite M-w in magit mode, and clear mark when done
 (defun my-magit-kill-ring-save ()
   (interactive)
