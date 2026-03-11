@@ -86,7 +86,7 @@
                            consult corfu corfu-prescient corfu-terminal diff-hl diminish dumb-jump
                            edit-indirect editorconfig eglot-python-preset el-mock embark
                            embark-consult erlang erlang-ts fish-mode flx git-modes gptel
-                           gptel-fn-complete graphql-ts-mode hydra js-comint jtsx kind-icon
+                           gptel-fn-complete graphql-ts-mode hydra js-comint jtsx kdl-mode kind-icon
                            kotlin-ts-mode ligature lua-mode magit marginalia markdown-mode maxframe
                            minions minuet mise modus-themes nerd-icons-completion nix-ts-mode
                            nsis-mode orderless package-build package-utils plz prisma-ts-mode pulsar
@@ -99,6 +99,7 @@
  '(require-final-newline nil)
  '(save-place t nil (saveplace))
  '(save-place-limit 20)
+ '(save-place-mode t nil (saveplace))
  '(select-enable-clipboard t)
  '(show-paren-mode t)
  '(show-paren-style 'parenthesis)

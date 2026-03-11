@@ -116,6 +116,11 @@
         ignore = dirty
         shallow = true
 	url = https://github.com/tree-sitter/tree-sitter-json.git
+[submodule "extra/tree-sitter-kdl"]
+        path = extra/tree-sitter-kdl
+        ignore = dirty
+        shallow = true
+        url = https://github.com/tree-sitter-grammars/tree-sitter-kdl.git
 [submodule "extra/tree-sitter-kotlin"]
         path = extra/tree-sitter-kotlin
         ignore = dirty

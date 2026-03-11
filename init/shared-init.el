@@ -113,8 +113,8 @@ When `depth' is provided, pass it to `add-hook'."
 
 ;; Load customizations
 (setq custom-file (if my-settings-shared-p
-                      (concat my-emacs-path "init/settings")
-                    (locate-user-emacs-file "settings")))
+                      (concat my-emacs-path "init/settings.el")
+                    (locate-user-emacs-file "settings.el")))
 (load custom-file nil nil nil t)
 
 ;;; Functions
@@ -1533,6 +1533,12 @@ optional G-MODEL is the gptel model symbol to use."
                   (:plugins [(:name "typescript-eslint-language-service"
                               :location ,my-emacs-path)]))))
 ;;)
+
+;; KDL
+(defun my-setup-kdl-mode ()
+  (setq-local tab-width 4))
+
+(add-hook 'kdl-mode-hook #'my-setup-kdl-mode)
 
 ;; Kotlin
 (add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-ts-mode))
