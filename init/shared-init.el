@@ -343,10 +343,9 @@ Use this to advise functions that could be problematic."
 
 (defun my-js--project-find (dir)
   "Project detection for JS files.
-
-Returns (python-project . ROOT) if DIR is inside a JS project."
+Return (js-project . ROOT) if DIR is inside a JS project."
   (when-let* ((root (locate-dominating-file dir #'my-js--project-root-p)))
-    (cons 'python-project root)))
+    (cons 'js-project root)))
 
 (defun my-detect-biome ()
   "Detect whether to use Biome based on project configuration.
