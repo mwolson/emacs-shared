@@ -1,3 +1,11 @@
+[submodule "elisp/eglot-python-preset"]
+	path = elisp/eglot-python-preset
+        ignore = dirty
+	url = https://github.com/mwolson/eglot-python-preset.git
+[submodule "elisp/eglot-typescript-preset"]
+	path = elisp/eglot-typescript-preset
+        ignore = dirty
+	url = https://github.com/mwolson/eglot-typescript-preset.git
 [submodule "elisp/flymake-stylelint"]
 	path = elisp/flymake-stylelint
         ignore = dirty

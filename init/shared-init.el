@@ -329,24 +329,6 @@ Use this to advise functions that could be problematic."
     (apply orig-fun args)))
 
 ;; Apheleia for automatic code formatting
-(defvar my-js-project-markers '("package.json")
-  "Files that indicate a JS project root.")
-
-(defun my-js--project-root-p (dir)
-  "Return non-nil if DIR contains a JS project marker file."
-  (when (and (not (my-in-indirect-md-buffer-p))
-             (or (derived-mode-p 'js-base-mode)
-                 (derived-mode-p 'typescript-ts-base-mode)))
-    (seq-some (lambda (file)
-                (file-exists-p (expand-file-name file dir)))
-              my-js-project-markers)))
-
-(defun my-js--project-find (dir)
-  "Project detection for JS files.
-Return (js-project . ROOT) if DIR is inside a JS project."
-  (when-let* ((root (locate-dominating-file dir #'my-js--project-root-p)))
-    (cons 'js-project root)))
-
 (defun my-detect-biome ()
   "Detect whether to use Biome based on project configuration.
 
@@ -1480,21 +1462,15 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'auto-mode-alist '("/bun\\.lock\\'" . json-ts-mode))
 (add-hook 'json-ts-mode-hook #'my-apheleia-skip-bun -100)
 
-(with-eval-after-load "project"
-  (cl-defmethod project-root ((project (head js-project)))
-    "Return root directory of PROJECT."
-    (cdr project))
-
-  (add-hook 'project-find-functions #'my-js--project-find))
-
-(add-to-list
- 'eglot-server-programs
- `((astro-ts-mode)
-   . ("astro-ls" "--stdio"
-      :initializationOptions
-      (:contentIntellisense t
-       :typescript
-       (:tsdk ,(concat my-emacs-path "node_modules/typescript/lib"))))))
+;; - eglot-typescript-preset: TS/JS/Astro project detection and eglot setup
+;;
+;; for local development and testing:
+;;(add-to-list 'load-path (expand-file-name "~/devel/projects/eglot-typescript-preset"))
+(add-to-list 'load-path (concat my-emacs-path "elisp/eglot-typescript-preset"))
+(require 'eglot-typescript-preset)
+(setopt eglot-typescript-preset-tsdk
+        (concat my-emacs-path "node_modules/typescript/lib"))
+(eglot-typescript-preset-setup)
 
 (dolist (mode my-jtsx-major-modes)
   (let ((hook (intern (concat (symbol-name mode) "-hook"))))
@@ -1511,27 +1487,6 @@ optional G-MODEL is the gptel model symbol to use."
    my-apheleia-set-markdown-formatter
    my-apheleia-set-yaml-formatter)
  #'my-inhibit-in-indirect-md-buffers)
-
-;; (defclass eglot-deno (eglot-lsp-server) ()
-;;   :documentation "A custom class for deno lsp.")
-;;
-;; (cl-defmethod eglot-initialization-options ((server eglot-deno))
-;;   "Passes through required deno initialization options"
-;;   (list :enable t
-;;         :lint t))
-;;
-;; (if (executable-find "deno")
-;;     (add-to-list 'eglot-server-programs
-;;                  `(,my-jtsx-ts-major-modes
-;;                    . (eglot-deno "deno" "lsp")))
-;;
-(add-to-list 'eglot-server-programs
-             `(,my-jtsx-ts-major-modes
-               . ("typescript-language-server" "--stdio"
-                  :initializationOptions
-                  (:plugins [(:name "typescript-eslint-language-service"
-                              :location ,my-emacs-path)]))))
-;;)
 
 ;; KDL
 (defun my-setup-kdl-mode ()
@@ -1699,8 +1654,9 @@ optional G-MODEL is the gptel model symbol to use."
 ;;
 ;; for local development and testing:
 ;;
-;; (add-to-list 'load-path (expand-file-name "~/devel/projects/eglot-python-preset"))
-;; (require 'eglot-python-preset)
+;;(add-to-list 'load-path (expand-file-name "~/devel/projects/eglot-python-preset"))
+(add-to-list 'load-path (concat my-emacs-path "elisp/eglot-python-preset"))
+(require 'eglot-python-preset)
 ;; (setopt eglot-python-preset-lsp-server 'basedpyright)
 ;; (setopt eglot-workspace-configuration
 ;;         (plist-put eglot-workspace-configuration
