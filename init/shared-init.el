@@ -1339,8 +1339,10 @@ optional G-MODEL is the gptel model symbol to use."
 ;; CSS
 (add-to-list 'major-mode-remap-alist '(css-mode . css-ts-mode))
 
+(add-hook 'css-ts-mode-hook #'add-node-modules-path t)
 (add-hook 'css-ts-mode-hook #'eglot-ensure t)
 (add-hook 'css-ts-mode-hook #'my-setup-web-ligatures t)
+;; (uses eglot-typescript-preset for rass: vscode-css + tailwindcss)
 
 ;; Emacs Lisp
 (autoload #'plist-lisp-indent-install "plist-lisp-indent"
