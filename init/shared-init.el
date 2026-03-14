@@ -1465,8 +1465,10 @@ optional G-MODEL is the gptel model symbol to use."
 ;; - eglot-typescript-preset: TS/JS/Astro project detection and eglot setup
 ;;
 ;; for local development and testing:
-;;(add-to-list 'load-path (expand-file-name "~/devel/projects/eglot-typescript-preset"))
-(add-to-list 'load-path (concat my-emacs-path "elisp/eglot-typescript-preset"))
+;;(eval-and-compile
+;;  (add-to-list 'load-path (expand-file-name "~/devel/projects/eglot-typescript-preset")))
+(eval-and-compile
+  (add-to-list 'load-path (concat my-emacs-path "elisp/eglot-typescript-preset")))
 (require 'eglot-typescript-preset)
 (setopt eglot-typescript-preset-tsdk
         (concat my-emacs-path "node_modules/typescript/lib"))
@@ -1654,8 +1656,10 @@ optional G-MODEL is the gptel model symbol to use."
 ;;
 ;; for local development and testing:
 ;;
-;;(add-to-list 'load-path (expand-file-name "~/devel/projects/eglot-python-preset"))
-(add-to-list 'load-path (concat my-emacs-path "elisp/eglot-python-preset"))
+;;(eval-and-compile
+;;  (add-to-list 'load-path (expand-file-name "~/devel/projects/eglot-python-preset")))
+(eval-and-compile
+  (add-to-list 'load-path (concat my-emacs-path "elisp/eglot-python-preset")))
 (require 'eglot-python-preset)
 ;; (setopt eglot-python-preset-lsp-server 'basedpyright)
 ;; (setopt eglot-workspace-configuration
