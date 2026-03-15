@@ -1473,6 +1473,7 @@ optional G-MODEL is the gptel model symbol to use."
 (require 'eglot-typescript-preset)
 (setopt eglot-typescript-preset-tsdk
         (concat my-emacs-path "node_modules/typescript/lib"))
+(setopt eglot-typescript-preset-astro-lsp-server 'rass)
 (setopt eglot-typescript-preset-lsp-server 'rass)
 (setopt eglot-typescript-preset-rass-tools
         '(typescript-language-server biome))
