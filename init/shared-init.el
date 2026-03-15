@@ -1473,6 +1473,9 @@ optional G-MODEL is the gptel model symbol to use."
 (require 'eglot-typescript-preset)
 (setopt eglot-typescript-preset-tsdk
         (concat my-emacs-path "node_modules/typescript/lib"))
+(setopt eglot-typescript-preset-lsp-server 'rass)
+(setopt eglot-typescript-preset-rass-tools
+        '(typescript-language-server biome))
 (eglot-typescript-preset-setup)
 
 (dolist (mode my-jtsx-major-modes)
@@ -1706,6 +1709,11 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'load-path (concat my-emacs-path "elisp/vue-ts-mode"))
 (autoload #'vue-ts-mode "vue-ts-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.vue\\'" . vue-ts-mode))
+
+(add-hook 'vue-ts-mode-hook #'add-node-modules-path t)
+(add-hook 'vue-ts-mode-hook #'eglot-ensure t)
+(add-hook 'vue-ts-mode-hook #'my-setup-web-ligatures t)
+(add-hook 'vue-ts-mode-hook #'my-apheleia-set-js-formatter)
 
 (eval-when-compile (require 'css-mode))
 (defun my-vue-ts-set-fontify-css-colors ()

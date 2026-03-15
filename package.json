@@ -43,6 +43,7 @@
     "@mermaid-js/mermaid-cli": "^11.12.0",
     "@mwolson/emacs-shared": "link:",
     "@tailwindcss/language-server": "^0.14.29",
+    "@vue/language-server": "^3.2.5",
     "oxlint": "^1.32.0",
     "prettier": "^3.7.4",
     "stylelint": "^16.26.1",
