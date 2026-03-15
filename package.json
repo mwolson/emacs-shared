@@ -46,14 +46,14 @@
     "oxlint": "^1.32.0",
     "prettier": "^3.7.4",
     "stylelint": "^16.26.1",
+    "typescript": "^5.9.3",
     "typescript-language-server": "^5.1.3",
     "vscode-json-languageserver": "link:extra/vscode/extensions/json-language-features/server"
   },
   "devDependencies": {
     "lefthook": "^2.0.11",
     "shx": "^0.4.0",
-    "tree-sitter-cli": "^0.25.10",
-    "typescript": "^5.9.3"
+    "tree-sitter-cli": "^0.25.10"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
