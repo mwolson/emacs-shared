@@ -94,9 +94,7 @@
 (defvar my-frame-height      50)
 (defvar my-frame-width       120)
 (defvar my-frame-maximize-if-pixel-width-lte 1440)
-(defvar my-frame-maximize-p
-  (and window-system
-       (not (string= (getenv "XDG_CURRENT_DESKTOP") "niri"))))
+(defvar my-frame-maximize-p  t)
 (defvar my-frame-pad-width   (if (eq system-type 'darwin) 65 nil))
 (defvar my-frame-pad-height  (if (eq system-type 'darwin) 15 nil))
 (defvar my-gptel-backend-local 'my-gptel--local-ai)
@@ -242,7 +240,9 @@
 (defun my-reset-frame-size ()
   "Reset the size of the current frame according to `default-frame-alist'."
   (interactive)
-  (let ((maximize-p my-frame-maximize-p))
+  (let ((maximize-p (and my-frame-maximize-p
+                         (not (string= (or (getenv "XDG_CURRENT_DESKTOP") "")
+                                       "niri")))))
     (when (and maximize-p my-frame-maximize-if-pixel-width-lte)
       (setq maximize-p (<= (display-pixel-width)
                            my-frame-maximize-if-pixel-width-lte)))
