@@ -1594,7 +1594,6 @@ optional G-MODEL is the gptel model symbol to use."
                       "Kill Element"))
 
 (add-hook 'markdown-mode-mode #'add-node-modules-path t)
-(add-hook 'markdown-mode-hook #'eglot-ensure)
 (add-hook 'markdown-mode-hook #'my-setup-web-ligatures t)
 (add-hook 'markdown-mode-hook #'my-turn-on-arrow-input t)
 (add-hook 'markdown-mode-hook #'my-apheleia-set-markdown-formatter)
@@ -1604,7 +1603,7 @@ optional G-MODEL is the gptel model symbol to use."
 
 (add-to-list
  'eglot-server-programs
- `((gfm-mode markdown-mode my-mdx-mode)
+ `(my-mdx-mode
    . ("mdx-language-server" "--stdio"
       :initializationOptions
       (:typescript
@@ -1614,6 +1613,8 @@ optional G-MODEL is the gptel model symbol to use."
 ;; MDX
 (define-derived-mode my-mdx-mode gfm-mode "MDX"
   "Major mode for highlighting MDX files.")
+
+(add-hook 'my-mdx-mode-hook #'eglot-ensure)
 
 (add-to-list 'auto-mode-alist '("\\.mdx\\'" . my-mdx-mode))
 (add-to-list 'my-md-code-aliases '(mdx . my-mdx-mode))

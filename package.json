@@ -37,15 +37,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@astrojs/language-server": "^2.16.2",
-    "@biomejs/biome": "^2.3.8",
+    "@astrojs/language-server": "^2.16.5",
+    "@biomejs/biome": "^2.4.7",
     "@mdx-js/language-server": "^0.6.3",
     "@mermaid-js/mermaid-cli": "^11.12.0",
     "@mwolson/emacs-shared": "link:",
     "@tailwindcss/language-server": "^0.14.29",
     "@vue/language-server": "^3.2.5",
-    "oxlint": "^1.32.0",
-    "prettier": "^3.7.4",
+    "oxlint": "^1.56.0",
+    "prettier": "^3.8.1",
     "stylelint": "^16.26.1",
     "svelte-language-server": "^0.17.29",
     "typescript": "^5.9.3",
@@ -53,7 +53,7 @@
     "vscode-json-languageserver": "link:extra/vscode/extensions/json-language-features/server"
   },
   "devDependencies": {
-    "lefthook": "^2.0.11",
+    "lefthook": "^2.1.4",
     "shx": "^0.4.0",
     "tree-sitter-cli": "^0.25.10"
   },
