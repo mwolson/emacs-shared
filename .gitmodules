@@ -18,6 +18,10 @@
 	path = elisp/mermaid-ts-mode
         ignore = dirty
 	url = https://github.com/kiennq/mermaid-ts-mode.git
+[submodule "elisp/svelte-ts-mode"]
+	path = elisp/svelte-ts-mode
+        ignore = dirty
+	url = https://github.com/leafOfTree/svelte-ts-mode.git
 [submodule "elisp/vue-ts-mode"]
 	path = elisp/vue-ts-mode
         ignore = dirty
@@ -170,6 +174,11 @@
         ignore = dirty
         shallow = true
         url = https://github.com/tree-sitter/tree-sitter-rust.git
+[submodule "extra/tree-sitter-svelte"]
+        path = extra/tree-sitter-svelte
+        ignore = dirty
+        shallow = true
+        url = https://github.com/tree-sitter-grammars/tree-sitter-svelte.git
 [submodule "extra/tree-sitter-swift"]
         path = extra/tree-sitter-swift
         ignore = dirty

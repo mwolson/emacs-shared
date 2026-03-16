@@ -195,7 +195,8 @@ for fullmod in recipes/*; do
 done
 
 file_elisp_submodules="
-    flymake-stylelint mermaid-ts-mode vue-ts-mode
+    eglot-python-preset eglot-typescript-preset flymake-stylelint
+    mermaid-ts-mode svelte-ts-mode vue-ts-mode
 "
 for mod in $file_elisp_submodules; do
     update_submodule elisp/"$mod"
@@ -217,7 +218,7 @@ if [[ -n "$BUILD" ]]; then
     tree_sitter_modules="
         astro bash c c-sharp clojure cpp css dockerfile erlang go gomod
         graphql html java javascript jsdoc json kdl kotlin mermaid nix prisma
-        python regex rust toml vue yaml zig
+        python regex rust svelte toml vue yaml zig
     "
     <<< $tree_sitter_modules xargs -P4 -n1 \
         "$(get_topdir)"/scripts/install-treesit-grammar.sh

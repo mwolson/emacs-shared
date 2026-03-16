@@ -1464,7 +1464,8 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'auto-mode-alist '("/bun\\.lock\\'" . json-ts-mode))
 (add-hook 'json-ts-mode-hook #'my-apheleia-skip-bun -100)
 
-;; - eglot-typescript-preset: TS/JS/Astro project detection and eglot setup
+;; - eglot-typescript-preset: TS/JS/Astro/Svelte/Vue project detection and
+;; eglot setup
 ;;
 ;; for local development and testing:
 (eval-and-compile
@@ -1698,6 +1699,16 @@ optional G-MODEL is the gptel model symbol to use."
              '((scss-mode)
                . ("vscode-css-language-server" "--stdio")))
 (add-hook 'scss-mode-hook #'eglot-ensure)
+
+;; Svelte
+(add-to-list 'load-path (concat my-emacs-path "elisp/svelte-ts-mode"))
+(autoload #'svelte-ts-mode "svelte-ts-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.svelte\\'" . svelte-ts-mode))
+
+(add-hook 'svelte-ts-mode-hook #'add-node-modules-path t)
+(add-hook 'svelte-ts-mode-hook #'eglot-ensure t)
+(add-hook 'svelte-ts-mode-hook #'my-setup-web-ligatures t)
+(add-hook 'svelte-ts-mode-hook #'my-apheleia-set-js-formatter)
 
 ;; Swift
 (add-to-list 'auto-mode-alist '("\\.swift\\(interface\\)?\\'" . swift-ts-mode))
