@@ -27,21 +27,58 @@
                 ((not (alist-get name package-vc-selected-packages nil nil #'string=))))
       (push (cons name pkg-spec) package-vc-selected-packages)))
 
+  (defun my-package-vc-generated-el-file-p (path)
+    (string-match-p "-\\(?:autoloads\\|pkg\\)\\.el\\'" path))
+
+  ;; Helper for the package-vc advice below. Resolve the explicit compile set
+  ;; for a package, honoring :lisp-dir, :main-file, and the local
+  ;; :compile-files extension. `:compile-files' accepts MELPA-style glob
+  ;; patterns such as "*.el" or "extensions/*.el".
+  (defun my-package-vc-expand-el-file-specs (base-dir files)
+    (delete-dups
+     (delq nil
+           (apply #'append
+                  (mapcar
+                   (lambda (file)
+                     (mapcar (lambda (path)
+                               (and (file-regular-p path)
+                                    (not (my-package-vc-generated-el-file-p path))
+                                    path))
+                             (file-expand-wildcards
+                              (expand-file-name file base-dir) t)))
+                   files)))))
+
+  (defun my-package-vc-selected-el-files (pkg-desc)
+    (let* ((pkg-spec (and (package-vc-p pkg-desc)
+                          (package-vc--desc->spec pkg-desc))))
+      (when pkg-spec
+        (let* ((dir (package-desc-dir pkg-desc))
+               (lisp-dir (plist-get pkg-spec :lisp-dir))
+               (base-dir (if lisp-dir (expand-file-name lisp-dir dir) dir))
+               (main-file (plist-get pkg-spec :main-file))
+               (compile-files (plist-get pkg-spec :compile-files))
+               (selected-files
+                (cond
+                 (compile-files
+                  (append (and main-file (list main-file))
+                          compile-files))
+                 (main-file
+                  (list main-file)))))
+          (when selected-files
+            (my-package-vc-expand-el-file-specs base-dir selected-files))))))
+
   ;; 2. package-vc--unpack-1 scans ALL .el files for Package-Requires, even
   ;;    when :main-file is specified. This causes circular dependencies in
-  ;;    monorepos like prescient.el. Restrict scanning to just the main file.
-  (define-advice package-vc--unpack-1 (:around (orig-fn pkg-desc pkg-dir) main-file-deps)
-    (let* ((pkg-spec (package-vc--desc->spec pkg-desc))
-           (main-file (plist-get pkg-spec :main-file)))
-      (if (not main-file)
+  ;;    monorepos like prescient.el. Restrict scanning to the selected files.
+  (define-advice package-vc--unpack-1 (:around (orig-fn pkg-desc pkg-dir) selected-file-deps)
+    (let ((selected-files (my-package-vc-selected-el-files pkg-desc)))
+      (if (not selected-files)
           (funcall orig-fn pkg-desc pkg-dir)
         (cl-letf* ((orig-directory-files (symbol-function 'directory-files))
                    ((symbol-function 'directory-files)
                     (lambda (dir &optional full match nosort count)
                       (if (and full (equal match "\\.el\\'"))
-                          (let ((mf (expand-file-name main-file dir)))
-                            (if (file-exists-p mf) (list mf)
-                              (funcall orig-directory-files dir full match nosort count)))
+                          selected-files
                         (funcall orig-directory-files dir full match nosort count)))))
           (funcall orig-fn pkg-desc pkg-dir)))))
 
@@ -71,13 +108,11 @@
       (when pkg-spec
         (let* ((dir (package-desc-dir pkg-desc))
                (lisp-dir (plist-get pkg-spec :lisp-dir))
-               (main-file (plist-get pkg-spec :main-file))
-               (full-dir (if lisp-dir (expand-file-name lisp-dir dir) dir)))
+               (full-dir (if lisp-dir (expand-file-name lisp-dir dir) dir))
+               (selected-files (my-package-vc-selected-el-files pkg-desc)))
           (cond
-           (main-file
-            (let ((main-path (expand-file-name main-file full-dir)))
-              (and (file-exists-p main-path)
-                   (list :type 'file :path main-path))))
+           (selected-files
+            (list :type 'files :paths selected-files))
            (lisp-dir
             (and (file-directory-p full-dir)
                  (list :type 'dir :path full-dir))))))))
@@ -88,8 +123,9 @@
           (funcall orig-fn pkg-desc)
         (let ((warning-minimum-level :error))
           (pcase (plist-get target :type)
-            ('file
-             (byte-compile-file (plist-get target :path)))
+            ('files
+             (dolist (path (plist-get target :paths))
+               (byte-compile-file path)))
             ('dir
              (byte-recompile-directory (plist-get target :path) 0 'force)))))))
 
@@ -100,14 +136,64 @@
             (funcall orig-fn pkg-desc)
           (let ((warning-minimum-level :error))
             (pcase (plist-get target :type)
-              ('file
-               (native-compile-async (plist-get target :path)))
+              ('files
+               (native-compile-async (plist-get target :paths)))
               ('dir
                (native-compile-async
                 (directory-files-recursively (plist-get target :path) "\\.el\\'"))))))))))
 
 (eval-and-compile
-  (require 'use-package))
+  (require 'use-package)
+  (add-to-list 'use-package-vc-valid-keywords :compile-files)
+
+  ;; use-package's :vc normalizer only knows that :ignored-files may take a
+  ;; list. Teach it to pass through :compile-files unchanged so the local
+  ;; package-vc advice can use explicit multi-file compile targets, including
+  ;; glob patterns.
+  (define-advice use-package-normalize--vc-arg (:around (orig-fn arg) compile-files)
+    (if (not (member :compile-files arg))
+        (funcall orig-fn arg)
+      (cl-flet* ((ensure-string (s)
+                   (if (and s (stringp s)) s (symbol-name s)))
+                 (ensure-symbol (s)
+                   (if (and s (stringp s)) (intern s) s))
+                 (ensure-list (value)
+                   (pcase value
+                     (`(quote ,items) items)
+                     ((pred listp) value)
+                     (_ (list value))))
+                 (normalize (k v)
+                   (pcase k
+                     (:rev (pcase v
+                             ('nil (if use-package-vc-prefer-newest
+                                       nil
+                                     :last-release))
+                             (:last-release :last-release)
+                             (:newest nil)
+                             (_ (ensure-string v))))
+                     (:vc-backend (ensure-symbol v))
+                     ((or :compile-files :ignored-files)
+                      (ensure-list v))
+                     (_ (ensure-string v)))))
+        (pcase-let* ((`(,name . ,opts) arg))
+          (if (stringp opts)
+              (list name opts)
+            (let ((opts (use-package-split-when
+                         (lambda (el)
+                           (seq-contains-p use-package-vc-valid-keywords el))
+                         opts)))
+              (cl-loop for (k . _) in opts
+                       if (not (member k use-package-vc-valid-keywords))
+                       do (use-package-error
+                           (format "Keyword :vc received unknown argument: %s. Supported keywords are: %s"
+                                   k use-package-vc-valid-keywords)))
+              (list name
+                    (cl-loop for (k . v) in opts
+                             if (not (eq k :rev))
+                             nconc (list k (normalize k (if (length= v 1)
+                                                            (car v)
+                                                          v))))
+                    (normalize :rev (car (alist-get :rev opts)))))))))))
 
 ;; Add shared elisp directory (but prefer system libs)
 (eval-and-compile
@@ -209,41 +295,51 @@ When `depth' is provided, pass it to `add-hook'."
   :vc (:url "https://github.com/tarsius/cond-let"
        :main-file "cond-let.el")
   :defer t)
-(use-package lv
-  :vc (:url "https://github.com/abo-abo/hydra"
-       :main-file "lv.el")
-  :defer t)
 (use-package llama
   :vc (:url "https://github.com/tarsius/llama"
        :main-file "llama.el")
   :defer t)
 (use-package macrostep
-  :vc (:url "https://github.com/emacsorphanage/macrostep")
+  :vc (:url "https://github.com/emacsorphanage/macrostep"
+       :main-file "macrostep.el"
+       :compile-files '("macrostep-c.el"))
   :defer t)
 (use-package magit-section
   :vc (:url "https://github.com/magit/magit"
        :main-file "magit-section.el" :lisp-dir "lisp")
   :defer t)
 (use-package parseclj
-  :vc (:url "https://github.com/clojure-emacs/parseclj")
+  :vc (:url "https://github.com/clojure-emacs/parseclj"
+       :main-file "parseclj.el"
+       :compile-files '("parseclj-alist.el"
+                        "parseclj-ast.el"
+                        "parseclj-lex.el"
+                        "parseclj-parser.el"))
   :defer t)
 (use-package parseedn
-  :vc (:url "https://github.com/clojure-emacs/parseedn")
+  :vc (:url "https://github.com/clojure-emacs/parseedn"
+       :main-file "parseedn.el")
   :defer t)
 (use-package plz
-  :vc (:url "https://github.com/alphapapa/plz.el")
+  :vc (:url "https://github.com/alphapapa/plz.el"
+       :main-file "plz.el")
   :defer t)
 (use-package popon
-  :vc (:url "https://codeberg.org/akib/emacs-popon")
+  :vc (:url "https://codeberg.org/akib/emacs-popon"
+       :main-file "popon.el")
   :defer t)
 (use-package sesman
-  :vc (:url "https://github.com/vspinu/sesman")
+  :vc (:url "https://github.com/vspinu/sesman"
+       :main-file "sesman.el"
+       :compile-files '("sesman-browser.el"))
   :defer t)
 (use-package spinner
-  :vc (:url "https://github.com/Malabarba/spinner.el")
+  :vc (:url "https://github.com/Malabarba/spinner.el"
+       :main-file "spinner.el")
   :defer t)
 (use-package svg-lib
-  :vc (:url "https://github.com/rougier/svg-lib")
+  :vc (:url "https://github.com/rougier/svg-lib"
+       :main-file "svg-lib.el")
   :defer t)
 (use-package transient
   :vc (:url "https://github.com/magit/transient"
@@ -399,7 +495,8 @@ When `depth' is provided, pass it to `add-hook'."
 ;; (add-to-list 'load-path (expand-file-name "~/devel/projects/gptel-fn-complete"))
 ;; (require 'gptel-fn-complete)
 (use-package gptel-fn-complete
-  :vc (:url "https://github.com/mwolson/gptel-fn-complete")
+  :vc (:url "https://github.com/mwolson/gptel-fn-complete"
+       :main-file "gptel-fn-complete.el")
   :commands (gptel-fn-complete--mark-function-treesit)
   :defer t)
 
@@ -635,7 +732,9 @@ Returns the config filename if one is found, `t' if found in package.json"
              t))))
 
 (use-package apheleia
-  :vc (:url "https://github.com/radian-software/apheleia")
+  :vc (:url "https://github.com/radian-software/apheleia"
+       :main-file "apheleia.el"
+       :compile-files '("apheleia-*.el"))
   :defer t
   :config
   ;; Note: oxfmt does not support stdin/stdout formatting. Apheleia's `inplace'
@@ -865,7 +964,10 @@ interactively.
 
 ;; Highlight changed lines
 (use-package diff-hl
-  :vc (:url "https://github.com/dgutov/diff-hl")
+  :vc (:url "https://github.com/dgutov/diff-hl"
+       :main-file "diff-hl.el"
+       :compile-files '("diff-hl-dired.el"
+                        "diff-hl-margin.el"))
   :defer t
   :hook ((dired-mode . diff-hl-dired-mode)
          (prog-mode . turn-on-diff-hl-mode)
@@ -889,7 +991,8 @@ interactively.
 
 ;; Pulsar, for highlighting current line after a jump-style keybind
 (use-package pulsar
-  :vc (:url "https://github.com/protesilaos/pulsar")
+  :vc (:url "https://github.com/protesilaos/pulsar"
+       :main-file "pulsar.el")
   :defer t
   :custom
   (pulsar-delay 0.03)
@@ -1217,7 +1320,9 @@ interactively.
     (setq gptel--system-message my-gptel-system-prompt)))
 
 (use-package gptel
-  :vc (:url "https://github.com/karthink/gptel")
+  :vc (:url "https://github.com/karthink/gptel"
+       :main-file "gptel.el"
+       :compile-files '("gptel-*.el"))
   :defer t
   :custom
   (gptel-default-mode #'gfm-mode)
@@ -1459,7 +1564,8 @@ optional G-MODEL is the gptel model symbol to use."
     (setq minuet-provider my-minuet-provider)))
 
 (use-package minuet
-  :vc (:url "https://github.com/milanglacier/minuet-ai.el")
+  :vc (:url "https://github.com/milanglacier/minuet-ai.el"
+       :main-file "minuet.el")
   :defer t
   :hook (prog-mode . my-minuet-maybe-turn-on-auto-suggest)
   :custom
@@ -1796,7 +1902,10 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; Lisp
 (use-package slime
-  :vc (:url "https://github.com/slime/slime")
+  :vc (:url "https://github.com/slime/slime"
+       :main-file "slime.el"
+       :compile-files '("contrib/*.el"
+                        "lib/*.el"))
   :demand t
   :custom
   (slime-auto-connect 'always)
@@ -1917,7 +2026,8 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; Mermaid diagrams
 (use-package mermaid-ts-mode
-  :vc (:url "https://github.com/kiennq/mermaid-ts-mode")
+  :vc (:url "https://github.com/kiennq/mermaid-ts-mode"
+       :main-file "mermaid-ts-mode.el")
   :mode "\\.mmd\\'")
 
 ;; Nix
@@ -1984,7 +2094,8 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; SCSS
 (use-package flymake-stylelint
-  :vc (:url "https://github.com/orzechowskid/flymake-stylelint")
+  :vc (:url "https://github.com/orzechowskid/flymake-stylelint"
+       :main-file "flymake-stylelint.el")
   :defer t)
 
 (add-hook 'scss-mode-hook #'add-node-modules-path t)
@@ -1999,7 +2110,8 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; Svelte
 (use-package svelte-ts-mode
-  :vc (:url "https://github.com/leafOfTree/svelte-ts-mode")
+  :vc (:url "https://github.com/leafOfTree/svelte-ts-mode"
+       :main-file "svelte-ts-mode.el")
   :mode "\\.svelte\\'")
 
 (add-hook 'svelte-ts-mode-hook #'add-node-modules-path t)
@@ -2016,7 +2128,8 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; Vue
 (use-package vue-ts-mode
-  :vc (:url "https://github.com/8uff3r/vue-ts-mode")
+  :vc (:url "https://github.com/8uff3r/vue-ts-mode"
+       :main-file "vue-ts-mode.el")
   :mode "\\.vue\\'")
 
 (add-hook 'vue-ts-mode-hook #'add-node-modules-path t)
@@ -2105,7 +2218,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
     (consult-ripgrep nil regexp)))
 
 (use-package consult
-  :vc (:url "https://github.com/minad/consult")
+  :vc (:url "https://github.com/minad/consult"
+       :main-file "consult.el"
+       :compile-files '("consult-*.el"))
   :defer t
   :config
   (with-eval-after-load "minuet"
@@ -2113,7 +2228,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
 
 (use-package embark
   :vc (:url "https://github.com/oantolin/embark"
-       :main-file "embark.el")
+       :main-file "embark.el"
+       :compile-files '("embark-org.el"))
   :defer t)
 
 (use-package embark-consult
@@ -2130,7 +2246,11 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup t))
 
 (use-package nerd-icons
-  :vc (:url "https://github.com/rainstormstudio/nerd-icons.el")
+  :vc (:url "https://github.com/rainstormstudio/nerd-icons.el"
+       :main-file "nerd-icons.el"
+       :compile-files '("data/nerd-icons-data-*.el"
+                        "nerd-icons-data.el"
+                        "nerd-icons-faces.el"))
   :defer t)
 
 (use-package nerd-icons-completion
@@ -2153,7 +2273,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
           (t (self-insert-command 1 ?/)))))
 
 (use-package vertico
-  :vc (:url "https://github.com/minad/vertico")
+  :vc (:url "https://github.com/minad/vertico"
+       :main-file "vertico.el"
+       :compile-files '("extensions/vertico-*.el"))
   :defer t
   :init
   (let ((ext-dir (expand-file-name "vertico/extensions" package-user-dir)))
@@ -2421,11 +2543,14 @@ This prevents the window from later moving back once the minibuffer is done show
 (add-hook 'completion-at-point-functions #'cape-keyword)
 
 (use-package orderless
-  :vc (:url "https://github.com/oantolin/orderless")
+  :vc (:url "https://github.com/oantolin/orderless"
+       :main-file "orderless.el")
   :defer t)
 
 (use-package corfu
-  :vc (:url "https://github.com/minad/corfu")
+  :vc (:url "https://github.com/minad/corfu"
+       :main-file "corfu.el"
+       :compile-files '("extensions/corfu-*.el"))
   :defer t
   :init
   (let ((ext-dir (expand-file-name "corfu/extensions" package-user-dir)))
@@ -2439,15 +2564,19 @@ This prevents the window from later moving back once the minibuffer is done show
   :defer t)
 
 (use-package corfu-terminal
-  :vc (:url "https://codeberg.org/akib/emacs-corfu-terminal")
+  :vc (:url "https://codeberg.org/akib/emacs-corfu-terminal"
+       :main-file "corfu-terminal.el")
   :defer t)
 
 (use-package cape
-  :vc (:url "https://github.com/minad/cape")
+  :vc (:url "https://github.com/minad/cape"
+       :main-file "cape.el"
+       :compile-files '("cape-keyword.el"))
   :defer t)
 
 (use-package kind-icon
-  :vc (:url "https://github.com/jdtsmith/kind-icon")
+  :vc (:url "https://github.com/jdtsmith/kind-icon"
+       :main-file "kind-icon.el")
   :defer t)
 
 (use-package dabbrev
@@ -2461,7 +2590,9 @@ This prevents the window from later moving back once the minibuffer is done show
 
 ;; Set up majutsu
 (use-package majutsu
-  :vc (:url "https://github.com/0WD0/majutsu")
+  :vc (:url "https://github.com/0WD0/majutsu"
+       :main-file "majutsu.el"
+       :compile-files '("majutsu-*.el"))
   :defer t
   :custom
   (majutsu-display-buffer-function 'same-window-except-diff))
@@ -2538,7 +2669,10 @@ This prevents the window from later moving back once the minibuffer is done show
 (eval-when-compile
   (require 'rg nil t))
 (use-package rg
-  :vc (:url "https://github.com/dajva/rg.el")
+  :vc (:url "https://github.com/dajva/rg.el"
+       :main-file "rg.el"
+       :compile-files '("rg-*.el"
+                        "wgrep-rg.el"))
   :defer t
   :config
   (keymap-set rg-mode-map "e" #'rg-rerun-change-regexp)
@@ -2605,7 +2739,8 @@ This prevents the window from later moving back once the minibuffer is done show
 
 ;; Packages that need :ensure but have no complex config
 (use-package s
-  :vc (:url "https://github.com/magnars/s.el")
+  :vc (:url "https://github.com/magnars/s.el"
+       :main-file "s.el")
   :defer t)
 
 (use-package add-node-modules-path
@@ -2613,10 +2748,13 @@ This prevents the window from later moving back once the minibuffer is done show
        :main-file "add-node-modules-path.el")
   :defer t)
 (use-package archive-rpm
-  :vc (:url "https://github.com/nbarrientos/archive-rpm")
+  :vc (:url "https://github.com/nbarrientos/archive-rpm"
+       :main-file "archive-rpm.el"
+       :compile-files '("archive-cpio.el"))
   :defer t)
 (use-package astro-ts-mode
-  :vc (:url "https://github.com/Sorixelle/astro-ts-mode")
+  :vc (:url "https://github.com/Sorixelle/astro-ts-mode"
+       :main-file "astro-ts-mode.el")
   :defer t)
 (use-package basic-mode
   :vc (:url "https://github.com/dykstrom/basic-mode"
@@ -2627,7 +2765,9 @@ This prevents the window from later moving back once the minibuffer is done show
        :main-file "clojure-ts-mode.el")
   :defer t)
 (use-package color-theme-sanityinc-tomorrow
-  :vc (:url "https://github.com/purcell/color-theme-sanityinc-tomorrow")
+  :vc (:url "https://github.com/purcell/color-theme-sanityinc-tomorrow"
+       :main-file "color-theme-sanityinc-tomorrow.el"
+       :compile-files '("sanityinc-tomorrow-*-theme.el"))
   :defer t)
 (use-package diminish
   :vc (:url "https://github.com/myrjola/diminish.el"
@@ -2650,14 +2790,13 @@ This prevents the window from later moving back once the minibuffer is done show
        :main-file "flx.el")
   :defer t)
 (use-package git-modes
-  :vc (:url "https://github.com/magit/git-modes")
+  :vc (:url "https://github.com/magit/git-modes"
+       :main-file "git-modes.el"
+       :compile-files '("git*mode.el"))
   :defer t)
 (use-package graphql-ts-mode
   :vc (:url "https://git.sr.ht/~joram/graphql-ts-mode"
        :main-file "graphql-ts-mode.el")
-  :defer t)
-(use-package hydra
-  :vc (:url "https://github.com/abo-abo/hydra")
   :defer t)
 (use-package jtsx
   :vc (:url "https://github.com/llemaitre19/jtsx"
@@ -2680,7 +2819,8 @@ This prevents the window from later moving back once the minibuffer is done show
        :main-file "nix-ts-mode.el")
   :defer t)
 (use-package nsis-mode
-  :vc (:url "https://github.com/mwolson/nsis-mode")
+  :vc (:url "https://github.com/mwolson/nsis-mode"
+       :main-file "nsis-mode.el")
   :defer t)
 (use-package prisma-ts-mode
   :vc (:url "https://github.com/nverno/prisma-ts-mode"
@@ -2699,10 +2839,12 @@ This prevents the window from later moving back once the minibuffer is done show
        :main-file "swift-ts-mode.el")
   :defer t)
 (use-package hcl-mode
-  :vc (:url "https://github.com/hcl-emacs/hcl-mode")
+  :vc (:url "https://github.com/hcl-emacs/hcl-mode"
+       :main-file "hcl-mode.el")
   :defer t)
 (use-package terraform-mode
-  :vc (:url "https://github.com/syohex/emacs-terraform-mode")
+  :vc (:url "https://github.com/syohex/emacs-terraform-mode"
+       :main-file "terraform-mode.el")
   :defer t)
 (use-package tmux-mode
   :vc (:url "https://github.com/nverno/tmux-mode"
@@ -2710,7 +2852,8 @@ This prevents the window from later moving back once the minibuffer is done show
   :defer t)
 (use-package vcl-mode :defer t)
 (use-package zig-ts-mode
-  :vc (:url "https://codeberg.org/meow_king/zig-ts-mode")
+  :vc (:url "https://codeberg.org/meow_king/zig-ts-mode"
+       :main-file "zig-ts-mode.el")
   :defer t)
 
 ;; All programming modes

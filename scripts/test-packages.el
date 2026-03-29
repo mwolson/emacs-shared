@@ -66,8 +66,8 @@
                corfu-terminal diff-hl diminish dumb-jump edit-indirect
                eglot-python-preset eglot-typescript-preset el-mock embark
                embark-consult fish-mode flx flymake-stylelint git-modes gptel
-               gptel-fn-complete graphql-ts-mode hydra js-comint jtsx kdl-mode
-               kind-icon kotlin-ts-mode ligature llama lv lua-mode macrostep
+               gptel-fn-complete graphql-ts-mode js-comint jtsx kdl-mode
+               kind-icon kotlin-ts-mode ligature llama lua-mode macrostep
                magit magit-section majutsu marginalia markdown-mode maxframe
                mermaid-ts-mode minions minuet mise modus-themes
                nerd-icons-completion nix-ts-mode nsis-mode orderless parseclj
