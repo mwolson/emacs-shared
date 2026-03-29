@@ -2762,11 +2762,43 @@ This prevents the window from later moving back once the minibuffer is done show
 (add-to-list 'Info-default-directory-list (concat my-emacs-path "share/info"))
 
 ;; Magit settings
+(eval-when-compile
+  (require 'markdown-mode nil t))
+
+(defun my-git-commit-gfm-fontify-headings (last)
+  (if (save-excursion
+        (beginning-of-line)
+        (looking-at-p "#[ \t]"))
+      (progn
+        (forward-line 1)
+        t)
+    (markdown-fontify-headings last)))
+
+(define-derived-mode my-git-commit-gfm-mode gfm-mode "Git Commit GFM"
+  "Major mode for Git commit messages with GFM formatting."
+  (setq-local comment-start "#")
+  (setq-local comment-end "")
+  (setq-local comment-start-skip "#+[ \t]*")
+  (setq-local font-lock-defaults
+              (list
+               (mapcar
+                (lambda (keyword)
+                  (if (equal keyword '(markdown-fontify-headings))
+                      '(my-git-commit-gfm-fontify-headings)
+                    keyword))
+                markdown-mode-font-lock-keywords)
+               nil nil nil nil
+               '(font-lock-multiline . t)
+               '(font-lock-syntactic-face-function . markdown-syntactic-face)
+               '(font-lock-extra-managed-props
+                 . (composition display invisible rear-nonsticky
+                                keymap help-echo mouse-face)))))
+
 (use-package git-commit
   :ensure nil
   :defer t
   :custom
-  (git-commit-major-mode 'gfm-mode)
+  (git-commit-major-mode 'my-git-commit-gfm-mode)
   (git-commit-summary-max-length 120))
 
 (defun my-magit-balance-windows-25/75 (top-window bottom-window)
