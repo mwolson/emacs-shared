@@ -63,37 +63,48 @@
             (error nil)))))
 
   ;; 5. package--compile and package--native-compile-async byte-compile the
-  ;;    entire package directory.  In monorepos with :main-file, this compiles
-  ;;    unrelated files whose dependencies aren't installed yet.  Restrict to
-  ;;    just the main file in that case.
-  (define-advice package--compile (:around (orig-fn pkg-desc) main-file-only)
+  ;;    entire package directory.  Respect :lisp-dir and :main-file so
+  ;;    monorepos do not compile unrelated files.
+  (defun my-package-vc-compile-targets (pkg-desc)
     (let* ((pkg-spec (and (package-vc-p pkg-desc)
-                          (package-vc--desc->spec pkg-desc)))
-           (main-file (and pkg-spec (plist-get pkg-spec :main-file))))
-      (if (not main-file)
-          (funcall orig-fn pkg-desc)
-        (let* ((lisp-dir (plist-get pkg-spec :lisp-dir))
-               (dir (package-desc-dir pkg-desc))
-               (full-dir (if lisp-dir (expand-file-name lisp-dir dir) dir))
-               (main-path (expand-file-name main-file full-dir)))
-          (when (file-exists-p main-path)
-            (let ((warning-minimum-level :error))
-              (byte-compile-file main-path)))))))
+                          (package-vc--desc->spec pkg-desc))))
+      (when pkg-spec
+        (let* ((dir (package-desc-dir pkg-desc))
+               (lisp-dir (plist-get pkg-spec :lisp-dir))
+               (main-file (plist-get pkg-spec :main-file))
+               (full-dir (if lisp-dir (expand-file-name lisp-dir dir) dir)))
+          (cond
+           (main-file
+            (let ((main-path (expand-file-name main-file full-dir)))
+              (and (file-exists-p main-path)
+                   (list :type 'file :path main-path))))
+           (lisp-dir
+            (and (file-directory-p full-dir)
+                 (list :type 'dir :path full-dir))))))))
 
-  (define-advice package--native-compile-async (:around (orig-fn pkg-desc) main-file-only)
+  (define-advice package--compile (:around (orig-fn pkg-desc) vc-compile-targets)
+    (let ((target (my-package-vc-compile-targets pkg-desc)))
+      (if (not target)
+          (funcall orig-fn pkg-desc)
+        (let ((warning-minimum-level :error))
+          (pcase (plist-get target :type)
+            ('file
+             (byte-compile-file (plist-get target :path)))
+            ('dir
+             (byte-recompile-directory (plist-get target :path) 0 'force)))))))
+
+  (define-advice package--native-compile-async (:around (orig-fn pkg-desc) vc-compile-targets)
     (when (native-comp-available-p)
-      (let* ((pkg-spec (and (package-vc-p pkg-desc)
-                            (package-vc--desc->spec pkg-desc)))
-             (main-file (and pkg-spec (plist-get pkg-spec :main-file))))
-        (if (not main-file)
+      (let ((target (my-package-vc-compile-targets pkg-desc)))
+        (if (not target)
             (funcall orig-fn pkg-desc)
-          (let* ((lisp-dir (plist-get pkg-spec :lisp-dir))
-                 (dir (package-desc-dir pkg-desc))
-                 (full-dir (if lisp-dir (expand-file-name lisp-dir dir) dir))
-                 (main-path (expand-file-name main-file full-dir)))
-            (when (file-exists-p main-path)
-              (let ((warning-minimum-level :error))
-                (native-compile-async main-path)))))))))
+          (let ((warning-minimum-level :error))
+            (pcase (plist-get target :type)
+              ('file
+               (native-compile-async (plist-get target :path)))
+              ('dir
+               (native-compile-async
+                (directory-files-recursively (plist-get target :path) "\\.el\\'"))))))))))
 
 (eval-and-compile
   (require 'use-package))
@@ -172,11 +183,13 @@ When `depth' is provided, pass it to `add-hook'."
         (mise-default-exclude))))
 
 (use-package inheritenv
-  :vc (:url "https://github.com/purcell/inheritenv")
+  :vc (:url "https://github.com/purcell/inheritenv"
+       :main-file "inheritenv.el")
   :defer t)
 
 (use-package mise
-  :vc (:url "https://github.com/eki3z/mise.el")
+  :vc (:url "https://github.com/eki3z/mise.el"
+       :main-file "mise.el")
   :defer t
   :config
   (setopt mise-exclude-predicate #'my-mise-exclude
@@ -193,14 +206,16 @@ When `depth' is provided, pass it to `add-hook'."
        :main-file "clojure-mode.el")
   :defer t)
 (use-package cond-let
-  :vc (:url "https://github.com/tarsius/cond-let")
+  :vc (:url "https://github.com/tarsius/cond-let"
+       :main-file "cond-let.el")
   :defer t)
 (use-package lv
   :vc (:url "https://github.com/abo-abo/hydra"
        :main-file "lv.el")
   :defer t)
 (use-package llama
-  :vc (:url "https://github.com/tarsius/llama")
+  :vc (:url "https://github.com/tarsius/llama"
+       :main-file "llama.el")
   :defer t)
 (use-package macrostep
   :vc (:url "https://github.com/emacsorphanage/macrostep")
@@ -231,21 +246,20 @@ When `depth' is provided, pass it to `add-hook'."
   :vc (:url "https://github.com/rougier/svg-lib")
   :defer t)
 (use-package transient
-  :vc (:url "https://github.com/magit/transient")
-  :defer t)
+  :vc (:url "https://github.com/magit/transient"
+       :main-file "transient.el")
+  :defer t
+  :config
+  (transient-bind-q-to-quit))
 (use-package websocket
-  :vc (:url "https://github.com/ahyatt/emacs-websocket")
+  :vc (:url "https://github.com/ahyatt/emacs-websocket"
+       :main-file "websocket.el")
   :defer t)
 (use-package with-editor
-  :vc (:url "https://github.com/magit/with-editor")
+  :vc (:url "https://github.com/magit/with-editor"
+       :lisp-dir "lisp" :main-file "with-editor.el")
   :defer t)
 ;; gptel depends on transient + plz; magit depends on transient + with-editor
-(use-package gptel
-  :vc (:url "https://github.com/karthink/gptel")
-  :defer t)
-(use-package magit
-  :vc (:url "https://github.com/magit/magit")
-  :defer t)
 
 ;; Setup manpage browsing
 (cond ((eq system-type 'darwin)
@@ -681,7 +695,8 @@ Returns the config filename if one is found, `t' if found in package.json"
 
 ;; Atomic Chrome: Edit Server support for launching Emacs from browsers
 (use-package atomic-chrome
-  :vc (:url "https://github.com/alpha22jp/atomic-chrome")
+  :vc (:url "https://github.com/alpha22jp/atomic-chrome"
+       :main-file "atomic-chrome.el")
   :defer t
   :init
   (when my-server-start-p
@@ -761,7 +776,8 @@ Returns the config filename if one is found, `t' if found in package.json"
 
 ;; NodeJS REPL
 (use-package js-comint
-  :vc (:url "https://github.com/redguardtoo/js-comint")
+  :vc (:url "https://github.com/redguardtoo/js-comint"
+       :main-file "js-comint.el")
   :commands (js-comint-send-string)
   :defer t)
 (defun my-js-comint-send-defun (start end)
@@ -899,12 +915,6 @@ interactively.
 ;; SMerge mode, for editing files with inline diffs
 (add-hook 'prog-mode-hook #'smerge-mode t)
 (my-around-advice #'smerge-mode #'my-inhibit-in-indirect-md-buffers)
-
-;; Transient
-(use-package transient
-  :defer t
-  :config
-  (transient-bind-q-to-quit))
 
 ;; Tree-sitter
 (use-package treesit
@@ -1207,6 +1217,7 @@ interactively.
     (setq gptel--system-message my-gptel-system-prompt)))
 
 (use-package gptel
+  :vc (:url "https://github.com/karthink/gptel")
   :defer t
   :custom
   (gptel-default-mode #'gfm-mode)
@@ -1472,7 +1483,8 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
 (use-package dumb-jump
-  :vc (:url "https://github.com/jacktasia/dumb-jump")
+  :vc (:url "https://github.com/jacktasia/dumb-jump"
+       :main-file "dumb-jump.el")
   :demand t
   :custom
   (dumb-jump-selector 'completing-read)
@@ -1748,7 +1760,8 @@ optional G-MODEL is the gptel model symbol to use."
 ;; (add-to-list 'load-path (expand-file-name "~/devel/projects/eglot-typescript-preset"))
 ;; (require 'eglot-typescript-preset)
 (use-package eglot-typescript-preset
-  :vc (:url "https://github.com/mwolson/eglot-typescript-preset")
+  :vc (:url "https://github.com/mwolson/eglot-typescript-preset"
+       :main-file "eglot-typescript-preset.el")
   :custom
   (eglot-typescript-preset-tsdk (concat my-emacs-path "node_modules/typescript/lib"))
   (eglot-typescript-preset-astro-lsp-server 'rass)
@@ -1858,7 +1871,8 @@ optional G-MODEL is the gptel model symbol to use."
   (deactivate-input-method))
 
 (use-package markdown-mode
-  :vc (:url "https://github.com/jrblevin/markdown-mode")
+  :vc (:url "https://github.com/jrblevin/markdown-mode"
+       :main-file "markdown-mode.el")
   :defer t
   :hook ((markdown-mode . add-node-modules-path)
          (markdown-mode . my-setup-web-ligatures)
@@ -1947,7 +1961,8 @@ optional G-MODEL is the gptel model symbol to use."
 ;; (add-to-list 'load-path (expand-file-name "~/devel/projects/eglot-python-preset"))
 ;; (require 'eglot-python-preset)
 (use-package eglot-python-preset
-  :vc (:url "https://github.com/mwolson/eglot-python-preset")
+  :vc (:url "https://github.com/mwolson/eglot-python-preset"
+       :main-file "eglot-python-preset.el")
   :custom
   (eglot-python-preset-lsp-server 'ty))
 ;; (setopt eglot-python-preset-lsp-server 'basedpyright)
@@ -2020,7 +2035,8 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; Web Mode
 (use-package web-mode
-  :vc (:url "https://github.com/fxbois/web-mode")
+  :vc (:url "https://github.com/fxbois/web-mode"
+       :main-file "web-mode.el")
   :mode "\\.hbs\\'"
   :hook ((web-mode . add-node-modules-path)
          (web-mode . my-setup-web-ligatures))
@@ -2107,7 +2123,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   :after (embark consult))
 
 (use-package marginalia
-  :vc (:url "https://github.com/minad/marginalia")
+  :vc (:url "https://github.com/minad/marginalia"
+       :main-file "marginalia.el")
   :defer t
   :config
   (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup t))
@@ -2117,7 +2134,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   :defer t)
 
 (use-package nerd-icons-completion
-  :vc (:url "https://github.com/rainstormstudio/nerd-icons-completion")
+  :vc (:url "https://github.com/rainstormstudio/nerd-icons-completion"
+       :main-file "nerd-icons-completion.el")
   :defer t)
 
 (eval-when-compile
@@ -2572,7 +2590,8 @@ This prevents the window from later moving back once the minibuffer is done show
 
 ;; Navigate the kill ring when doing M-y
 (use-package browse-kill-ring
-  :vc (:url "https://github.com/browse-kill-ring/browse-kill-ring")
+  :vc (:url "https://github.com/browse-kill-ring/browse-kill-ring"
+       :main-file "browse-kill-ring.el")
   :demand t
   :config
   (browse-kill-ring-default-keybindings))
@@ -2590,7 +2609,8 @@ This prevents the window from later moving back once the minibuffer is done show
   :defer t)
 
 (use-package add-node-modules-path
-  :vc (:url "https://github.com/codesuki/add-node-modules-path")
+  :vc (:url "https://github.com/codesuki/add-node-modules-path"
+       :main-file "add-node-modules-path.el")
   :defer t)
 (use-package archive-rpm
   :vc (:url "https://github.com/nbarrientos/archive-rpm")
@@ -2603,64 +2623,80 @@ This prevents the window from later moving back once the minibuffer is done show
        :lisp-dir "src")
   :defer t)
 (use-package clojure-ts-mode
-  :vc (:url "https://github.com/clojure-emacs/clojure-ts-mode")
+  :vc (:url "https://github.com/clojure-emacs/clojure-ts-mode"
+       :main-file "clojure-ts-mode.el")
   :defer t)
 (use-package color-theme-sanityinc-tomorrow
   :vc (:url "https://github.com/purcell/color-theme-sanityinc-tomorrow")
   :defer t)
 (use-package diminish
-  :vc (:url "https://github.com/myrjola/diminish.el")
+  :vc (:url "https://github.com/myrjola/diminish.el"
+       :main-file "diminish.el")
   :defer t)
 (use-package edit-indirect
-  :vc (:url "https://github.com/Fanael/edit-indirect")
+  :vc (:url "https://github.com/Fanael/edit-indirect"
+       :main-file "edit-indirect.el")
   :defer t)
 (use-package el-mock
-  :vc (:url "https://github.com/rejeep/el-mock.el")
+  :vc (:url "https://github.com/rejeep/el-mock.el"
+       :main-file "el-mock.el")
   :defer t)
 (use-package fish-mode
-  :vc (:url "https://github.com/wwwjfy/emacs-fish")
+  :vc (:url "https://github.com/wwwjfy/emacs-fish"
+       :main-file "fish-mode.el")
   :defer t)
 (use-package flx
-  :vc (:url "https://github.com/lewang/flx")
+  :vc (:url "https://github.com/lewang/flx"
+       :main-file "flx.el")
   :defer t)
 (use-package git-modes
   :vc (:url "https://github.com/magit/git-modes")
   :defer t)
 (use-package graphql-ts-mode
-  :vc (:url "https://git.sr.ht/~joram/graphql-ts-mode")
+  :vc (:url "https://git.sr.ht/~joram/graphql-ts-mode"
+       :main-file "graphql-ts-mode.el")
   :defer t)
 (use-package hydra
   :vc (:url "https://github.com/abo-abo/hydra")
   :defer t)
 (use-package jtsx
-  :vc (:url "https://github.com/llemaitre19/jtsx")
+  :vc (:url "https://github.com/llemaitre19/jtsx"
+       :main-file "jtsx.el")
   :defer t)
 (use-package kdl-mode
-  :vc (:url "https://github.com/taquangtrung/emacs-kdl-mode")
+  :vc (:url "https://github.com/taquangtrung/emacs-kdl-mode"
+       :main-file "kdl-mode.el")
   :defer t)
 (use-package kotlin-ts-mode
-  :vc (:url "https://gitlab.com/bricka/emacs-kotlin-ts-mode")
+  :vc (:url "https://gitlab.com/bricka/emacs-kotlin-ts-mode"
+       :main-file "kotlin-ts-mode.el")
   :defer t)
 (use-package lua-mode
-  :vc (:url "https://github.com/immerrr/lua-mode")
+  :vc (:url "https://github.com/immerrr/lua-mode"
+       :main-file "lua-mode.el")
   :defer t)
 (use-package nix-ts-mode
-  :vc (:url "https://github.com/nix-community/nix-ts-mode")
+  :vc (:url "https://github.com/nix-community/nix-ts-mode"
+       :main-file "nix-ts-mode.el")
   :defer t)
 (use-package nsis-mode
   :vc (:url "https://github.com/mwolson/nsis-mode")
   :defer t)
 (use-package prisma-ts-mode
-  :vc (:url "https://github.com/nverno/prisma-ts-mode")
+  :vc (:url "https://github.com/nverno/prisma-ts-mode"
+       :main-file "prisma-ts-mode.el")
   :defer t)
 (use-package rainbow-delimiters
-  :vc (:url "https://github.com/Fanael/rainbow-delimiters")
+  :vc (:url "https://github.com/Fanael/rainbow-delimiters"
+       :main-file "rainbow-delimiters.el")
   :defer t)
 (use-package reformatter
-  :vc (:url "https://github.com/purcell/emacs-reformatter")
+  :vc (:url "https://github.com/purcell/emacs-reformatter"
+       :main-file "reformatter.el")
   :defer t)
 (use-package swift-ts-mode
-  :vc (:url "https://github.com/rechsteiner/swift-ts-mode")
+  :vc (:url "https://github.com/rechsteiner/swift-ts-mode"
+       :main-file "swift-ts-mode.el")
   :defer t)
 (use-package hcl-mode
   :vc (:url "https://github.com/hcl-emacs/hcl-mode")
@@ -2669,7 +2705,8 @@ This prevents the window from later moving back once the minibuffer is done show
   :vc (:url "https://github.com/syohex/emacs-terraform-mode")
   :defer t)
 (use-package tmux-mode
-  :vc (:url "https://github.com/nverno/tmux-mode")
+  :vc (:url "https://github.com/nverno/tmux-mode"
+       :main-file "tmux-mode.el")
   :defer t)
 (use-package vcl-mode :defer t)
 (use-package zig-ts-mode
@@ -2729,10 +2766,8 @@ This prevents the window from later moving back once the minibuffer is done show
   :ensure nil
   :defer t
   :custom
-  (git-commit-major-mode 'org-mode)
-  (git-commit-summary-max-length 120)
-  :config
-  (remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill))
+  (git-commit-major-mode 'gfm-mode)
+  (git-commit-summary-max-length 120))
 
 (defun my-magit-balance-windows-25/75 (top-window bottom-window)
   (let* ((total-height (+ (window-total-height top-window)
@@ -2786,6 +2821,8 @@ This prevents the window from later moving back once the minibuffer is done show
   (deactivate-mark))
 
 (use-package magit
+  :vc (:url "https://github.com/magit/magit"
+       :lisp-dir "lisp")
   :defer t
   :custom
   (magit-define-global-key-bindings nil)
@@ -2818,7 +2855,8 @@ This prevents the window from later moving back once the minibuffer is done show
 
 ;; Don't display any minor modes on the mode-line
 (use-package minions
-  :vc (:url "https://github.com/tarsius/minions")
+  :vc (:url "https://github.com/tarsius/minions"
+       :main-file "minions.el")
   :demand t
   :custom
   (minions-mode-line-delimiters '("" . ""))
@@ -2840,7 +2878,8 @@ This prevents the window from later moving back once the minibuffer is done show
   (org-capture nil "n"))
 
 (use-package toc-org
-  :vc (:url "https://github.com/snosov1/toc-org")
+  :vc (:url "https://github.com/snosov1/toc-org"
+       :main-file "toc-org.el")
   :defer t)
 
 (use-package org

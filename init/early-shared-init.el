@@ -70,15 +70,18 @@
     (load autoload-name nil t)))
 
 (use-package compile-angel
-  :vc (:url "https://github.com/jamescherti/compile-angel.el")
+  :vc (:url "https://github.com/jamescherti/compile-angel.el"
+       :main-file "compile-angel.el")
   :init (my-preload-package 'compile-angel)
   :defer t)
 (use-package ligature
-  :vc (:url "https://github.com/mickeynp/ligature.el")
+  :vc (:url "https://github.com/mickeynp/ligature.el"
+       :main-file "ligature.el")
   :init (my-preload-package 'ligature)
   :defer t)
 (use-package maxframe
-  :vc (:url "https://github.com/rmm5t/maxframe.el")
+  :vc (:url "https://github.com/rmm5t/maxframe.el"
+       :main-file "maxframe.el")
   :init (my-preload-package 'maxframe)
   :commands (maximize-frame)
   :defer t
