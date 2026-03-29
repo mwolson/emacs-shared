@@ -43,7 +43,8 @@
  '(message-log-max 500)
  '(mouse-wheel-mode t)
  '(package-archives
-   '(("gnu" . "https://elpa.gnu.org/packages/")))
+   '(("gnu" . "https://elpa.gnu.org/packages/")
+     ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
  '(package-check-signature nil)
  '(post-jump-header nil)
  '(project-vc-merge-submodules nil)

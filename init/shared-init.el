@@ -189,7 +189,8 @@ When `depth' is provided, pass it to `add-hook'."
 ;; Ordered by dependency chain: packages that are deps of later entries
 ;; must come first, otherwise package.el installs the ELPA version.
 (use-package clojure-mode
-  :vc (:url "https://github.com/clojure-emacs/clojure-mode")
+  :vc (:url "https://github.com/clojure-emacs/clojure-mode"
+       :main-file "clojure-mode.el")
   :defer t)
 (use-package cond-let
   :vc (:url "https://github.com/tarsius/cond-let")
@@ -2095,11 +2096,13 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
     (consult-customize minuet-complete-with-minibuffer)))
 
 (use-package embark
-  :vc (:url "https://github.com/oantolin/embark")
+  :vc (:url "https://github.com/oantolin/embark"
+       :main-file "embark.el")
   :defer t)
 
 (use-package embark-consult
-  :vc (:url "https://github.com/oantolin/embark")
+  :vc (:url "https://github.com/oantolin/embark"
+       :main-file "embark-consult.el")
   :defer t
   :after (embark consult))
 
@@ -2202,7 +2205,8 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
       xref-show-xrefs-function #'consult-xref)
 
 (use-package wgrep
-  :vc (:url "https://github.com/mhayashi1120/Emacs-wgrep")
+  :vc (:url "https://github.com/mhayashi1120/Emacs-wgrep"
+       :main-file "wgrep.el")
   :defer t)
 
 (eval-when-compile
