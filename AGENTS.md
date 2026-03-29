@@ -28,19 +28,65 @@ Emacs:
 - Check parentheses balance after edits:
   - `emacs -Q --batch --eval '(progn (with-temp-buffer (insert-file-contents "init/shared-init.el") (check-parens)))'`
 
+### Bootstrap / install packages
+
+Install all packages from a fresh or existing `~/.emacs.d/elpa`:
+
+- `emacs -Q --batch -l scripts/install-packages.el`
+
+This script:
+
+- Installs missing packages (both ELPA and `:vc`)
+- Fixes any VC packages stuck on detached HEAD (from old `:last-release`
+  installs) by checking out the default branch
+- Runs `package-vc-upgrade-all` to pull latest commits for all VC packages
+- Cleans stale `.elc` files from upgraded VC packages
+- Regenerates the kind-icon cache
+
+For a completely fresh install, move `~/.emacs.d/elpa` aside first.
+
 ### Native compilation check
 
 Run native compilation on all config files to catch warnings and errors:
 
 - `./scripts/native-comp-all.sh`
 
-This ensures all changes will compile cleanly. Look for warnings about:
+This enables compile-angel (`my-native-comp-enable t`) which byte-compiles on
+load, then native-compiles the three config files. It requires
+`package-initialize` to find installed packages.
+
+Warnings to watch for:
 
 - Obsolete macros/functions (e.g., `defadvice`, `when-let`, `incf`)
 - Unused lexical variables/arguments
 - References to free variables (usually fine in `with-eval-after-load` blocks)
 - Unknown functions (usually fine when using autoloads or
   `with-eval-after-load`)
+- Recursive require errors (usually from autoloaded `progn` blocks that call
+  `require` on themselves during batch load; guard with `noninteractive`)
+
+After upgrading VC packages, always re-run this script -- stale `.elc` files
+from compile-angel can cause recursive load errors if the source changed.
+
+### Package smoke test
+
+Verify that all expected packages are installed, key features are loadable, and
+byte-compilation succeeded:
+
+- `emacs --script scripts/test-packages.el`
+
+Exits non-zero on failure, printing a summary of passed/failed checks. When
+adding or removing a package, update the package lists in this script to match.
+
+### Startup time benchmark
+
+Measure config load time and deferred-task time:
+
+- `emacs -Q --batch -l scripts/test-startup-time.el`
+
+Prints three timings: config load, deferred tasks, and total. Useful for
+catching regressions when changing `:defer` or `:demand` settings in use-package
+declarations. Not a pass/fail gate -- purely informational.
 
 ### Debugging init errors
 

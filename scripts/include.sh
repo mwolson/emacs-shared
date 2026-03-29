@@ -53,18 +53,6 @@ function emacs_script() {
     emacs --script "$@" 2>&1 | grep -v '^Loading '
 }
 
-function byte_compile() {
-    if [[ -d "$2" ]]; then
-        rm -f "$2"/*.elc
-    elif [[ -f "$2" ]]; then
-        rm -f "${2}c"
-    else
-        echo "Warning: unknown type for $2"
-    fi
-
-    emacs_script "$(get_topdir)"/scripts/byte-compile-local.el "$@"
-}
-
 function native_comp_all() {
     emacs_script "$(get_topdir)"/scripts/native-comp-all.el
 }

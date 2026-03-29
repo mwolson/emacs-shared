@@ -1,31 +1,3 @@
-[submodule "elisp/eglot-python-preset"]
-	path = elisp/eglot-python-preset
-        ignore = dirty
-	url = https://github.com/mwolson/eglot-python-preset.git
-[submodule "elisp/eglot-typescript-preset"]
-	path = elisp/eglot-typescript-preset
-        ignore = dirty
-	url = https://github.com/mwolson/eglot-typescript-preset.git
-[submodule "elisp/flymake-stylelint"]
-	path = elisp/flymake-stylelint
-        ignore = dirty
-	url = https://github.com/orzechowskid/flymake-stylelint.git
-[submodule "elisp/majutsu"]
-	path = elisp/majutsu
-        ignore = dirty
-	url = https://github.com/0WD0/majutsu.git
-[submodule "elisp/mermaid-ts-mode"]
-	path = elisp/mermaid-ts-mode
-        ignore = dirty
-	url = https://github.com/kiennq/mermaid-ts-mode.git
-[submodule "elisp/svelte-ts-mode"]
-	path = elisp/svelte-ts-mode
-        ignore = dirty
-	url = https://github.com/leafOfTree/svelte-ts-mode.git
-[submodule "elisp/vue-ts-mode"]
-	path = elisp/vue-ts-mode
-        ignore = dirty
-	url = https://github.com/8uff3r/vue-ts-mode.git
 [submodule "extra/emacs"]
         path = extra/emacs
         ignore = dirty

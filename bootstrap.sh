@@ -186,23 +186,6 @@ if [[ -n "$BUILD_GIT_MANPAGES" ]]; then
     qpopd
 fi
 
-for fullmod in recipes/*; do
-    mod=${fullmod##*/}
-    # if the pattern didn't match any recipes, stop
-    [[ -d elisp/"$mod" ]] || continue
-    update_submodule elisp/"$mod"
-    byte_compile "$mod" elisp/"$mod"
-done
-
-file_elisp_submodules="
-    eglot-python-preset eglot-typescript-preset flymake-stylelint
-    mermaid-ts-mode svelte-ts-mode vue-ts-mode
-"
-for mod in $file_elisp_submodules; do
-    update_submodule elisp/"$mod"
-    byte_compile "$mod" elisp/"$mod"/"$mod".el
-done
-
 update_submodule extra/emacs
 
 if [[ -n "$BUILD" ]]; then

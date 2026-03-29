@@ -42,26 +42,55 @@
 
 ;; Initialize early packages
 (require 'cl-seq)
+(require 'use-package)
 
-(defun my-preload-packages (syms)
-  "Preload autoloads for packages in SYMS."
-  (let ((pkg-dirs (and (file-directory-p package-user-dir)
-                       (directory-files package-user-dir t "\\`[^.]"))))
-    (dolist (sym syms)
-      (when-let* ((sym-name (symbol-name sym))
-                  (regexp (format "\\`%s-[0-9]" (regexp-quote sym-name)))
-                  (pkg-dir (cl-find-if
-                            (lambda (d)
-                              (let ((file (file-name-nondirectory d)))
-                                (string-match-p regexp file)))
-                            pkg-dirs))
-                  ((file-directory-p pkg-dir))
-                  (autoload-name (expand-file-name
-                                  (format "%s-autoloads" sym-name)
-                                  pkg-dir)))
-        (load autoload-name nil t)))))
+(defvar my-install-packages nil
+  "When non-nil, use-package will install/update missing packages.")
 
-(my-preload-packages '(compile-angel ligature maxframe modus-themes))
+(setopt use-package-always-ensure my-install-packages)
+(setopt use-package-vc-prefer-newest t)
+
+(defun my-preload-package (sym)
+  "Preload autoloads for package SYM from `package-user-dir'."
+  (when-let* ((pkg-dirs (and (file-directory-p package-user-dir)
+                             (directory-files package-user-dir t "\\`[^.]")))
+              (sym-name (symbol-name sym))
+              (pkg-dir (or (let ((vc-dir (expand-file-name sym-name package-user-dir)))
+                             (and (file-directory-p vc-dir) vc-dir))
+                           (let ((regexp (format "\\`%s-[0-9]" (regexp-quote sym-name))))
+                             (cl-find-if
+                              (lambda (d)
+                                (let ((file (file-name-nondirectory d)))
+                                  (string-match-p regexp file)))
+                              pkg-dirs))))
+              ((file-directory-p pkg-dir))
+              (autoload-name (expand-file-name
+                              (format "%s-autoloads" sym-name)
+                              pkg-dir)))
+    (load autoload-name nil t)))
+
+(use-package compile-angel
+  :vc (:url "https://github.com/jamescherti/compile-angel.el")
+  :init (my-preload-package 'compile-angel)
+  :defer t)
+(use-package ligature
+  :vc (:url "https://github.com/mickeynp/ligature.el")
+  :init (my-preload-package 'ligature)
+  :defer t)
+(use-package maxframe
+  :vc (:url "https://github.com/rmm5t/maxframe.el")
+  :init (my-preload-package 'maxframe)
+  :commands (maximize-frame)
+  :defer t
+  :config
+  (when my-frame-pad-width
+    (setopt mf-max-width (- (display-pixel-width) my-frame-pad-width)))
+  (when my-frame-pad-height
+    (setopt mf-max-height (- (display-pixel-height) my-frame-pad-height))))
+(use-package modus-themes
+  :vc (:url "https://github.com/protesilaos/modus-themes")
+  :init (my-preload-package 'modus-themes)
+  :defer t)
 
 (defvar my-native-comp-enable nil
   "Whether to natively compile libraries with `compile-angel'.")
@@ -198,12 +227,6 @@
   (setq-local ligature-composition-table nil)
   (ligature-set-ligatures major-mode my-web-mode-ligatures))
 
-(with-eval-after-load "maxframe"
-  (when my-frame-pad-width
-    (setopt mf-max-width (- (display-pixel-width) my-frame-pad-width)))
-  (when my-frame-pad-height
-    (setopt mf-max-height (- (display-pixel-height) my-frame-pad-height))))
-
 (defun my-default-font ()
   (or my-default-font
       (cond
@@ -323,7 +346,7 @@
       (insert (substitute-command-keys initial-scratch-message))
       (set-buffer-modified-p nil))))
 
-(unless my-native-comp-enable
+(unless (or my-native-comp-enable noninteractive)
   ;;(my-reset-theme)
   (pop-to-buffer-same-window (messages-buffer))
   (my-populate-scratch-buffer)

@@ -15,6 +15,89 @@
 (eval-and-compile
   (package-initialize))
 
+;; Workarounds for Emacs bug#76325: package-vc has two issues with monorepos
+;; that use :main-file.
+(require 'package-vc nil t)
+(with-eval-after-load 'package-vc
+  ;; 1. package-vc--unpack saves the spec to package-vc-selected-packages
+  ;;    AFTER cloning, but package-vc--release-rev needs it DURING cloning to
+  ;;    resolve :main-file. Save it earlier so the spec is visible.
+  (define-advice package-vc--unpack (:before (pkg-desc pkg-spec &optional _rev) save-spec-early)
+    (when-let* ((name (package-desc-name pkg-desc))
+                ((not (alist-get name package-vc-selected-packages nil nil #'string=))))
+      (push (cons name pkg-spec) package-vc-selected-packages)))
+
+  ;; 2. package-vc--unpack-1 scans ALL .el files for Package-Requires, even
+  ;;    when :main-file is specified. This causes circular dependencies in
+  ;;    monorepos like prescient.el. Restrict scanning to just the main file.
+  (define-advice package-vc--unpack-1 (:around (orig-fn pkg-desc pkg-dir) main-file-deps)
+    (let* ((pkg-spec (package-vc--desc->spec pkg-desc))
+           (main-file (plist-get pkg-spec :main-file)))
+      (if (not main-file)
+          (funcall orig-fn pkg-desc pkg-dir)
+        (cl-letf* ((orig-directory-files (symbol-function 'directory-files))
+                   ((symbol-function 'directory-files)
+                    (lambda (dir &optional full match nosort count)
+                      (if (and full (equal match "\\.el\\'"))
+                          (let ((mf (expand-file-name main-file dir)))
+                            (if (file-exists-p mf) (list mf)
+                              (funcall orig-directory-files dir full match nosort count)))
+                        (funcall orig-directory-files dir full match nosort count)))))
+          (funcall orig-fn pkg-desc pkg-dir)))))
+
+  ;; 3. package-vc--clone calls project-remember-projects-under on every
+  ;;    checkout, polluting the project list with elpa directories.
+  (define-advice project-remember-projects-under (:around (orig-fn dir &rest args) skip-elpa)
+    (unless (string-prefix-p (expand-file-name package-user-dir) (expand-file-name dir))
+      (apply orig-fn dir args)))
+
+  ;; 4. package-strip-rcs-id rejects pre-release versions like "0.3.3-DEV".
+  ;;    Strip common pre-release suffixes so VC packages with such headers
+  ;;    still get a usable version instead of falling back to "0".
+  (define-advice package-strip-rcs-id (:around (orig-fn str) handle-pre-release)
+    (or (condition-case nil (funcall orig-fn str) (error nil))
+        (when str
+          (condition-case nil
+              (funcall orig-fn (replace-regexp-in-string
+                                "-\\(?:DEV\\|SNAPSHOT\\|alpha\\|beta\\|rc\\)[^.]*\\'" "" str))
+            (error nil)))))
+
+  ;; 5. package--compile and package--native-compile-async byte-compile the
+  ;;    entire package directory.  In monorepos with :main-file, this compiles
+  ;;    unrelated files whose dependencies aren't installed yet.  Restrict to
+  ;;    just the main file in that case.
+  (define-advice package--compile (:around (orig-fn pkg-desc) main-file-only)
+    (let* ((pkg-spec (and (package-vc-p pkg-desc)
+                          (package-vc--desc->spec pkg-desc)))
+           (main-file (and pkg-spec (plist-get pkg-spec :main-file))))
+      (if (not main-file)
+          (funcall orig-fn pkg-desc)
+        (let* ((lisp-dir (plist-get pkg-spec :lisp-dir))
+               (dir (package-desc-dir pkg-desc))
+               (full-dir (if lisp-dir (expand-file-name lisp-dir dir) dir))
+               (main-path (expand-file-name main-file full-dir)))
+          (when (file-exists-p main-path)
+            (let ((warning-minimum-level :error))
+              (byte-compile-file main-path)))))))
+
+  (define-advice package--native-compile-async (:around (orig-fn pkg-desc) main-file-only)
+    (when (native-comp-available-p)
+      (let* ((pkg-spec (and (package-vc-p pkg-desc)
+                            (package-vc--desc->spec pkg-desc)))
+             (main-file (and pkg-spec (plist-get pkg-spec :main-file))))
+        (if (not main-file)
+            (funcall orig-fn pkg-desc)
+          (let* ((lisp-dir (plist-get pkg-spec :lisp-dir))
+                 (dir (package-desc-dir pkg-desc))
+                 (full-dir (if lisp-dir (expand-file-name lisp-dir dir) dir))
+                 (main-path (expand-file-name main-file full-dir)))
+            (when (file-exists-p main-path)
+              (let ((warning-minimum-level :error))
+                (native-compile-async main-path)))))))))
+
+(eval-and-compile
+  (require 'use-package))
+
 ;; Add shared elisp directory (but prefer system libs)
 (eval-and-compile
   (add-to-list 'load-path (concat my-emacs-path "elisp") t))
@@ -88,12 +171,80 @@ When `depth' is provided, pass it to `add-hook'."
            filename))
         (mise-default-exclude))))
 
-(eval-when-compile (require 'mise))
-(with-eval-after-load "mise"
+(use-package inheritenv
+  :vc (:url "https://github.com/purcell/inheritenv")
+  :defer t)
+
+(use-package mise
+  :vc (:url "https://github.com/eki3z/mise.el")
+  :defer t
+  :config
   (setopt mise-exclude-predicate #'my-mise-exclude
           mise-trust t))
 
 (my-defer-startup #'global-mise-mode)
+
+;; Transitive dependencies -- declared here so package-vc fetches latest
+;; commits during bootstrap instead of using ELPA release versions.
+;; Ordered by dependency chain: packages that are deps of later entries
+;; must come first, otherwise package.el installs the ELPA version.
+(use-package clojure-mode
+  :vc (:url "https://github.com/clojure-emacs/clojure-mode")
+  :defer t)
+(use-package cond-let
+  :vc (:url "https://github.com/tarsius/cond-let")
+  :defer t)
+(use-package lv
+  :vc (:url "https://github.com/abo-abo/hydra"
+       :main-file "lv.el")
+  :defer t)
+(use-package llama
+  :vc (:url "https://github.com/tarsius/llama")
+  :defer t)
+(use-package macrostep
+  :vc (:url "https://github.com/emacsorphanage/macrostep")
+  :defer t)
+(use-package magit-section
+  :vc (:url "https://github.com/magit/magit"
+       :main-file "magit-section.el" :lisp-dir "lisp")
+  :defer t)
+(use-package parseclj
+  :vc (:url "https://github.com/clojure-emacs/parseclj")
+  :defer t)
+(use-package parseedn
+  :vc (:url "https://github.com/clojure-emacs/parseedn")
+  :defer t)
+(use-package plz
+  :vc (:url "https://github.com/alphapapa/plz.el")
+  :defer t)
+(use-package popon
+  :vc (:url "https://codeberg.org/akib/emacs-popon")
+  :defer t)
+(use-package sesman
+  :vc (:url "https://github.com/vspinu/sesman")
+  :defer t)
+(use-package spinner
+  :vc (:url "https://github.com/Malabarba/spinner.el")
+  :defer t)
+(use-package svg-lib
+  :vc (:url "https://github.com/rougier/svg-lib")
+  :defer t)
+(use-package transient
+  :vc (:url "https://github.com/magit/transient")
+  :defer t)
+(use-package websocket
+  :vc (:url "https://github.com/ahyatt/emacs-websocket")
+  :defer t)
+(use-package with-editor
+  :vc (:url "https://github.com/magit/with-editor")
+  :defer t)
+;; gptel depends on transient + plz; magit depends on transient + with-editor
+(use-package gptel
+  :vc (:url "https://github.com/karthink/gptel")
+  :defer t)
+(use-package magit
+  :vc (:url "https://github.com/magit/magit")
+  :defer t)
 
 ;; Setup manpage browsing
 (cond ((eq system-type 'darwin)
@@ -194,20 +345,105 @@ When `depth' is provided, pass it to `add-hook'."
   (setopt user-mail-address my-email-address))
 (my-update-personal-info)
 
-(with-eval-after-load "add-log"
+(use-package add-log
+  :ensure nil
+  :defer t
+  :custom
+  (add-log-keep-changes-together t)
+  :config
   (setopt add-log-mailing-address my-changelog-address))
 
 ;; Load `dired' itself, with `tramp' extension
-(require 'dired)
-(require 'dired-x)
-(require 'wdired)
-(require 'ffap)
+(use-package dired
+  :ensure nil
+  :demand t
+  :custom
+  (dired-dwim-target t)
+  (dired-recursive-copies 'always)
+  (dired-recursive-deletes 'always))
+
+(use-package dired-x
+  :ensure nil
+  :demand t
+  :after dired)
+
+;; Enable wdired on "r"
+(use-package wdired
+  :ensure nil
+  :demand t
+  :after dired
+  :bind (:map dired-mode-map ("r" . wdired-change-to-wdired-mode)))
+
+(use-package ffap
+  :ensure nil
+  :demand t)
+
+;; gptel-fn-complete: complete current function with AI
+;;
+;; for local development and testing, replace the use-package block with:
+;; (add-to-list 'load-path (expand-file-name "~/devel/projects/gptel-fn-complete"))
+;; (require 'gptel-fn-complete)
+(use-package gptel-fn-complete
+  :vc (:url "https://github.com/mwolson/gptel-fn-complete")
+  :commands (gptel-fn-complete--mark-function-treesit)
+  :defer t)
 
 ;; Load tramp
-(require 'tramp)
+(use-package tramp
+  :ensure nil
+  :demand t
+  :custom
+  (tramp-auto-save-directory "~/.emacs.d/.autosave.d")
+  (tramp-backup-directory-alist '(("." . "~/.emacs.d/backup"))))
 
 ;; List directories first in dired
-(require 'ls-lisp)
+(use-package ls-lisp
+  :ensure nil
+  :demand t
+  :custom
+  (ls-lisp-dirs-first t)
+  (ls-lisp-ignore-case t)
+  (ls-lisp-support-shell-wildcards nil)
+  (ls-lisp-use-insert-directory-program nil)
+  (ls-lisp-verbosity '(uid gid)))
+
+(use-package cperl-mode
+  :ensure nil
+  :defer t
+  :custom
+  (cperl-close-paren-offset -4)
+  (cperl-indent-level 4)
+  (cperl-indent-parens-as-block t)
+  (cperl-merge-trailing-else nil))
+
+(use-package css-mode
+  :ensure nil
+  :defer t
+  :custom
+  (css-indent-offset 2))
+
+(use-package eldoc
+  :ensure nil
+  :defer t
+  :custom
+  (eldoc-documentation-strategy 'eldoc-documentation-compose)
+  (eldoc-echo-area-use-multiline-p nil))
+
+(use-package sql
+  :ensure nil
+  :defer t
+  :custom
+  (sql-product 'postgres))
+
+(use-package woman
+  :ensure nil
+  :defer t
+  :custom
+  (woman-fill-column 95)
+  (woman-fontify t)
+  (woman-use-own-frame nil)
+  :custom-face
+  (woman-italic ((t (:underline t :slant italic)))))
 
 ;; Long lines support
 (global-so-long-mode 1)
@@ -383,8 +619,10 @@ Returns the config filename if one is found, `t' if found in package.json"
                (re-search-forward "\"oxlint\"" nil t))
              t))))
 
-(eval-when-compile (require 'apheleia))
-(with-eval-after-load "apheleia-formatters"
+(use-package apheleia
+  :vc (:url "https://github.com/radian-software/apheleia")
+  :defer t
+  :config
   ;; Note: oxfmt does not support stdin/stdout formatting. Apheleia's `inplace'
   ;; integration uses a temp file with the correct extension.
   (setf (alist-get 'oxfmt apheleia-formatters)
@@ -441,28 +679,37 @@ Returns the config filename if one is found, `t' if found in package.json"
 (apheleia-global-mode 1)
 
 ;; Atomic Chrome: Edit Server support for launching Emacs from browsers
-(when my-server-start-p
-  (my-defer-startup #'atomic-chrome-start-server))
+(use-package atomic-chrome
+  :vc (:url "https://github.com/alpha22jp/atomic-chrome")
+  :defer t
+  :init
+  (when my-server-start-p
+    (my-defer-startup #'atomic-chrome-start-server)))
 
 ;; Compile buffers
-(with-eval-after-load "compile"
+(use-package compile
+  :ensure nil
+  :defer t
+  :hook (compilation-filter . ansi-color-compilation-filter)
+  :custom
+  (compilation-scroll-output 'first-error)
+  :config
   (keymap-set compilation-mode-map "M-g" #'recompile)
   (keymap-set compilation-shell-minor-mode-map "M-g" #'recompile))
 
-(add-hook 'compilation-filter-hook #'ansi-color-compilation-filter t)
-
 ;; Editorconfig support
-(with-eval-after-load "editorconfig"
+(use-package editorconfig
+  :ensure nil
+  :demand t
+  :config
   (put 'editorconfig-lisp-use-default-indent 'safe-local-variable #'always)
   (my-around-advice #'editorconfig-major-mode-hook
-                    #'my-inhibit-in-indirect-md-buffers))
-
-(editorconfig-mode 1)
+                    #'my-inhibit-in-indirect-md-buffers)
+  (editorconfig-mode 1))
 
 ;; Set up eglot for LSP features
-(require 'eglot)
-(setopt eglot-sync-connect nil)
-
+;; to debug eglot:
+;; (setq my-debug-jsonrpc t)
 (defvar my-debug-jsonrpc nil
   "Whether to enable log messages for jsonrpc.")
 
@@ -475,7 +722,14 @@ Returns the config filename if one is found, `t' if found in package.json"
   (when my-debug-jsonrpc
     (apply #'my-jsonrpc--log-event-real args)))
 
-(with-eval-after-load "eglot"
+(use-package eglot
+  :ensure nil
+  :demand t
+  :custom
+  (eglot-extend-to-xref t)
+  (eglot-send-changes-idle-time 0.2)
+  (eglot-sync-connect nil)
+  :config
   (setq eglot-diagnostics-map
         (let ((map (make-sparse-keymap)))
           (keymap-set map "<mouse-3>" #'eglot-code-actions-at-mouse)
@@ -484,12 +738,7 @@ Returns the config filename if one is found, `t' if found in package.json"
   (my-around-advice #'eglot-ensure #'my-inhibit-in-indirect-md-buffers)
   (keymap-set eglot-mode-map "<f2>" #'eglot-rename)
   (fset #'my-jsonrpc--log-event-real (symbol-function 'jsonrpc--log-event))
-  (fset #'jsonrpc--log-event #'my-jsonrpc--log-event)
-
-  ;; to debug eglot:
-  ;; (setq my-debug-jsonrpc t)
-  (setopt eglot-extend-to-xref t
-          eglot-send-changes-idle-time 0.2))
+  (fset #'jsonrpc--log-event #'my-jsonrpc--log-event))
 
 ;; Flymake
 (defvar my-flymake-mode-map
@@ -502,14 +751,18 @@ Returns the config filename if one is found, `t' if found in package.json"
     map)
   "My key customizations for flymake.")
 
-(with-eval-after-load "flymake"
+(use-package flymake
+  :ensure nil
+  :defer t
+  :config
   (keymap-set flymake-mode-map "C-c f" my-flymake-mode-map)
   (keymap-set flymake-mode-map "C-x f" my-flymake-mode-map))
 
 ;; NodeJS REPL
-(eval-when-compile
-  (require 'gptel-fn-complete)
-  (require 'js-comint))
+(use-package js-comint
+  :vc (:url "https://github.com/redguardtoo/js-comint")
+  :commands (js-comint-send-string)
+  :defer t)
 (defun my-js-comint-send-defun (start end)
   "Send the function at point to the inferior Javascript process."
   (interactive "r")
@@ -586,13 +839,21 @@ interactively.
 (my-around-advice #'my-node-repl-setup #'my-inhibit-in-indirect-md-buffers)
 
 ;; Highlight current line
-(require 'hl-line-plus)
-(hl-line-when-idle-interval 0.3)
-(toggle-hl-line-when-idle 1)
+(use-package hl-line-plus
+  :ensure nil
+  :demand t
+  :config
+  (hl-line-when-idle-interval 0.3)
+  (toggle-hl-line-when-idle 1))
 
 ;; Highlight changed lines
-(eval-when-compile (require 'diff-hl))
-(with-eval-after-load "diff-hl"
+(use-package diff-hl
+  :vc (:url "https://github.com/dgutov/diff-hl")
+  :defer t
+  :hook ((dired-mode . diff-hl-dired-mode)
+         (prog-mode . turn-on-diff-hl-mode)
+         (magit-post-refresh . diff-hl-magit-post-refresh))
+  :config
   (diff-hl-margin-mode 1)
 
   (dolist (el diff-hl-margin-symbols-alist)
@@ -600,22 +861,23 @@ interactively.
 
   (setopt diff-hl-draw-borders nil
           diff-hl-margin-symbols-alist diff-hl-margin-symbols-alist
-          diff-hl-update-async t))
+          diff-hl-update-async t)
+  (my-around-advice #'turn-on-diff-hl-mode #'my-inhibit-in-indirect-md-buffers))
 
-(add-hook 'dired-mode-hook #'diff-hl-dired-mode)
-(add-hook 'prog-mode-hook #'turn-on-diff-hl-mode)
-(add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
-(my-around-advice #'turn-on-diff-hl-mode #'my-inhibit-in-indirect-md-buffers)
+(defface my-pulsar-face
+  '((default :extend t)
+    (t :inherit xref-match))
+  "Face for pulsar."
+  :group 'pulsar-faces)
 
 ;; Pulsar, for highlighting current line after a jump-style keybind
-(eval-when-compile (require 'pulsar))
-(with-eval-after-load "pulsar"
-  (defface my-pulsar-face
-    '((default :extend t)
-      (t :inherit xref-match))
-    "Face for pulsar."
-    :group 'pulsar-faces)
-
+(use-package pulsar
+  :vc (:url "https://github.com/protesilaos/pulsar")
+  :defer t
+  :custom
+  (pulsar-delay 0.03)
+  (pulsar-face 'my-pulsar-face)
+  :config
   ;; Use setq instead of setopt: pulsar's defcustom type is (repeat function),
   ;; but its default includes symbols for packages not always loaded (evil, logos).
   ;; The type check fails for these, causing a spurious warning.
@@ -629,10 +891,7 @@ interactively.
 
   (with-eval-after-load "consult"
     (add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
-    (add-hook 'consult-after-jump-hook #'pulsar-reveal-entry))
-
-  (setopt pulsar-delay 0.03
-          pulsar-face 'my-pulsar-face))
+    (add-hook 'consult-after-jump-hook #'pulsar-reveal-entry)))
 
 (my-defer-startup #'pulsar-global-mode)
 
@@ -641,18 +900,19 @@ interactively.
 (my-around-advice #'smerge-mode #'my-inhibit-in-indirect-md-buffers)
 
 ;; Transient
-(eval-when-compile (require 'transient))
-(with-eval-after-load "transient"
+(use-package transient
+  :defer t
+  :config
   (transient-bind-q-to-quit))
 
 ;; Tree-sitter
-(with-eval-after-load "treesit"
-  (setopt treesit-font-lock-level 4))
+(use-package treesit
+  :ensure nil
+  :defer t
+  :custom
+  (treesit-font-lock-level 4))
 
 ;; Set up gptel
-(eval-when-compile
-  (require 'gptel)
-  (require 'gptel-context))
 (defvar my-gptel--backends-defined nil)
 (defvar my-gptel--claude nil)
 (defvar my-gptel--claude-thinking nil)
@@ -706,6 +966,8 @@ interactively.
 (defvar my-gptel-ensure-backends-hook '()
   "Additional functions to call when running `my-gptel-ensure-backends'.")
 
+(eval-when-compile
+  (require 'gptel nil t))
 (defun my-gptel-ensure-backends ()
   (unless my-gptel--backends-defined
     (setq my-gptel--backends-defined t)
@@ -943,10 +1205,21 @@ interactively.
   (when my-gptel-system-prompt
     (setq gptel--system-message my-gptel-system-prompt)))
 
-(with-eval-after-load "gptel"
-  (my-gptel-ensure-backends))
+(use-package gptel
+  :defer t
+  :custom
+  (gptel-default-mode #'gfm-mode)
+  :config
+  (my-gptel-ensure-backends)
+  (add-to-list 'gptel-prompt-prefix-alist '(gfm-mode . "")))
 
-(with-eval-after-load "gptel-context"
+;; Separate block so :commands generates autoloads targeting "gptel-context",
+;; which also suppresses byte-compiler warnings for these functions.
+(use-package gptel-context
+  :ensure nil
+  :commands (gptel-context-add-file gptel-context--buffer-setup
+                                    gptel-context-confirm gptel-context-remove-all)
+  :config
   (let ((map gptel-context-buffer-mode-map))
     (keymap-set map "q" #'my-gptel-context-save-and-quit)))
 
@@ -1072,7 +1345,6 @@ Use the region instead if one is selected."
   (interactive)
   (gptel-context--buffer-setup))
 
-(eval-when-compile (require 'gptel-request))
 (defun my-gptel-rewrite-function ()
   "Rewrite or refactor the current function using an LLM.
 
@@ -1097,29 +1369,7 @@ Use the region instead if one is selected."
   (interactive)
   (gptel-context-remove-all))
 
-(autoload #'gptel-api-key-from-auth-source "gptel"
-  "Lookup api key in the auth source." nil)
-(autoload #'gptel-backend-name "gptel-openai"
-  "Access slot \"name\" of ‘gptel-backend’ struct." nil)
-(autoload #'gptel-context-add-file "gptel-context"
-  "Add the file at PATH to the gptel context." t)
-(autoload #'gptel-context--buffer-setup "gptel-context"
-  "Set up the gptel context buffer." t)
-(autoload #'gptel-context-confirm "gptel-context"
-  "Confirm pending operations and return to gptel's menu." t)
-(autoload #'gptel-context-remove-all "gptel-context"
-  "Remove all gptel context." t)
-
-;; for local development and testing:
-;;
-;; (add-to-list 'load-path (expand-file-name "~/devel/projects/gptel-fn-complete"))
-;; (autoload #'gptel-fn-complete "gptel-fn-complete"
-;;   "Complete function at point using an LLM." t)
-;; (autoload #'gptel-fn-complete-mark-function "gptel-fn-complete"
-;;   "Put mark at end of this function, point at beginning." t)
-
 ;; Minuet for AI completion
-(eval-when-compile (require 'minuet))
 (defun my-minuet-exclude ()
   (let* ((filename (buffer-file-name)))
     (or (not filename)
@@ -1133,6 +1383,8 @@ Use the region instead if one is selected."
   (when (and my-minuet-auto-suggest-p (not (my-minuet-exclude)))
     (minuet-auto-suggestion-mode 1)))
 
+(eval-when-compile
+  (require 'minuet nil t))
 (defun my-minuet-get-api-key (backend)
   (my-auth-source-get-api-key (gptel-backend-host backend)))
 
@@ -1194,11 +1446,16 @@ optional G-MODEL is the gptel model symbol to use."
                                        my-minuet-model)
     (setq minuet-provider my-minuet-provider)))
 
-(with-eval-after-load "minuet"
+(use-package minuet
+  :vc (:url "https://github.com/milanglacier/minuet-ai.el")
+  :defer t
+  :hook (prog-mode . my-minuet-maybe-turn-on-auto-suggest)
+  :custom
+  (minuet-add-single-line-entry nil)
+  (minuet-auto-suggestion-debounce-delay 0.3)
+  (minuet-n-completions 1)
+  :config
   (my-minuet-init-provider)
-  (setopt minuet-add-single-line-entry nil
-          minuet-auto-suggestion-debounce-delay 0.3
-          minuet-n-completions 1)
 
   (add-hook 'minuet-auto-suggestion-block-predicates
             #'my-minuet-block-suggestions -100)
@@ -1209,14 +1466,17 @@ optional G-MODEL is the gptel model symbol to use."
   (keymap-set minuet-active-mode-map "C-g" #'minuet-dismiss-suggestion)
   (keymap-set minuet-active-mode-map "<tab>" #'minuet-accept-suggestion-line))
 
-(add-hook 'prog-mode-hook #'my-minuet-maybe-turn-on-auto-suggest t)
 (my-around-advice #'my-minuet-maybe-turn-on-auto-suggest
                   #'my-inhibit-in-indirect-md-buffers)
 
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
-(require 'dumb-jump)
-(setopt dumb-jump-selector 'completing-read)
-(add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+(use-package dumb-jump
+  :vc (:url "https://github.com/jacktasia/dumb-jump")
+  :demand t
+  :custom
+  (dumb-jump-selector 'completing-read)
+  :config
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 (defvar my-xref-map
   (let ((map (make-sparse-keymap)))
@@ -1253,15 +1513,19 @@ optional G-MODEL is the gptel model symbol to use."
 (my-around-advice #'my-xref-minor-mode #'my-inhibit-in-indirect-md-buffers)
 
 ;; Bash shell script and .env support
-
-(require 'sh-script)
-(fset #'my-real-sh-mode #'sh-mode)
-(add-to-list 'my-md-code-aliases '(bash . my-real-sh-mode))
-(add-to-list 'my-md-code-aliases '(sh . my-real-sh-mode))
-(add-to-list 'my-md-code-aliases '(shell . my-real-sh-mode))
-(add-to-list 'major-mode-remap-alist '(sh-mode . bash-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.env\\(\\..*\\)?\\'" . bash-ts-mode))
-(setopt sh-shell-file "/bin/bash")
+(use-package sh-script
+  :ensure nil
+  :demand t
+  :mode ("\\.env\\(\\..*\\)?\\'" . bash-ts-mode)
+  :custom
+  (sh-shell-file "/bin/bash")
+  :init
+  (add-to-list 'major-mode-remap-alist '(sh-mode . bash-ts-mode))
+  :config
+  (fset #'my-real-sh-mode #'sh-mode)
+  (add-to-list 'my-md-code-aliases '(bash . my-real-sh-mode))
+  (add-to-list 'my-md-code-aliases '(sh . my-real-sh-mode))
+  (add-to-list 'my-md-code-aliases '(shell . my-real-sh-mode)))
 
 ;; C/C++
 (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
@@ -1273,12 +1537,15 @@ optional G-MODEL is the gptel model symbol to use."
 ;; C# - requires exactly v0.20.0 of its treesit grammar
 ;; `C-c . .` doesn't currently work, see this for ideas:
 ;; https://github.com/theschmocker/dotfiles/blob/33944638a5a59ddba01b64066daf50d46e5f0c3a/emacs/.doom.d/config.el#L807
-(eval-when-compile (require 'csharp-mode))
-(with-eval-after-load "csharp-ts-mode"
+(use-package csharp-mode
+  :ensure nil
+  :defer t
+  :init
+  (add-to-list 'major-mode-remap-alist '(csharp-mode . csharp-ts-mode))
+  :hook (csharp-ts-mode . my-xref-minor-mode)
+  :config
   (keymap-set csharp-mode-map "C-c ." nil))
 
-(add-to-list 'major-mode-remap-alist '(csharp-mode . csharp-ts-mode))
-(add-hook 'csharp-ts-mode-hook #'my-xref-minor-mode t)
 (when (executable-find "omnisharp")
   (add-hook 'csharp-ts-mode-hook #'eglot-ensure))
 
@@ -1292,14 +1559,27 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'auto-mode-alist '("/Caddyfile\\'" . my-caddyfile-mode))
 
 ;; Clojure
-(eval-when-compile (require 'cider-repl))
-(with-eval-after-load "cider-repl"
+(use-package cider
+  :vc (:url "https://github.com/clojure-emacs/cider"
+       :lisp-dir "lisp")
+  :defer t)
+
+(eval-when-compile
+  (require 'cider-repl nil t))
+(use-package cider-repl
+  :ensure nil
+  :defer t
+  :config
   (keymap-set cider-repl-mode-map "C-d" #'cider-quit))
 
 (defvar my-clojure-modes
   '(clojure-ts-mode clojure-ts-clojurec-mode clojure-ts-clojurescript-mode))
 
-(with-eval-after-load "apheleia-formatters"
+(use-package apheleia-formatters
+  :ensure nil
+  :defer t
+  :after apheleia
+  :config
   (setf (alist-get 'zprint apheleia-formatters)
         '("zprint" "{:style [:how-to-ns] :search-config? true}"))
   (dolist (mode my-clojure-modes)
@@ -1345,13 +1625,12 @@ optional G-MODEL is the gptel model symbol to use."
 ;; (uses eglot-typescript-preset for rass: vscode-css + tailwindcss)
 
 ;; Emacs Lisp
-(autoload #'plist-lisp-indent-install "plist-lisp-indent"
-  "Use `plist-lisp-indent-function' to indent in the current Lisp buffer." nil)
-
-(with-eval-after-load "elisp-mode"
-  (add-hook 'emacs-lisp-mode-hook #'plist-lisp-indent-install t))
-
-(eval-when-compile (require 'ielm))
+(eval-when-compile
+  (require 'ielm nil t))
+(use-package plist-lisp-indent
+  :ensure nil
+  :commands plist-lisp-indent-install
+  :hook (emacs-lisp-mode . plist-lisp-indent-install))
 (defun my-ielm-setup ()
   (let ((map (copy-keymap inferior-emacs-lisp-mode-map)))
     (keymap-set map "C-d" #'kill-buffer-and-window)
@@ -1370,20 +1649,10 @@ optional G-MODEL is the gptel model symbol to use."
 (add-hook 'ielm-mode-hook #'my-ielm-setup t)
 (keymap-global-set "C-M-;" #'ielm)
 
-;; Erlang
-(add-to-list 'major-mode-remap-alist '(erlang-mode . erlang-ts-mode))
-
 ;; Go
 (defun my-project-find-go-module (dir)
   (when-let* ((root (locate-dominating-file dir "go.mod")))
     (cons 'go-module root)))
-
-(with-eval-after-load "project"
-  ;; from https://github.com/golang/tools/blob/master/gopls/doc/emacs.md#configuring-project-for-go-modules-in-emacs
-  (cl-defmethod project-root ((project (head go-module)))
-    (cdr project))
-
-  (add-hook 'project-find-functions #'my-project-find-go-module))
 
 (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
 (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))
@@ -1430,12 +1699,19 @@ optional G-MODEL is the gptel model symbol to use."
   '(astro-ts-mode jtsx-jsx-mode jtsx-tsx-mode jtsx-typescript-mode))
 (defvar my-jtsx-ts-major-modes '(jtsx-tsx-mode jtsx-typescript-mode))
 
-(require 'js)
-(fset #'my-real-js-mode #'js-mode)
+(use-package js
+  :ensure nil
+  :demand t
+  :custom
+  (js-indent-level 2)
+  :config
+  (fset #'my-real-js-mode #'js-mode))
 
 ;; load this early (astro-ts-mode dependency) so that we can override the
 ;; auto-mode-alist entries that it makes
-(require 'typescript-ts-mode)
+(use-package typescript-ts-mode
+  :ensure nil
+  :demand t)
 
 (add-to-list 'auto-mode-alist '("\\.astro\\'" . astro-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.[cm]js\\'" . jtsx-jsx-mode))
@@ -1467,18 +1743,16 @@ optional G-MODEL is the gptel model symbol to use."
 ;; - eglot-typescript-preset: TS/JS/Astro/Svelte/Vue project detection and
 ;; eglot setup
 ;;
-;; for local development and testing:
-(eval-and-compile
-  ;; (add-to-list 'load-path (expand-file-name "~/devel/projects/eglot-typescript-preset")))
-  (add-to-list 'load-path (concat my-emacs-path "elisp/eglot-typescript-preset")))
-(require 'eglot-typescript-preset)
-(setopt eglot-typescript-preset-tsdk
-        (concat my-emacs-path "node_modules/typescript/lib"))
-(setopt eglot-typescript-preset-astro-lsp-server 'rass)
-(setopt eglot-typescript-preset-lsp-server 'rass)
-(setopt eglot-typescript-preset-rass-tools
-        '(typescript-language-server biome))
-(eglot-typescript-preset-setup)
+;; for local development and testing, replace the use-package block with:
+;; (add-to-list 'load-path (expand-file-name "~/devel/projects/eglot-typescript-preset"))
+;; (require 'eglot-typescript-preset)
+(use-package eglot-typescript-preset
+  :vc (:url "https://github.com/mwolson/eglot-typescript-preset")
+  :custom
+  (eglot-typescript-preset-tsdk (concat my-emacs-path "node_modules/typescript/lib"))
+  (eglot-typescript-preset-astro-lsp-server 'rass)
+  (eglot-typescript-preset-lsp-server 'rass)
+  (eglot-typescript-preset-rass-tools '(typescript-language-server biome)))
 
 (dolist (mode my-jtsx-major-modes)
   (let ((hook (intern (concat (symbol-name mode) "-hook"))))
@@ -1507,11 +1781,15 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'my-md-code-aliases '(kotlin . kotlin-ts-mode))
 
 ;; Lisp
-(require 'slime)
-(slime-setup '(slime-repl))
-(setopt slime-auto-connect 'always)
-(setopt slime-kill-without-query-p t)
-(setopt slime-protocol-version 'ignore)
+(use-package slime
+  :vc (:url "https://github.com/slime/slime")
+  :demand t
+  :custom
+  (slime-auto-connect 'always)
+  (slime-kill-without-query-p t)
+  (slime-protocol-version 'ignore)
+  :config
+  (slime-setup '(slime-repl)))
 
 ;; Don't warn me when opening some Common Lisp files
 (put 'package 'safe-local-variable 'symbolp)
@@ -1524,16 +1802,13 @@ optional G-MODEL is the gptel model symbol to use."
 ;; Markdown support
 (add-to-list 'major-mode-remap-alist '(markdown-mode . gfm-mode))
 
-(with-eval-after-load "gptel"
-  (setopt gptel-default-mode #'gfm-mode)
-  (add-to-list 'gptel-prompt-prefix-alist '(gfm-mode . "### ")))
-
+(eval-when-compile
+  (require 'markdown-mode nil t))
 (defun my-replace-mode-in-symbol (mode-sym)
   (intern
    (replace-regexp-in-string "-mode\\'" ""
                              (symbol-name mode-sym))))
 
-(eval-when-compile (require 'markdown-mode))
 (defun my-markdown-install-aliases ()
   (dolist (to-remap major-mode-remap-alist)
     (let ((from (my-replace-mode-in-symbol (car to-remap)))
@@ -1581,7 +1856,18 @@ optional G-MODEL is the gptel model symbol to use."
   (interactive)
   (deactivate-input-method))
 
-(with-eval-after-load "markdown-mode"
+(use-package markdown-mode
+  :vc (:url "https://github.com/jrblevin/markdown-mode")
+  :defer t
+  :hook ((markdown-mode . add-node-modules-path)
+         (markdown-mode . my-setup-web-ligatures)
+         (markdown-mode . my-turn-on-arrow-input)
+         (markdown-mode . my-apheleia-set-markdown-formatter))
+  :custom
+  (markdown-command "npx marked")
+  (markdown-enable-wiki-links t)
+  (markdown-fontify-code-blocks-natively t)
+  :config
   (my-markdown-install-aliases)
   (my-replace-cdrs-in-alist 'sh-mode 'bash-ts-mode
                             'markdown-code-lang-modes)
@@ -1592,11 +1878,6 @@ optional G-MODEL is the gptel model symbol to use."
                       nil
                       '["Yank Code Block" my-markdown-yank-chunk]
                       "Kill Element"))
-
-(add-hook 'markdown-mode-mode #'add-node-modules-path t)
-(add-hook 'markdown-mode-hook #'my-setup-web-ligatures t)
-(add-hook 'markdown-mode-hook #'my-turn-on-arrow-input t)
-(add-hook 'markdown-mode-hook #'my-apheleia-set-markdown-formatter)
 
 (my-around-advice #'my-turn-on-arrow-input
                   #'my-inhibit-in-indirect-md-buffers)
@@ -1620,9 +1901,9 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'my-md-code-aliases '(mdx . my-mdx-mode))
 
 ;; Mermaid diagrams
-(add-to-list 'load-path (concat my-emacs-path "elisp/mermaid-ts-mode"))
-(autoload #'mermaid-ts-mode "mermaid-ts-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.mmd\\'" . mermaid-ts-mode))
+(use-package mermaid-ts-mode
+  :vc (:url "https://github.com/kiennq/mermaid-ts-mode")
+  :mode "\\.mmd\\'")
 
 ;; Nix
 (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
@@ -1661,20 +1942,19 @@ optional G-MODEL is the gptel model symbol to use."
 
 ;; - eglot-python-preset: Python project detection and PEP-723 support
 ;;
-;; for local development and testing:
-;;
-(eval-and-compile
-  ;; (add-to-list 'load-path (expand-file-name "~/devel/projects/eglot-python-preset"))
-  (add-to-list 'load-path (concat my-emacs-path "elisp/eglot-python-preset")))
-(require 'eglot-python-preset)
+;; for local development and testing, replace the use-package block with:
+;; (add-to-list 'load-path (expand-file-name "~/devel/projects/eglot-python-preset"))
+;; (require 'eglot-python-preset)
+(use-package eglot-python-preset
+  :vc (:url "https://github.com/mwolson/eglot-python-preset")
+  :custom
+  (eglot-python-preset-lsp-server 'ty))
 ;; (setopt eglot-python-preset-lsp-server 'basedpyright)
 ;; (setopt eglot-workspace-configuration
 ;;         (plist-put eglot-workspace-configuration
 ;;                    :basedpyright.analysis
 ;;                    '(:autoImportCompletions :json-false
 ;;                      :typeCheckingMode "basic")))
-(setopt eglot-python-preset-lsp-server 'ty)
-(eglot-python-preset-setup)
 
 ;; Rust
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
@@ -1687,9 +1967,9 @@ optional G-MODEL is the gptel model symbol to use."
 (add-hook 'rust-ts-mode-hook #'eglot-ensure)
 
 ;; SCSS
-(add-to-list 'load-path (concat my-emacs-path "elisp/flymake-stylelint"))
-(autoload #'flymake-stylelint-enable "flymake-stylelint"
-  "Enable flymake-stylelint." nil)
+(use-package flymake-stylelint
+  :vc (:url "https://github.com/orzechowskid/flymake-stylelint")
+  :defer t)
 
 (add-hook 'scss-mode-hook #'add-node-modules-path t)
 (add-hook 'scss-mode-hook #'flymake-stylelint-enable t)
@@ -1702,9 +1982,9 @@ optional G-MODEL is the gptel model symbol to use."
 (add-hook 'scss-mode-hook #'eglot-ensure)
 
 ;; Svelte
-(add-to-list 'load-path (concat my-emacs-path "elisp/svelte-ts-mode"))
-(autoload #'svelte-ts-mode "svelte-ts-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.svelte\\'" . svelte-ts-mode))
+(use-package svelte-ts-mode
+  :vc (:url "https://github.com/leafOfTree/svelte-ts-mode")
+  :mode "\\.svelte\\'")
 
 (add-hook 'svelte-ts-mode-hook #'add-node-modules-path t)
 (add-hook 'svelte-ts-mode-hook #'eglot-ensure t)
@@ -1719,16 +1999,17 @@ optional G-MODEL is the gptel model symbol to use."
 (add-to-list 'auto-mode-alist '("\\.toml\\'" . toml-ts-mode))
 
 ;; Vue
-(add-to-list 'load-path (concat my-emacs-path "elisp/vue-ts-mode"))
-(autoload #'vue-ts-mode "vue-ts-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.vue\\'" . vue-ts-mode))
+(use-package vue-ts-mode
+  :vc (:url "https://github.com/8uff3r/vue-ts-mode")
+  :mode "\\.vue\\'")
 
 (add-hook 'vue-ts-mode-hook #'add-node-modules-path t)
 (add-hook 'vue-ts-mode-hook #'eglot-ensure t)
 (add-hook 'vue-ts-mode-hook #'my-setup-web-ligatures t)
 (add-hook 'vue-ts-mode-hook #'my-apheleia-set-js-formatter)
 
-(eval-when-compile (require 'css-mode))
+(eval-when-compile
+  (require 'css-mode nil t))
 (defun my-vue-ts-set-fontify-css-colors ()
   (require 'css-mode)
   (setq-local font-lock-fontify-region-function #'css--fontify-region))
@@ -1737,14 +2018,19 @@ optional G-MODEL is the gptel model symbol to use."
   (add-hook 'vue-ts-mode-hook #'my-vue-ts-set-fontify-css-colors))
 
 ;; Web Mode
-(add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
-(add-hook 'web-mode-hook #'add-node-modules-path t)
-(add-hook 'web-mode-hook #'my-setup-web-ligatures t)
-
-(setopt web-mode-code-indent-offset 2
-        web-mode-enable-auto-indentation nil
-        web-mode-enable-auto-quoting nil
-        web-mode-markup-indent-offset 2)
+(use-package web-mode
+  :vc (:url "https://github.com/fxbois/web-mode")
+  :mode "\\.hbs\\'"
+  :hook ((web-mode . add-node-modules-path)
+         (web-mode . my-setup-web-ligatures))
+  :custom
+  (web-mode-code-indent-offset 2)
+  (web-mode-enable-auto-indentation nil)
+  (web-mode-enable-auto-quoting nil)
+  (web-mode-markup-indent-offset 2)
+  :custom-face
+  (web-mode-html-tag-face ((t (:inherit font-lock-constant-face))))
+  (web-mode-json-key-face ((t (:foreground unspecified :inherit font-lock-variable-name-face)))))
 
 ;; YAML
 (defun my-run-prog-mode-hooks ()
@@ -1763,7 +2049,6 @@ optional G-MODEL is the gptel model symbol to use."
 (add-hook 'zig-ts-mode-hook #'eglot-ensure)
 
 ;; Consult, Embark, Marginalia, Orderless, Prescient, Vertico
-(eval-when-compile (require 'consult))
 (defvar my-minibuffer-from-consult-line nil)
 
 (defun my-consult-line ()
@@ -1779,6 +2064,8 @@ optional G-MODEL is the gptel model symbol to use."
         (my-minibuffer-from-consult-line t))
     (consult-line reg nil)))
 
+(eval-when-compile
+  (require 'consult nil t))
 (defvar my-default-ripgrep-args "--hidden -i --no-ignore-vcs --ignore-file=.gitignore --glob=!.git/")
 
 (defun my-consult-ripgrep (regexp rg-args)
@@ -1800,12 +2087,41 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (let ((consult-ripgrep-args rg-args))
     (consult-ripgrep nil regexp)))
 
-(with-eval-after-load "consult"
+(use-package consult
+  :vc (:url "https://github.com/minad/consult")
+  :defer t
+  :config
   (with-eval-after-load "minuet"
     (consult-customize minuet-complete-with-minibuffer)))
 
-(with-eval-after-load "marginalia"
+(use-package embark
+  :vc (:url "https://github.com/oantolin/embark")
+  :defer t)
+
+(use-package embark-consult
+  :vc (:url "https://github.com/oantolin/embark")
+  :defer t
+  :after (embark consult))
+
+(use-package marginalia
+  :vc (:url "https://github.com/minad/marginalia")
+  :defer t
+  :config
   (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup t))
+
+(use-package nerd-icons
+  :vc (:url "https://github.com/rainstormstudio/nerd-icons.el")
+  :defer t)
+
+(use-package nerd-icons-completion
+  :vc (:url "https://github.com/rainstormstudio/nerd-icons-completion")
+  :defer t)
+
+(eval-when-compile
+  (require 'orderless nil t)
+  (require 'vertico-directory nil t)
+  (require 'vertico-repeat nil t)
+  (require 'vertico-suspend nil t))
 
 (defun my-vertico-insert-like-ivy ()
   (interactive)
@@ -1815,12 +2131,21 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
           ((file-directory-p (vertico--candidate)) (vertico-insert))
           (t (self-insert-command 1 ?/)))))
 
-(eval-when-compile (require 'vertico))
-(with-eval-after-load "vertico"
-  (setopt vertico-count 10
-          vertico-mouse-mode t
-          vertico-resize nil)
-
+(use-package vertico
+  :vc (:url "https://github.com/minad/vertico")
+  :defer t
+  :init
+  (let ((ext-dir (expand-file-name "vertico/extensions" package-user-dir)))
+    (when (file-directory-p ext-dir)
+      (add-to-list 'load-path ext-dir)))
+  :custom
+  (vertico-count 10)
+  (vertico-mouse-mode t)
+  (vertico-resize nil)
+  :config
+  (require 'vertico-directory)
+  (require 'vertico-repeat)
+  (require 'vertico-suspend)
   (keymap-set occur-mode-map "r" #'occur-edit-mode)
   (keymap-set vertico-map "?" #'minibuffer-completion-help)
   (keymap-set vertico-map "/" #'my-vertico-insert-like-ivy)
@@ -1837,16 +2162,25 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   (keymap-set vertico-map "<next>" #'vertico-scroll-up)
 
   (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
-  (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
+  (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
 
-  (require 'vertico-prescient)
-  (setopt prescient-sort-full-matches-first t)
+(use-package prescient
+  :vc (:url "https://github.com/radian-software/prescient.el"
+       :main-file "prescient.el")
+  :defer t)
 
+(use-package vertico-prescient
+  :vc (:url "https://github.com/radian-software/prescient.el"
+       :main-file "vertico-prescient.el")
+  :defer t
+  :after vertico
+  :custom
+  (prescient-sort-full-matches-first t)
+  :config
   ;; disable prescient for consult-line since history doesn't make sense there
   (setopt vertico-prescient-completion-category-overrides
-          (append `((consult-location (styles orderless basic)))
+          (append '((consult-location (styles orderless basic)))
                   vertico-prescient-completion-category-overrides))
-
   (vertico-prescient-mode)
   (prescient-persist-mode))
 
@@ -1867,13 +2201,20 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
       xref-show-definitions-function #'consult-xref
       xref-show-xrefs-function #'consult-xref)
 
-(eval-when-compile
-  (require 'grep)
-  (require 'wgrep))
-(with-eval-after-load "grep"
-  (keymap-set grep-mode-map "r" #'wgrep-change-to-wgrep-mode))
+(use-package wgrep
+  :vc (:url "https://github.com/mhayashi1120/Emacs-wgrep")
+  :defer t)
 
-(eval-when-compile (require 'crm))
+(eval-when-compile
+  (require 'grep nil t)
+  (require 'wgrep nil t))
+(use-package grep
+  :ensure nil
+  :defer t
+  :config
+  (keymap-set grep-mode-map "r" #'wgrep-change-to-wgrep-mode))
+(eval-when-compile
+  (require 'crm nil t))
 (defun my-crm-indicator (args)
   "Work around issue in completing-read-multiple.
 
@@ -1983,9 +2324,6 @@ This prevents the window from later moving back once the minibuffer is done show
 ;; Corfu, Cape, Dabbrev for auto-completion
 (defvar my-orderless-done-p nil)
 
-(eval-when-compile
-  (require 'orderless))
-
 (defun my-setup-orderless ()
   (unless my-orderless-done-p
     (setq my-orderless-done-p t)
@@ -2014,10 +2352,6 @@ This prevents the window from later moving back once the minibuffer is done show
 (defun my-corfu-terminal-start ()
   (unless window-system (corfu-terminal-mode 1)))
 
-(eval-when-compile
-  (require 'corfu)
-  (require 'corfu-auto)
-  (require 'kind-icon))
 (defun my-load-corfu ()
   (with-eval-after-load "elisp-mode"
     (add-hook 'emacs-lisp-mode-hook #'my-corfu-elisp t))
@@ -2041,6 +2375,7 @@ This prevents the window from later moving back once the minibuffer is done show
   (keymap-set corfu-map "RET" nil)
 
   (require 'corfu-auto)
+  (require 'corfu-popupinfo)
   (setopt corfu-auto t
           corfu-popupinfo-delay '(0.3 . 0.01)
           corfu-popupinfo-hide nil
@@ -2063,24 +2398,93 @@ This prevents the window from later moving back once the minibuffer is done show
 (add-hook 'completion-at-point-functions #'cape-file)
 (add-hook 'completion-at-point-functions #'cape-keyword)
 
-(eval-when-compile (require 'dabbrev))
-(with-eval-after-load "dabbrev"
+(use-package orderless
+  :vc (:url "https://github.com/oantolin/orderless")
+  :defer t)
+
+(use-package corfu
+  :vc (:url "https://github.com/minad/corfu")
+  :defer t
+  :init
+  (let ((ext-dir (expand-file-name "corfu/extensions" package-user-dir)))
+    (when (file-directory-p ext-dir)
+      (add-to-list 'load-path ext-dir))))
+
+(use-package corfu-prescient
+  :vc (:url "https://github.com/radian-software/prescient.el"
+       :main-file "corfu-prescient.el")
+  :commands (corfu-prescient-mode)
+  :defer t)
+
+(use-package corfu-terminal
+  :vc (:url "https://codeberg.org/akib/emacs-corfu-terminal")
+  :defer t)
+
+(use-package cape
+  :vc (:url "https://github.com/minad/cape")
+  :defer t)
+
+(use-package kind-icon
+  :vc (:url "https://github.com/jdtsmith/kind-icon")
+  :defer t)
+
+(use-package dabbrev
+  :ensure nil
+  :defer t
+  :config
   (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
   (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
 
 ;; Set up majutsu
-(with-eval-after-load "majutsu"
-  (my-replace-cdrs-in-alist 'pop-to-buffer 'switch-to-buffer
-                            'majutsu-display-functions)
-  (setopt majutsu-default-display-function #'switch-to-buffer))
+(use-package majutsu
+  :vc (:url "https://github.com/0WD0/majutsu")
+  :defer t
+  :custom
+  (majutsu-display-buffer-function 'same-window-except-diff))
 
 (defun my-majutsu-log ()
   (interactive)
   (majutsu-log (or (my-project-root) default-directory)))
 
+(defun my-remove-project-switch-bindings (to-remove)
+  (dolist (item (cdr project-prefix-map))
+    (let* ((raw-key (car item))
+           (cmd (cdr item)))
+      (when (and (memq cmd to-remove) (integerp raw-key))
+        (keymap-set project-prefix-map (string raw-key) nil))))
+  (setq project-switch-commands
+        (cl-remove-if #'(lambda (item) (memq (car item) to-remove))
+                      project-switch-commands)))
+
 ;; Set up project.el
+(use-package project
+  :ensure nil
+  :defer t
+  :config
+  ;; from https://github.com/golang/tools/blob/master/gopls/doc/emacs.md#configuring-project-for-go-modules-in-emacs
+  (cl-defmethod project-root ((project (head go-module)))
+    (cdr project))
+
+  (add-hook 'project-find-functions #'my-project-find-go-module)
+  (my-remove-project-switch-bindings '(project-eshell
+                                       project-find-dir
+                                       project-find-regexp
+                                       project-query-replace-regexp
+                                       project-vc-dir))
+  (add-to-list 'project-switch-commands '(project-dired "Dired") t)
+  (keymap-set project-prefix-map "b" #'consult-project-buffer)
+  (keymap-set project-prefix-map "d" #'project-dired)
+  (add-to-list 'project-switch-commands '(my-consult-ripgrep "Ripgrep") t)
+  (keymap-set project-prefix-map "j" #'my-majutsu-log)
+  (add-to-list 'project-switch-commands '(my-majutsu-log "jj log") t)
+  (keymap-set project-prefix-map "r" #'my-consult-ripgrep)
+  (keymap-set project-prefix-map "s" #'my-consult-ripgrep)
+  (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
+  (keymap-set project-prefix-map "RET" #'magit-project-status)
+  (keymap-set project-prefix-map "m" #'magit-project-status))
+
 (defun my-project-root (&optional maybe-prompt)
   "Return root directory of the current project."
   (when-let* ((proj (project-current maybe-prompt)))
@@ -2103,47 +2507,22 @@ This prevents the window from later moving back once the minibuffer is done show
     (kill-new filepath)
     (message "Copied '%s' to clipboard" filepath)))
 
-(defun my-remove-project-switch-bindings (to-remove)
-  (dolist (item (cdr project-prefix-map))
-    (let* ((raw-key (car item))
-           (cmd (cdr item)))
-      (when (and (memq cmd to-remove) (integerp raw-key))
-        (keymap-set project-prefix-map (string raw-key) nil))))
-  (setq project-switch-commands
-        (cl-remove-if #'(lambda (item) (memq (car item) to-remove))
-                      project-switch-commands)))
-
-(with-eval-after-load "project"
-  (my-remove-project-switch-bindings '(project-eshell
-                                       project-find-dir
-                                       project-find-regexp
-                                       project-query-replace-regexp
-                                       project-vc-dir))
-  (add-to-list 'project-switch-commands '(project-dired "Dired") t)
-  (keymap-set project-prefix-map "b" #'consult-project-buffer)
-  (keymap-set project-prefix-map "d" #'project-dired)
-  (add-to-list 'project-switch-commands '(my-consult-ripgrep "Ripgrep") t)
-  (keymap-set project-prefix-map "j" #'my-majutsu-log)
-  (add-to-list 'project-switch-commands '(my-majutsu-log "jj log") t)
-  (keymap-set project-prefix-map "r" #'my-consult-ripgrep)
-  (keymap-set project-prefix-map "s" #'my-consult-ripgrep)
-  (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
-  (keymap-set project-prefix-map "RET" #'magit-project-status)
-  (keymap-set project-prefix-map "m" #'magit-project-status))
-
 ;; Insinuate with ripgrep
 (defun my-rg-command-line-flags (&optional flags)
   (append flags (split-string-shell-command my-default-ripgrep-args)))
 
 (setq rg-command-line-flags-function #'my-rg-command-line-flags)
 
-(eval-when-compile (require 'rg))
-(with-eval-after-load "rg"
+(eval-when-compile
+  (require 'rg nil t))
+(use-package rg
+  :vc (:url "https://github.com/dajva/rg.el")
+  :defer t
+  :config
   (keymap-set rg-mode-map "e" #'rg-rerun-change-regexp)
   (keymap-set rg-mode-map "r" #'wgrep-change-to-wgrep-mode))
 
 ;; Bind N and P in ediff so that I don't leave the control buffer
-(eval-when-compile (require 'ediff))
 (defun my-ediff-next-difference (&rest _args)
   (interactive)
   (save-selected-window
@@ -2157,10 +2536,17 @@ This prevents the window from later moving back once the minibuffer is done show
 (defun my-ediff-extra-keys ()
   (keymap-set ediff-mode-map "N" #'my-ediff-next-difference)
   (keymap-set ediff-mode-map "P" #'my-ediff-previous-difference))
-(add-hook 'ediff-keymap-setup-hook #'my-ediff-extra-keys t)
 
+(use-package ediff
+  :ensure nil
+  :defer t
+  :custom
+  (ediff-window-setup-function 'ediff-setup-windows-plain)
+  :hook (ediff-keymap-setup . my-ediff-extra-keys))
+
+(eval-when-compile
+  (require 'texinfo nil t))
 ;; Make TexInfo easier to work with
-(eval-when-compile (require 'texinfo))
 (defun my-texinfo-view-file ()
   "View the published version of the current file."
   (interactive)
@@ -2177,18 +2563,114 @@ This prevents the window from later moving back once the minibuffer is done show
   (keymap-set texinfo-mode-map "C-c C-v" #'my-texinfo-view-file))
 (add-hook 'texinfo-mode-hook #'my-texinfo-extra-keys t)
 
-;; Enable wdired on "r"
-(keymap-set dired-mode-map "r" 'wdired-change-to-wdired-mode)
-
 ;; Make tramp's backup directories the same as the normal ones
 (setopt tramp-backup-directory-alist backup-directory-alist)
 
 ;; Navigate the kill ring when doing M-y
-(browse-kill-ring-default-keybindings)
+(use-package browse-kill-ring
+  :vc (:url "https://github.com/browse-kill-ring/browse-kill-ring")
+  :demand t
+  :config
+  (browse-kill-ring-default-keybindings))
 
 ;; extension of mine to make list editing easy
-(require 'edit-list)
-(defalias 'my-edit-list 'edit-list)
+(use-package edit-list
+  :ensure nil
+  :demand t
+  :config
+  (defalias 'my-edit-list 'edit-list))
+
+;; Packages that need :ensure but have no complex config
+(use-package s
+  :vc (:url "https://github.com/magnars/s.el")
+  :defer t)
+
+(use-package add-node-modules-path
+  :vc (:url "https://github.com/codesuki/add-node-modules-path")
+  :defer t)
+(use-package archive-rpm
+  :vc (:url "https://github.com/nbarrientos/archive-rpm")
+  :defer t)
+(use-package astro-ts-mode
+  :vc (:url "https://github.com/Sorixelle/astro-ts-mode")
+  :defer t)
+(use-package basic-mode
+  :vc (:url "https://github.com/dykstrom/basic-mode"
+       :lisp-dir "src")
+  :defer t)
+(use-package clojure-ts-mode
+  :vc (:url "https://github.com/clojure-emacs/clojure-ts-mode")
+  :defer t)
+(use-package color-theme-sanityinc-tomorrow
+  :vc (:url "https://github.com/purcell/color-theme-sanityinc-tomorrow")
+  :defer t)
+(use-package diminish
+  :vc (:url "https://github.com/myrjola/diminish.el")
+  :defer t)
+(use-package edit-indirect
+  :vc (:url "https://github.com/Fanael/edit-indirect")
+  :defer t)
+(use-package el-mock
+  :vc (:url "https://github.com/rejeep/el-mock.el")
+  :defer t)
+(use-package fish-mode
+  :vc (:url "https://github.com/wwwjfy/emacs-fish")
+  :defer t)
+(use-package flx
+  :vc (:url "https://github.com/lewang/flx")
+  :defer t)
+(use-package git-modes
+  :vc (:url "https://github.com/magit/git-modes")
+  :defer t)
+(use-package graphql-ts-mode
+  :vc (:url "https://git.sr.ht/~joram/graphql-ts-mode")
+  :defer t)
+(use-package hydra
+  :vc (:url "https://github.com/abo-abo/hydra")
+  :defer t)
+(use-package jtsx
+  :vc (:url "https://github.com/llemaitre19/jtsx")
+  :defer t)
+(use-package kdl-mode
+  :vc (:url "https://github.com/taquangtrung/emacs-kdl-mode")
+  :defer t)
+(use-package kotlin-ts-mode
+  :vc (:url "https://gitlab.com/bricka/emacs-kotlin-ts-mode")
+  :defer t)
+(use-package lua-mode
+  :vc (:url "https://github.com/immerrr/lua-mode")
+  :defer t)
+(use-package nix-ts-mode
+  :vc (:url "https://github.com/nix-community/nix-ts-mode")
+  :defer t)
+(use-package nsis-mode
+  :vc (:url "https://github.com/mwolson/nsis-mode")
+  :defer t)
+(use-package prisma-ts-mode
+  :vc (:url "https://github.com/nverno/prisma-ts-mode")
+  :defer t)
+(use-package rainbow-delimiters
+  :vc (:url "https://github.com/Fanael/rainbow-delimiters")
+  :defer t)
+(use-package reformatter
+  :vc (:url "https://github.com/purcell/emacs-reformatter")
+  :defer t)
+(use-package swift-ts-mode
+  :vc (:url "https://github.com/rechsteiner/swift-ts-mode")
+  :defer t)
+(use-package hcl-mode
+  :vc (:url "https://github.com/hcl-emacs/hcl-mode")
+  :defer t)
+(use-package terraform-mode
+  :vc (:url "https://github.com/syohex/emacs-terraform-mode")
+  :defer t)
+(use-package tmux-mode
+  :vc (:url "https://github.com/nverno/tmux-mode")
+  :defer t)
+(use-package vcl-mode :defer t)
+(use-package zig-ts-mode
+  :vc (:url "https://codeberg.org/meow_king/zig-ts-mode")
+  :defer t)
 
 ;; All programming modes
 (defun my-turn-on-display-line-numbers-mode ()
@@ -2215,7 +2697,9 @@ This prevents the window from later moving back once the minibuffer is done show
 (add-to-list 'auto-mode-alist '("\\.?tmux\\.conf\\(\\.[^.]+\\)?\\'" . tmux-mode))
 
 ;; Profiling
-(require 'profiler)
+(use-package profiler
+  :ensure nil
+  :demand t)
 (cl-defmacro my-with-cpu-profiling (&rest body)
   `(unwind-protect
        (progn
@@ -2237,11 +2721,13 @@ This prevents the window from later moving back once the minibuffer is done show
 (add-to-list 'Info-default-directory-list (concat my-emacs-path "share/info"))
 
 ;; Magit settings
-(eval-when-compile
-  (require 'git-commit)
-  (require 'magit))
-(with-eval-after-load "git-commit"
-  (setopt git-commit-major-mode 'org-mode)
+(use-package git-commit
+  :ensure nil
+  :defer t
+  :custom
+  (git-commit-major-mode 'org-mode)
+  (git-commit-summary-max-length 120)
+  :config
   (remove-hook 'git-commit-setup-hook #'git-commit-turn-on-auto-fill))
 
 (defun my-magit-balance-windows-25/75 (top-window bottom-window)
@@ -2295,7 +2781,15 @@ This prevents the window from later moving back once the minibuffer is done show
   (call-interactively #'kill-ring-save)
   (deactivate-mark))
 
-(with-eval-after-load "magit"
+(use-package magit
+  :defer t
+  :custom
+  (magit-define-global-key-bindings nil)
+  (magit-diff-refine-hunk t)
+  (magit-display-buffer-function 'my-magit-display-buffer-top25-bottom75-v1)
+  (magit-log-section-commit-count 1)
+  (magit-prefer-remote-upstream t)
+  :config
   (keymap-set magit-mode-map "M-w" #'my-magit-kill-ring-save)
   (keymap-set magit-diff-section-map "RET" #'magit-diff-visit-worktree-file)
   (keymap-set magit-hunk-section-map "RET" #'magit-diff-visit-worktree-file))
@@ -2319,13 +2813,18 @@ This prevents the window from later moving back once the minibuffer is done show
 (keymap-global-set "C-x V v" #'magit-dispatch)
 
 ;; Don't display any minor modes on the mode-line
-(require 'minions)
-(setopt minions-mode-line-delimiters '("" . ""))
-(setopt minions-mode-line-lighter " ")
-(minions-mode 1)
+(use-package minions
+  :vc (:url "https://github.com/tarsius/minions")
+  :demand t
+  :custom
+  (minions-mode-line-delimiters '("" . ""))
+  (minions-mode-line-lighter " ")
+  :config
+  (minions-mode 1))
 
+(eval-when-compile
+  (require 'org nil t))
 ;; Org Mode settings
-(eval-when-compile (require 'org))
 (defun my-org-find-notes-file ()
   (interactive)
   (require 'org)
@@ -2336,7 +2835,21 @@ This prevents the window from later moving back once the minibuffer is done show
   (require 'org-capture)
   (org-capture nil "n"))
 
-(with-eval-after-load "org"
+(use-package toc-org
+  :vc (:url "https://github.com/snosov1/toc-org")
+  :defer t)
+
+(use-package org
+  :ensure nil
+  :defer t
+  :custom
+  (org-capture-templates
+   '(("n" "Note" entry (file+headline "" "Notes") "* %?" :prepend t :empty-lines-after 1)))
+  (org-default-notes-file "~/Documents/notes.org")
+  (org-startup-folded nil)
+  (org-startup-truncated nil)
+  (org-yank-folded-subtrees nil)
+  :config
   (require 'toc-org)
   (put 'toc-org-max-depth 'safe-local-variable 'integerp)
   (add-to-list 'safe-local-variable-values
@@ -2385,7 +2898,6 @@ This prevents the window from later moving back once the minibuffer is done show
 (keymap-global-set "C-x o" #'my-other-frame-or-window)
 (keymap-global-set "C-x p" #'my-other-frame-or-window)
 
-(eval-when-compile (require 'server))
 (defun my-kill-emacs ()
   (interactive)
   (let* ((confirm-kill-emacs 'y-or-n-p)
@@ -2430,23 +2942,32 @@ This prevents the window from later moving back once the minibuffer is done show
 (keymap-global-set "C-x F" my-find-things-map)
 (keymap-global-set "C-x f" my-find-things-map)
 
-(eval-when-compile (require 'view))
-(with-eval-after-load "view"
-  ;; Make the `q' key bury the current buffer when viewing help
+(use-package view
+  :ensure nil
+  :defer t
+  :config
   (keymap-set view-mode-map "q" 'bury-buffer)
-  ;; Make the <DEL> key scroll backwards in View mode
   (keymap-set view-mode-map "DEL" 'View-scroll-page-backward))
 
-(with-eval-after-load "info"
-  ;; Make the <DEL> key scroll backwards in Info mode
+(use-package info
+  :ensure nil
+  :defer t
+  :config
   (keymap-set Info-mode-map "DEL" 'Info-scroll-down))
 
 ;; diff-mode: Don't mess with M-q
-(with-eval-after-load "diff-mode"
+(use-package diff-mode
+  :ensure nil
+  :defer t
+  :config
   (keymap-set diff-mode-map "M-q" 'fill-paragraph))
 
 ;; Show keybind options while typing leading keys
-(my-defer-startup #'which-key-mode)
+(use-package which-key
+  :ensure nil
+  :defer t
+  :init
+  (my-defer-startup #'which-key-mode))
 
 ;; Typo prevention
 (keymap-global-set "C-h C-n" #'describe-gnu-project)
@@ -2470,7 +2991,11 @@ This prevents the window from later moving back once the minibuffer is done show
   (setopt ns-alternate-modifier 'meta)
   (setopt ns-command-modifier 'super))
 
-(eval-when-compile (require 'git-rebase))
+(eval-when-compile
+  (require 'git-rebase nil t))
+(use-package git-rebase
+  :ensure nil
+  :defer t)
 (defun my-set-super-bindings ()
   (interactive)
   (with-eval-after-load "cider-repl"
