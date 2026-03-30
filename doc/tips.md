@@ -12,8 +12,6 @@
 - <kbd>C-c p a a</kbd> to locate projects under the given directory
 - <kbd>C-c p c</kbd> to start a compilation at the top of the current project
 - <kbd>C-c p f</kbd> to find a file within the current project
-- <kbd>C-c p g g</kbd> to start a Claude AI interaction buffer
-- <kbd>C-c p g p</kbd> to bring up a gptel menu for taking different AI actions
 - <kbd>C-c p k</kbd> to close all files in the current project
 - <kbd>C-c p p</kbd> to visit a known project in Magit, which is a git status
   browser and git shell
@@ -53,26 +51,11 @@
 - <kbd>C-c p r</kbd> to search and replace a phrase throughout an entire
   project, asking you what to do with each match
 
-## Using AI and Finding Definitions
+## Finding Definitions
 
 When you're visiting a source code file, you can use these commands to navigate
 to the definition of the function that the cursor is at.
 
-- <kbd>C-c . a a</kbd> to add the current function as context for a later AI
-  query
-- <kbd>C-c . a f</kbd> to add the current file as context for a later AI query
-- <kbd>C-c . c</kbd> to show a multi-line AI autocomplete suggestion; use
-  <kbd>TAB</kbd> to accept just one line of it, or <kbd>RET</kbd> to accept the
-  entire suggestion.
-- <kbd>C-c . f</kbd> to complete the function or code block at point using AI;
-  if you have a comment near the end, that will better inform the completion
-- <kbd>C-c . k</kbd> to fully clear the AI context
-- <kbd>C-c . l</kbd> to switch from Claude to a local AI server or vice versa
-- <kbd>C-c . q</kbd> to bring up a Claude AI query on the side with the current
-  function or region added to the AI context
-- <kbd>C-c . r</kbd> to rewrite the current function or region using Claude AI
-- <kbd>C-c . v</kbd> to pop up a menu that allows viewing and pruning the AI
-  context; hit <kbd>q</kbd> when done to apply the changes
 - <kbd>C-c . .</kbd> to visit the definition
 - <kbd>C-c . ,</kbd> to return to the original point
 - <kbd>C-c . /</kbd> to find references

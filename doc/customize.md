@@ -38,45 +38,6 @@ Most of the settings are optional, except for `my-emacs-path`.
 - `my-frame-width`: If the window is not fullscreen, it will be resized to have
   this many columns on startup
 
-## AI Settings
-
-- `my-gptel-backend`: The default `gptel` backend to use, as a symbol; examples
-  are:
-  - `'my-gptel--claude`
-  - `'my-gptel--claude-thinking`
-  - `'my-gptel--gemini`
-  - `'my-gptel--gemini-lite`
-  - `'my-gptel--groq`
-  - `'my-gptel--local-ai`
-  - `'my-gptel--mistral`
-  - `'my-gptel--openai`
-  - `'my-gptel--openrouter-grok-4-fast`
-  - `'my-gptel--openrouter-kimi-k2`
-  - `'my-gptel--openrouter-qwen-3-coder`
-  - `'my-gptel--xai`
-- `my-gptel-backend-local`: The `gptel` backend to use for local AI, as a
-  symbol; this defaults to `my-gptel-local-ai`.
-- `my-gptel-backend-remote`: The `gptel` backend to use for remote AI, as a
-  symbol; examples are `'my-gptel--claude`, `'my-gptel--codestral`,
-  `'my-gptel--gemini`, `'my-gptel--mistral`, and `'gptel--openai` . Make sure to
-  set an appropriate value for `my-gptel-model` as well.
-- `my-gptel-model`: The default `gptel` model to use; if not specified, the
-  first valid value for the backend will be used.
-- `my-gptel-model-local`: The `gptel` backend to use for local AI, as a symbol;
-  this defaults to `my-gptel-local-ai`.
-- `my-gptel-model-remote`: The `gptel` backend to use for remote AI, as a
-  symbol; this defaults to unspecified.
-- `my-minuet-auto-suggest-p`: Whether to enable code completion suggetions with
-  `minuet`; defaults to enabled via this option but disabled via
-  `my-minuet-exclude-file-regexps`
-- `my-minuet-exclude-file-regexps`: Which files to disallow `minuet` to run on;
-  defaults to everything.
-- `my-minuet-model`: The model to use for `minuet` AI, as a symbol; this
-  defaults to `'kimi-k2`.
-- `my-minuet-provider`: The `minuet` provider to use, as a symbol; this defaults
-  to `'openai-compatible`. Configuration will be synced from the gptel option
-  `my-gptel-preferred-provider`.
-
 ## Other Settings
 
 - `my-default-directory`: After Emacs starts up, switch to this directory

@@ -65,13 +65,13 @@
                compile-angel cond-let consult corfu corfu-prescient
                corfu-terminal diff-hl diminish dumb-jump edit-indirect
                eglot-python-preset eglot-typescript-preset el-mock embark
-               embark-consult fish-mode flx flymake-stylelint git-modes gptel
-               gptel-fn-complete graphql-ts-mode js-comint jtsx kdl-mode
+               embark-consult fish-mode flx flymake-stylelint git-modes
+               graphql-ts-mode js-comint jtsx kdl-mode
                kind-icon kotlin-ts-mode ligature llama lua-mode macrostep
                magit magit-section majutsu marginalia markdown-mode maxframe
-               mermaid-ts-mode minions minuet mise modus-themes
+               mermaid-ts-mode minions mise modus-themes
                nerd-icons-completion nix-ts-mode nsis-mode orderless parseclj
-               parseedn plz popon pulsar rainbow-delimiters reformatter rg
+               parseedn popon pulsar rainbow-delimiters reformatter rg
                sesman slime spinner svg-lib svelte-ts-mode swift-ts-mode
                terraform-mode tmux-mode toc-org transient vertico
                vertico-prescient vue-ts-mode web-mode websocket wgrep
@@ -79,12 +79,12 @@
   (my-test-package-installed pkg))
 
 ;; Key features loadable
-(dolist (feature '(use-package eglot magit consult vertico corfu gptel
+(dolist (feature '(use-package eglot magit consult vertico corfu
                    dired tramp diff-hl pulsar))
   (my-test-feature-loadable feature))
 
 ;; Byte-compilation check for a few key packages
-(dolist (pkg '(magit consult vertico corfu gptel))
+(dolist (pkg '(magit consult vertico corfu))
   (my-test-has-elc pkg))
 
 (message "\n=== Results ===")

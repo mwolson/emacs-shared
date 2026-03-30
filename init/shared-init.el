@@ -320,10 +320,6 @@ When `depth' is provided, pass it to `add-hook'."
   :vc (:url "https://github.com/clojure-emacs/parseedn"
        :main-file "parseedn.el")
   :defer t)
-(use-package plz
-  :vc (:url "https://github.com/alphapapa/plz.el"
-       :main-file "plz.el")
-  :defer t)
 (use-package popon
   :vc (:url "https://codeberg.org/akib/emacs-popon"
        :main-file "popon.el")
@@ -355,7 +351,6 @@ When `depth' is provided, pass it to `add-hook'."
   :vc (:url "https://github.com/magit/with-editor"
        :lisp-dir "lisp" :main-file "with-editor.el")
   :defer t)
-;; gptel depends on transient + plz; magit depends on transient + with-editor
 
 ;; Setup manpage browsing
 (cond ((eq system-type 'darwin)
@@ -488,17 +483,6 @@ When `depth' is provided, pass it to `add-hook'."
 (use-package ffap
   :ensure nil
   :demand t)
-
-;; gptel-fn-complete: complete current function with AI
-;;
-;; for local development and testing, replace the use-package block with:
-;; (add-to-list 'load-path (expand-file-name "~/devel/projects/gptel-fn-complete"))
-;; (require 'gptel-fn-complete)
-(use-package gptel-fn-complete
-  :vc (:url "https://github.com/mwolson/gptel-fn-complete"
-       :main-file "gptel-fn-complete.el")
-  :commands (gptel-fn-complete--mark-function-treesit)
-  :defer t)
 
 ;; Load tramp
 (use-package tramp
@@ -879,13 +863,32 @@ Returns the config filename if one is found, `t' if found in package.json"
        :main-file "js-comint.el")
   :commands (js-comint-send-string)
   :defer t)
+
+(eval-when-compile
+  (require 'treesit nil t))
+
+(defun my-treesit-mark-defun (&optional steps)
+  "Put mark at end of this function, point at beginning, for a treesit mode.
+
+If STEPS is negative, mark `- arg - 1` extra functions backward.
+The behavior for when STEPS is positive is not currently well-defined."
+  (interactive)
+  (treesit-end-of-defun)
+  (let ((pt-max (point)))
+    (treesit-beginning-of-defun 1)
+    (setq steps (1- (- 0 (or steps 0))))
+    (while (> steps 0)
+      (treesit-beginning-of-defun 1)
+      (cl-decf steps))
+    (set-mark (point))
+    (goto-char pt-max)))
+
 (defun my-js-comint-send-defun (start end)
   "Send the function at point to the inferior Javascript process."
   (interactive "r")
   (unless (region-active-p)
-    (require 'gptel-fn-complete)
     (save-mark-and-excursion
-      (gptel-fn-complete--mark-function-treesit)
+      (my-treesit-mark-defun)
       (setq start (point)
             end (mark))))
   (let ((text (buffer-substring-no-properties start end)))
@@ -1026,567 +1029,6 @@ interactively.
   :custom
   (treesit-font-lock-level 4))
 
-;; Set up gptel
-(defvar my-gptel--backends-defined nil)
-(defvar my-gptel--claude nil)
-(defvar my-gptel--claude-thinking nil)
-(defvar my-gptel--gemini nil)
-(defvar my-gptel--gemini-lite nil)
-(defvar my-gptel--groq nil)
-(defvar my-gptel--local-ai nil)
-(defvar my-gptel--mistral nil)
-(defvar my-gptel--openai nil)
-(defvar my-gptel--opencode-zen nil)
-(defvar my-gptel--openrouter-kimi-k2 nil)
-(defvar my-gptel--xai nil)
-(defvar my-gptel-local-models
-  '((Qwen3.5-35B-A3B-UD-Q8_K_XL
-     :description "Local default: Qwen3.5-35B-A3B-UD-Q8_K_XL"
-     :capabilities (media tool json url)
-     :context-window 262144
-     :request-params
-     (:temperature 0.6
-      :top_k 20
-      :top_p 0.95
-      :min_p 0.0
-      :presence_penalty 0.0
-      :frequency_penalty 0.0
-      :repetition_penalty 1.0))
-    (Qwen3.5-122B-A10B-UD-Q5_K_XL
-     :description "Local alternate: Qwen3.5-122B-A10B-UD-Q5_K_XL"
-     :capabilities (media tool json url)
-     :context-window 262144
-     :request-params
-     (:temperature 0.6
-      :top_k 20
-      :top_p 0.95
-      :min_p 0.0
-      :presence_penalty 0.0
-      :frequency_penalty 0.0
-      :repetition_penalty 1.0))))
-
-(defun my-auth-source-get-api-key (host &optional user)
-  (if-let* ((secret (plist-get
-                     (car (auth-source-search
-                           :host host
-                           :user (or user "apikey")
-                           :require '(:secret)))
-                     :secret)))
-      (if (functionp secret)
-          (encode-coding-string (funcall secret) 'utf-8)
-        secret)
-    (user-error "No `apikey' found in the auth source")))
-
-(defvar my-gptel-ensure-backends-hook '()
-  "Additional functions to call when running `my-gptel-ensure-backends'.")
-
-(eval-when-compile
-  (require 'gptel nil t))
-(defun my-gptel-ensure-backends ()
-  (unless my-gptel--backends-defined
-    (setq my-gptel--backends-defined t)
-
-    (require 'gptel-anthropic)
-    (setq my-gptel--claude
-          (gptel-make-anthropic "Claude"
-            :stream t
-            :key #'gptel-api-key-from-auth-source))
-
-    (setq my-gptel--claude-thinking
-          (gptel-make-anthropic "Claude-Thinking"
-            :stream t
-            :key #'gptel-api-key-from-auth-source
-            :header (lambda () (when-let* ((key (gptel--get-api-key)))
-                                 `(("x-api-key" . ,key)
-                                   ("anthropic-version" . "2023-06-01")
-                                   ("anthropic-beta" . "pdfs-2024-09-25")
-                                   ("anthropic-beta" . "output-128k-2025-02-19")
-                                   ("anthropic-beta" . "prompt-caching-2024-07-31"))))
-            :request-params
-            `(:thinking
-              (:type "enabled"
-               :budget_tokens ,my-gptel-claude-thinking-budget)
-              :temperature 1
-              :max_tokens 4096)))
-
-    (require 'gptel-gemini)
-    (unless (alist-get 'gemini-2.5-pro gptel--gemini-models)
-      (setf (alist-get 'gemini-2.5-pro gptel--gemini-models)
-            '(gemini-2.5-pro
-              :description "Most powerful Gemini thinking model with maximum response accuracy and state-of-the-art performance"
-              :capabilities (tool-use json media)
-              :mime-types
-              ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
-               "application/pdf" "text/plain" "text/csv" "text/html")
-              :context-window 1048 ; 65536 output token limit
-              :input-cost 1.25 ; 2.50 for >200k tokens
-              :output-cost 10.00 ; 15 for >200k tokens
-              :cutoff-date "2025-01"))
-      (setopt gptel--gemini-models gptel--gemini-models))
-
-    (unless (alist-get 'gemini-2.5-flash gptel--gemini-models)
-      (setf (alist-get 'gemini-2.5-flash gptel--gemini-models)
-            `(:description "Best Gemini model in terms of price-performance, offering well-rounded capabilities"
-              :capabilities (tool-use json media)
-              :mime-types
-              ("image/png" "image/jpeg" "image/webp" "image/heic" "image/heif"
-               "application/pdf" "text/plain" "text/csv" "text/html")
-              :context-window 1000
-              :input-cost 0.15
-              :output-cost 0.60 ; 3.50 for thinking
-              :cutoff-date "2025-04"))
-      (setopt gptel--gemini-models gptel--gemini-models))
-
-    (setq my-gptel--gemini
-          (gptel-make-gemini "Gemini"
-            :stream t
-            :key #'gptel-api-key-from-auth-source
-            ;; don't let gptel set temperature
-            :request-params '(:generationConfig)))
-
-    (setq my-gptel--gemini-lite
-          (gptel-make-gemini "Gemini (Lite Thinking)"
-            :stream t
-            :key #'gptel-api-key-from-auth-source
-            :request-params
-            `(:generationConfig
-              (:thinkingConfig
-               (:thinkingBudget ,my-gptel-gemini-lite-thinking-budget)))))
-
-    (setq my-gptel--groq
-          (gptel-make-openai "Groq"
-            :host "api.groq.com"
-            :endpoint "/openai/v1/chat/completions"
-            :stream t
-            :key #'gptel-api-key-from-auth-source
-            :models '(deepseek-r1-distill-llama-70b
-                      llama-3.3-70b-versatile)))
-
-    (setq my-gptel--local-ai
-          (gptel-make-openai "Local AI Server"
-            :host "localhost:1337"
-            :protocol "http"
-            :stream t
-            :models my-gptel-local-models))
-
-    (setq my-gptel--mistral
-          (gptel-make-openai "Mistral"
-            :host "api.mistral.ai"
-            :stream t
-            :key #'gptel-api-key-from-auth-source
-            :models '((codestral-latest
-                       :description "Official codestral Mistral AI model"
-                       :capabilities (tool json url)
-                       :context-window 256)
-                      (open-codestral-mamba
-                       :description "Official codestral-mamba Mistral AI model"
-                       :capabilities (tool json url)
-                       :context-window 256)
-                      (open-mistral-nemo
-                       :description "Official open-mistral-nemo Mistral AI model"
-                       :capabilities (tool json url)
-                       :context-window 131))))
-
-    (require 'gptel-openai)
-    (unless (alist-get 'gpt-5.2 gptel--openai-models)
-      (setf (alist-get 'gpt-5.2 gptel--openai-models)
-            '(gpt-5.2
-              :description "Flagship model for coding, reasoning, and agentic tasks across domains"
-              :capabilities (media tool-use json url)
-              :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
-              :context-window 400
-              :input-cost 1.75
-              :output-cost 14.0
-              :cutoff-date "2025-08"))
-      (setopt gptel--openai-models gptel--openai-models))
-
-    (setq my-gptel--openai
-          (gptel-make-openai "ChatGPT"
-            :key #'gptel-api-key-from-auth-source
-            :stream t
-            :models gptel--openai-models))
-    (setq my-gptel--openrouter-kimi-k2
-          (gptel-make-openai "OpenRouter"
-            :host "openrouter.ai"
-            :endpoint "/api/v1/chat/completions"
-            :stream t
-            :key #'gptel-api-key-from-auth-source
-            :request-params
-            '(:provider (:only ["deepinfra"])
-              :temperature 0.6)
-            :models '(moonshotai/kimi-k2
-                      :description "Kimi K2")))
-
-    (require 'gptel-openai-extras)
-    (setq my-gptel--xai
-          (gptel-make-xai "xAI"
-            :key #'gptel-api-key-from-auth-source
-            :stream t
-            :models '((grok-4-fast
-                       :description "Fast reasoning model"
-                       :capabilities '(tool-use json reasoning)
-                       :context-window 256
-                       :input-cost 0.2
-                       :output-cost 1.5))))
-
-    (setq my-gptel--opencode-zen
-          (gptel-make-openai "OpenCode Zen"
-            :host "opencode.ai"
-            :endpoint "/zen/v1/chat/completions"
-            :stream t
-            :key #'gptel-api-key-from-auth-source
-            :models '((big-pickle
-                       :description "Big Pickle model - currently free"
-                       :capabilities (tool-use json)
-                       :context-window 200
-                       :input-cost 0.0
-                       :output-cost 0.0)
-                      (claude-haiku-4-5
-                       :description "Claude Haiku 4.5 model"
-                       :capabilities (tool-use json)
-                       :context-window 200
-                       :input-cost 1.0
-                       :output-cost 5.0
-                       :cutoff-date "2025-01")
-                      (claude-opus-4-5
-                       :description "Claude Opus 4.5 model - most powerful Claude model"
-                       :capabilities (tool-use json media)
-                       :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
-                       :context-window 200
-                       :input-cost 15.0
-                       :output-cost 75.0
-                       :cutoff-date "2025-02")
-                      (claude-sonnet-4-5
-                       :description "Claude Sonnet 4.5 model with enhanced capabilities"
-                       :capabilities (tool-use json media)
-                       :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
-                       :context-window 200
-                       :input-cost 3.0
-                       :output-cost 15.0
-                       :cutoff-date "2024-09")
-                      (gemini-3-pro
-                       :description "Gemini 3.0 Pro model - most intelligent model with state-of-the-art reasoning and multimodal capabilities"
-                       :capabilities (tool-use json media)
-                       :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp" "image/heic" "image/heif" "application/pdf" "text/plain" "text/csv" "text/html" "video/mp4" "video/webm")
-                       :context-window 1000
-                       :input-cost 1.25
-                       :output-cost 10.0
-                       :cutoff-date "2025-01")
-                      (glm-4.7-free
-                       :description "GLM 4.7 model (free)"
-                       :capabilities (tool-use json)
-                       :context-window 200
-                       :input-cost 0.6
-                       :output-cost 2.2)
-                      (gpt-5.2
-                       :description "GPT 5.2 model - latest GPT model"
-                       :capabilities (media tool-use json url)
-                       :mime-types ("image/jpeg" "image/png" "image/gif" "image/webp")
-                       :context-window 200
-                       :input-cost 1.75
-                       :output-cost 14.0
-                       :cutoff-date "2025-08")
-                      (grok-code
-                       :description "Grok Code Fast 1 model - currently free"
-                       :capabilities (tool-use json)
-                       :context-window 200
-                       :input-cost 0.0
-                       :output-cost 0.0)
-                      (kimi-k2
-                       :description "Kimi K2 model"
-                       :capabilities (tool-use json)
-                       :context-window 200
-                       :input-cost 0.6
-                       :output-cost 2.5)
-                      (qwen3-coder
-                       :description "Qwen3 Coder 480B model"
-                       :capabilities (tool-use json)
-                       :context-window 200
-                       :input-cost 0.45
-                       :output-cost 1.5))))
-
-    (run-hooks 'my-gptel-ensure-backends-hook))
-
-  (setq gptel-backend (symbol-value my-gptel-backend))
-  (setopt gptel-model (or my-gptel-model (car (gptel-backend-models gptel-backend)))
-          gptel-expert-commands t
-          gptel-rewrite-default-action 'accept
-          gptel-temperature my-gptel-temperature)
-
-  ;; uncomment to debug gptel:
-  ;; (setq gptel-log-level 'debug)
-
-  (when my-gptel-system-prompt
-    (setq gptel--system-message my-gptel-system-prompt)))
-
-(use-package gptel
-  :vc (:url "https://github.com/karthink/gptel"
-       :main-file "gptel.el"
-       :compile-files '("gptel-*.el"))
-  :defer t
-  :custom
-  (gptel-default-mode #'gfm-mode)
-  :config
-  (my-gptel-ensure-backends)
-  (add-to-list 'gptel-prompt-prefix-alist '(gfm-mode . "")))
-
-;; Separate block so :commands generates autoloads targeting "gptel-context",
-;; which also suppresses byte-compiler warnings for these functions.
-(use-package gptel-context
-  :ensure nil
-  :commands (gptel-context-add-file gptel-context--buffer-setup
-                                    gptel-context-confirm gptel-context-remove-all)
-  :config
-  (let ((map gptel-context-buffer-mode-map))
-    (keymap-set map "q" #'my-gptel-context-save-and-quit)))
-
-(defun my-gptel-start ()
-  "Start gptel with a default buffer name."
-  (interactive)
-  (require 'gptel)
-  (let ((backend-name (format "*%s*" (gptel-backend-name gptel-backend))))
-    (switch-to-buffer (gptel backend-name nil ""))))
-
-(defun my-gptel-toggle-local ()
-  "Toggle between local AI and remote AI."
-  (interactive)
-  (require 'gptel)
-  (let* ((use-local (cond ((eq gptel-backend (symbol-value my-gptel-backend-local))
-                           nil)
-                          ((eq gptel-backend (symbol-value my-gptel-backend-remote))
-                           t)
-                          (t t)))
-         (backend-sym
-          (if use-local my-gptel-backend-local my-gptel-backend-remote))
-         (backend (symbol-value backend-sym))
-         (model (or (if use-local my-gptel-model-local my-gptel-model-remote)
-                    (car (gptel-backend-models backend)))))
-    (setq gptel-backend backend
-          my-gptel-backend backend-sym
-          gptel-model model
-          my-gptel-model model)
-    (message "gptel backend is now %s" backend-sym)))
-
-(defun my-gptel-toggle-model (gptel-backend-sym gptel-model-sym)
-  "Switch to a specific AI model."
-  (interactive)
-  (require 'gptel)
-  (let* ((use-preferred (not (eq my-gptel-preferred-provider 'default)))
-         (backend-sym (if use-preferred
-                          my-gptel-preferred-provider
-                        gptel-backend-sym))
-         (model-sym (if use-preferred
-                        (pcase gptel-model-sym
-                          ('claude-opus-4-5-20251101 'claude-opus-4-5)
-                          ('claude-sonnet-4-5-20250929 'claude-sonnet-4-5)
-                          ('grok-code-fast-1 'grok-code)
-                          ('moonshotai/kimi-k2 'kimi-k2)
-                          (_ gptel-model-sym))
-                      gptel-model-sym)))
-    (setq gptel-backend (symbol-value my-gptel-backend-local)
-          my-gptel-backend-remote backend-sym
-          my-gptel-model-remote model-sym)
-    (my-gptel-toggle-local)))
-
-(defun my-gptel-toggle-gemini-flash ()
-  (interactive)
-  (my-gptel-toggle-model 'my-gptel--gemini-lite
-                         'gemini-2.5-flash))
-
-(defun my-gptel-toggle-gemini-pro ()
-  (interactive)
-  (my-gptel-toggle-model 'my-gptel--gemini
-                         'gemini-3-pro))
-
-(defun my-gptel-toggle-glm ()
-  (interactive)
-  (my-gptel-toggle-model 'my-gptel--opencode-zen
-                         'glm-4.7-free))
-
-(defun my-gptel-toggle-gpt ()
-  (interactive)
-  (my-gptel-toggle-model 'my-gptel--openai
-                         'gpt-5.2))
-
-(defun my-gptel-toggle-grok-code-fast ()
-  (interactive)
-  (my-gptel-toggle-model 'my-gptel--xai
-                         'grok-code-fast-1))
-
-(defun my-gptel-toggle-kimi-k2 ()
-  (interactive)
-  (my-gptel-toggle-model 'my-gptel--openrouter-kimi-k2
-                         'moonshotai/kimi-k2))
-
-(defun my-gptel-toggle-opus ()
-  (interactive)
-  (my-gptel-toggle-model 'my-gptel--claude
-                         'claude-opus-4-5-20251101))
-
-(defun my-gptel-toggle-opus-thinking ()
-  (interactive)
-  (my-gptel-toggle-model 'my-gptel--claude-thinking
-                         'claude-opus-4-5-20251101))
-
-(defun my-gptel-toggle-sonnet ()
-  (interactive)
-  (my-gptel-toggle-model 'my-gptel--claude
-                         'claude-sonnet-4-5-20250929))
-
-(defun my-gptel-toggle-sonnet-thinking ()
-  (interactive)
-  (my-gptel-toggle-model 'my-gptel--claude-thinking
-                         'claude-sonnet-4-5-20250929))
-
-(defun my-gptel-context-save-and-quit ()
-  "Apply gptel context changes and quit."
-  (interactive)
-  (cl-letf (((symbol-function 'gptel-context-quit) (lambda () (quit-window))))
-    (gptel-context-confirm)))
-
-(defun my-gptel-add-function ()
-  "Add the current function to the LLM context.
-
-Use the region instead if one is selected."
-  (interactive)
-  (unless (use-region-p)
-    (gptel-fn-complete-mark-function))
-  (call-interactively #'gptel-add))
-
-(defun my-gptel-add-current-file ()
-  "Add the current file to the LLM context."
-  (interactive)
-  (gptel-context-add-file (buffer-file-name)))
-
-(defun my-gptel-view-context ()
-  (interactive)
-  (gptel-context--buffer-setup))
-
-(defun my-gptel-rewrite-function ()
-  "Rewrite or refactor the current function using an LLM.
-
-Rewrite the region instead if one is selected."
-  (interactive)
-  (unless (use-region-p)
-    (gptel-fn-complete-mark-function))
-  (let ((gptel-include-reasoning nil))
-    (call-interactively #'gptel-rewrite)))
-
-(defun my-gptel-query-function ()
-  "Add the current function to gptel context and query an LLM.
-
-Use the region instead if one is selected."
-  (interactive)
-  (my-gptel-add-function)
-  (split-window-right)
-  (other-window 1)
-  (call-interactively #'my-gptel-start))
-
-(defun my-gptel-context-remove-all ()
-  (interactive)
-  (gptel-context-remove-all))
-
-;; Minuet for AI completion
-(defun my-minuet-exclude ()
-  (let* ((filename (buffer-file-name)))
-    (or (not filename)
-        (when-let* ((lst my-minuet-exclude-file-regexps))
-          (string-match-p
-           (string-join (mapcar (lambda (x)
-                                  (concat "\\(?:" x "\\)")) lst) "\\|")
-           filename)))))
-
-(defun my-minuet-maybe-turn-on-auto-suggest ()
-  (when (and my-minuet-auto-suggest-p (not (my-minuet-exclude)))
-    (minuet-auto-suggestion-mode 1)))
-
-(eval-when-compile
-  (require 'minuet nil t))
-(defun my-minuet-get-api-key (backend)
-  (my-auth-source-get-api-key (gptel-backend-host backend)))
-
-(defun my-minuet-block-suggestions ()
-  "Return nil if we should show suggestions, t (blocked) otherwise.
-
-Criteria:
-- File must be writable
-- Cursor must not be at beginning of line
-- Cursor must be at the end of line (ignoring whitespace)."
-  (not (and (not buffer-read-only)
-            (not (bolp))
-            (looking-at-p "\s*$"))))
-
-(defun my-minuet-sync-options-from-gptel (m-backend g-backend &optional g-model)
-  "Synchronize Minuet provider options from the current gptel backend.
-
-M-BACKEND is the Minuet backend symbol.
-G-BACKEND is the gptel backend instance.
-optional G-MODEL is the gptel model symbol to use."
-  (let* ((options-name (format "minuet-%s-options" (symbol-name m-backend)))
-         (options (symbol-value (intern options-name)))
-         (model (or g-model (car (gptel-backend-models g-backend)))))
-    (when (memq m-backend '(openai-compatible openai-fim-compatible))
-      (plist-put options :name (gptel-backend-name g-backend))
-      (setf (plist-get options :optional)
-            (copy-sequence (gptel--model-request-params gptel-model)))
-      (plist-put options :model (symbol-name model)))
-    (cond (my-minuet-provider-local-p
-           (minuet-set-optional-options options :max_tokens 128)
-           (plist-put options :api-key #'(lambda () "local-ai")))
-          (t
-           (plist-put options :api-key
-                      `(lambda () (my-minuet-get-api-key ,g-backend)))))
-    (cond ((eq m-backend 'openai-fim-compatible)
-           (plist-put options :end-point
-                      (format "%s://%s%s"
-                              (gptel-backend-protocol g-backend)
-                              (gptel-backend-host g-backend)
-                              "/v1/completions")))
-          ((eq m-backend 'openai-compatible)
-           (plist-put options :end-point
-                      (format "%s://%s%s"
-                              (gptel-backend-protocol g-backend)
-                              (gptel-backend-host g-backend)
-                              (gptel-backend-endpoint g-backend)))))))
-
-(defun my-minuet-init-provider ()
-  "Initialize Minuet provider settings based on current gptel backend."
-  (interactive)
-  (my-gptel-ensure-backends)
-  (let* ((g-provider (pcase my-minuet-provider
-                       ('claude my-gptel--claude)
-                       ('openai my-gptel--openai)
-                       ((or 'openai-compatible 'openai-compatible-fim)
-                        (symbol-value my-gptel-preferred-provider)))))
-    (my-minuet-sync-options-from-gptel my-minuet-provider
-                                       g-provider
-                                       my-minuet-model)
-    (setq minuet-provider my-minuet-provider)))
-
-(use-package minuet
-  :vc (:url "https://github.com/milanglacier/minuet-ai.el"
-       :main-file "minuet.el")
-  :defer t
-  :hook (prog-mode . my-minuet-maybe-turn-on-auto-suggest)
-  :custom
-  (minuet-add-single-line-entry nil)
-  (minuet-auto-suggestion-debounce-delay 0.3)
-  (minuet-n-completions 1)
-  :config
-  (my-minuet-init-provider)
-
-  (add-hook 'minuet-auto-suggestion-block-predicates
-            #'my-minuet-block-suggestions -100)
-
-  (keymap-set minuet-active-mode-map "C-c C-c" #'minuet-accept-suggestion)
-  (keymap-set minuet-active-mode-map "C-c C-n" #'minuet-next-suggestion)
-  (keymap-set minuet-active-mode-map "C-c C-p" #'minuet-previous-suggestion)
-  (keymap-set minuet-active-mode-map "C-g" #'minuet-dismiss-suggestion)
-  (keymap-set minuet-active-mode-map "<tab>" #'minuet-accept-suggestion-line))
-
-(my-around-advice #'my-minuet-maybe-turn-on-auto-suggest
-                  #'my-inhibit-in-indirect-md-buffers)
-
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
 (use-package dumb-jump
   :vc (:url "https://github.com/jacktasia/dumb-jump"
@@ -1599,15 +1041,6 @@ optional G-MODEL is the gptel model symbol to use."
 
 (defvar my-xref-map
   (let ((map (make-sparse-keymap)))
-    (keymap-set map "a a" #'my-gptel-add-function)
-    (keymap-set map "a f" #'my-gptel-add-current-file)
-    (keymap-set map "c" #'minuet-show-suggestion)
-    (keymap-set map "f" #'gptel-fn-complete)
-    (keymap-set map "k" #'my-gptel-context-remove-all)
-    (keymap-set map "l" #'my-gptel-toggle-local)
-    (keymap-set map "q" #'my-gptel-query-function)
-    (keymap-set map "r" #'my-gptel-rewrite-function)
-    (keymap-set map "v" #'my-gptel-view-context)
     (keymap-set map "." #'xref-find-definitions)
     (keymap-set map "," #'xref-go-back)
     (keymap-set map "/" #'xref-find-references)
@@ -2221,10 +1654,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   :vc (:url "https://github.com/minad/consult"
        :main-file "consult.el"
        :compile-files '("consult-*.el"))
-  :defer t
-  :config
-  (with-eval-after-load "minuet"
-    (consult-customize minuet-complete-with-minibuffer)))
+  :defer t)
 
 (use-package embark
   :vc (:url "https://github.com/oantolin/embark"
@@ -3082,9 +2512,6 @@ This prevents the window from later moving back once the minibuffer is done show
     (keymap-set map "a a" #'project-remember-projects-under)
     (keymap-set map "c" #'project-compile)
     (keymap-set map "f" #'project-find-file)
-    (keymap-set map "g g" #'my-gptel-start)
-    (keymap-set map "g p" #'gptel-menu)
-    (keymap-set map "g s" #'gptel-send)
     (keymap-set map "k" #'project-kill-buffers)
     (keymap-set map "n" #'my-org-find-notes-file)
     (keymap-set map "p" #'project-switch-project)
