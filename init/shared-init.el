@@ -2349,6 +2349,7 @@ This prevents the window from later moving back once the minibuffer is done show
 
 (define-derived-mode my-git-commit-gfm-mode gfm-mode "Git Commit GFM"
   "Major mode for Git commit messages with GFM formatting."
+  (setq-local apheleia-inhibit t)
   (setq-local comment-start "#")
   (setq-local comment-end "")
   (setq-local comment-start-skip "#+[ \t]*")
