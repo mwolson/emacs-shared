@@ -154,27 +154,27 @@
     (if (not (member :compile-files arg))
         (funcall orig-fn arg)
       (cl-flet* ((ensure-string (s)
-                   (if (and s (stringp s)) s (symbol-name s)))
+                                (if (and s (stringp s)) s (symbol-name s)))
                  (ensure-symbol (s)
-                   (if (and s (stringp s)) (intern s) s))
+                                (if (and s (stringp s)) (intern s) s))
                  (ensure-list (value)
-                   (pcase value
-                     (`(quote ,items) items)
-                     ((pred listp) value)
-                     (_ (list value))))
+                              (pcase value
+                                (`(quote ,items) items)
+                                ((pred listp) value)
+                                (_ (list value))))
                  (normalize (k v)
-                   (pcase k
-                     (:rev (pcase v
-                             ('nil (if use-package-vc-prefer-newest
-                                       nil
-                                     :last-release))
-                             (:last-release :last-release)
-                             (:newest nil)
-                             (_ (ensure-string v))))
-                     (:vc-backend (ensure-symbol v))
-                     ((or :compile-files :ignored-files)
-                      (ensure-list v))
-                     (_ (ensure-string v)))))
+                            (pcase k
+                              (:rev (pcase v
+                                      ('nil (if use-package-vc-prefer-newest
+                                                nil
+                                              :last-release))
+                                      (:last-release :last-release)
+                                      (:newest nil)
+                                      (_ (ensure-string v))))
+                              (:vc-backend (ensure-symbol v))
+                              ((or :compile-files :ignored-files)
+                               (ensure-list v))
+                              (_ (ensure-string v)))))
         (pcase-let* ((`(,name . ,opts) arg))
           (if (stringp opts)
               (list name opts)
