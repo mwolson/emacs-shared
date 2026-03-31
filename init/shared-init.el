@@ -2249,7 +2249,7 @@ This prevents the window from later moving back once the minibuffer is done show
        :main-file "nix-ts-mode.el")
   :defer t)
 (use-package nsis-mode
-  :vc (:url "https://github.com/mwolson/nsis-mode"
+  :vc (:url "https://github.com/mattfidler/nsis-mode"
        :main-file "nsis-mode.el")
   :defer t)
 (use-package prisma-ts-mode

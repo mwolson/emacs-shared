@@ -7,10 +7,22 @@
 
 (require 'treesit) ; to silence an autoload warning, seems like emacs bug
 (require 'package)
+(require 'use-package)
 (setq my-install-packages t)
 (setq package-native-compile t)
 (package-initialize)
 (package-refresh-contents)
+
+(defvar my-install-packages--desired-vc-specs nil
+  "Normalized VC specs declared by `use-package' during this run.")
+
+(defun my-install-packages-record-vc-spec (name _keyword arg _rest _state)
+  (setf (alist-get name my-install-packages--desired-vc-specs nil nil #'eq)
+        arg))
+
+(define-advice use-package-handler/:vc
+    (:before (name keyword arg rest state) record-install-spec)
+  (my-install-packages-record-vc-spec name keyword arg rest state))
 
 (dolist (elc (file-expand-wildcards (concat my-emacs-path "init/*.elc") t))
   (delete-file elc))
@@ -25,6 +37,40 @@
 
 ;; Note: package-autoremove is not called here because :vc packages aren't
 ;; tracked in package-selected-packages and would be incorrectly removed.
+
+;; If a package's configured VC URL changed, reinstall it from the new remote
+;; before the normal upgrade pass.  `package-vc-upgrade-all' updates existing
+;; checkouts but does not rewrite their origin URL.
+(message "Checking VC packages for source URL changes...")
+(dolist (pkg-alist-entry package-alist)
+  (dolist (pkg-desc (cdr pkg-alist-entry))
+    (when-let* (((package-vc-p pkg-desc))
+                (desired-arg (alist-get (package-desc-name pkg-desc)
+                                        my-install-packages--desired-vc-specs
+                                        nil nil #'eq)))
+      (let* ((desired-spec (nth 1 desired-arg))
+             (desired-rev (nth 2 desired-arg))
+             (desired-url (plist-get desired-spec :url))
+             (pkg-dir (package-desc-dir pkg-desc)))
+        (when (and desired-url
+                   pkg-dir
+                   (file-directory-p (expand-file-name ".git" pkg-dir)))
+          (let* ((default-directory pkg-dir)
+                 (current-url
+                  (ignore-errors
+                    (car (process-lines "git" "remote" "get-url" "origin")))))
+            (when (and current-url
+                       (not (string-equal
+                             (replace-regexp-in-string "\\(?:\\.git\\|/\\)\\'" ""
+                                                       current-url)
+                             (replace-regexp-in-string "\\(?:\\.git\\|/\\)\\'" ""
+                                                       desired-url))))
+              (message "  %s: reinstalling from %s (was %s)"
+                       (package-desc-name pkg-desc) desired-url current-url)
+              (package-delete pkg-desc t t)
+              (package-vc-install
+               (cons (package-desc-name pkg-desc) desired-spec)
+               desired-rev))))))))
 
 ;; Ensure all VC packages are on a tracking branch (not detached HEAD) so that
 ;; package-vc-upgrade-all can pull.  This is needed when packages were

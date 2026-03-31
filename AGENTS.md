@@ -37,6 +37,7 @@ Install all packages from a fresh or existing `~/.emacs.d/elpa`:
 This script:
 
 - Installs missing packages (both ELPA and `:vc`)
+- Reinstalls `:vc` packages whose configured source URL changed
 - Fixes any VC packages stuck on detached HEAD (from old `:last-release`
   installs) by checking out the default branch
 - Runs `package-vc-upgrade-all` to pull latest commits for all VC packages
