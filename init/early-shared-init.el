@@ -69,6 +69,11 @@
                               pkg-dir)))
     (load autoload-name nil t)))
 
+(use-package vcupp
+  :vc (:url "https://github.com/mwolson/vcupp")
+  :init (my-preload-package 'vcupp)
+  :demand t)
+
 (use-package compile-angel
   :vc (:url "https://github.com/jamescherti/compile-angel.el"
        :main-file "compile-angel.el")

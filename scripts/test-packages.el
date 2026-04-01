@@ -73,14 +73,15 @@
                nerd-icons-completion nix-ts-mode nsis-mode orderless parseclj
                parseedn popon pulsar rainbow-delimiters reformatter rg
                sesman slime spinner svg-lib svelte-ts-mode swift-ts-mode
-               terraform-mode tmux-mode toc-org transient vertico
+               terraform-mode tmux-mode toc-org transient vcupp
+               vertico
                vertico-prescient vue-ts-mode web-mode websocket wgrep
                with-editor zig-ts-mode))
   (my-test-package-installed pkg))
 
 ;; Key features loadable
 (dolist (feature '(use-package eglot magit consult vertico corfu
-                   dired tramp diff-hl pulsar))
+                   dired tramp diff-hl pulsar vcupp))
   (my-test-feature-loadable feature))
 
 ;; Byte-compilation check for a few key packages

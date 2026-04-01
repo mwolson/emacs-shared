@@ -53,8 +53,10 @@ Run native compilation on all config files to catch warnings and errors:
 - `./scripts/native-comp-all.sh`
 
 This enables compile-angel (`my-native-comp-enable t`) which byte-compiles on
-load, then native-compiles the three config files. It requires
-`package-initialize` to find installed packages.
+load through `vcupp-native-comp` when `compile-angel` is installed, then
+native-compiles the main config entry files after loading the shared config. The
+batch wrapper bootstraps `vcupp` with `use-package :vc :demand`, so it also
+works from a fresh `package-user-dir`.
 
 Warnings to watch for:
 
