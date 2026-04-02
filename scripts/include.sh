@@ -50,7 +50,14 @@ function update_submodule () {
 }
 
 function emacs_script() {
+    local status
+
+    set -o pipefail
     emacs --script "$@" 2>&1 | grep -v '^Loading '
+    status=$?
+    set +o pipefail
+
+    return "$status"
 }
 
 function native_comp_all() {
@@ -65,4 +72,3 @@ function set_treesit_dir() {
 function get_treesit_dir() {
     cat "$(get_topdir)"/build/.treesit-dir
 }
-

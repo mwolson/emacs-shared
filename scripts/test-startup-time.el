@@ -1,6 +1,5 @@
 ;;; test-startup-time.el --- -*- lexical-binding: t -*-
 
-(setq my-native-comp-enable nil)
 (setq my-server-start-p nil)
 (setq my-emacs-path (expand-file-name
                      (concat (file-name-directory load-file-name) "../")))

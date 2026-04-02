@@ -1,12 +1,12 @@
 ;;; test-packages.el --- -*- lexical-binding: t -*-
 
-(setq my-native-comp-enable nil)
 (setq my-server-start-p nil)
 (setq my-emacs-path (expand-file-name
                      (concat (file-name-directory load-file-name) "../")))
 
 (require 'package)
 (package-initialize)
+(advice-add 'package-vc-install :override #'ignore)
 
 (load-file (concat my-emacs-path "init/shared-init.el"))
 (my-run-deferred-tasks)
@@ -87,6 +87,40 @@
 ;; Byte-compilation check for a few key packages
 (dolist (pkg '(magit consult vertico corfu))
   (my-test-has-elc pkg))
+
+;; Self-dependency check
+(require 'vcupp)
+(let ((self-deps (vcupp-find-self-deps)))
+  (if self-deps
+      (push (format "SELF-DEPS: %s" (mapconcat #'symbol-name self-deps ", "))
+            my-test-failures)
+    (cl-incf my-test-pass-count)))
+
+;; Duplicate bare+versioned package directories
+(let ((dupes (vcupp-find-duplicate-packages)))
+  (if dupes
+      (push (format "DUPLICATE PACKAGES (bare + versioned): %s"
+                    (string-join dupes ", "))
+            my-test-failures)
+    (cl-incf my-test-pass-count)))
+
+;; Clean package re-initialization (catches max-lisp-eval-depth from self-deps)
+(let ((nesting-errors 0))
+  (advice-add 'message :before
+              (lambda (fmt &rest _args)
+                (when (and (stringp fmt)
+                           (string-match-p "max-lisp-eval-depth" fmt))
+                  (setq nesting-errors (1+ nesting-errors))))
+              '((name . my-test-nesting-check)))
+  (setq package--initialized nil
+        package-activated-list nil)
+  (package-initialize)
+  (advice-remove 'message 'my-test-nesting-check)
+  (if (> nesting-errors 0)
+      (push (format "PACKAGE-INITIALIZE: %d max-lisp-eval-depth error(s)"
+                    nesting-errors)
+            my-test-failures)
+    (cl-incf my-test-pass-count)))
 
 (message "\n=== Results ===")
 (message "Passed: %d" my-test-pass-count)

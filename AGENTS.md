@@ -52,11 +52,12 @@ Run native compilation on all config files to catch warnings and errors:
 
 - `./scripts/native-comp-all.sh`
 
-This enables compile-angel (`my-native-comp-enable t`) which byte-compiles on
-load through `vcupp-native-comp` when `compile-angel` is installed, then
-native-compiles the main config entry files after loading the shared config. The
-batch wrapper bootstraps `vcupp` with `use-package :vc :demand`, so it also
-works from a fresh `package-user-dir`.
+`vcupp-native-comp` sets `vcupp-native-comp-active-p` to t and enables
+`compile-angel-on-load-mode` before loading the config, so packages and other
+libraries loaded during init are byte-compiled and native-compiled
+automatically. It then native-compiles the main config entry files after
+loading. The batch wrapper bootstraps `vcupp` with `use-package :vc :demand`, so
+it also works from a fresh `package-user-dir`.
 
 Warnings to watch for:
 
@@ -140,6 +141,24 @@ full interactive Emacs session.
     - `emacs -Q --batch -l tmp/<topic>-test.el`
   - Print output with `princ` and exit non-zero with `(kill-emacs 1)` on
     failure.
+
+## Local checkouts of mwolson libraries
+
+This config uses several mwolson-authored packages installed via
+`use-package :vc`. The canonical development checkouts live outside this repo.
+The preferred workflow is: develop in the `~/devel/projects/` (or `~/vcupp/`)
+checkout, push changes, then update the submodule or `:vc` install here. Some
+libraries have commented-out `add-to-list 'load-path` blocks in
+`init/shared-init.el` to make it easy to test the local checkout directly.
+
+| Library                 | Local checkout                              | Used in                     | Local-dev shortcut in shared-init |
+| ----------------------- | ------------------------------------------- | --------------------------- | --------------------------------- |
+| eglot-python-preset     | `~/devel/projects/eglot-python-preset/`     | `init/shared-init.el`       | yes (line ~1324)                  |
+| eglot-typescript-preset | `~/devel/projects/eglot-typescript-preset/` | `init/shared-init.el`       | yes (line ~1119)                  |
+| vcupp                   | `~/devel/projects/vcupp/`                   | `init/early-shared-init.el` | no                                |
+
+Other mwolson projects in `~/devel/projects/` that are not currently used in
+this config: gptel-fn-complete.
 
 ## Gotchas
 

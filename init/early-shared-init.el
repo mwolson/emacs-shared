@@ -40,80 +40,8 @@
 
 (setq ring-bell-function #'my-flash-bell-icon)
 
-;; Initialize early packages
-(require 'cl-seq)
-(require 'use-package)
-
-(defvar my-install-packages nil
-  "When non-nil, use-package will install/update missing packages.")
-
-(setopt use-package-always-ensure my-install-packages)
-(setopt use-package-vc-prefer-newest t)
-
-(defun my-preload-package (sym)
-  "Preload autoloads for package SYM from `package-user-dir'."
-  (when-let* ((pkg-dirs (and (file-directory-p package-user-dir)
-                             (directory-files package-user-dir t "\\`[^.]")))
-              (sym-name (symbol-name sym))
-              (pkg-dir (or (let ((vc-dir (expand-file-name sym-name package-user-dir)))
-                             (and (file-directory-p vc-dir) vc-dir))
-                           (let ((regexp (format "\\`%s-[0-9]" (regexp-quote sym-name))))
-                             (cl-find-if
-                              (lambda (d)
-                                (let ((file (file-name-nondirectory d)))
-                                  (string-match-p regexp file)))
-                              pkg-dirs))))
-              ((file-directory-p pkg-dir))
-              (autoload-name (expand-file-name
-                              (format "%s-autoloads" sym-name)
-                              pkg-dir)))
-    (load autoload-name nil t)))
-
-(use-package vcupp
-  :vc (:url "https://github.com/mwolson/vcupp")
-  :init (my-preload-package 'vcupp)
-  :demand t)
-
-(use-package compile-angel
-  :vc (:url "https://github.com/jamescherti/compile-angel.el"
-       :main-file "compile-angel.el")
-  :init (my-preload-package 'compile-angel)
-  :defer t)
-(use-package ligature
-  :vc (:url "https://github.com/mickeynp/ligature.el"
-       :main-file "ligature.el")
-  :init (my-preload-package 'ligature)
-  :defer t)
-(use-package maxframe
-  :vc (:url "https://github.com/rmm5t/maxframe.el"
-       :main-file "maxframe.el")
-  :init (my-preload-package 'maxframe)
-  :commands (maximize-frame)
-  :defer t
-  :config
-  (when my-frame-pad-width
-    (setopt mf-max-width (- (display-pixel-width) my-frame-pad-width)))
-  (when my-frame-pad-height
-    (setopt mf-max-height (- (display-pixel-height) my-frame-pad-height))))
-(use-package modus-themes
-  :vc (:url "https://github.com/protesilaos/modus-themes")
-  :init (my-preload-package 'modus-themes)
-  :defer t)
-
-(defvar my-native-comp-enable nil
-  "Whether to natively compile libraries with `compile-angel'.")
-
-(eval-and-compile
-  (if my-native-comp-enable
-      (progn
-        (setq load-prefer-newer t)
-        (require 'compile-angel)
-        (compile-angel-on-load-mode 1))
-    (require 'comp-run)
-    (setq native-comp-async-report-warnings-errors 'silent
-          native-comp-jit-compilation nil)))
-
 ;;; Options that change behavior of this repo
+(require 'cl-seq)
 
 (defvar my-default-font      nil)
 (defvar my-default-emoji-font nil)
@@ -171,6 +99,57 @@
              "~/.local/bin"
              "/opt/maven/bin"))))
 (setq my-system-paths (cl-remove-if-not #'file-exists-p my-system-paths))
+
+;; Initialize early packages
+(require 'use-package)
+
+(setopt use-package-vc-prefer-newest t)
+
+(use-package vcupp
+  :vc (:url "https://github.com/mwolson/vcupp")
+  :init
+  ;; Bootstrap: load vcupp autoloads directly since vcupp-preload-package
+  ;; is not yet available.  After this, vcupp-preload-package can be used
+  ;; for other packages.
+  (when-let* ((dir (expand-file-name "vcupp" package-user-dir))
+              ((file-directory-p dir))
+              (autoloads (expand-file-name "vcupp-autoloads" dir)))
+    (load autoloads nil t))
+  :demand t)
+
+(eval-and-compile
+  (vcupp-suppress-native-comp-jit))
+
+(vcupp-ensure-packages-on-install)
+
+(use-package compile-angel
+  :vc (:url "https://github.com/jamescherti/compile-angel.el"
+       :main-file "compile-angel.el")
+  :init (vcupp-preload-package 'compile-angel)
+  :defer t)
+
+(use-package ligature
+  :vc (:url "https://github.com/mickeynp/ligature.el"
+       :main-file "ligature.el")
+  :init (vcupp-preload-package 'ligature)
+  :defer t)
+
+(use-package maxframe
+  :vc (:url "https://github.com/rmm5t/maxframe.el"
+       :main-file "maxframe.el")
+  :init (vcupp-preload-package 'maxframe)
+  :commands (maximize-frame)
+  :defer t
+  :config
+  (when my-frame-pad-width
+    (setopt mf-max-width (- (display-pixel-width) my-frame-pad-width)))
+  (when my-frame-pad-height
+    (setopt mf-max-height (- (display-pixel-height) my-frame-pad-height))))
+
+(use-package modus-themes
+  :vc (:url "https://github.com/protesilaos/modus-themes")
+  :init (vcupp-preload-package 'modus-themes)
+  :defer t)
 
 ;;; Display
 
@@ -338,7 +317,7 @@
       (insert (substitute-command-keys initial-scratch-message))
       (set-buffer-modified-p nil))))
 
-(unless (or my-native-comp-enable noninteractive)
+(unless noninteractive
   ;;(my-reset-theme)
   (pop-to-buffer-same-window (messages-buffer))
   (my-populate-scratch-buffer)
