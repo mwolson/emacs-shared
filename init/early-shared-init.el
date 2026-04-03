@@ -108,13 +108,14 @@
 (use-package vcupp
   :vc (:url "https://github.com/mwolson/vcupp")
   :init
-  ;; Bootstrap: load vcupp autoloads directly since vcupp-preload-package
-  ;; is not yet available.  After this, vcupp-preload-package can be used
-  ;; for other packages.
+  ;; Bootstrap: add vcupp to load-path directly since
+  ;; vcupp-preload-package is not yet available.  This only depends on
+  ;; the directory existing (guaranteed after git pull), unlike loading
+  ;; autoloads which can be missing if package-vc--unpack-1 failed
+  ;; silently during an upgrade.
   (when-let* ((dir (expand-file-name "vcupp" package-user-dir))
-              ((file-directory-p dir))
-              (autoloads (expand-file-name "vcupp-autoloads" dir)))
-    (load autoloads nil t))
+              ((file-directory-p dir)))
+    (add-to-list 'load-path dir))
   :demand t)
 
 (eval-and-compile
