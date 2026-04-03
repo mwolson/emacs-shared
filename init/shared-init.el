@@ -1245,6 +1245,7 @@ interactively.
   (markdown-command "npx marked")
   (markdown-enable-wiki-links t)
   (markdown-fontify-code-blocks-natively t)
+  (markdown-spaces-after-code-fence 0)
   :config
   (my-markdown-install-aliases)
   (my-replace-cdrs-in-alist 'sh-mode 'bash-ts-mode
