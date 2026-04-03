@@ -833,8 +833,8 @@ interactively.
                                    '(scroll-down-command scroll-up-command))))
 
   (with-eval-after-load "consult"
-    (add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
-    (add-hook 'consult-after-jump-hook #'pulsar-reveal-entry)))
+    (add-hook 'consult-after-jump-hook #'pulsar-recenter-top t)
+    (add-hook 'consult-after-jump-hook #'pulsar-reveal-entry t)))
 
 (my-defer-startup #'pulsar-global-mode)
 
@@ -903,7 +903,7 @@ interactively.
 (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
 (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
 (add-to-list 'major-mode-remap-alist '(c-or-c++-mode . c-or-c++-ts-mode))
-(add-hook 'c-ts-base-mode-hook #'eglot-ensure)
+(add-hook 'c-ts-base-mode-hook #'eglot-ensure t)
 (add-hook 'c-ts-base-mode-hook #'my-xref-minor-mode t)
 
 ;; C# - requires exactly v0.20.0 of its treesit grammar
@@ -1029,17 +1029,17 @@ interactively.
 (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
 (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))
 (add-to-list 'my-md-code-aliases '(go . go-ts-mode))
-(add-hook 'go-ts-mode-hook #'eglot-ensure)
-(add-hook 'go-mod-ts-mode-hook #'eglot-ensure)
+(add-hook 'go-ts-mode-hook #'eglot-ensure t)
+(add-hook 'go-mod-ts-mode-hook #'eglot-ensure t)
 
 ;; GraphQL
 (add-to-list 'auto-mode-alist '("\\.\\(graphql\\|gql\\)\\'" . graphql-ts-mode))
-(add-hook 'graphql-ts-mode-hook #'my-apheleia-set-js-formatter)
+(add-hook 'graphql-ts-mode-hook #'my-apheleia-set-js-formatter t)
 
 ;; HTML
 (add-to-list 'major-mode-remap-alist '(html-mode . html-ts-mode))
 
-(add-hook 'html-ts-mode-hook #'eglot-ensure)
+(add-hook 'html-ts-mode-hook #'eglot-ensure t)
 (add-hook 'html-ts-mode-hook #'my-setup-web-ligatures t)
 
 ;; Java
@@ -1056,15 +1056,15 @@ interactively.
                     (:extendedClientCapabilities
                      (:classFileContentsSupport t
                       :skipProjectConfiguration t)))))
-  (add-hook 'java-ts-mode-hook #'eglot-ensure))
+  (add-hook 'java-ts-mode-hook #'eglot-ensure t))
 
 ;; JSON
 (add-to-list 'major-mode-remap-alist '(json-mode . json-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.jsonc?\\'" . json-ts-mode))
 (add-hook 'json-ts-mode-hook #'add-node-modules-path t)
-(add-hook 'json-ts-mode-hook #'eglot-ensure)
+(add-hook 'json-ts-mode-hook #'eglot-ensure t)
 (add-hook 'json-ts-mode-hook #'my-setup-web-ligatures t)
-(add-hook 'json-ts-mode-hook #'my-apheleia-set-js-formatter)
+(add-hook 'json-ts-mode-hook #'my-apheleia-set-js-formatter t)
 
 ;; JTSX (Astro, Javascript, JSX, Typescript, and TSX support)
 (defvar my-jtsx-major-modes
@@ -1133,7 +1133,7 @@ interactively.
     (add-hook hook #'eglot-ensure t)
     (add-hook hook #'my-node-repl-setup t)
     (add-hook hook #'my-setup-web-ligatures t)
-    (add-hook hook #'my-apheleia-set-js-formatter)))
+    (add-hook hook #'my-apheleia-set-js-formatter t)))
 
 (my-around-advice
  '(add-node-modules-path
@@ -1147,7 +1147,7 @@ interactively.
 (defun my-setup-kdl-mode ()
   (setq-local tab-width 4))
 
-(add-hook 'kdl-mode-hook #'my-setup-kdl-mode)
+(add-hook 'kdl-mode-hook #'my-setup-kdl-mode t)
 
 ;; Kotlin
 (add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-ts-mode))
@@ -1237,6 +1237,7 @@ interactively.
        :main-file "markdown-mode.el")
   :defer t
   :hook ((markdown-mode . add-node-modules-path)
+         (markdown-mode . eglot-ensure)
          (markdown-mode . my-setup-web-ligatures)
          (markdown-mode . my-turn-on-arrow-input)
          (markdown-mode . my-apheleia-set-markdown-formatter))
@@ -1261,18 +1262,14 @@ interactively.
 
 (add-to-list
  'eglot-server-programs
- `(my-mdx-mode
-   . ("mdx-language-server" "--stdio"
+ '((gfm-mode my-mdx-mode)
+   . ("vscode-markdown-language-server" "--stdio"
       :initializationOptions
-      (:typescript
-       (:enabled t
-        :tsdk ,(concat my-emacs-path "node_modules/typescript/lib"))))))
+      (:markdownFileExtensions ["md" "mdx"]))))
 
 ;; MDX
 (define-derived-mode my-mdx-mode gfm-mode "MDX"
   "Major mode for highlighting MDX files.")
-
-(add-hook 'my-mdx-mode-hook #'eglot-ensure)
 
 (add-to-list 'auto-mode-alist '("\\.mdx\\'" . my-mdx-mode))
 (add-to-list 'my-md-code-aliases '(mdx . my-mdx-mode))
@@ -1343,7 +1340,7 @@ interactively.
                . ("rust-analyzer"
                   :initializationOptions
                   (:check (:command "clippy")))))
-(add-hook 'rust-ts-mode-hook #'eglot-ensure)
+(add-hook 'rust-ts-mode-hook #'eglot-ensure t)
 
 ;; SCSS
 (use-package flymake-stylelint
@@ -1359,7 +1356,7 @@ interactively.
 (add-to-list 'eglot-server-programs
              '((scss-mode)
                . ("vscode-css-language-server" "--stdio")))
-(add-hook 'scss-mode-hook #'eglot-ensure)
+(add-hook 'scss-mode-hook #'eglot-ensure t)
 
 ;; Svelte
 (use-package svelte-ts-mode
@@ -1370,7 +1367,7 @@ interactively.
 (add-hook 'svelte-ts-mode-hook #'add-node-modules-path t)
 (add-hook 'svelte-ts-mode-hook #'eglot-ensure t)
 (add-hook 'svelte-ts-mode-hook #'my-setup-web-ligatures t)
-(add-hook 'svelte-ts-mode-hook #'my-apheleia-set-js-formatter)
+(add-hook 'svelte-ts-mode-hook #'my-apheleia-set-js-formatter t)
 
 ;; Swift
 (add-to-list 'auto-mode-alist '("\\.swift\\(interface\\)?\\'" . swift-ts-mode))
@@ -1388,7 +1385,7 @@ interactively.
 (add-hook 'vue-ts-mode-hook #'add-node-modules-path t)
 (add-hook 'vue-ts-mode-hook #'eglot-ensure t)
 (add-hook 'vue-ts-mode-hook #'my-setup-web-ligatures t)
-(add-hook 'vue-ts-mode-hook #'my-apheleia-set-js-formatter)
+(add-hook 'vue-ts-mode-hook #'my-apheleia-set-js-formatter t)
 
 (eval-when-compile
   (require 'css-mode nil t))
@@ -1397,7 +1394,7 @@ interactively.
   (setq-local font-lock-fontify-region-function #'css--fontify-region))
 
 (with-eval-after-load "vue-ts-mode"
-  (add-hook 'vue-ts-mode-hook #'my-vue-ts-set-fontify-css-colors))
+  (add-hook 'vue-ts-mode-hook #'my-vue-ts-set-fontify-css-colors t))
 
 ;; Web Mode
 (use-package web-mode
@@ -1420,7 +1417,7 @@ interactively.
   (run-hooks 'prog-mode-hook))
 
 (add-hook 'yaml-ts-mode-hook #'my-run-prog-mode-hooks t)
-(add-hook 'yaml-ts-mode-hook #'my-apheleia-set-yaml-formatter)
+(add-hook 'yaml-ts-mode-hook #'my-apheleia-set-yaml-formatter t)
 (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
 
 ;; Zig
@@ -1429,7 +1426,7 @@ interactively.
 (add-to-list 'eglot-server-programs
              '((zig-ts-mode)
                . ("zls" :initializationOptions ())))
-(add-hook 'zig-ts-mode-hook #'eglot-ensure)
+(add-hook 'zig-ts-mode-hook #'eglot-ensure t)
 
 ;; Consult, Embark, Marginalia, Orderless, Prescient, Vertico
 (defvar my-minibuffer-from-consult-line nil)
