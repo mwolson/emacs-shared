@@ -123,26 +123,25 @@ echo "OS      : $OS"
 echo "BUILD   : $BUILD"
 echo "BUILD_GIT_MANPAGES : $BUILD_GIT_MANPAGES"
 echo "DESTDIR : $DESTDIR"
-echo
 
+echo
 git submodule init
 git submodule sync
 git submodule update --depth 1
-echo
 
 if [[ -n "$BUILD" ]]; then
+    echo -e "\nInstalling pnpm dependencies..."
     pnpm install --quiet
+    echo "Installing pnpm dependencies...done"
     export PATH="$(get_topdir)/node_modules/.bin:$PATH"
 
     if ! qwhich tree-sitter; then
         echo >&2 "Error: Could not find \"tree-sitter\" in node_modules/.bin after pnpm install"
         exit 1
     fi
-
-    pnpm run compile:lsp
-    pnpm install --quiet
 fi
 
+echo
 emacs_script "$(get_topdir)"/scripts/install-packages.el
 
 set_treesit_dir
@@ -189,6 +188,7 @@ fi
 update_submodule extra/emacs
 
 if [[ -n "$BUILD" ]]; then
+    echo -e "\nBuilding tree-sitter modules..."
     "$(get_topdir)"/scripts/install-treesit-grammar.sh \
         markdown_inline markdown "tree-sitter-markdown-inline/src"
 
@@ -207,10 +207,12 @@ if [[ -n "$BUILD" ]]; then
         "$(get_topdir)"/scripts/install-treesit-grammar.sh
 
     "$(get_topdir)"/scripts/install-treesit-grammar.sh swift "" "" generate
+    echo "Building tree-sitter modules...done"
 else
     notify "Warning: tree-sitter modules will not be built, some major modes will not work"
 fi
 
+echo
 native_comp_all
 
 for idx in ${!NOTICES[@]}; do

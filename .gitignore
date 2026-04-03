@@ -7,7 +7,6 @@
 /extra/emacs/*
 /extra/git/*
 /extra/tree-sitter-swift/*
-/extra/vscode/*
 /node_modules
 /share/man/*
 /tmp
