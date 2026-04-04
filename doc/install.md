@@ -85,15 +85,61 @@ makepkg -si
 Minimal install:
 
 ```sh
-paru -S aspell-en base-devel clang cmake fd gnutls gopls make man-db man-pages \
-    mise ninja openssh python ripgrep rust-analyzer ty zls
+paru -Sy --needed aspell-en base-devel clang cmake fd gnutls gopls make man-db \
+    man-pages mise ninja openssh python ripgrep rust-analyzer ty usage zls
 ```
 
 For a full install, in addition to the above also run:
 
 ```sh
-paru -S clojure clojure-lsp-bin elixir elixir-ls jdtls leiningen omnisharp-roslyn-bin zprint-bin
+paru -Sy --needed clojure clojure-lsp-bin elixir jdtls leiningen \
+    omnisharp-roslyn-bin zprint-bin
+mise use -g elixir-ls@latest
 ```
+
+## Install mise
+
+It's recommended to [install mise](https://mise.jdx.dev/getting-started.html)
+and optionally [usage](https://usage.jdx.dev/cli/) for commandline help (as done
+in the Arch instructions above) to make it easier to manage and version
+different tools.
+
+Configure your shell to work with it and restart any open terminals. We'll refer
+to mise in other installation sections.
+
+For zsh, I find adding the following works well, and avoids problems with
+running zsh in a subshell. For `~/.zshenv`:
+
+```sh
+# Setup mise for non-interactive sessions (shims only)
+if (( $+commands[mise] )); then
+    # Remove existing mise installs and shims entries
+    path=("${path[@]:#*/mise/installs/*}")
+    path=("${path[@]:#*/mise/shims}")
+
+    if [[ ! -o interactive ]]; then
+        # Interactive sessions will get activation later in .zshrc
+        eval "$(mise activate zsh --shims)"
+    fi
+fi
+```
+
+For `~/.zshrc`:
+
+```sh
+if (( ! $+commands[mise] )); then
+    echo >&2 "Warning: mise is not installed yet, it manages tool versions"
+else
+    # Setup mise for interactive sessions
+    if (( ! $+commands[usage] )) && \
+       [[ ! -e ~/.local/share/mise/shims/usage ]]; then
+        echo >&2 "Warning: usage is not installed yet, mise completions will not work"
+    fi
+    eval "$(mise activate zsh --shims)"
+fi
+```
+
+Restart your terminal afterwards to apply the changes.
 
 ## Install clangd
 
@@ -140,7 +186,8 @@ includes Erlang/OTP as a dependency) and
 server features for Elixir. On Mac:
 
 ```sh
-brew install elixir elixir-ls
+brew install elixir
+mise use -g elixir-ls@latest
 ```
 
 On Arch Linux, these are covered by the full install packages above.
