@@ -1021,6 +1021,20 @@ interactively.
 (add-hook 'ielm-mode-hook #'my-ielm-setup t)
 (keymap-global-set "C-M-;" #'ielm)
 
+;; Elixir
+(defun my-project-find-mix (dir)
+  (when-let* ((root (locate-dominating-file dir "mix.exs")))
+    (cons 'mix root)))
+
+(add-to-list 'auto-mode-alist '("\\.exs?\\'" . elixir-ts-mode))
+(add-to-list 'auto-mode-alist '("mix\\.lock\\'" . elixir-ts-mode))
+(add-to-list 'my-md-code-aliases '(elixir . elixir-ts-mode))
+(add-to-list 'eglot-server-programs
+             '((elixir-ts-mode heex-ts-mode)
+               . ("elixir-ls")))
+(add-hook 'elixir-ts-mode-hook #'eglot-ensure t)
+(add-hook 'heex-ts-mode-hook #'eglot-ensure t)
+
 ;; Go
 (defun my-project-find-go-module (dir)
   (when-let* ((root (locate-dominating-file dir "go.mod")))
@@ -1868,7 +1882,11 @@ This prevents the window from later moving back once the minibuffer is done show
   (cl-defmethod project-root ((project (head go-module)))
     (cdr project))
 
+  (cl-defmethod project-root ((project (head mix)))
+    (cdr project))
+
   (add-hook 'project-find-functions #'my-project-find-go-module)
+  (add-hook 'project-find-functions #'my-project-find-mix)
   (my-remove-project-switch-bindings '(project-eshell
                                        project-find-dir
                                        project-find-regexp

@@ -60,6 +60,11 @@
         ignore = dirty
         shallow = true
         url = https://github.com/WhatsApp/tree-sitter-erlang.git
+[submodule "extra/tree-sitter-elixir"]
+        path = extra/tree-sitter-elixir
+        ignore = dirty
+        shallow = true
+        url = https://github.com/elixir-lang/tree-sitter-elixir
 [submodule "extra/tree-sitter-go"]
         path = extra/tree-sitter-go
         ignore = dirty
@@ -75,6 +80,11 @@
         ignore = dirty
         shallow = true
         url = https://github.com/bkegley/tree-sitter-graphql.git
+[submodule "extra/tree-sitter-heex"]
+        path = extra/tree-sitter-heex
+        ignore = dirty
+        shallow = true
+        url = https://github.com/phoenixframework/tree-sitter-heex
 [submodule "extra/tree-sitter-html"]
         path = extra/tree-sitter-html
         ignore = dirty

@@ -92,7 +92,7 @@ paru -S aspell-en base-devel clang cmake fd gnutls gopls make man-db man-pages \
 For a full install, in addition to the above also run:
 
 ```sh
-paru -S clojure clojure-lsp-bin jdtls leiningen omnisharp-roslyn-bin zprint-bin
+paru -S clojure clojure-lsp-bin elixir elixir-ls jdtls leiningen omnisharp-roslyn-bin zprint-bin
 ```
 
 ## Install clangd
@@ -131,6 +131,19 @@ You'll also want to create a `~/.zprintrc` file with these contents:
 ;; -*- clojure -*-
 {:search-config? true, :style [:how-to-ns]}
 ```
+
+## (Optional) Install Elixir and ElixirLS
+
+You'll need to install [Elixir](https://elixir-lang.org/install.html) (which
+includes Erlang/OTP as a dependency) and
+[ElixirLS](https://github.com/elixir-lsp/elixir-ls) in order to support language
+server features for Elixir. On Mac:
+
+```sh
+brew install elixir elixir-ls
+```
+
+On Arch Linux, these are covered by the full install packages above.
 
 ## Install fd
 
