@@ -480,6 +480,11 @@ Use this to advise functions that could be problematic."
   (unless (my-in-indirect-md-buffer-p)
     (apply orig-fun args)))
 
+(defun my-inhibit-in-git-commit-buffers (orig-fun &rest args)
+  "Don't run ORIG-FUN (with ARGS) in git commit buffers."
+  (unless (derived-mode-p 'my-git-commit-gfm-mode)
+    (apply orig-fun args)))
+
 ;; Apheleia for automatic code formatting
 (defun my-detect-biome ()
   "Detect whether to use Biome based on project configuration.
@@ -655,6 +660,7 @@ Returns the config filename if one is found, `t' if found in package.json"
           map))
 
   (my-around-advice #'eglot-ensure #'my-inhibit-in-indirect-md-buffers)
+  (my-around-advice #'eglot-ensure #'my-inhibit-in-git-commit-buffers)
   (keymap-set eglot-mode-map "<f2>" #'eglot-rename)
   (fset #'my-jsonrpc--log-event-real (symbol-function 'jsonrpc--log-event))
   (fset #'jsonrpc--log-event #'my-jsonrpc--log-event))
