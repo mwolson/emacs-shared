@@ -12,6 +12,7 @@
   "scripts": {
     "init": "pnpm run up && pnpm run init:hooks",
     "init:hooks": "lefthook install",
+    "hooks:check": "lefthook run pre-commit --all-files --no-stage-fixed",
     "hooks:pre-commit": "lefthook run pre-commit",
     "hooks:pre-commit:all": "lefthook run pre-commit --all-files",
     "fix:md": "prettier --write '**/*.md'",
