@@ -1523,6 +1523,19 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   :defer t
   :after (embark consult))
 
+(use-package nerd-icons
+  :vc (:url "https://github.com/rainstormstudio/nerd-icons.el"
+       :main-file "nerd-icons.el"
+       :compile-files '("data/nerd-icons-data-*.el"
+                        "nerd-icons-data.el"
+                        "nerd-icons-faces.el"))
+  :defer t)
+
+(use-package nerd-icons-completion
+  :vc (:url "https://github.com/rainstormstudio/nerd-icons-completion"
+       :main-file "nerd-icons-completion.el")
+  :defer t)
+
 (defun my-extended-command-predicate (symbol buffer)
   (and (command-completion-default-include-p symbol buffer)
        (transient-command-completion-not-suffix-only-p symbol buffer)))
@@ -1669,7 +1682,7 @@ This prevents the window from later moving back once the minibuffer is done show
   (interactive)
   (let* ((md (completion-metadata
               (buffer-substring-no-properties (icomplete--field-beg)
-                                             (icomplete--field-end))
+                                              (icomplete--field-end))
               minibuffer-completion-table
               minibuffer-completion-predicate))
          (category (completion-metadata-get md 'category)))
@@ -1703,6 +1716,7 @@ This prevents the window from later moving back once the minibuffer is done show
   (keymap-set occur-mode-map "r" #'occur-edit-mode)
 
   (icomplete-vertical-mode 1)
+  (nerd-icons-completion-mode 1)
 
   (setopt savehist-additional-variables
           '(kill-ring search-ring regexp-search-ring))

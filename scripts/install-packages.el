@@ -24,7 +24,11 @@
                  (setq my-emacs-path
                        ,(expand-file-name
                          (concat (file-name-directory load-file-name)
-                                 "../"))))))
+                                 "../"))))
+   :post-install-forms
+   ((vcupp-activate-package 'nerd-icons)
+    (require 'nerd-icons)
+    (nerd-icons-install-fonts t))))
 
 (provide 'install-packages)
 ;;; install-packages.el ends here

@@ -70,6 +70,7 @@
                kotlin-ts-mode ligature llama lua-mode macrostep
                magit magit-section majutsu markdown-mode maxframe
                mermaid-ts-mode minions mise modus-themes
+               nerd-icons nerd-icons-completion
                nix-ts-mode nsis-mode parseclj
                parseedn popon pulsar rainbow-delimiters reformatter rg
                sesman slime spinner svg-lib svelte-ts-mode swift-ts-mode
