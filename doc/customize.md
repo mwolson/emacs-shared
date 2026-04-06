@@ -51,6 +51,8 @@ Most of the settings are optional, except for `my-emacs-path`.
   file at `~/.emacs.d/settings.el` or use the ones that come with
   `emacs-shared` - a default is chosen based on whether that personal settings
   file is found
+- `my-icomplete-prospects-height`: Number of completion candidates to show in
+  the minibuffer; also controls the page size for PgUp/PgDn (default: `10`)
 - `my-server-start-p`: Whether to start a server process that can be reused in
   multiple editing sessions
 - `my-recent-files`: A list of files to open automatically in the background

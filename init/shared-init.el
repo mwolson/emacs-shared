@@ -1544,6 +1544,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
       completion-category-overrides '((file (styles basic partial-completion)))
       completion-ignore-case t
       completion-styles '(basic substring partial-completion flex)
+      completions-detailed t
       consult-async-min-input 2
       consult-async-input-debounce 0.1
       consult-async-input-throttle 0.2
@@ -1690,6 +1691,53 @@ This prevents the window from later moving back once the minibuffer is done show
         (exit-minibuffer)
       (icomplete-force-complete-and-exit))))
 
+(eval-when-compile (require 'help-fns nil t))
+
+(defun my-help-symbol-affixation (completions)
+  "Also show variable docstrings and current values in help completions."
+  (mapcar (lambda (c)
+            (let* ((s (intern c))
+                   (doc (or (condition-case nil (documentation s) (error nil))
+                            (documentation-property s 'variable-documentation)))
+                   (doc (and doc (substring doc 0 (string-search "\n" doc))))
+                   (val (and (boundp s)
+                             (not (fboundp s))
+                             (let* ((print-level 1) (print-length 3)
+                                    (raw (format "%s" (symbol-value s))))
+                               (if (> (length raw) 30)
+                                   (concat (substring raw 0 27) "...")
+                                 raw)))))
+              (list c (propertize
+                       (format "%-4s" (help--symbol-class s))
+                       'face 'completions-annotations)
+                    (concat
+                     (if val (propertize (format " = %s" val)
+                                         'face 'font-lock-type-face)
+                       "")
+                     (if doc (propertize (format " -- %s" doc)
+                                         'face 'completions-annotations)
+                       "")))))
+          completions))
+
+(advice-add 'help--symbol-completion-table-affixation
+            :override #'my-help-symbol-affixation)
+
+(defvar my-icomplete-prospects-height 10
+  "Number of completion candidates to show in icomplete-vertical-mode.
+Also controls the page size for PgUp/PgDn in the minibuffer.")
+
+(defun my-icomplete-page-down ()
+  "Move forward one page in icomplete completions."
+  (interactive)
+  (dotimes (_ (ceiling (1- (/ my-icomplete-prospects-height 2))))
+    (icomplete-forward-completions)))
+
+(defun my-icomplete-page-up ()
+  "Move backward one page in icomplete completions."
+  (interactive)
+  (dotimes (_ (ceiling (1- (/ my-icomplete-prospects-height 2))))
+    (icomplete-backward-completions)))
+
 (defun my-load-icomplete ()
   (require 'icomplete)
   (setopt icomplete-compute-delay 0
@@ -1697,7 +1745,7 @@ This prevents the window from later moving back once the minibuffer is done show
           icomplete-hide-common-prefix nil
           icomplete-in-buffer t
           icomplete-max-delay-chars 0
-          icomplete-prospects-height 10
+          icomplete-prospects-height my-icomplete-prospects-height
           icomplete-scroll t
           icomplete-show-matches-on-no-input t
           icomplete-tidy-shadowed-file-names t
@@ -1710,8 +1758,8 @@ This prevents the window from later moving back once the minibuffer is done show
     (keymap-set icvmm-map "C-c C-o" #'embark-export)
     (keymap-set icvmm-map "RET" #'my-icomplete-ret)
     (keymap-set icvmm-map "M-RET" #'exit-minibuffer)
-    (keymap-set icvmm-map "<prior>" #'scroll-down-command)
-    (keymap-set icvmm-map "<next>" #'scroll-up-command))
+    (keymap-set icvmm-map "<prior>" #'my-icomplete-page-up)
+    (keymap-set icvmm-map "<next>" #'my-icomplete-page-down))
 
   (keymap-set occur-mode-map "r" #'occur-edit-mode)
 
