@@ -1257,7 +1257,8 @@ interactively.
        :main-file "markdown-mode.el")
   :defer t
   :hook ((markdown-mode . add-node-modules-path)
-         (markdown-mode . eglot-ensure)
+         ;; disabled since file-completion in links doesn't work yet
+         ;; (markdown-mode . eglot-ensure)
          (markdown-mode . my-setup-web-ligatures)
          (markdown-mode . my-turn-on-arrow-input)
          (markdown-mode . my-apheleia-set-markdown-formatter))
