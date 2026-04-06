@@ -839,8 +839,22 @@ interactively.
                                    '(scroll-down-command scroll-up-command))))
 
   (with-eval-after-load "consult"
-    (add-hook 'consult-after-jump-hook #'pulsar-recenter-top t)
+    (remove-hook 'consult-after-jump-hook #'recenter)
+    (add-hook 'consult-after-jump-hook #'my-consult-recenter-for-preview t)
     (add-hook 'consult-after-jump-hook #'pulsar-reveal-entry t)))
+
+(defun my-consult-recenter-for-preview ()
+  "Center point to where it will appear after the minibuffer closes.
+Offsets the centering down by half the minibuffer height so the line
+lands at true center once the window expands, giving zero visual jump.
+When consult-line previews the original position, skip recentering to
+avoid visual disruption."
+  (if (and my-consult-line-start-pos
+           (string-empty-p (minibuffer-contents-no-properties)))
+      nil
+    (let ((mb-offset (/ (window-body-height (minibuffer-window)) 2)))
+      (recenter (+ (/ (window-body-height) 2) mb-offset)))
+    (call-interactively #'pulsar-highlight-pulse)))
 
 (my-defer-startup #'pulsar-global-mode)
 
@@ -1450,8 +1464,9 @@ interactively.
                . ("zls" :initializationOptions ())))
 (add-hook 'zig-ts-mode-hook #'eglot-ensure t)
 
-;; Consult, Embark, Marginalia, Orderless, Prescient, Vertico
+;; Consult, Embark, icomplete, completion-preview
 (defvar my-minibuffer-from-consult-line nil)
+(defvar my-consult-line-start-pos nil)
 
 (defun my-consult-line ()
   "Start incremental search from current line."
@@ -1463,7 +1478,8 @@ interactively.
                (if-let* ((sym (and current-prefix-arg
                                    (symbol-at-point))))
                    (symbol-name sym))))
-        (my-minibuffer-from-consult-line t))
+        (my-minibuffer-from-consult-line t)
+        (my-consult-line-start-pos (point)))
     (consult-line reg nil)))
 
 (eval-when-compile
@@ -1507,108 +1523,22 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   :defer t
   :after (embark consult))
 
-(use-package marginalia
-  :vc (:url "https://github.com/minad/marginalia"
-       :main-file "marginalia.el")
-  :defer t
-  :config
-  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup t))
-
-(use-package nerd-icons
-  :vc (:url "https://github.com/rainstormstudio/nerd-icons.el"
-       :main-file "nerd-icons.el"
-       :compile-files '("data/nerd-icons-data-*.el"
-                        "nerd-icons-data.el"
-                        "nerd-icons-faces.el"))
-  :defer t)
-
-(use-package nerd-icons-completion
-  :vc (:url "https://github.com/rainstormstudio/nerd-icons-completion"
-       :main-file "nerd-icons-completion.el")
-  :defer t)
-
-(eval-when-compile
-  (require 'orderless nil t)
-  (require 'vertico-directory nil t)
-  (require 'vertico-repeat nil t)
-  (require 'vertico-suspend nil t))
-
-(defun my-vertico-insert-like-ivy ()
-  (interactive)
-  (let* ((mb (minibuffer-contents-no-properties))
-         (lc (if (string= mb "") mb (substring mb -1))))
-    (cond ((string-match-p "^[/~:]" lc) (self-insert-command 1 ?/))
-          ((file-directory-p (vertico--candidate)) (vertico-insert))
-          (t (self-insert-command 1 ?/)))))
-
-(use-package vertico
-  :vc (:url "https://github.com/minad/vertico"
-       :main-file "vertico.el"
-       :compile-files '("extensions/vertico-*.el"))
-  :defer t
-  :init
-  (let ((ext-dir (expand-file-name "vertico/extensions" package-user-dir)))
-    (when (file-directory-p ext-dir)
-      (add-to-list 'load-path ext-dir)))
-  :custom
-  (vertico-count 10)
-  (vertico-mouse-mode t)
-  (vertico-resize nil)
-  :config
-  (require 'vertico-directory)
-  (require 'vertico-repeat)
-  (require 'vertico-suspend)
-  (keymap-set occur-mode-map "r" #'occur-edit-mode)
-  (keymap-set vertico-map "?" #'minibuffer-completion-help)
-  (keymap-set vertico-map "/" #'my-vertico-insert-like-ivy)
-  (keymap-set vertico-map "C-c C-c" #'vertico-repeat)
-  (keymap-set vertico-map "C-c C-o" #'embark-export)
-  (keymap-set vertico-map "C-c C-s" #'vertico-suspend)
-  (keymap-set vertico-map "C-k" #'kill-line)
-  (keymap-set vertico-map "C-r" #'vertico-previous)
-  (keymap-set vertico-map "C-s" #'vertico-next)
-  (keymap-set vertico-map "DEL" #'vertico-directory-delete-char)
-  (keymap-set vertico-map "M-DEL" #'vertico-directory-delete-word)
-  (keymap-set vertico-map "RET" #'vertico-directory-enter)
-  (keymap-set vertico-map "<prior>" #'vertico-scroll-down)
-  (keymap-set vertico-map "<next>" #'vertico-scroll-up)
-
-  (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
-  (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
-
-(use-package prescient
-  :vc (:url "https://github.com/radian-software/prescient.el"
-       :main-file "prescient.el")
-  :defer t)
-
-(use-package vertico-prescient
-  :vc (:url "https://github.com/radian-software/prescient.el"
-       :main-file "vertico-prescient.el")
-  :defer t
-  :after vertico
-  :custom
-  (prescient-sort-full-matches-first t)
-  :config
-  ;; disable prescient for consult-line since history doesn't make sense there
-  (setopt vertico-prescient-completion-category-overrides
-          (append '((consult-location (styles orderless basic)))
-                  vertico-prescient-completion-category-overrides))
-  (vertico-prescient-mode)
-  (prescient-persist-mode))
-
 (defun my-extended-command-predicate (symbol buffer)
   (and (command-completion-default-include-p symbol buffer)
        (transient-command-completion-not-suffix-only-p symbol buffer)))
 
 (setq completion-category-defaults nil
       completion-category-overrides '((file (styles basic partial-completion)))
-      completion-styles '(orderless basic)
+      completion-ignore-case t
+      completion-styles '(basic substring partial-completion flex)
       consult-async-min-input 2
       consult-async-input-debounce 0.1
       consult-async-input-throttle 0.2
       consult-async-refresh-delay 0.15
       prefix-help-command #'embark-prefix-help-command
+      read-buffer-completion-ignore-case t
       read-extended-command-predicate #'my-extended-command-predicate
+      read-file-name-completion-ignore-case t
       xref-search-program 'ripgrep
       xref-show-definitions-function #'consult-xref
       xref-show-xrefs-function #'consult-xref)
@@ -1647,7 +1577,6 @@ Not needed in Emacs 31 or higher."
   "Ensure that the window is moved to leave room for minibuffer under cursor.
 
 This prevents the window from later moving back once the minibuffer is done showing."
-  (require 'vertico)
   (let* ((prior-win (minibuffer-selected-window))
          (prior-buf (and prior-win (window-buffer prior-win))))
     (when (and prior-win (= (minibuffer-depth) 1))
@@ -1658,8 +1587,10 @@ This prevents the window from later moving back once the minibuffer is done show
                        (round rows-dec)))
                (ppos (posn-at-point))
 	       (cursor-row (cdr (posn-actual-col-row ppos)))
+               (prospects-height (if (boundp 'icomplete-prospects-height)
+                                     icomplete-prospects-height 10))
                ;; 4 = 1 minibuffer input line + 3 rows of context
-               (max-allowed-row (max 0 (- rows vertico-count 4)))
+               (max-allowed-row (max 0 (- rows prospects-height 4)))
                (scroll-up-amount (min (max 0 cursor-row)
                                       (- cursor-row max-allowed-row))))
           (when (and (> cursor-row max-allowed-row)
@@ -1672,12 +1603,7 @@ This prevents the window from later moving back once the minibuffer is done show
 (defun my-minibuffer-restore-after-exit ()
   (when (= (minibuffer-depth) 1)
     (if my-minibuffer-from-consult-line
-        (progn
-          (setq my-minibuffer-restore-pos nil)
-          ;; 5 ~= (1 minibuffer input line + 10) / 2
-          (run-with-timer 0.0 nil (lambda ()
-                                    (recenter)
-                                    (scroll-up 5))))
+        (setq my-minibuffer-restore-pos nil)
       (when (and my-minibuffer-restore-pos
                  (null (transient-active-prefix)))
         (let ((prior-win (aref my-minibuffer-restore-pos 0))
@@ -1702,8 +1628,7 @@ This prevents the window from later moving back once the minibuffer is done show
 (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode +100)
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-restore-after-exit 100)
 
-(my-defer-startup #'marginalia-mode)
-(my-defer-startup #'vertico-mode)
+(my-defer-startup #'my-load-icomplete)
 
 (dolist (map (list minibuffer-local-map read-expression-map))
   (keymap-set map "C-k" #'kill-line)
@@ -1725,7 +1650,6 @@ This prevents the window from later moving back once the minibuffer is done show
     map)
   "My key customizations for consult with `M-g' prefix.")
 
-(keymap-global-set "C-c C-r" #'vertico-suspend)
 (keymap-global-set "C-c M-x" #'consult-mode-command)
 (keymap-global-set "C-h b" #'embark-bindings)
 (keymap-global-set "C-r" #'my-consult-line)
@@ -1734,119 +1658,65 @@ This prevents the window from later moving back once the minibuffer is done show
 (keymap-global-set "M-g" my-consult-M-g-map)
 (keymap-global-set "M-y" #'consult-yank-pop)
 
-;; Corfu, Cape, Dabbrev for auto-completion
-(defvar my-orderless-done-p nil)
+;; icomplete-vertical-mode (replaces vertico), savehist (replaces prescient),
+;; completion-preview-mode (replaces corfu), dabbrev (replaces cape)
+(eval-when-compile
+  (require 'dabbrev nil t)
+  (require 'icomplete nil t))
 
-(defun my-setup-orderless ()
-  (unless my-orderless-done-p
-    (setq my-orderless-done-p t)
-    (require 'orderless)
-    (orderless-define-completion-style orderless-literal-only
-      (orderless-style-dispatchers nil)
-      (orderless-matching-styles '(orderless-literal)))))
+(defun my-icomplete-ret ()
+  "In file prompts, exit with exact input; otherwise select the candidate."
+  (interactive)
+  (let* ((md (completion-metadata
+              (buffer-substring-no-properties (icomplete--field-beg)
+                                             (icomplete--field-end))
+              minibuffer-completion-table
+              minibuffer-completion-predicate))
+         (category (completion-metadata-get md 'category)))
+    (if (eq category 'file)
+        (exit-minibuffer)
+      (icomplete-force-complete-and-exit))))
 
-(defun my-setup-corfu-mode ()
-  (my-setup-orderless)
-  (setq-local completion-styles '(orderless-literal-only basic)
-              completion-category-overrides nil
-              completion-category-defaults nil))
+(defun my-load-icomplete ()
+  (require 'icomplete)
+  (setopt icomplete-compute-delay 0
+          icomplete-delay-completions-threshold 0
+          icomplete-hide-common-prefix nil
+          icomplete-in-buffer t
+          icomplete-max-delay-chars 0
+          icomplete-prospects-height 10
+          icomplete-scroll t
+          icomplete-show-matches-on-no-input t
+          icomplete-tidy-shadowed-file-names t
+          icomplete-with-completion-tables t)
+  (let ((icvmm-map icomplete-vertical-mode-minibuffer-map))
+    (keymap-set icvmm-map "C-s" #'icomplete-forward-completions)
+    (keymap-set icvmm-map "C-r" #'icomplete-backward-completions)
+    (keymap-set icvmm-map "C-k" #'kill-line)
+    (keymap-set icvmm-map "?" #'minibuffer-completion-help)
+    (keymap-set icvmm-map "C-c C-o" #'embark-export)
+    (keymap-set icvmm-map "RET" #'my-icomplete-ret)
+    (keymap-set icvmm-map "M-RET" #'exit-minibuffer)
+    (keymap-set icvmm-map "<prior>" #'scroll-down-command)
+    (keymap-set icvmm-map "<next>" #'scroll-up-command))
 
-(defun my-eglot-capf ()
-  (setq-local completion-at-point-functions
-              (list (cape-capf-super
-                     #'eglot-completion-at-point
-                     #'cape-file))))
+  (keymap-set occur-mode-map "r" #'occur-edit-mode)
 
-(defun my-corfu-elisp ()
-  "Configure Corfu completion for Elisp using CAPE backends locally."
-  (add-hook 'completion-at-point-functions #'cape-elisp-block nil t)
-  (add-hook 'completion-at-point-functions #'cape-elisp-symbol nil t))
+  (icomplete-vertical-mode 1)
 
-(defun my-corfu-terminal-start ()
-  (unless window-system (corfu-terminal-mode 1)))
+  (setopt savehist-additional-variables
+          '(kill-ring search-ring regexp-search-ring))
+  (setopt savehist-file (expand-file-name "var/savehist"
+                                          user-emacs-directory))
+  (savehist-mode 1)
 
-(defun my-load-corfu ()
-  (with-eval-after-load "elisp-mode"
-    (add-hook 'emacs-lisp-mode-hook #'my-corfu-elisp t))
+  (setopt completion-preview-idle-delay 0.3
+          completion-preview-minimum-symbol-length 2
+          global-completion-preview-modes '((not org-mode) prog-mode shell-mode))
+  (global-completion-preview-mode 1)
 
-  (require 'corfu)
-  (dolist (hook '(prog-mode-hook shell-mode-hook))
-    (add-hook hook #'corfu-mode t))
-
-  (my-around-advice #'corfu-mode #'my-inhibit-in-indirect-md-buffers)
-  (add-hook 'corfu-mode-hook #'my-setup-corfu-mode)
-  (add-hook 'eglot-managed-mode-hook #'my-eglot-capf)
-
-  (require 'kind-icon)
-  (plist-put kind-icon-default-style :height 0.35)
-  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
-
-  (keymap-set corfu-map "<remap> <move-beginning-of-line>" nil)
-  (keymap-set corfu-map "<remap> <move-end-of-line>" nil)
-  (keymap-set corfu-map "<remap> <scroll-down-command>" nil)
-  (keymap-set corfu-map "<remap> <scroll-up-command>" nil)
-  (keymap-set corfu-map "RET" nil)
-
-  (require 'corfu-auto)
-  (require 'corfu-popupinfo)
-  (setopt corfu-auto t
-          corfu-popupinfo-delay '(0.3 . 0.01)
-          corfu-popupinfo-hide nil
-          corfu-quit-no-match 'separator
-          global-corfu-modes t
-          text-mode-ispell-word-completion nil)
-
-  (dolist (el '("delete-backward-char\\'" "\\`backward-delete-char"))
-    (setq corfu-auto-commands (delete el corfu-auto-commands)))
-
-  (my-corfu-terminal-start)
-  (add-hook 'my-init-client-display-hook #'my-corfu-terminal-start t)
-  (corfu-popupinfo-mode)
-  (corfu-prescient-mode)
-  (global-corfu-mode))
-
-(my-defer-startup #'my-load-corfu)
-
-(add-hook 'completion-at-point-functions #'cape-dabbrev)
-(add-hook 'completion-at-point-functions #'cape-file)
-(add-hook 'completion-at-point-functions #'cape-keyword)
-
-(use-package orderless
-  :vc (:url "https://github.com/oantolin/orderless"
-       :main-file "orderless.el")
-  :defer t)
-
-(use-package corfu
-  :vc (:url "https://github.com/minad/corfu"
-       :main-file "corfu.el"
-       :compile-files '("extensions/corfu-*.el"))
-  :defer t
-  :init
-  (let ((ext-dir (expand-file-name "corfu/extensions" package-user-dir)))
-    (when (file-directory-p ext-dir)
-      (add-to-list 'load-path ext-dir))))
-
-(use-package corfu-prescient
-  :vc (:url "https://github.com/radian-software/prescient.el"
-       :main-file "corfu-prescient.el")
-  :commands (corfu-prescient-mode)
-  :defer t)
-
-(use-package corfu-terminal
-  :vc (:url "https://codeberg.org/akib/emacs-corfu-terminal"
-       :main-file "corfu-terminal.el")
-  :defer t)
-
-(use-package cape
-  :vc (:url "https://github.com/minad/cape"
-       :main-file "cape.el"
-       :compile-files '("cape-keyword.el"))
-  :defer t)
-
-(use-package kind-icon
-  :vc (:url "https://github.com/jdtsmith/kind-icon"
-       :main-file "kind-icon.el")
-  :defer t)
+  (add-hook 'completion-at-point-functions #'dabbrev-capf)
+  (setopt text-mode-ispell-word-completion nil))
 
 (use-package dabbrev
   :ensure nil

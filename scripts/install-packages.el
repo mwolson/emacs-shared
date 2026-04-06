@@ -24,12 +24,7 @@
                  (setq my-emacs-path
                        ,(expand-file-name
                          (concat (file-name-directory load-file-name)
-                                 "../"))))
-   :post-install-forms
-   ((vcupp-activate-package 'kind-icon)
-    (require 'kind-icon)
-    (kind-icon-reset-cache)
-    (kind-icon-preview-all))))
+                                 "../"))))))
 
 (provide 'install-packages)
 ;;; install-packages.el ends here

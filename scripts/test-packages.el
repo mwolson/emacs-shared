@@ -60,32 +60,31 @@
 
 ;; VC packages
 (dolist (pkg '(add-node-modules-path apheleia archive-rpm astro-ts-mode
-               atomic-chrome basic-mode browse-kill-ring cape cider
+               atomic-chrome basic-mode browse-kill-ring cider
                clojure-mode clojure-ts-mode color-theme-sanityinc-tomorrow
-               compile-angel cond-let consult corfu corfu-prescient
-               corfu-terminal diff-hl diminish dumb-jump edit-indirect
+               compile-angel cond-let consult
+               diff-hl diminish dumb-jump edit-indirect
                eglot-python-preset eglot-typescript-preset el-mock embark
                embark-consult fish-mode flx flymake-stylelint git-modes
                graphql-ts-mode js-comint jtsx kdl-mode
-               kind-icon kotlin-ts-mode ligature llama lua-mode macrostep
-               magit magit-section majutsu marginalia markdown-mode maxframe
+               kotlin-ts-mode ligature llama lua-mode macrostep
+               magit magit-section majutsu markdown-mode maxframe
                mermaid-ts-mode minions mise modus-themes
-               nerd-icons-completion nix-ts-mode nsis-mode orderless parseclj
+               nix-ts-mode nsis-mode parseclj
                parseedn popon pulsar rainbow-delimiters reformatter rg
                sesman slime spinner svg-lib svelte-ts-mode swift-ts-mode
                terraform-mode tmux-mode toc-org transient vcupp
-               vertico
-               vertico-prescient vue-ts-mode web-mode websocket wgrep
+               vue-ts-mode web-mode websocket wgrep
                with-editor zig-ts-mode))
   (my-test-package-installed pkg))
 
 ;; Key features loadable
-(dolist (feature '(use-package eglot magit consult vertico corfu
-                   dired tramp diff-hl pulsar vcupp))
+(dolist (feature '(use-package eglot magit consult icomplete
+                   completion-preview dired tramp diff-hl pulsar vcupp))
   (my-test-feature-loadable feature))
 
 ;; Byte-compilation check for a few key packages
-(dolist (pkg '(magit consult vertico corfu))
+(dolist (pkg '(magit consult))
   (my-test-has-elc pkg))
 
 ;; Self-dependency check

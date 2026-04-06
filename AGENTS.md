@@ -42,7 +42,6 @@ This script:
   installs) by checking out the default branch
 - Runs `package-vc-upgrade-all` to pull latest commits for all VC packages
 - Cleans stale `.elc` files from upgraded VC packages
-- Regenerates the kind-icon cache
 
 For a completely fresh install, move `~/.emacs.d/elpa` aside first.
 
