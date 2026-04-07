@@ -251,6 +251,10 @@
              (set-frame-parameter
               nil param (cdr (assoc param default-frame-alist))))))))
 
+(defvar my-tab-active-background "#8b008b"
+  "Background color of the active tab in tab-line.
+Default is `magenta4'.")
+
 (defvar my-tab-box-gap 6
   "Pixels of tab-line background to show above and below each tab.")
 
@@ -272,7 +276,8 @@ visible gap around each tab."
        `(tab-line ((t (:height ,my-tab-line-height))))
        `(tab-line-tab ((t (:height ,my-tab-height :box ,box))))
        `(tab-line-tab-current
-         ((t (:weight normal :height ,my-tab-height :box ,box))))
+         ((t (:weight normal :height ,my-tab-height
+              :background ,my-tab-active-background :box ,box))))
        `(tab-line-tab-inactive
          ((t (:weight normal :height ,my-tab-height :box ,box))))
        `(tab-line-tab-inactive-alternate
