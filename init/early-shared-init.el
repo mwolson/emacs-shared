@@ -251,6 +251,33 @@
              (set-frame-parameter
               nil param (cdr (assoc param default-frame-alist))))))))
 
+(defvar my-tab-box-gap 4
+  "Pixels of tab-line background to show above and below each tab.")
+
+(defvar my-tab-line-height 1.2
+  "Height to apply to the tab-line base face.")
+
+(defvar my-tab-height 0.7
+  "Height to apply to tab faces on the tab-line.")
+
+(defun my-reset-tab-line-faces ()
+  "Shrink tab-line tab faces and remove bolding, leaving the menu button alone.
+Uses `custom-set-faces' so the specs survive face recalculations.
+A `:box' border colored to match the tab-line background creates a
+visible gap around each tab."
+  (interactive)
+  (modus-themes-with-colors
+    (let ((box (list :line-width (cons 1 my-tab-box-gap) :color bg-tab-bar)))
+      (custom-set-faces
+       `(tab-line ((t (:height ,my-tab-line-height))))
+       `(tab-line-tab ((t (:height ,my-tab-height :box ,box))))
+       `(tab-line-tab-current
+         ((t (:weight normal :height ,my-tab-height :box ,box))))
+       `(tab-line-tab-inactive
+         ((t (:weight normal :height ,my-tab-height :box ,box))))
+       `(tab-line-tab-inactive-alternate
+         ((t (:weight normal :height ,my-tab-height :box ,box))))))))
+
 (defun my-reset-theme ()
   (interactive)
   (when my-use-themes-p
@@ -259,7 +286,8 @@
           (require 'modus-themes)
           (setopt modus-themes-common-palette-overrides
                   my-modus-theme-overrides)
-          (modus-themes-select my-modus-theme))
+          (modus-themes-select my-modus-theme)
+          (my-reset-tab-line-faces))
       (load-theme my-theme t))))
 
 ;; Support for font ligatures
@@ -332,6 +360,12 @@
                   (append  (list my-tab-line-left-margin
                                  my-tab-line-menu-button)
                            result)))
+    (advice-add 'tab-line-tab-name-format-default :filter-return
+                (lambda (result)
+                  (let ((face (get-text-property 0 'face result)))
+                    (concat (propertize " " 'display '(space :width (6))
+                                        'face face)
+                            result))))
     (my-reset-frame-size)))
 
 ;; Initialize client frames
