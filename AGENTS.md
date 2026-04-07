@@ -6,6 +6,23 @@ This repository is mostly an Emacs config.
 
 Prefer to write plans in the `plans/` directory.
 
+## Verifying changes
+
+After modifying any `init/*.el` files, always run the native compilation check
+to verify your work:
+
+- `./scripts/native-comp-all.sh`
+
+This catches syntax errors, invalid face references, unbalanced parens, obsolete
+functions, and other issues that only surface during byte/native compilation. Do
+not consider a change complete until this script passes cleanly.
+
+## Reference: Emacs source checkout
+
+A full Emacs source tree is checked out at `extra/emacs/`. This is useful for
+looking up face definitions, understanding built-in mode internals, or checking
+how upstream Emacs implements specific features.
+
 ## Dev loop tools
 
 Here are some strategies to obtain a reliable “dev loop” for validating
