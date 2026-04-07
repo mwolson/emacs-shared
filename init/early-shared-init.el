@@ -251,7 +251,7 @@
              (set-frame-parameter
               nil param (cdr (assoc param default-frame-alist))))))))
 
-(defvar my-tab-box-gap 4
+(defvar my-tab-box-gap 6
   "Pixels of tab-line background to show above and below each tab.")
 
 (defvar my-tab-line-height 1.2
