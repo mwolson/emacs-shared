@@ -1650,7 +1650,16 @@ This prevents the window from later moving back once the minibuffer is done show
 
 (my-defer-startup #'my-load-icomplete)
 
+(defun my-minibuffer-insert-last-history ()
+  "Insert the most recent minibuffer history item, replacing current input."
+  (interactive)
+  (when-let* ((hist (symbol-value minibuffer-history-variable))
+              (last (car hist)))
+    (delete-minibuffer-contents)
+    (insert last)))
+
 (dolist (map (list minibuffer-local-map read-expression-map))
+  (keymap-set map "C-c C-c" #'my-minibuffer-insert-last-history)
   (keymap-set map "C-k" #'kill-line)
   (keymap-set map "M-s" #'consult-history)
   (keymap-set map "M-r" #'consult-history))
