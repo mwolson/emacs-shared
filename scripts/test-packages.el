@@ -61,19 +61,19 @@
 ;; VC packages
 (dolist (pkg '(add-node-modules-path apheleia archive-rpm astro-ts-mode
                atomic-chrome basic-mode browse-kill-ring cider
-               clojure-mode clojure-ts-mode color-theme-sanityinc-tomorrow
+               clojure-mode clojure-ts-mode
                compile-angel cond-let consult
-               diff-hl diminish dumb-jump edit-indirect
-               eglot-python-preset eglot-typescript-preset el-mock embark
-               embark-consult fish-mode flx flymake-stylelint git-modes
+               diff-hl dumb-jump edit-indirect
+               eglot-python-preset eglot-typescript-preset embark
+               embark-consult fish-mode flymake-stylelint git-modes
                graphql-ts-mode js-comint jtsx kdl-mode
                kotlin-ts-mode ligature llama lua-mode macrostep
                magit magit-section majutsu markdown-mode maxframe
                mermaid-ts-mode minions mise modus-themes
                nerd-icons nerd-icons-completion
                nix-ts-mode nsis-mode parseclj
-               parseedn popon pulsar rainbow-delimiters reformatter rg
-               sesman slime spinner svg-lib svelte-ts-mode swift-ts-mode
+               parseedn pulsar rainbow-delimiters rg
+               sesman slime spinner svelte-ts-mode swift-ts-mode
                terraform-mode tmux-mode toc-org transient vcupp
                vue-ts-mode web-mode websocket wgrep
                with-editor zig-ts-mode))

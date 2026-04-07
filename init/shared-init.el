@@ -140,10 +140,6 @@ When `depth' is provided, pass it to `add-hook'."
   :vc (:url "https://github.com/clojure-emacs/parseedn"
        :main-file "parseedn.el")
   :defer t)
-(use-package popon
-  :vc (:url "https://codeberg.org/akib/emacs-popon"
-       :main-file "popon.el")
-  :defer t)
 (use-package sesman
   :vc (:url "https://github.com/vspinu/sesman"
        :main-file "sesman.el"
@@ -152,10 +148,6 @@ When `depth' is provided, pass it to `add-hook'."
 (use-package spinner
   :vc (:url "https://github.com/Malabarba/spinner.el"
        :main-file "spinner.el")
-  :defer t)
-(use-package svg-lib
-  :vc (:url "https://github.com/rougier/svg-lib"
-       :main-file "svg-lib.el")
   :defer t)
 (use-package transient
   :vc (:url "https://github.com/magit/transient"
@@ -1969,30 +1961,13 @@ Also controls the page size for PgUp/PgDn in the minibuffer.")
   :vc (:url "https://github.com/clojure-emacs/clojure-ts-mode"
        :main-file "clojure-ts-mode.el")
   :defer t)
-(use-package color-theme-sanityinc-tomorrow
-  :vc (:url "https://github.com/purcell/color-theme-sanityinc-tomorrow"
-       :main-file "color-theme-sanityinc-tomorrow.el"
-       :compile-files '("sanityinc-tomorrow-*-theme.el"))
-  :defer t)
-(use-package diminish
-  :vc (:url "https://github.com/myrjola/diminish.el"
-       :main-file "diminish.el")
-  :defer t)
 (use-package edit-indirect
   :vc (:url "https://github.com/Fanael/edit-indirect"
        :main-file "edit-indirect.el")
   :defer t)
-(use-package el-mock
-  :vc (:url "https://github.com/rejeep/el-mock.el"
-       :main-file "el-mock.el")
-  :defer t)
 (use-package fish-mode
   :vc (:url "https://github.com/wwwjfy/emacs-fish"
        :main-file "fish-mode.el")
-  :defer t)
-(use-package flx
-  :vc (:url "https://github.com/lewang/flx"
-       :main-file "flx.el")
   :defer t)
 (use-package git-modes
   :vc (:url "https://github.com/magit/git-modes"
@@ -2034,10 +2009,6 @@ Also controls the page size for PgUp/PgDn in the minibuffer.")
 (use-package rainbow-delimiters
   :vc (:url "https://github.com/Fanael/rainbow-delimiters"
        :main-file "rainbow-delimiters.el")
-  :defer t)
-(use-package reformatter
-  :vc (:url "https://github.com/purcell/emacs-reformatter"
-       :main-file "reformatter.el")
   :defer t)
 (use-package swift-ts-mode
   :vc (:url "https://github.com/rechsteiner/swift-ts-mode"
