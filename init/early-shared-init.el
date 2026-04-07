@@ -271,6 +271,27 @@
   (ligature-set-ligatures 'prog-mode my-prog-mode-ligatures)
   (global-ligature-mode t))
 
+;; Tab-line menu button
+(defvar my-tab-line-menu-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [tab-line mouse-1] #'tab-bar-menu-bar)
+    map)
+  "Keymap for the tab-line menu button.")
+
+(defvar my-tab-line-left-margin
+  (propertize " " 'face '(:inherit tab-line
+                          :box (:line-width (1 . 0)
+                                :style flat-button)))
+  "Invisible left margin spacer for the tab line.")
+
+(defvar my-tab-line-menu-button
+  (propertize " ☰ "
+              'face '(:foreground "#ffffff")
+              'mouse-face 'tab-line-highlight
+              'local-map my-tab-line-menu-map
+              'help-echo "Menu (F10)")
+  "Menu button.")
+
 ;; Initialize client displays
 (defvar my-init-client-display-hook '()
   "Functions called after Emacs is started or a server frame is displayed.")
@@ -304,6 +325,13 @@
   (my-reset-theme)
   (when window-system
     (global-tab-line-mode 1)
+    ;; it could do this without advice, but would have to set the value on
+    ;; existing early buffers like *Messages*
+    (advice-add 'tab-line-format :filter-return
+                (lambda (result)
+                  (append  (list my-tab-line-left-margin
+                                 my-tab-line-menu-button)
+                           result)))
     (my-reset-frame-size)))
 
 ;; Initialize client frames

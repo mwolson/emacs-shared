@@ -40,6 +40,7 @@
  '(mail-user-agent 'gnus-user-agent)
  '(max-lisp-eval-depth 1000)
  '(max-specpdl-size 1000 t)
+ '(menu-bar-mode nil)
  '(message-log-max 500)
  '(mouse-wheel-mode t)
  '(package-archives
