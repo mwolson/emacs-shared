@@ -1758,13 +1758,15 @@ take one more character from the first candidate and re-expand."
 (defun my-icomplete-ret ()
   "In file prompts, exit with exact input; otherwise select the candidate."
   (interactive)
-  (let* ((md (completion-metadata
-              (buffer-substring-no-properties (icomplete--field-beg)
-                                              (icomplete--field-end))
-              minibuffer-completion-table
-              minibuffer-completion-predicate))
-         (category (completion-metadata-get md 'category)))
-    (if (eq category 'file)
+  (let* ((beg (icomplete--field-beg))
+         (end (icomplete--field-end))
+         (md (completion-metadata (buffer-substring-no-properties beg end)
+                                  minibuffer-completion-table
+                                  minibuffer-completion-predicate))
+         (category (completion-metadata-get md 'category))
+         (all (completion-all-sorted-completions beg end)))
+    (if (and (eq category 'file)
+             (null all))
         (exit-minibuffer)
       (icomplete-force-complete-and-exit))))
 
