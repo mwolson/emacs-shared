@@ -1533,7 +1533,9 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
        (transient-command-completion-not-suffix-only-p symbol buffer)))
 
 (setq completion-category-defaults nil
-      completion-category-overrides '((file (styles basic partial-completion)))
+      completion-category-overrides '((consult-location (styles substring basic partial-completion flex))
+                                      (file (styles basic partial-completion)))
+      completion-auto-help nil
       completion-ignore-case t
       completion-styles '(basic substring partial-completion flex)
       completions-detailed t
@@ -1670,6 +1672,68 @@ This prevents the window from later moving back once the minibuffer is done show
   (require 'dabbrev nil t)
   (require 'icomplete nil t))
 
+(defun my-icomplete-tab ()
+  "Complete to longest common prefix, advancing one fork point at a time.
+When the input can be expanded to a longer common prefix among all
+candidates, do that. When already at the longest common prefix,
+take one more character from the first candidate and re-expand."
+  (interactive)
+  (let* ((beg (icomplete--field-beg))
+         (end (icomplete--field-end))
+         (string (buffer-substring-no-properties beg end))
+         (md (completion-metadata
+              string
+              minibuffer-completion-table
+              minibuffer-completion-predicate))
+         (comp (completion-try-completion
+                string
+                minibuffer-completion-table
+                minibuffer-completion-predicate
+                (- (point) beg)
+                md)))
+    (cond
+     ((null comp))
+     ((eq t comp))
+     (t
+      (let ((completion (car comp))
+            (comp-pos (cdr comp)))
+        (if (not (string-equal completion string))
+            (progn
+              (completion--replace beg end completion)
+              (goto-char (+ beg comp-pos)))
+          ;; Already at longest common prefix: take one char from the first
+          ;; sorted candidate to pass the fork, then re-expand.
+          (let* ((all (completion-all-sorted-completions beg end))
+                 (base-size (or (cdr (last all)) 0))
+                 (firstnp (substring-no-properties (car all)))
+                 ;; Skip past first completion if other items available and
+                 ;; it's either a "./" or an exact match
+                 (first (if (and (consp (cdr all))
+                                 (or (string= firstnp
+                                              (substring string base-size))
+                                     (string= (directory-file-name firstnp)
+                                              ".")))
+                            (cadr all)
+                          (car all)))
+                 (suffix-len (- (length string) base-size)))
+            (when (and (consp all) (< suffix-len (length first)))
+              (let* ((new-suffix (substring first 0 (1+ suffix-len)))
+                     (new-string (concat (substring string 0 base-size)
+                                         new-suffix))
+                     (new-comp (completion-try-completion
+                                new-string
+                                minibuffer-completion-table
+                                minibuffer-completion-predicate
+                                (length new-string)
+                                md)))
+                (cond
+                 ((consp new-comp)
+                  (completion--replace beg end (car new-comp))
+                  (goto-char (+ beg (cdr new-comp))))
+                 (t
+                  (completion--replace beg end new-string)
+                  (goto-char (+ beg (length new-string))))))))))))))
+
 (defun my-icomplete-ret ()
   "In file prompts, exit with exact input; otherwise select the candidate."
   (interactive)
@@ -1747,6 +1811,7 @@ Also controls the page size for PgUp/PgDn in the minibuffer.")
     (keymap-set icvmm-map "C-r" #'icomplete-backward-completions)
     (keymap-set icvmm-map "C-k" #'kill-line)
     (keymap-set icvmm-map "?" #'minibuffer-completion-help)
+    (keymap-set icvmm-map "TAB" #'my-icomplete-tab)
     (keymap-set icvmm-map "C-c C-o" #'embark-export)
     (keymap-set icvmm-map "RET" #'my-icomplete-ret)
     (keymap-set icvmm-map "M-RET" #'exit-minibuffer)
