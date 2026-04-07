@@ -835,17 +835,30 @@ interactively.
     (add-hook 'consult-after-jump-hook #'my-consult-recenter-for-preview t)
     (add-hook 'consult-after-jump-hook #'pulsar-reveal-entry t)))
 
+(defvar my-icomplete-prospects-height 10
+  "Number of completion candidates to show in icomplete-vertical-mode.
+Also controls the page size for PgUp/PgDn in the minibuffer.")
+
 (defun my-consult-recenter-for-preview ()
-  "Center point to where it will appear after the minibuffer closes.
-Offsets the centering down by half the minibuffer height so the line
-lands at true center once the window expands, giving zero visual jump.
-When consult-line previews the original position, skip recentering to
-avoid visual disruption."
+  "Recenter point for consult preview, preserving position when possible.
+When consult-line previews the original position (empty minibuffer),
+skip recentering entirely. Otherwise, only recenter if the cursor is
+too close to the bottom of the window to leave room for the minibuffer
+and icomplete candidates; if it has enough room, leave it in place."
   (if (and my-consult-line-start-pos
            (string-empty-p (minibuffer-contents-no-properties)))
       nil
-    (let ((mb-offset (/ (window-body-height (minibuffer-window)) 2)))
-      (recenter (+ (/ (window-body-height) 2) mb-offset)))
+    (let* ((ppos (posn-at-point))
+           (cursor-row (and ppos (cdr (posn-actual-col-row ppos))))
+           (win-height (window-body-height))
+           (mb-height (window-body-height (minibuffer-window)))
+           (mb-offset (/ mb-height 2)))
+      (if (not cursor-row)
+          (recenter (+ (/ win-height 2) mb-offset))
+        (let* ((reserved (+ mb-height my-icomplete-prospects-height 4))
+               (max-allowed-row (max 0 (- win-height reserved))))
+          (when (> cursor-row max-allowed-row)
+            (recenter (+ (/ win-height 2) mb-offset))))))
     (call-interactively #'pulsar-highlight-pulse)))
 
 (my-defer-startup #'pulsar-global-mode)
@@ -1595,8 +1608,7 @@ This prevents the window from later moving back once the minibuffer is done show
                        (round rows-dec)))
                (ppos (posn-at-point))
 	       (cursor-row (cdr (posn-actual-col-row ppos)))
-               (prospects-height (if (boundp 'icomplete-prospects-height)
-                                     icomplete-prospects-height 10))
+               (prospects-height my-icomplete-prospects-height)
                ;; 4 = 1 minibuffer input line + 3 rows of context
                (max-allowed-row (max 0 (- rows prospects-height 4)))
                (scroll-up-amount (min (max 0 cursor-row)
@@ -1777,10 +1789,6 @@ take one more character from the first candidate and re-expand."
 
 (advice-add 'help--symbol-completion-table-affixation
             :override #'my-help-symbol-affixation)
-
-(defvar my-icomplete-prospects-height 10
-  "Number of completion candidates to show in icomplete-vertical-mode.
-Also controls the page size for PgUp/PgDn in the minibuffer.")
 
 (defun my-icomplete-page-down ()
   "Move forward one page in icomplete completions."
