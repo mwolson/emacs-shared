@@ -1813,6 +1813,39 @@ take one more character from the first candidate and re-expand."
   (dotimes (_ (ceiling (1- (/ my-icomplete-prospects-height 2))))
     (icomplete-backward-completions)))
 
+(defun my-icomplete-backspace ()
+  "Delete backward, continuing while file completions stay unchanged.
+In file-category completion, delete one character backward then
+keep deleting while the sorted completion list stays identical
+and at least one input character remains. In other categories,
+delete a single character.
+
+This works because `completion-all-sorted-completions' returns an
+improper list (comp1 comp2 ... compN . base-size) and its cache
+is flushed by `after-change-functions' on each `delete-char', so
+successive calls produce fresh cons cells. `equal' compares
+string contents (ignoring text properties) and the trailing
+base-size, giving us the right semantics."
+  (interactive)
+  (let* ((beg (icomplete--field-beg))
+         (end (icomplete--field-end)))
+    (if (or (<= end beg)
+            (not (eq 'file (completion-metadata-get
+                            (completion-metadata
+                             (buffer-substring-no-properties beg end)
+                             minibuffer-completion-table
+                             minibuffer-completion-predicate)
+                            'category))))
+        (delete-char -1)
+      (let ((prev (completion-all-sorted-completions beg end)))
+        (delete-char -1)
+        (setq end (icomplete--field-end))
+        (while (and (> end beg)
+                    (equal prev
+                           (completion-all-sorted-completions beg end)))
+          (delete-char -1)
+          (setq end (icomplete--field-end)))))))
+
 (defun my-load-icomplete ()
   (require 'icomplete)
   (setopt icomplete-compute-delay 0
@@ -1834,6 +1867,7 @@ take one more character from the first candidate and re-expand."
     (keymap-set icvmm-map "C-c C-o" #'embark-export)
     (keymap-set icvmm-map "RET" #'my-icomplete-ret)
     (keymap-set icvmm-map "M-RET" #'exit-minibuffer)
+    (keymap-set icvmm-map "<backspace>" #'my-icomplete-backspace)
     (keymap-set icvmm-map "<prior>" #'my-icomplete-page-up)
     (keymap-set icvmm-map "<next>" #'my-icomplete-page-down))
 
