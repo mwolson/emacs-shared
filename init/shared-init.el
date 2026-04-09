@@ -1846,8 +1846,29 @@ base-size, giving us the right semantics."
           (delete-char -1)
           (setq end (icomplete--field-end)))))))
 
+(defun my-icomplete-bubble-dot-slash (all)
+  "Bubble \"./\" to top of file completions in icomplete-vertical-mode."
+  (if (and all
+           (not fido-mode)
+           (not minibuffer-default)
+           (eq (icomplete--category) 'file)
+           (not (string= "./" (car all))))
+      (cl-loop for l on all
+               while (consp (cdr l))
+               for comp = (cadr l)
+               when (string= "./" comp)
+               do (setf (cdr l) (cddr l))
+               and return
+               (completion--cache-all-sorted-completions
+                (icomplete--field-beg) (icomplete--field-end)
+                (cons comp all))
+               finally return all)
+    all))
+
 (defun my-load-icomplete ()
   (require 'icomplete)
+  (advice-add 'icomplete--sorted-completions :filter-return
+              #'my-icomplete-bubble-dot-slash)
   (setopt icomplete-compute-delay 0
           icomplete-delay-completions-threshold 0
           icomplete-hide-common-prefix nil

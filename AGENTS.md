@@ -21,7 +21,10 @@ not consider a change complete until this script passes cleanly.
 
 A full Emacs source tree is checked out at `extra/emacs/`. This is useful for
 looking up face definitions, understanding built-in mode internals, or checking
-how upstream Emacs implements specific features.
+how upstream Emacs implements specific features. This directory is read-only
+reference material and is not loaded by the running Emacs instance. Never modify
+files under `extra/emacs/`; instead, use advice, function overrides, or other
+mechanisms in `init/*.el` to change behavior.
 
 ## Dev loop tools
 
