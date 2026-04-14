@@ -161,6 +161,14 @@ full interactive Emacs session.
   - Print output with `princ` and exit non-zero with `(kill-emacs 1)` on
     failure.
 
+- When debugging errors that originate inside a third-party package, read the
+  package source to find the exact function call sequence, then replicate that
+  sequence in a batch harness. This isolates whether the bug is in the package's
+  logic, the user config, or the interaction between them. Compare
+  `emacs --batch -Q` (vanilla) against
+  `emacs --batch -l ~/.emacs.d/early-init.el -l ~/.emacs.d/init.el` (user
+  config) to narrow the cause.
+
 ## Local checkouts of mwolson libraries
 
 This config uses several mwolson-authored packages installed via
