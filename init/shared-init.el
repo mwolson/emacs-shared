@@ -920,9 +920,9 @@ and icomplete candidates; if it has enough room, leave it in place."
   (add-to-list 'major-mode-remap-alist '(sh-mode . bash-ts-mode))
   :config
   (fset #'my-real-sh-mode #'sh-mode)
-  (add-to-list 'my-md-code-aliases '(bash . my-real-sh-mode))
-  (add-to-list 'my-md-code-aliases '(sh . my-real-sh-mode))
-  (add-to-list 'my-md-code-aliases '(shell . my-real-sh-mode)))
+  (add-to-list 'my-md-code-aliases '("bash" . my-real-sh-mode))
+  (add-to-list 'my-md-code-aliases '("sh" . my-real-sh-mode))
+  (add-to-list 'my-md-code-aliases '("shell" . my-real-sh-mode)))
 
 ;; C/C++
 (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
@@ -1053,7 +1053,7 @@ and icomplete candidates; if it has enough room, leave it in place."
 
 (add-to-list 'auto-mode-alist '("\\.exs?\\'" . elixir-ts-mode))
 (add-to-list 'auto-mode-alist '("mix\\.lock\\'" . elixir-ts-mode))
-(add-to-list 'my-md-code-aliases '(elixir . elixir-ts-mode))
+(add-to-list 'my-md-code-aliases '("elixir" . elixir-ts-mode))
 (add-to-list 'eglot-server-programs
              '((elixir-ts-mode heex-ts-mode)
                . ("elixir-ls")))
@@ -1067,7 +1067,7 @@ and icomplete candidates; if it has enough room, leave it in place."
 
 (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
 (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))
-(add-to-list 'my-md-code-aliases '(go . go-ts-mode))
+(add-to-list 'my-md-code-aliases '("go" . go-ts-mode))
 (add-hook 'go-ts-mode-hook #'eglot-ensure t)
 (add-hook 'go-mod-ts-mode-hook #'eglot-ensure t)
 
@@ -1137,10 +1137,10 @@ and icomplete candidates; if it has enough room, leave it in place."
 (add-to-list 'auto-mode-alist '("/\\.prettierignore\\'" . gitignore-mode))
 (add-to-list 'auto-mode-alist '("/\\yarn.lock\\'" . conf-mode))
 (add-to-list 'auto-mode-alist '("\\.yarnrc\\'" . yaml-ts-mode))
-(add-to-list 'my-md-code-aliases '(javascript . my-real-js-mode))
-(add-to-list 'my-md-code-aliases '(js . my-real-js-mode))
-(add-to-list 'my-md-code-aliases '(ts . my-real-js-mode))
-(add-to-list 'my-md-code-aliases '(typescript . my-real-js-mode))
+(add-to-list 'my-md-code-aliases '("javascript" . my-real-js-mode))
+(add-to-list 'my-md-code-aliases '("js" . my-real-js-mode))
+(add-to-list 'my-md-code-aliases '("ts" . my-real-js-mode))
+(add-to-list 'my-md-code-aliases '("typescript" . my-real-js-mode))
 (add-to-list 'major-mode-remap-alist '(js-mode . jtsx-jsx-mode))
 (add-to-list 'major-mode-remap-alist '(ts-mode . jtsx-tsx-mode))
 
@@ -1190,7 +1190,7 @@ and icomplete candidates; if it has enough room, leave it in place."
 
 ;; Kotlin
 (add-to-list 'auto-mode-alist '("\\.kts?\\'" . kotlin-ts-mode))
-(add-to-list 'my-md-code-aliases '(kotlin . kotlin-ts-mode))
+(add-to-list 'my-md-code-aliases '("kotlin" . kotlin-ts-mode))
 
 ;; Lisp
 (use-package slime
@@ -1219,14 +1219,10 @@ and icomplete candidates; if it has enough room, leave it in place."
 
 (eval-when-compile
   (require 'markdown-mode nil t))
-(defun my-replace-mode-in-symbol (mode-sym)
-  (intern
-   (replace-regexp-in-string "-mode\\'" ""
-                             (symbol-name mode-sym))))
-
 (defun my-markdown-install-aliases ()
   (dolist (to-remap major-mode-remap-alist)
-    (let ((from (my-replace-mode-in-symbol (car to-remap)))
+    (let ((from (replace-regexp-in-string
+                 "-mode\\'" "" (symbol-name (car to-remap))))
           (to (cdr to-remap)))
       (unless (eq to 'gfm-mode)
         (add-to-list 'markdown-code-lang-modes (cons from to)))))
@@ -1313,7 +1309,7 @@ and icomplete candidates; if it has enough room, leave it in place."
   "Major mode for highlighting MDX files.")
 
 (add-to-list 'auto-mode-alist '("\\.mdx\\'" . my-mdx-mode))
-(add-to-list 'my-md-code-aliases '(mdx . my-mdx-mode))
+(add-to-list 'my-md-code-aliases '("mdx" . my-mdx-mode))
 
 ;; Mermaid diagrams
 (use-package mermaid-ts-mode
@@ -1323,7 +1319,7 @@ and icomplete candidates; if it has enough room, leave it in place."
 
 ;; Nix
 (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
-(add-to-list 'my-md-code-aliases '(nix . nix-ts-mode))
+(add-to-list 'my-md-code-aliases '("nix" . nix-ts-mode))
 
 ;; Node.js
 (defvar my-nodejs-compilation-regexp
@@ -1375,7 +1371,7 @@ and icomplete candidates; if it has enough room, leave it in place."
 
 ;; Rust
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
-(add-to-list 'my-md-code-aliases '(rust . rust-ts-mode))
+(add-to-list 'my-md-code-aliases '("rust" . rust-ts-mode))
 (add-to-list 'eglot-server-programs
              '((rust-ts-mode rust-mode)
                . ("rust-analyzer"
@@ -1412,7 +1408,7 @@ and icomplete candidates; if it has enough room, leave it in place."
 
 ;; Swift
 (add-to-list 'auto-mode-alist '("\\.swift\\(interface\\)?\\'" . swift-ts-mode))
-(add-to-list 'my-md-code-aliases '(swift . swift-ts-mode))
+(add-to-list 'my-md-code-aliases '("swift" . swift-ts-mode))
 
 ;; TOML
 (add-to-list 'auto-mode-alist '("\\.toml\\'" . toml-ts-mode))
@@ -1463,7 +1459,7 @@ and icomplete candidates; if it has enough room, leave it in place."
 
 ;; Zig
 (add-to-list 'auto-mode-alist '("\\.zig\\'" . zig-ts-mode))
-(add-to-list 'my-md-code-aliases '(zig . zig-ts-mode))
+(add-to-list 'my-md-code-aliases '("zig" . zig-ts-mode))
 (add-to-list 'eglot-server-programs
              '((zig-ts-mode)
                . ("zls" :initializationOptions ())))
