@@ -1810,37 +1810,27 @@ take one more character from the first candidate and re-expand."
     (icomplete-backward-completions)))
 
 (defun my-icomplete-backspace ()
-  "Delete backward, continuing while file completions stay unchanged.
-In file-category completion, delete one character backward then
-keep deleting while the sorted completion list stays identical
-and at least one input character remains. In other categories,
-delete a single character.
-
-This works because `completion-all-sorted-completions' returns an
-improper list (comp1 comp2 ... compN . base-size) and its cache
-is flushed by `after-change-functions' on each `delete-char', so
-successive calls produce fresh cons cells. `equal' compares
-string contents (ignoring text properties) and the trailing
-base-size, giving us the right semantics."
+  "Delete backward, stopping at path separators for file completion.
+In file-category completion with at least one `/' or `\\' in the
+input, delete one character backward then keep deleting until the
+character before point is `/' or `\\'. Otherwise, delete a single
+character."
   (interactive)
   (let* ((beg (icomplete--field-beg))
-         (end (icomplete--field-end)))
-    (if (or (<= end beg)
-            (not (eq 'file (completion-metadata-get
-                            (completion-metadata
-                             (buffer-substring-no-properties beg end)
-                             minibuffer-completion-table
-                             minibuffer-completion-predicate)
-                            'category))))
-        (delete-char -1)
-      (let ((prev (completion-all-sorted-completions beg end)))
-        (delete-char -1)
-        (setq end (icomplete--field-end))
-        (while (and (> end beg)
-                    (equal prev
-                           (completion-all-sorted-completions beg end)))
-          (delete-char -1)
-          (setq end (icomplete--field-end)))))))
+         (end (icomplete--field-end))
+         (input (buffer-substring-no-properties beg end)))
+    (delete-char -1)
+    (when (and (> end beg)
+               (eq 'file (completion-metadata-get
+                          (completion-metadata
+                           input
+                           minibuffer-completion-table
+                           minibuffer-completion-predicate)
+                          'category))
+               (string-match-p "[/\\]" input))
+      (while (and (> (point) beg)
+                  (not (memq (char-before) '(?/ ?\\))))
+        (delete-char -1)))))
 
 (defun my-icomplete-bubble-dot-slash (all)
   "Bubble \"./\" to top of file completions in icomplete-vertical-mode."
