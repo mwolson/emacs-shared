@@ -874,6 +874,10 @@ and icomplete candidates; if it has enough room, leave it in place."
   :custom
   (treesit-font-lock-level 4))
 
+;; Generic workaround for Emacs bug#79687 (see treesit-predicate-rewrite.el).
+;; Must load before any tree-sitter mode's `treesit-font-lock-rules' call.
+(load (concat my-emacs-path "init/treesit-predicate-rewrite") nil nil nil t)
+
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
 (use-package dumb-jump
   :vc (:url "https://github.com/jacktasia/dumb-jump"
@@ -1124,9 +1128,6 @@ and icomplete candidates; if it has enough room, leave it in place."
   :ensure nil
   :demand t)
 
-;; Workaround for Emacs bug#79687 (see treesit-typescript-ts-fix.el).
-(load (concat my-emacs-path "init/treesit-typescript-ts-fix") nil nil nil t)
-
 (add-to-list 'auto-mode-alist '("\\.astro\\'" . astro-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.[cm]js\\'" . jtsx-jsx-mode))
 (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . jtsx-jsx-mode))
@@ -1354,9 +1355,6 @@ and icomplete candidates; if it has enough room, leave it in place."
 ;; Python
 (add-to-list 'auto-mode-alist '("/uv\\.lock\\'" . toml-ts-mode))
 (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-
-;; Workaround for Emacs bug#79687 (see treesit-python-ts-fix.el).
-(load (concat my-emacs-path "init/treesit-python-ts-fix") nil nil nil t)
 
 ;; - eglot-python-preset: Python project detection and PEP-723 support
 ;;
