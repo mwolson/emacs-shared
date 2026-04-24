@@ -1,6 +1,7 @@
 ;;; native-comp-all.el --- -*- lexical-binding: t -*-
 
 (require 'package)
+(setq package-install-upgrade-built-in t)
 (package-initialize)
 
 (require 'use-package)

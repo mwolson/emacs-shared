@@ -104,6 +104,7 @@
 (require 'use-package)
 
 (setopt use-package-vc-prefer-newest t)
+(setopt package-install-upgrade-built-in t)
 
 (use-package vcupp
   :vc (:url "https://github.com/mwolson/vcupp")

@@ -3,10 +3,11 @@
 (require 'treesit) ; to silence an autoload warning, seems like emacs bug
 
 (require 'package)
+(setq package-install-upgrade-built-in t
+      use-package-vc-prefer-newest t)
 (package-initialize)
 
 (require 'use-package)
-(setq use-package-vc-prefer-newest t)
 
 (advice-add 'project-remember-projects-under :override #'ignore)
 

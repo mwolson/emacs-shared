@@ -151,7 +151,7 @@ When `depth' is provided, pass it to `add-hook'."
   :defer t)
 (use-package transient
   :vc (:url "https://github.com/magit/transient"
-       :main-file "transient.el")
+       :lisp-dir "lisp" :main-file "transient.el")
   :defer t
   :config
   (transient-bind-q-to-quit))
