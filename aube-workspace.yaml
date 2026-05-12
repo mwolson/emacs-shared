@@ -3,3 +3,5 @@ allowBuilds:
   puppeteer: false
   tree-sitter-cli: true
 sharedWorkspaceLockfile: false
+trustPolicyExclude:
+  - svelte
