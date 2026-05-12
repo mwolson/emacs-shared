@@ -46,5 +46,11 @@
   "devDependencies": {
     "lefthook": "^2.1.6",
     "tree-sitter-cli": "^0.26.8"
+  },
+  "aube": {
+    "allowBuilds": {
+      "lefthook": true,
+      "puppeteer": false
+    }
   }
 }
