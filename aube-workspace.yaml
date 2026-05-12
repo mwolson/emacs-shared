@@ -1,0 +1,5 @@
+allowBuilds:
+  lefthook: false
+  puppeteer: false
+  tree-sitter-cli: true
+sharedWorkspaceLockfile: false

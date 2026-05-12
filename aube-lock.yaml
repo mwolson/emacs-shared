@@ -118,54 +118,74 @@ packages:
   '@biomejs/cli-darwin-arm64@2.4.10':
     resolution: {integrity: sha512-vuzzI1cWqDVzOMIkYyHbKqp+AkQq4K7k+UCXWpkYcY/HDn1UxdsbsfgtVpa40shem8Kax4TLDLlx8kMAecgqiw==}
     engines: {node: '>=14.21.3'}
-    cpu: [arm64]
-    os: [darwin]
+    os:
+    - darwin
+    cpu:
+    - arm64
 
   '@biomejs/cli-darwin-x64@2.4.10':
     resolution: {integrity: sha512-14fzASRo+BPotwp7nWULy2W5xeUyFnTaq1V13Etrrxkrih+ez/2QfgFm5Ehtf5vSjtgx/IJycMMpn5kPd5ZNaA==}
     engines: {node: '>=14.21.3'}
-    cpu: [x64]
-    os: [darwin]
+    os:
+    - darwin
+    cpu:
+    - x64
 
   '@biomejs/cli-linux-arm64-musl@2.4.10':
     resolution: {integrity: sha512-WrJY6UuiSD/Dh+nwK2qOTu8kdMDlLV3dLMmychIghHPAysWFq1/DGC1pVZx8POE3ZkzKR3PUUnVrtZfMfaJjyQ==}
     engines: {node: '>=14.21.3'}
-    cpu: [arm64]
-    os: [linux]
-    libc: [musl]
+    os:
+    - linux
+    cpu:
+    - arm64
+    libc:
+    - musl
 
   '@biomejs/cli-linux-arm64@2.4.10':
     resolution: {integrity: sha512-7MH1CMW5uuxQ/s7FLST63qF8B3Hgu2HRdZ7tA1X1+mk+St4JOuIrqdhIBnnyqeyWJNI+Bww7Es5QZ0wIc1Cmkw==}
     engines: {node: '>=14.21.3'}
-    cpu: [arm64]
-    os: [linux]
-    libc: [glibc]
+    os:
+    - linux
+    cpu:
+    - arm64
+    libc:
+    - glibc
 
   '@biomejs/cli-linux-x64-musl@2.4.10':
     resolution: {integrity: sha512-kDTi3pI6PBN6CiczsWYOyP2zk0IJI08EWEQyDMQWW221rPaaEz6FvjLhnU07KMzLv8q3qSuoB93ua6inSQ55Tw==}
     engines: {node: '>=14.21.3'}
-    cpu: [x64]
-    os: [linux]
-    libc: [musl]
+    os:
+    - linux
+    cpu:
+    - x64
+    libc:
+    - musl
 
   '@biomejs/cli-linux-x64@2.4.10':
     resolution: {integrity: sha512-tZLvEEi2u9Xu1zAqRjTcpIDGVtldigVvzug2fTuPG0ME/g8/mXpRPcNgLB22bGn6FvLJpHHnqLnwliOu8xjYrg==}
     engines: {node: '>=14.21.3'}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
+    os:
+    - linux
+    cpu:
+    - x64
+    libc:
+    - glibc
 
   '@biomejs/cli-win32-arm64@2.4.10':
     resolution: {integrity: sha512-umwQU6qPzH+ISTf/eHyJ/QoQnJs3V9Vpjz2OjZXe9MVBZ7prgGafMy7yYeRGnlmDAn87AKTF3Q6weLoMGpeqdQ==}
     engines: {node: '>=14.21.3'}
-    cpu: [arm64]
-    os: [win32]
+    os:
+    - win32
+    cpu:
+    - arm64
 
   '@biomejs/cli-win32-x64@2.4.10':
     resolution: {integrity: sha512-aW/JU5GuyH4uxMrNYpoC2kjaHlyJGLgIa3XkhPEZI0uKhZhJZU8BuEyJmvgzSPQNGozBwWjC972RaNdcJ9KyJg==}
     engines: {node: '>=14.21.3'}
-    cpu: [x64]
-    os: [win32]
+    os:
+    - win32
+    cpu:
+    - x64
 
   '@braintree/sanitize-url@7.1.2':
     resolution: {integrity: sha512-jigsZK+sMF/cuiB7sERuo9V7N9jx+dhmHHnQyDSVdpZwVutaBu7WvNYqMDLSgFgfB30n452TP3vjDAvFC973mA==}
@@ -347,124 +367,170 @@ packages:
   '@oxlint/binding-android-arm-eabi@1.58.0':
     resolution: {integrity: sha512-1T7UN3SsWWxpWyWGn1cT3ASNJOo+pI3eUkmEl7HgtowapcV8kslYpFQcYn431VuxghXakPNlbjRwhqmR37PFOg==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [arm]
-    os: [android]
+    os:
+    - android
+    cpu:
+    - arm
 
   '@oxlint/binding-android-arm64@1.58.0':
     resolution: {integrity: sha512-GryzujxuiRv2YFF7bRy8mKcxlbuAN+euVUtGJt9KKbLT8JBUIosamVhcthLh+VEr6KE6cjeVMAQxKAzJcoN7dg==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [arm64]
-    os: [android]
+    os:
+    - android
+    cpu:
+    - arm64
 
   '@oxlint/binding-darwin-arm64@1.58.0':
     resolution: {integrity: sha512-7/bRSJIwl4GxeZL9rPZ11anNTyUO9epZrfEJH/ZMla3+/gbQ6xZixh9nOhsZ0QwsTW7/5J2A/fHbD1udC5DQQA==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [arm64]
-    os: [darwin]
+    os:
+    - darwin
+    cpu:
+    - arm64
 
   '@oxlint/binding-darwin-x64@1.58.0':
     resolution: {integrity: sha512-EqdtJSiHweS2vfILNrpyJ6HUwpEq2g7+4Zx1FPi4hu3Hu7tC3znF6ufbXO8Ub2LD4mGgznjI7kSdku9NDD1Mkg==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [x64]
-    os: [darwin]
+    os:
+    - darwin
+    cpu:
+    - x64
 
   '@oxlint/binding-freebsd-x64@1.58.0':
     resolution: {integrity: sha512-VQt5TH4M42mY20F545G637RKxV/yjwVtKk2vfXuazfReSIiuvWBnv+FVSvIV5fKVTJNjt3GSJibh6JecbhGdBw==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [x64]
-    os: [freebsd]
+    os:
+    - freebsd
+    cpu:
+    - x64
 
   '@oxlint/binding-linux-arm-gnueabihf@1.58.0':
     resolution: {integrity: sha512-fBYcj4ucwpAtjJT3oeBdFBYKvNyjRSK+cyuvBOTQjh0jvKp4yeA4S/D0IsCHus/VPaNG5L48qQkh+Vjy3HL2/Q==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [arm]
-    os: [linux]
+    os:
+    - linux
+    cpu:
+    - arm
 
   '@oxlint/binding-linux-arm-musleabihf@1.58.0':
     resolution: {integrity: sha512-0BeuFfwlUHlJ1xpEdSD1YO3vByEFGPg36uLjK1JgFaxFb4W6w17F8ET8sz5cheZ4+x5f2xzdnRrrWv83E3Yd8g==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [arm]
-    os: [linux]
+    os:
+    - linux
+    cpu:
+    - arm
 
   '@oxlint/binding-linux-arm64-gnu@1.58.0':
     resolution: {integrity: sha512-TXlZgnPTlxrQzxG9ZXU7BNwx1Ilrr17P3GwZY0If2EzrinqRH3zXPc3HrRcBJgcsoZNMuNL5YivtkJYgp467UQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [arm64]
-    os: [linux]
-    libc: [glibc]
+    os:
+    - linux
+    cpu:
+    - arm64
+    libc:
+    - glibc
 
   '@oxlint/binding-linux-arm64-musl@1.58.0':
     resolution: {integrity: sha512-zSoYRo5dxHLcUx93Stl2hW3hSNjPt99O70eRVWt5A1zwJ+FPjeCCANCD2a9R4JbHsdcl11TIQOjyigcRVOH2mw==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [arm64]
-    os: [linux]
-    libc: [musl]
+    os:
+    - linux
+    cpu:
+    - arm64
+    libc:
+    - musl
 
   '@oxlint/binding-linux-ppc64-gnu@1.58.0':
     resolution: {integrity: sha512-NQ0U/lqxH2/VxBYeAIvMNUK1y0a1bJ3ZicqkF2c6wfakbEciP9jvIE4yNzCFpZaqeIeRYaV7AVGqEO1yrfVPjA==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [ppc64]
-    os: [linux]
-    libc: [glibc]
+    os:
+    - linux
+    cpu:
+    - ppc64
+    libc:
+    - glibc
 
   '@oxlint/binding-linux-riscv64-gnu@1.58.0':
     resolution: {integrity: sha512-X9J+kr3gIC9FT8GuZt0ekzpNUtkBVzMVU4KiKDSlocyQuEgi3gBbXYN8UkQiV77FTusLDPsovjo95YedHr+3yg==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [riscv64]
-    os: [linux]
-    libc: [glibc]
+    os:
+    - linux
+    cpu:
+    - riscv64
+    libc:
+    - glibc
 
   '@oxlint/binding-linux-riscv64-musl@1.58.0':
     resolution: {integrity: sha512-CDze3pi1OO3Wvb/QsXjmLEY4XPKGM6kIo82ssNOgmcl1IdndF9VSGAE38YLhADWmOac7fjqhBw82LozuUVxD0Q==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [riscv64]
-    os: [linux]
-    libc: [musl]
+    os:
+    - linux
+    cpu:
+    - riscv64
+    libc:
+    - musl
 
   '@oxlint/binding-linux-s390x-gnu@1.58.0':
     resolution: {integrity: sha512-b/89glbxFaEAcA6Uf1FvCNecBJEgcUTsV1quzrqXM/o4R1M4u+2KCVuyGCayN2UpsRWtGGLb+Ver0tBBpxaPog==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [s390x]
-    os: [linux]
-    libc: [glibc]
+    os:
+    - linux
+    cpu:
+    - s390x
+    libc:
+    - glibc
 
   '@oxlint/binding-linux-x64-gnu@1.58.0':
     resolution: {integrity: sha512-0/yYpkq9VJFCEcuRlrViGj8pJUFFvNS4EkEREaN7CB1EcLXJIaVSSa5eCihwBGXtOZxhnblWgxks9juRdNQI7w==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
+    os:
+    - linux
+    cpu:
+    - x64
+    libc:
+    - glibc
 
   '@oxlint/binding-linux-x64-musl@1.58.0':
     resolution: {integrity: sha512-hr6FNvmcAXiH+JxSvaJ4SJ1HofkdqEElXICW9sm3/Rd5eC3t7kzvmLyRAB3NngKO2wzXRCAm4Z/mGWfrsS4X8w==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [x64]
-    os: [linux]
-    libc: [musl]
+    os:
+    - linux
+    cpu:
+    - x64
+    libc:
+    - musl
 
   '@oxlint/binding-openharmony-arm64@1.58.0':
     resolution: {integrity: sha512-R+O368VXgRql1K6Xar+FEo7NEwfo13EibPMoTv3sesYQedRXd6m30Dh/7lZMxnrQVFfeo4EOfYIP4FpcgWQNHg==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [arm64]
-    os: [openharmony]
+    os:
+    - openharmony
+    cpu:
+    - arm64
 
   '@oxlint/binding-win32-arm64-msvc@1.58.0':
     resolution: {integrity: sha512-Q0FZiAY/3c4YRj4z3h9K1PgaByrifrfbBoODSeX7gy97UtB7pySPUQfC2B/GbxWU6k7CzQrRy5gME10PltLAFQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [arm64]
-    os: [win32]
+    os:
+    - win32
+    cpu:
+    - arm64
 
   '@oxlint/binding-win32-ia32-msvc@1.58.0':
     resolution: {integrity: sha512-Y8FKBABrSPp9H0QkRLHDHOSUgM/309a3IvOVgPcVxYcX70wxJrk608CuTg7w+C6vEd724X5wJoNkBcGYfH7nNQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [ia32]
-    os: [win32]
+    os:
+    - win32
+    cpu:
+    - ia32
 
   '@oxlint/binding-win32-x64-msvc@1.58.0':
     resolution: {integrity: sha512-bCn5rbiz5My+Bj7M09sDcnqW0QJyINRVxdZ65x1/Y2tGrMwherwK/lpk+HRQCKvXa8pcaQdF5KY5j54VGZLwNg==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    cpu: [x64]
-    os: [win32]
+    os:
+    - win32
+    cpu:
+    - x64
 
   '@puppeteer/browsers@2.6.1':
     resolution: {integrity: sha512-aBSREisdsGH890S2rQqK82qmQYU3uFpSH8wcZWHgHzl3LfzsxAKbLNiAG9mO8v1Y0UICBeClICxPJvyr0rcuxg==}
@@ -1353,7 +1419,8 @@ packages:
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
-    os: [darwin]
+    os:
+    - darwin
 
   function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
@@ -1616,53 +1683,73 @@ packages:
 
   lefthook-darwin-arm64@2.1.4:
     resolution: {integrity: sha512-BUAAE9+rUrjr39a+wH/1zHmGrDdwUQ2Yq/z6BQbM/yUb9qtXBRcQ5eOXxApqWW177VhGBpX31aqIlfAZ5Q7wzw==}
-    cpu: [arm64]
-    os: [darwin]
+    os:
+    - darwin
+    cpu:
+    - arm64
 
   lefthook-darwin-x64@2.1.4:
     resolution: {integrity: sha512-K1ncIMEe84fe+ss1hQNO7rIvqiKy2TJvTFpkypvqFodT7mJXZn7GLKYTIXdIuyPAYthRa9DwFnx5uMoHwD2F1Q==}
-    cpu: [x64]
-    os: [darwin]
+    os:
+    - darwin
+    cpu:
+    - x64
 
   lefthook-freebsd-arm64@2.1.4:
     resolution: {integrity: sha512-PVUhjOhVN71YaYsVdQyNbFZ4a2jFB2Tg5hKrrn9kaWpx64aLz/XivLjwr8sEuTaP1GRlEWBpW6Bhrcsyo39qFw==}
-    cpu: [arm64]
-    os: [freebsd]
+    os:
+    - freebsd
+    cpu:
+    - arm64
 
   lefthook-freebsd-x64@2.1.4:
     resolution: {integrity: sha512-ZWV9o/LeyWNEBoVO+BhLqxH3rGTba05nkm5NvMjEFSj7LbUNUDbQmupZwtHl1OMGJO66eZP0CalzRfUH6GhBxQ==}
-    cpu: [x64]
-    os: [freebsd]
+    os:
+    - freebsd
+    cpu:
+    - x64
 
   lefthook-linux-arm64@2.1.4:
     resolution: {integrity: sha512-iWN0pGnTjrIvNIcSI1vQBJXUbybTqJ5CLMniPA0olabMXQfPDrdMKVQe+mgdwHK+E3/Y0H0ZNL3lnOj6Sk6szA==}
-    cpu: [arm64]
-    os: [linux]
+    os:
+    - linux
+    cpu:
+    - arm64
 
   lefthook-linux-x64@2.1.4:
     resolution: {integrity: sha512-96bTBE/JdYgqWYAJDh+/e/0MaxJ25XTOAk7iy/fKoZ1ugf6S0W9bEFbnCFNooXOcxNVTan5xWKfcjJmPIKtsJA==}
-    cpu: [x64]
-    os: [linux]
+    os:
+    - linux
+    cpu:
+    - x64
 
   lefthook-openbsd-arm64@2.1.4:
     resolution: {integrity: sha512-oYUoK6AIJNEr9lUSpIMj6g7sWzotvtc3ryw7yoOyQM6uqmEduw73URV/qGoUcm4nqqmR93ZalZwR2r3Gd61zvw==}
-    cpu: [arm64]
-    os: [openbsd]
+    os:
+    - openbsd
+    cpu:
+    - arm64
 
   lefthook-openbsd-x64@2.1.4:
     resolution: {integrity: sha512-i/Dv9Jcm68y9cggr1PhyUhOabBGP9+hzQPoiyOhKks7y9qrJl79A8XfG6LHekSuYc2VpiSu5wdnnrE1cj2nfTg==}
-    cpu: [x64]
-    os: [openbsd]
+    os:
+    - openbsd
+    cpu:
+    - x64
 
   lefthook-windows-arm64@2.1.4:
     resolution: {integrity: sha512-hSww7z+QX4YMnw2lK7DMrs3+w7NtxksuMKOkCKGyxUAC/0m1LAICo0ZbtdDtZ7agxRQQQ/SEbzFRhU5ysNcbjA==}
-    cpu: [arm64]
-    os: [win32]
+    os:
+    - win32
+    cpu:
+    - arm64
 
   lefthook-windows-x64@2.1.4:
     resolution: {integrity: sha512-eE68LwnogxwcPgGsbVGPGxmghyMGmU9SdGwcc+uhGnUxPz1jL89oECMWJNc36zjVK24umNeDAzB5KA3lw1MuWw==}
-    cpu: [x64]
-    os: [win32]
+    os:
+    - win32
+    cpu:
+    - x64
 
   lefthook@2.1.4:
     resolution: {integrity: sha512-JNfJ5gAn0KADvJ1I6/xMcx70+/6TL6U9gqGkKvPw5RNMfatC7jIg0Evl97HN846xmfz959BV70l8r3QsBJk30w==}
@@ -1989,7 +2076,6 @@ packages:
   puppeteer@23.11.1:
     resolution: {integrity: sha512-53uIX3KR5en8l7Vd8n5DUv90Ae9QDQsyIthaUFVzwV6yU750RjqRznEtNMBT20VthqAdemnJN+hxVdmMHKt7Zw==}
     engines: {node: '>=18'}
-    deprecated: < 24.15.0 is no longer supported
     hasBin: true
 
   qified@0.9.1:
@@ -2550,7 +2636,7 @@ snapshots:
     optionalDependencies:
       prettier: 3.8.1
     transitivePeerDependencies:
-      - typescript
+    - typescript
 
   '@astrojs/yaml2ts@0.2.3':
     dependencies:
@@ -2650,9 +2736,9 @@ snapshots:
       css-tree: 3.2.1
 
   '@csstools/css-tokenizer@3.0.4': {}
+  ? '@csstools/media-query-list-parser@4.0.3(@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4))(@csstools/css-tokenizer@3.0.4)'
 
-  '@csstools/media-query-list-parser@4.0.3(@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4))(@csstools/css-tokenizer@3.0.4)':
-    dependencies:
+  : dependencies:
       '@csstools/css-parser-algorithms': 3.0.5(@csstools/css-tokenizer@3.0.4)
       '@csstools/css-tokenizer': 3.0.4
 
@@ -2773,22 +2859,22 @@ snapshots:
       mermaid: 11.14.0
       puppeteer: 23.11.1(typescript@5.9.3)
     transitivePeerDependencies:
-      - '@babel/core'
-      - '@babel/template'
-      - '@types/react'
-      - tsx
-      - yaml
+    - '@babel/core'
+    - '@babel/template'
+    - '@types/react'
+    - tsx
+    - yaml
 
   '@mermaid-js/mermaid-zenuml@0.2.2(mermaid@11.14.0)(yaml@2.8.3)':
     dependencies:
       '@zenuml/core': 3.47.2(yaml@2.8.3)
       mermaid: 11.14.0
     transitivePeerDependencies:
-      - '@babel/core'
-      - '@babel/template'
-      - '@types/react'
-      - tsx
-      - yaml
+    - '@babel/core'
+    - '@babel/template'
+    - '@types/react'
+    - tsx
+    - yaml
 
   '@mermaid-js/parser@1.1.0':
     dependencies:
@@ -2874,10 +2960,10 @@ snapshots:
       unbzip2-stream: 1.4.3
       yargs: 17.7.2
     transitivePeerDependencies:
-      - bare-abort-controller
-      - bare-buffer
-      - react-native-b4a
-      - supports-color
+    - bare-abort-controller
+    - bare-buffer
+    - react-native-b4a
+    - supports-color
 
   '@react-aria/focus@3.21.5(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
@@ -3216,7 +3302,7 @@ snapshots:
       path-browserify: 1.0.1
       vue-component-meta: 3.2.6(typescript@5.9.3)
     transitivePeerDependencies:
-      - typescript
+    - typescript
 
   '@zenuml/core@3.47.2(yaml@2.8.3)':
     dependencies:
@@ -3241,11 +3327,11 @@ snapshots:
       tailwind-merge: 3.5.0
       tailwindcss: 3.4.19(yaml@2.8.3)
     transitivePeerDependencies:
-      - '@babel/core'
-      - '@babel/template'
-      - '@types/react'
-      - tsx
-      - yaml
+    - '@babel/core'
+    - '@babel/template'
+    - '@types/react'
+    - tsx
+    - yaml
 
   abort-controller@3.0.0:
     dependencies:
@@ -3317,8 +3403,8 @@ snapshots:
       bare-url: 2.4.0
       fast-fifo: 1.3.2
     transitivePeerDependencies:
-      - bare-abort-controller
-      - react-native-b4a
+    - bare-abort-controller
+    - react-native-b4a
 
   bare-os@3.8.7: {}
 
@@ -3333,7 +3419,7 @@ snapshots:
     optionalDependencies:
       bare-events: 2.8.2
     transitivePeerDependencies:
-      - react-native-b4a
+    - react-native-b4a
 
   bare-url@2.4.0:
     dependencies:
@@ -3811,7 +3897,7 @@ snapshots:
     dependencies:
       bare-events: 2.8.2
     transitivePeerDependencies:
-      - bare-abort-controller
+    - bare-abort-controller
 
   events@3.3.0: {}
 
@@ -3823,7 +3909,7 @@ snapshots:
     optionalDependencies:
       '@types/yauzl': 2.10.3
     transitivePeerDependencies:
-      - supports-color
+    - supports-color
 
   fast-deep-equal@3.1.3: {}
 
@@ -3906,7 +3992,7 @@ snapshots:
       data-uri-to-buffer: 6.0.2
       debug: 4.4.3
     transitivePeerDependencies:
-      - supports-color
+    - supports-color
 
   glob-parent@5.1.2:
     dependencies:
@@ -3976,14 +4062,14 @@ snapshots:
       agent-base: 7.1.4
       debug: 4.4.3
     transitivePeerDependencies:
-      - supports-color
+    - supports-color
 
   https-proxy-agent@7.0.6:
     dependencies:
       agent-base: 7.1.4
       debug: 4.4.3
     transitivePeerDependencies:
-      - supports-color
+    - supports-color
 
   iconv-lite@0.6.3:
     dependencies:
@@ -4285,7 +4371,7 @@ snapshots:
       pac-resolver: 7.0.1
       socks-proxy-agent: 8.0.5
     transitivePeerDependencies:
-      - supports-color
+    - supports-color
 
   pac-resolver@7.0.1:
     dependencies:
@@ -4444,7 +4530,7 @@ snapshots:
       proxy-from-env: 1.1.0
       socks-proxy-agent: 8.0.5
     transitivePeerDependencies:
-      - supports-color
+    - supports-color
 
   proxy-from-env@1.1.0: {}
 
@@ -4475,12 +4561,12 @@ snapshots:
       typed-query-selector: 2.12.1
       ws: 8.20.0
     transitivePeerDependencies:
-      - bare-abort-controller
-      - bare-buffer
-      - bufferutil
-      - react-native-b4a
-      - supports-color
-      - utf-8-validate
+    - bare-abort-controller
+    - bare-buffer
+    - bufferutil
+    - react-native-b4a
+    - supports-color
+    - utf-8-validate
 
   puppeteer@23.11.1(typescript@5.9.3):
     dependencies:
@@ -4491,13 +4577,13 @@ snapshots:
       puppeteer-core: 23.11.1
       typed-query-selector: 2.12.1
     transitivePeerDependencies:
-      - bare-abort-controller
-      - bare-buffer
-      - bufferutil
-      - react-native-b4a
-      - supports-color
-      - typescript
-      - utf-8-validate
+    - bare-abort-controller
+    - bare-buffer
+    - bufferutil
+    - react-native-b4a
+    - supports-color
+    - typescript
+    - utf-8-validate
 
   qified@0.9.1:
     dependencies:
@@ -4599,7 +4685,7 @@ snapshots:
       debug: 4.4.3
       socks: 2.8.7
     transitivePeerDependencies:
-      - supports-color
+    - supports-color
 
   socks@2.8.7:
     dependencies:
@@ -4623,8 +4709,8 @@ snapshots:
       fast-fifo: 1.3.2
       text-decoder: 1.2.7
     transitivePeerDependencies:
-      - bare-abort-controller
-      - react-native-b4a
+    - bare-abort-controller
+    - react-native-b4a
 
   string-width@4.2.3:
     dependencies:
@@ -4682,8 +4768,8 @@ snapshots:
       table: 6.9.0
       write-file-atomic: 5.0.1
     transitivePeerDependencies:
-      - supports-color
-      - typescript
+    - supports-color
+    - typescript
 
   stylis@4.3.6: {}
 
@@ -4730,7 +4816,7 @@ snapshots:
       vscode-languageserver-types: 3.17.5
       vscode-uri: 3.1.0
     transitivePeerDependencies:
-      - picomatch
+    - picomatch
 
   svelte2tsx@0.7.53(svelte@4.2.20)(typescript@5.9.3):
     dependencies:
@@ -4795,8 +4881,8 @@ snapshots:
       resolve: 1.22.11
       sucrase: 3.35.1
     transitivePeerDependencies:
-      - tsx
-      - yaml
+    - tsx
+    - yaml
 
   tar-fs@3.1.2:
     dependencies:
@@ -4806,9 +4892,9 @@ snapshots:
       bare-fs: 4.6.0
       bare-path: 3.0.0
     transitivePeerDependencies:
-      - bare-abort-controller
-      - bare-buffer
-      - react-native-b4a
+    - bare-abort-controller
+    - bare-buffer
+    - react-native-b4a
 
   tar-stream@3.1.8:
     dependencies:
@@ -4817,22 +4903,22 @@ snapshots:
       fast-fifo: 1.3.2
       streamx: 2.25.0
     transitivePeerDependencies:
-      - bare-abort-controller
-      - bare-buffer
-      - react-native-b4a
+    - bare-abort-controller
+    - bare-buffer
+    - react-native-b4a
 
   teex@1.0.1:
     dependencies:
       streamx: 2.25.0
     transitivePeerDependencies:
-      - bare-abort-controller
-      - react-native-b4a
+    - bare-abort-controller
+    - react-native-b4a
 
   text-decoder@1.2.7:
     dependencies:
       b4a: 1.8.0
     transitivePeerDependencies:
-      - react-native-b4a
+    - react-native-b4a
 
   thenify-all@1.6.0:
     dependencies:

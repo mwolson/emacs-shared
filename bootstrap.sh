@@ -36,7 +36,7 @@ compile_check which
 compile_check cmake
 compile_check make
 compile_check node
-compile_check pnpm
+compile_check aube
 if [[ $OS == Windows ]]; then
     compile_check ninja
 
@@ -130,13 +130,13 @@ git submodule sync
 git submodule update --depth 1
 
 if [[ -n "$BUILD" ]]; then
-    echo -e "\nInstalling pnpm dependencies..."
-    pnpm install --quiet
-    echo "Installing pnpm dependencies...done"
+    echo -e "\nInstalling aube dependencies..."
+    aube install --silent
+    echo "Installing aube dependencies...done"
     export PATH="$(get_topdir)/node_modules/.bin:$PATH"
 
     if ! qwhich tree-sitter; then
-        echo >&2 "Error: Could not find \"tree-sitter\" in node_modules/.bin after pnpm install"
+        echo >&2 "Error: Could not find \"tree-sitter\" in node_modules/.bin after aube install"
         exit 1
     fi
 fi

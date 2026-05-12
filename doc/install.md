@@ -227,10 +227,10 @@ Windows, we've already done this for Windows in the `Install MSYS2` section.
 
 It's recommended to [install mise](https://mise.jdx.dev/getting-started.html),
 configure your shell to work with it, restart any open terminals, and then
-install the latest LTS node.js version and pnpm with:
+install the latest LTS node.js version and aube with:
 
 ```sh
-mise use -g node@lts pnpm@latest
+mise use -g node@lts aube@latest
 mise settings add idiomatic_version_file_enable_tools node
 ```
 
@@ -649,18 +649,17 @@ typical installation.
 
 ## Set up hooks and tools for this repo
 
-To initialize hooks, install the latest mise dependencies, and install the
-latest pnpm dependencies:
+To initialize hooks, install the configured mise dependencies, and install the
+aube dependencies:
 
 ```sh
-pnpm run init
+aubr init
 ```
 
-To install the latest mise dependencies and install the latest pnpm
-dependencies:
+To install the configured mise dependencies and aube dependencies:
 
 ```sh
-pnpm run up
+aubr up
 ```
 
 ## Build Git manpages

@@ -5,7 +5,7 @@
   - "/extra"
   - "/share"
   - "**/node_modules"
-  - "pnpm-lock.yaml"
+  - "aube-lock.yaml"
 
 pre-commit:
   parallel: true
@@ -15,11 +15,11 @@ pre-commit:
       priority: 1
       glob: "*.md"
       exclude: *common_excludes
-      run: mise x -- pnpm run fix:md:file {staged_files}
+      run: mise x -- aube run fix:md:file {staged_files}
       stage_fixed: true
     yaml-format:
       priority: 1
       glob: "*.yaml"
       exclude: *common_excludes
-      run: mise x -- pnpm run fix:yaml:file {staged_files}
+      run: mise x -- aube run fix:yaml:file {staged_files}
       stage_fixed: true
