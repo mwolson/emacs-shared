@@ -90,7 +90,7 @@ function generate_grammar() {
     local lang=$1
     local tree_sitter_cmd
     local ts_cli_version
-    local ts_generate_args=(generate --no-bindings)
+    local ts_generate_args=(generate)
 
     if ! tree_sitter_cmd="$(get_tree_sitter_cmd)"; then
         echo >&2 "Error: Could not find \"tree-sitter\" in your path"
@@ -100,6 +100,10 @@ function generate_grammar() {
     if ! qwhich node; then
         echo >&2 "Error: Could not find \"node\" in your path"
         return 1
+    fi
+
+    if "${tree_sitter_cmd}" generate --help 2>&1 | grep -q -- '--no-bindings'; then
+        ts_generate_args+=(--no-bindings)
     fi
 
     ts_cli_version="$("${tree_sitter_cmd}" --version | awk '{print $2}' | sed 's/[^0-9.].*$//')"

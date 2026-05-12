@@ -27,23 +27,24 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@astrojs/language-server": "^2.16.6",
-    "@biomejs/biome": "^2.4.10",
-    "@mermaid-js/mermaid-cli": "^11.12.0",
+    "@astrojs/language-server": "^2.16.8",
+    "@biomejs/biome": "^2.4.15",
+    "@mermaid-js/mermaid-cli": "^11.14.0",
     "@mwolson/emacs-shared": "link:",
-    "@t1ckbase/vscode-langservers-extracted": "1.0.2",
+    "@t1ckbase/vscode-langservers-extracted": "1.0.6",
     "@tailwindcss/language-server": "^0.14.29",
-    "@vue/language-server": "^3.2.6",
-    "oxlint": "^1.58.0",
-    "prettier": "^3.8.1",
-    "stylelint": "^16.26.1",
-    "svelte-language-server": "^0.17.30",
-    "typescript": "^5.9.3",
-    "typescript-language-server": "^5.1.3",
-    "vscode-markdown-languageserver": "0.5.0-alpha.12"
+    "@vue/language-server": "^3.2.8",
+    "oxlint": "^1.64.0",
+    "prettier": "^3.8.3",
+    "puppeteer": "^24.43.1",
+    "stylelint": "^17.11.0",
+    "svelte-language-server": "^0.18.0",
+    "typescript": "^6.0.3",
+    "typescript-language-server": "^5.2.0",
+    "vscode-markdown-languageserver": "0.5.0-alpha.15"
   },
   "devDependencies": {
-    "lefthook": "^2.1.4",
-    "tree-sitter-cli": "^0.25.10"
+    "lefthook": "^2.1.6",
+    "tree-sitter-cli": "^0.26.8"
   }
 }
