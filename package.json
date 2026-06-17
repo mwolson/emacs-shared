@@ -1,7 +1,7 @@
 {
   "name": "emacs-shared",
   "version": "1.0.0",
-  "packageManager": "aube@1.11.0",
+  "packageManager": "aube@latest",
   "description": "Shared Emacs settings",
   "type": "module",
   "directories": {

@@ -80,6 +80,7 @@
          `(,(concat my-emacs-path "bin")
            ,(concat my-emacs-path "node_modules/.bin")
            "~/.local/bin"
+           "~/.local/share/mise/shims"
            "/opt/homebrew/bin"
            "/opt/homebrew/sbin"
            "/usr/local/bin"
@@ -94,6 +95,7 @@
            "c:/msys64/ucrt64/bin"
            ,(concat my-emacs-path "node_modules/.bin")
            "~/.local/bin"
+           "~/.local/share/mise/shims"
            "C:/Program Files/maven/bin"))
         (t `(,(concat my-emacs-path "node_modules/.bin")
              "~/.local/bin"
