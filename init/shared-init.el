@@ -472,6 +472,38 @@ Use this to advise functions that could be problematic."
   (unless (my-in-indirect-md-buffer-p)
     (apply orig-fun args)))
 
+(defun my-node-modules-bin-dirs (&optional start-dir)
+  "Return ancestor node_modules/.bin directories, nearest package last.
+
+START-DIR defaults to `default-directory'. Only directories that contain both
+package.json and an existing node_modules/.bin are included.  The order is for
+`my-add-node-modules-path', which prepends each entry so the nearest package
+wins on `exec-path' lookup."
+  (let ((dir (expand-file-name (or start-dir default-directory)))
+        (dirs '()))
+    (while dir
+      (let ((pkg (expand-file-name "package.json" dir))
+            (bin (expand-file-name "node_modules/.bin" dir)))
+        (when (and (file-exists-p pkg) (file-directory-p bin))
+          (push bin dirs)))
+      (let ((parent (directory-file-name
+                     (file-name-directory (directory-file-name dir)))))
+        (if (equal parent dir)
+            (setq dir nil)
+          (setq dir parent))))
+    dirs))
+
+(defun my-add-node-modules-path ()
+  "Add project node_modules/.bin dirs to `exec-path' without shelling out.
+
+Walks ancestor package.json directories and prepends each existing
+node_modules/.bin so the nearest package wins.  `add-node-modules-path' runs
+`npm bin', which is slower than just locating it ourselves."
+  (when-let ((bins (my-node-modules-bin-dirs)))
+    (make-local-variable 'exec-path)
+    (dolist (bin bins)
+      (add-to-list 'exec-path bin))))
+
 (defun my-inhibit-in-git-commit-buffers (orig-fun &rest args)
   "Don't run ORIG-FUN (with ARGS) in git commit buffers."
   (unless (derived-mode-p 'my-git-commit-gfm-mode)
@@ -1020,7 +1052,7 @@ and icomplete candidates; if it has enough room, leave it in place."
 ;; CSS
 (add-to-list 'major-mode-remap-alist '(css-mode . css-ts-mode))
 
-(add-hook 'css-ts-mode-hook #'add-node-modules-path t)
+(add-hook 'css-ts-mode-hook #'my-add-node-modules-path t)
 (add-hook 'css-ts-mode-hook #'eglot-ensure t)
 (add-hook 'css-ts-mode-hook #'my-setup-web-ligatures t)
 ;; (uses eglot-typescript-preset for rass: vscode-css + tailwindcss)
@@ -1104,7 +1136,7 @@ and icomplete candidates; if it has enough room, leave it in place."
 ;; JSON
 (add-to-list 'major-mode-remap-alist '(json-mode . json-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.jsonc?\\'" . json-ts-mode))
-(add-hook 'json-ts-mode-hook #'add-node-modules-path t)
+(add-hook 'json-ts-mode-hook #'my-add-node-modules-path t)
 (add-hook 'json-ts-mode-hook #'eglot-ensure t)
 (add-hook 'json-ts-mode-hook #'my-setup-web-ligatures t)
 (add-hook 'json-ts-mode-hook #'my-apheleia-set-js-formatter t)
@@ -1172,14 +1204,14 @@ and icomplete candidates; if it has enough room, leave it in place."
 
 (dolist (mode my-jtsx-major-modes)
   (let ((hook (intern (concat (symbol-name mode) "-hook"))))
-    (add-hook hook #'add-node-modules-path t)
+    (add-hook hook #'my-add-node-modules-path t)
     (add-hook hook #'eglot-ensure t)
     (add-hook hook #'my-node-repl-setup t)
     (add-hook hook #'my-setup-web-ligatures t)
     (add-hook hook #'my-apheleia-set-js-formatter t)))
 
 (my-around-advice
- '(add-node-modules-path
+ '(my-add-node-modules-path
    my-node-repl-setup
    my-apheleia-set-js-formatter
    my-apheleia-set-markdown-formatter
@@ -1275,7 +1307,7 @@ and icomplete candidates; if it has enough room, leave it in place."
   :vc (:url "https://github.com/jrblevin/markdown-mode"
        :main-file "markdown-mode.el")
   :defer t
-  :hook ((markdown-mode . add-node-modules-path)
+  :hook ((markdown-mode . my-add-node-modules-path)
          ;; disabled since file-completion in links doesn't work yet
          ;; (markdown-mode . eglot-ensure)
          (markdown-mode . my-setup-web-ligatures)
@@ -1389,7 +1421,7 @@ and icomplete candidates; if it has enough room, leave it in place."
        :main-file "flymake-stylelint.el")
   :defer t)
 
-(add-hook 'scss-mode-hook #'add-node-modules-path t)
+(add-hook 'scss-mode-hook #'my-add-node-modules-path t)
 (add-hook 'scss-mode-hook #'flymake-stylelint-enable t)
 (my-around-advice #'flymake-stylelint-enable
                   #'my-inhibit-in-indirect-md-buffers)
@@ -1405,7 +1437,7 @@ and icomplete candidates; if it has enough room, leave it in place."
        :main-file "svelte-ts-mode.el")
   :mode "\\.svelte\\'")
 
-(add-hook 'svelte-ts-mode-hook #'add-node-modules-path t)
+(add-hook 'svelte-ts-mode-hook #'my-add-node-modules-path t)
 (add-hook 'svelte-ts-mode-hook #'eglot-ensure t)
 (add-hook 'svelte-ts-mode-hook #'my-setup-web-ligatures t)
 (add-hook 'svelte-ts-mode-hook #'my-apheleia-set-js-formatter t)
@@ -1423,7 +1455,7 @@ and icomplete candidates; if it has enough room, leave it in place."
        :main-file "vue-ts-mode.el")
   :mode "\\.vue\\'")
 
-(add-hook 'vue-ts-mode-hook #'add-node-modules-path t)
+(add-hook 'vue-ts-mode-hook #'my-add-node-modules-path t)
 (add-hook 'vue-ts-mode-hook #'eglot-ensure t)
 (add-hook 'vue-ts-mode-hook #'my-setup-web-ligatures t)
 (add-hook 'vue-ts-mode-hook #'my-apheleia-set-js-formatter t)
@@ -1442,7 +1474,7 @@ and icomplete candidates; if it has enough room, leave it in place."
   :vc (:url "https://github.com/fxbois/web-mode"
        :main-file "web-mode.el")
   :mode "\\.hbs\\'"
-  :hook ((web-mode . add-node-modules-path)
+  :hook ((web-mode . my-add-node-modules-path)
          (web-mode . my-setup-web-ligatures))
   :custom
   (web-mode-code-indent-offset 2)
@@ -2069,10 +2101,6 @@ character."
        :main-file "s.el")
   :defer t)
 
-(use-package add-node-modules-path
-  :vc (:url "https://github.com/codesuki/add-node-modules-path"
-       :main-file "add-node-modules-path.el")
-  :defer t)
 (use-package archive-rpm
   :vc (:url "https://github.com/nbarrientos/archive-rpm"
        :main-file "archive-rpm.el"

@@ -59,7 +59,7 @@
   (my-test-package-installed pkg))
 
 ;; VC packages
-(dolist (pkg '(add-node-modules-path apheleia archive-rpm astro-ts-mode
+(dolist (pkg '(apheleia archive-rpm astro-ts-mode
                atomic-chrome basic-mode browse-kill-ring cider
                clojure-mode clojure-ts-mode
                compile-angel cond-let consult
