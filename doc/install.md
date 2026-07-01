@@ -17,6 +17,11 @@ On macOS, the best way to do this is to install Xcode from App Store.
 You may want to pick up [Homebrew](http://mxcl.github.io/homebrew/) for easier
 installation of other useful tools, though it's not a strict requirement.
 
+Homebrew 6+ warns about non-official taps until you trust them. Prefer trusting
+only the specific formula or cask you need (see
+[Tap Trust](https://docs.brew.sh/Tap-Trust)). Each macOS section below includes
+a `brew trust` line immediately before any third-party install.
+
 ## (Windows only) Install chocolatey
 
 It's recommended to do an
@@ -158,7 +163,9 @@ in order to support Clojure. On Mac:
 
 ```sh
 brew install --cask temurin@21
+brew trust --formula clojure/tools/clojure
 brew install clojure/tools/clojure leiningen
+brew trust --formula clojure-lsp/brew/clojure-lsp-native
 brew install clojure-lsp/brew/clojure-lsp-native
 brew install --cask zprint
 # do this to avoid failures when starting CIDER for the first time
@@ -247,6 +254,7 @@ _Mac OS_
 Run:
 
 ```sh
+brew trust --formula omnisharp/omnisharp-roslyn/omnisharp-mono
 brew install omnisharp/omnisharp-roslyn/omnisharp-mono
 sudo mkdir -p /usr/local/opt
 sudo ln -s /opt/homebrew/opt/omnisharp-mono /usr/local/opt
@@ -324,12 +332,29 @@ If upgrading:
 ### Install Emacs on macOS
 
 We'll install the
-[emacs-plus cask from Homebrew](https://github.com/d12frosted/homebrew-emacs-plus):
+[emacs-plus cask from Homebrew](https://github.com/d12frosted/homebrew-emacs-plus).
+Use the stable cask (`emacs-plus-app`, currently Emacs 30.2). Trust is per cask:
+if Homebrew reports an untrusted `emacs-plus-app@master` error, you are
+installing or upgrading a different cask than the one you trusted.
 
 ```sh
 brew tap d12frosted/emacs-plus
+brew trust --cask d12frosted/emacs-plus/emacs-plus-app
 brew install --cask emacs-plus-app
 ```
+
+If you prefer the development cask instead (`emacs-plus-app@master`, Emacs 32
+from master), use that cask's trust line:
+
+```sh
+brew tap d12frosted/emacs-plus
+brew trust --cask d12frosted/emacs-plus/emacs-plus-app@master
+brew install --cask emacs-plus-app@master
+```
+
+Ignore unrelated Homebrew warnings such as
+`Cask emacs was renamed to emacs-app`; that refers to the official `emacs` cask,
+not emacs-plus.
 
 If you get an error when starting Emacs like
 `"dyld[48068]: Library not loaded: /opt/homebrew/opt/tree-sitter/lib/libtree-sitter.0.23.dylib"`,
