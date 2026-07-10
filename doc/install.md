@@ -20,7 +20,9 @@ installation of other useful tools, though it's not a strict requirement.
 Homebrew 6+ warns about non-official taps until you trust them. Prefer trusting
 only the specific formula or cask you need (see
 [Tap Trust](https://docs.brew.sh/Tap-Trust)). Each macOS section below includes
-a `brew trust` line immediately before any third-party install.
+a `brew trust` line immediately before any third-party install. The emacs-plus
+tap is an exception where we trust the whole tap; see the
+`Install Emacs on macOS` section for why.
 
 ## (Windows only) Install chocolatey
 
@@ -333,22 +335,24 @@ If upgrading:
 
 We'll install the
 [emacs-plus cask from Homebrew](https://github.com/d12frosted/homebrew-emacs-plus).
-Use the stable cask (`emacs-plus-app`, currently Emacs 30.2). Trust is per cask:
-if Homebrew reports an untrusted `emacs-plus-app@master` error, you are
-installing or upgrading a different cask than the one you trusted.
+Use the stable cask (`emacs-plus-app`, currently Emacs 30.2). Trust the whole
+tap rather than the individual cask: `brew upgrade` evaluates the tap's other
+casks, so trusting only `emacs-plus-app` still fails later with a
+`Refusing to load cask ... emacs-plus-app@master from untrusted tap` error when
+upgrading.
 
 ```sh
 brew tap d12frosted/emacs-plus
-brew trust --cask d12frosted/emacs-plus/emacs-plus-app
+brew trust d12frosted/emacs-plus
 brew install --cask emacs-plus-app
 ```
 
 If you prefer the development cask instead (`emacs-plus-app@master`, Emacs 32
-from master), use that cask's trust line:
+from master):
 
 ```sh
 brew tap d12frosted/emacs-plus
-brew trust --cask d12frosted/emacs-plus/emacs-plus-app@master
+brew trust d12frosted/emacs-plus
 brew install --cask emacs-plus-app@master
 ```
 
@@ -361,6 +365,17 @@ If you get an error when starting Emacs like
 when you may need to reinstall the XCode Commandline Tools, then check System
 Update for any updates to it, and then reboot to make the changes take effect.
 After that, try installing `emacs-plus` again per the above instructions.
+
+If native compilation starts failing with errors like
+`ld: library 'emutls_w' not found` and
+`libgccjit.so: error: error invoking gcc driver`, the installed Emacs bundle was
+built against an older gcc/libgccjit than the one Homebrew currently has (a
+`brew upgrade` of gcc removes the older version's runtime libraries). Upgrade to
+the latest build of the cask to fix it:
+
+```sh
+brew upgrade --cask emacs-plus-app
+```
 
 You'll also probably want to go into System Settings -> Privacy & Security ->
 Full Disk Acccess and add Emacs, so that it can open files from any location.
