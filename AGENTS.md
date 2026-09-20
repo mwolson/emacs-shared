@@ -132,7 +132,7 @@ an isolated init directory and capture stderr:
 - Create a minimal repro under `tmp/`, e.g. `tmp/repro/early-init.el`.
 - Symlink packages if needed: `ln -s ~/.emacs.d/elpa tmp/repro/elpa`
 - Launch with nohup (macOS example):
-  - `EMACS_BIN="/opt/homebrew/Caskroom/emacs-plus-app/30.2-*/Emacs.app/Contents/MacOS/Emacs"`
+  - `EMACS_BIN="/opt/homebrew/Caskroom/emacs-plus-app/31.1-*/Emacs.app/Contents/MacOS/Emacs"`
   - `nohup $EMACS_BIN --init-directory=tmp/repro --debug-init > tmp/repro/nohup.out 2>&1 &`
 - Check `tmp/repro/nohup.out` for the backtrace.
 - To probe state interactively, add `(setq debug-on-error t)` to the

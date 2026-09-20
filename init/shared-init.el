@@ -499,7 +499,7 @@ wins on `exec-path' lookup."
 Walks ancestor package.json directories and prepends each existing
 node_modules/.bin so the nearest package wins.  `add-node-modules-path' runs
 `npm bin', which is slower than just locating it ourselves."
-  (when-let ((bins (my-node-modules-bin-dirs)))
+  (when-let* ((bins (my-node-modules-bin-dirs)))
     (make-local-variable 'exec-path)
     (dolist (bin bins)
       (add-to-list 'exec-path bin))))
@@ -905,10 +905,6 @@ and icomplete candidates; if it has enough room, leave it in place."
   :defer t
   :custom
   (treesit-font-lock-level 4))
-
-;; Generic workaround for Emacs bug#79687 (see treesit-predicate-rewrite.el).
-;; Must load before any tree-sitter mode's `treesit-font-lock-rules' call.
-(load (concat my-emacs-path "init/treesit-predicate-rewrite") nil nil nil t)
 
 ;; Enable dumb-jump, which makes `C-c . .' jump to a function's definition
 (use-package dumb-jump
@@ -1609,21 +1605,6 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
   :defer t
   :config
   (keymap-set grep-mode-map "r" #'wgrep-change-to-wgrep-mode))
-(eval-when-compile
-  (require 'crm nil t))
-(defun my-crm-indicator (args)
-  "Work around issue in completing-read-multiple.
-
-Not needed in Emacs 31 or higher."
-  (cons (format "[CRM%s] %s"
-                (replace-regexp-in-string
-                 "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-                 crm-separator)
-                (car args))
-        (cdr args)))
-
-(advice-add #'completing-read-multiple :filter-args #'my-crm-indicator)
-
 (defvar my-minibuffer-restore-pos nil)
 
 (defun my-minibuffer-move-window-contents-up ()
@@ -1723,86 +1704,8 @@ This prevents the window from later moving back once the minibuffer is done show
 ;; completion-preview-mode (replaces corfu), dabbrev (replaces cape)
 (eval-when-compile
   (require 'dabbrev nil t)
+  (require 'help-fns nil t)
   (require 'icomplete nil t))
-
-(defun my-icomplete-tab ()
-  "Complete to longest common prefix, advancing one fork point at a time.
-When the input can be expanded to a longer common prefix among all
-candidates, do that. When already at the longest common prefix,
-take one more character from the first candidate and re-expand."
-  (interactive)
-  (let* ((beg (icomplete--field-beg))
-         (end (icomplete--field-end))
-         (string (buffer-substring-no-properties beg end))
-         (md (completion-metadata
-              string
-              minibuffer-completion-table
-              minibuffer-completion-predicate))
-         (comp (completion-try-completion
-                string
-                minibuffer-completion-table
-                minibuffer-completion-predicate
-                (- (point) beg)
-                md)))
-    (cond
-     ((null comp))
-     ((eq t comp))
-     (t
-      (let ((completion (car comp))
-            (comp-pos (cdr comp)))
-        (if (not (string-equal completion string))
-            (progn
-              (completion--replace beg end completion)
-              (goto-char (+ beg comp-pos)))
-          ;; Already at longest common prefix: take one char from the first
-          ;; sorted candidate to pass the fork, then re-expand.
-          (let* ((all (completion-all-sorted-completions beg end))
-                 (base-size (or (cdr (last all)) 0))
-                 (firstnp (substring-no-properties (car all)))
-                 ;; Skip past first completion if other items available and
-                 ;; it's either a "./" or an exact match
-                 (first (if (and (consp (cdr all))
-                                 (or (string= firstnp
-                                              (substring string base-size))
-                                     (string= (directory-file-name firstnp)
-                                              ".")))
-                            (cadr all)
-                          (car all)))
-                 (suffix-len (- (length string) base-size)))
-            (when (and (consp all) (< suffix-len (length first)))
-              (let* ((new-suffix (substring first 0 (1+ suffix-len)))
-                     (new-string (concat (substring string 0 base-size)
-                                         new-suffix))
-                     (new-comp (completion-try-completion
-                                new-string
-                                minibuffer-completion-table
-                                minibuffer-completion-predicate
-                                (length new-string)
-                                md)))
-                (cond
-                 ((consp new-comp)
-                  (completion--replace beg end (car new-comp))
-                  (goto-char (+ beg (cdr new-comp))))
-                 (t
-                  (completion--replace beg end new-string)
-                  (goto-char (+ beg (length new-string))))))))))))))
-
-(defun my-icomplete-ret ()
-  "In file prompts, exit with exact input; otherwise select the candidate."
-  (interactive)
-  (let* ((beg (icomplete--field-beg))
-         (end (icomplete--field-end))
-         (md (completion-metadata (buffer-substring-no-properties beg end)
-                                  minibuffer-completion-table
-                                  minibuffer-completion-predicate))
-         (category (completion-metadata-get md 'category))
-         (all (completion-all-sorted-completions beg end)))
-    (if (and (eq category 'file)
-             (null all))
-        (exit-minibuffer)
-      (icomplete-force-complete-and-exit))))
-
-(eval-when-compile (require 'help-fns nil t))
 
 (defun my-help-symbol-affixation (completions)
   "Also show variable docstrings and current values in help completions."
@@ -1845,52 +1748,8 @@ take one more character from the first candidate and re-expand."
   (dotimes (_ (ceiling (1- (/ my-icomplete-prospects-height 2))))
     (icomplete-backward-completions)))
 
-(defun my-icomplete-backspace ()
-  "Delete backward, stopping at path separators for file completion.
-In file-category completion with at least one `/' or `\\' in the
-input, delete one character backward then keep deleting until the
-character before point is `/' or `\\'. Otherwise, delete a single
-character."
-  (interactive)
-  (let* ((beg (icomplete--field-beg))
-         (end (icomplete--field-end))
-         (input (buffer-substring-no-properties beg end)))
-    (delete-char -1)
-    (when (and (> end beg)
-               (eq 'file (completion-metadata-get
-                          (completion-metadata
-                           input
-                           minibuffer-completion-table
-                           minibuffer-completion-predicate)
-                          'category))
-               (string-match-p "[/\\]" input))
-      (while (and (> (point) beg)
-                  (not (memq (char-before) '(?/ ?\\))))
-        (delete-char -1)))))
-
-(defun my-icomplete-bubble-dot-slash (all)
-  "Bubble \"./\" to top of file completions in icomplete-vertical-mode."
-  (if (and all
-           (not fido-mode)
-           (not minibuffer-default)
-           (eq (icomplete--category) 'file)
-           (not (string= "./" (car all))))
-      (cl-loop for l on all
-               while (consp (cdr l))
-               for comp = (cadr l)
-               when (string= "./" comp)
-               do (setf (cdr l) (cddr l))
-               and return
-               (completion--cache-all-sorted-completions
-                (icomplete--field-beg) (icomplete--field-end)
-                (cons comp all))
-               finally return all)
-    all))
-
 (defun my-load-icomplete ()
   (require 'icomplete)
-  (advice-add 'icomplete--sorted-completions :filter-return
-              #'my-icomplete-bubble-dot-slash)
   (setopt icomplete-compute-delay 0
           icomplete-delay-completions-threshold 0
           icomplete-hide-common-prefix nil
@@ -1906,11 +1765,7 @@ character."
     (keymap-set icvmm-map "C-r" #'icomplete-backward-completions)
     (keymap-set icvmm-map "C-k" #'kill-line)
     (keymap-set icvmm-map "?" #'minibuffer-completion-help)
-    (keymap-set icvmm-map "TAB" #'my-icomplete-tab)
     (keymap-set icvmm-map "C-c C-o" #'embark-export)
-    (keymap-set icvmm-map "RET" #'my-icomplete-ret)
-    (keymap-set icvmm-map "M-RET" #'exit-minibuffer)
-    (keymap-set icvmm-map "<backspace>" #'my-icomplete-backspace)
     (keymap-set icvmm-map "<prior>" #'my-icomplete-page-up)
     (keymap-set icvmm-map "<next>" #'my-icomplete-page-down))
 

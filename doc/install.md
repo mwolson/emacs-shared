@@ -77,30 +77,27 @@ Note: This is taken from the
 
 ## (Arch Linux only) Install utilities
 
-It's assumed that you have installed `paru` already. If you haven't yet, do
-this:
+It's assumed that you have installed `yay` already. If you haven't yet, do this:
 
 ```sh
-sudo pacman -Sy --needed base-devel
-mkdir -p ~/pkgbuilds
-cd ~/pkgbuilds
-git clone https://aur.archlinux.org/paru-bin.git
-cd paru-bin
-makepkg -si
+sudo pacman -Sy yay
 ```
 
 Minimal install:
 
 ```sh
-paru -Sy --needed aspell-en base-devel clang cmake fd gnutls gopls make man-db \
-    man-pages mise ninja openssh python ripgrep rust-analyzer ty usage zls
+# skip if on Omarchy:
+yay -Sy --needed mise
+
+yay -Sy --needed aspell-en base-devel clang cmake fd gnutls make man-db \
+    man-pages ninja openssh python ripgrep ttf-firacode-nerd ty usage
 ```
 
 For a full install, in addition to the above also run:
 
 ```sh
-paru -Sy --needed clojure clojure-lsp-bin elixir jdtls leiningen \
-    omnisharp-roslyn-bin zprint-bin
+yay -Sy --needed clojure clojure-lsp-bin elixir gopls jdtls leiningen \
+    omnisharp-roslyn-bin rust-analyzer zls zprint-bin
 mise use -g elixir-ls@latest
 ```
 
@@ -268,7 +265,7 @@ symlink as above.
 
 _Arch Linux_
 
-Run `paru -S omnisharp-roslyn-bin`
+Run `yay -S omnisharp-roslyn-bin`
 
 ## Install ripgrep
 
@@ -298,14 +295,14 @@ On Mac, install the `zls` package from homebrew.
 
 ## Install Emacs
 
-The recommended version is Emacs 30.2. The recommended ways to install Emacs for
+The recommended version is Emacs 31.1. The recommended ways to install Emacs for
 each OS are as follows.
 
 ### Install Emacs on Windows
 
-- [Download and install emacs](https://ftp.gnu.org/gnu/emacs/windows/emacs-30/emacs-30.2-installer.exe).
+- [Download and install emacs](https://ftp.gnu.org/gnu/emacs/windows/emacs-31/emacs-31.1-installer.exe).
 - When done, you should verify that a file named
-  `C:\Program Files\Emacs\emacs-30.2\bin\runemacs.exe` exists.
+  `C:\Program Files\Emacs\emacs-31.1\bin\runemacs.exe` exists.
 - If you change the location, you may want to update the `my-system-paths`
   option later.
 - Adjust some environment variables so that Emacs can be started successfully
@@ -319,7 +316,7 @@ each OS are as follows.
   - In System Variables, double-click `Path` and make sure an entry for
     `%USERPROFILE%\emacs-shared\bin` is present at the very top.
   - In System Variables, double-click `Path` and make sure an entry for
-    `C:\Program Files\Emacs\emacs-30.2\bin` is present at the end. If you see an
+    `C:\Program Files\Emacs\emacs-31.1\bin` is present at the end. If you see an
     entry for a different version of Emacs, change it to have this content
     instead and remove any duplicates of it.
   - Click OK
@@ -329,13 +326,13 @@ If upgrading:
 
 - Unpin any pinned Emacs icons
 - Change any existing desktop icons to point to
-  `C:\Program Files\Emacs\emacs-30.2\bin\runemacs.exe`.
+  `C:\Program Files\Emacs\emacs-31.1\bin\runemacs.exe`.
 
 ### Install Emacs on macOS
 
 We'll install the
 [emacs-plus cask from Homebrew](https://github.com/d12frosted/homebrew-emacs-plus).
-Use the stable cask (`emacs-plus-app`, currently Emacs 30.2). Trust the whole
+Use the stable cask (`emacs-plus-app`, currently Emacs 31.1). Trust the whole
 tap rather than the individual cask: `brew upgrade` evaluates the tap's other
 casks, so trusting only `emacs-plus-app` still fails later with a
 `Refusing to load cask ... emacs-plus-app@master from untrusted tap` error when
@@ -422,8 +419,8 @@ releases in a timely way.
 sudo apt build-dep -y emacs
 sudo apt install libjansson4 libjansson-dev gnutls-bin
 cd build/emacs
-curl -o - https://ftp.gnu.org/gnu/emacs/emacs-30.2.tar.gz | tar -xzf -
-cd emacs-30.2
+curl -o - https://ftp.gnu.org/gnu/emacs/emacs-31.1.tar.gz | tar -xzf -
+cd emacs-31.1
 ./autogen.sh
 ./configure
 make -j$(proc)
@@ -449,7 +446,7 @@ follow the instructions.
 _Arch Linux_
 
 ```sh
-paru -S ttf-fira-code
+yay -S ttf-fira-code
 ```
 
 _Ubuntu_
@@ -507,7 +504,7 @@ On Windows:
 ```sh
 if uname | grep "MINGW64_NT" > /dev/null 2>&1; then
     # for MSYS2
-    export PATH="~/emacs-shared/bin":"/c/Windows/System32/OpenSSH":"/c/Program Files/Emacs/emacs-30.2/bin":/ucrt64/bin:"/c/Program Files/Git/bin":"$PATH"
+    export PATH="~/emacs-shared/bin":"/c/Windows/System32/OpenSSH":"/c/Program Files/Emacs/emacs-31.1/bin":/ucrt64/bin:"/c/Program Files/Git/bin":"$PATH"
 elif uname | grep "MSYS_NT" > /dev/null 2>&1; then
     # for Git Bash
     export PATH="/c/Windows/System32/OpenSSH":"$PATH"
@@ -515,7 +512,7 @@ fi
 ```
 
 - Check `.bashrc` and update any `PATH` entries which have a different version
-  of Emacs to instead point to `/c/Program Files/Emacs/emacs-30.2/bin` and
+  of Emacs to instead point to `/c/Program Files/Emacs/emacs-31.1/bin` and
   restart Terminal.
 - You will want to open an "MSYS2 MinGW 64-bit" window (not Git Bash) and run
   the commands from there.
@@ -541,6 +538,8 @@ emacs -q early-init.el  # or other editing command
 `early-init.el` contents, change these as appropriate:
 
 ```elisp
+;;; early-init.el --- -*- lexical-binding: t -*-
+
 ;; Configure emacs-shared
 (setq my-emacs-path    "~/emacs-shared/")
 (setq my-email-address "you@example.com")
@@ -575,6 +574,8 @@ emacs -q init.el  # or other editing command
 `init.el` contents, change these as appropriate:
 
 ```elisp
+;;; init.el --- -*- lexical-binding: t -*-
+
 ;; Authinfo location for passwords and tokens
 (setopt auth-sources '("~/.emacs.d/.authinfo"))
 
@@ -587,7 +588,7 @@ emacs -q init.el  # or other editing command
 _Windows_
 
 Open `Start Menu -> Emacs`. This should point to the file
-`C:\Program Files\Emacs\emacs-30.2\bin\runemacs.exe`.
+`C:\Program Files\Emacs\emacs-31.1\bin\runemacs.exe`.
 
 _Windows Taskbar_
 
@@ -597,8 +598,8 @@ To pin Emacs to the Taskbar / Quick Launch bar and have it behave correctly:
 - Run Emacs from Start menu or a desktop shortcut
 - Pin it
 - Then right-click its Taskbar button, right-click "Emacs", click "Properties"
-- Change "C:\Program Files\Emacs\emacs-30.2\bin\emacs.exe" to "C:\Program
-  Files\Emacs\emacs-30.2\bin\runemacs.exe"
+- Change "C:\Program Files\Emacs\emacs-31.1\bin\emacs.exe" to "C:\Program
+  Files\Emacs\emacs-31.1\bin\runemacs.exe"
 
 _macOS_
 
@@ -744,8 +745,8 @@ Do this:
 
 ```sh
 pushd extra/emacs
-git fetch --depth 1 origin tag emacs-30.2
-git checkout emacs-30.2
+git fetch --depth 1 origin tag emacs-31.1
+git checkout emacs-31.1
 popd
 ```
 

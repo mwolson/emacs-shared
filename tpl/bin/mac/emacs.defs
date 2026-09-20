@@ -1,6 +1,6 @@
 # -*- sh -*-
 
-EMACS_DEFS_PATTERN="/opt/homebrew/Caskroom/emacs-plus-app/30.2-*/Emacs.app/Contents/MacOS/Emacs"
+EMACS_DEFS_PATTERN="/opt/homebrew/Caskroom/emacs-plus-app/31.1-*/Emacs.app/Contents/MacOS/Emacs"
 EMACS_DEFS_MATCHES=( $EMACS_DEFS_PATTERN )
 
 if [[ ${#EMACS_DEFS_MATCHES[@]} -eq 0 || ! -e "${EMACS_DEFS_MATCHES[0]}" ]]; then
