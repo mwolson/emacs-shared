@@ -590,14 +590,6 @@ emacs -q init.el  # or other editing command
 
 ;; Load shared init file
 (load (concat my-emacs-path "init/shared-init") nil nil nil t)
-
-;; shared-init still points backups and Tramp autosaves at ~/.emacs.d.
-;; Creating that directory makes the next start ignore ~/.config/emacs.
-(let ((backup (expand-file-name "backup/" user-emacs-directory)))
-  (setopt tramp-auto-save-directory (expand-file-name ".autosave.d" user-emacs-directory)
-          tramp-backup-directory-alist `(("." . ,backup))
-          auto-save-file-name-transforms `((".*" ,backup t))
-          backup-directory-alist `((".*" . ,backup))))
 ```
 
 ## Start Emacs
@@ -624,21 +616,21 @@ Open `Applications -> Emacs`.
 
 _Linux_
 
-Use the user service Emacs installs, `/usr/lib/systemd/user/emacs.service`
-(a source install may put it in `/usr/local/lib/systemd/user` instead). It runs
-`emacs --fg-daemon` and is wanted by `default.target`, so the daemon comes up
-at login. Enable it the same way the dotfiles sync does:
+Use the user service Emacs installs, `/usr/lib/systemd/user/emacs.service` (a
+source install may put it in `/usr/local/lib/systemd/user` instead). It runs
+`emacs --fg-daemon` and is wanted by `default.target`, so the daemon comes up at
+login. Enable it the same way the dotfiles sync does:
 
 ```sh
 systemctl --user enable --now emacs.service
 ```
 
-Open a GUI frame with `ew`. Open a terminal frame with `et`. After init
-changes, `systemctl --user restart emacs.service`.
+Open a GUI frame with `ew`. Open a terminal frame with `et`. After init changes,
+`systemctl --user restart emacs.service`.
 
-If `systemctl --user cat emacs.service` cannot find the unit, save the
-following as `~/.config/systemd/user/emacs.service`. Change `ExecStart` when
-`emacs` is not `/usr/bin/emacs`.
+If `systemctl --user cat emacs.service` cannot find the unit, save the following
+as `~/.config/systemd/user/emacs.service`. Change `ExecStart` when `emacs` is
+not `/usr/bin/emacs`.
 
 ```ini
 [Unit]

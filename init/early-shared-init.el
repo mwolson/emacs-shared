@@ -102,6 +102,14 @@
              "/opt/maven/bin"))))
 (setq my-system-paths (cl-remove-if-not #'file-exists-p my-system-paths))
 
+;; Keep backups inside XDG emacs dir so customize/tramp do not recreate ~/.emacs.d
+;; (which would steal user-emacs-directory from ~/.config/emacs).
+(let ((backup (expand-file-name "backup/" user-emacs-directory)))
+  (setq auto-save-file-name-transforms `((".*" ,backup t))
+        backup-directory-alist `((".*" . ,backup))
+        tramp-auto-save-directory (expand-file-name ".autosave.d" user-emacs-directory)
+        tramp-backup-directory-alist `(("." . ,backup))))
+
 ;; Initialize early packages
 (require 'use-package)
 

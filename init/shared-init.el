@@ -2220,7 +2220,9 @@ This prevents the window from later moving back once the minibuffer is done show
     (setf (get 'magit-status-mode 'magit-diff-current-arguments) args))
   (keymap-set magit-mode-map "M-w" #'my-magit-kill-ring-save)
   (keymap-set magit-diff-section-map "RET" #'magit-diff-visit-worktree-file)
-  (keymap-set magit-hunk-section-map "RET" #'magit-diff-visit-worktree-file))
+  (keymap-set magit-hunk-section-map "RET" #'magit-diff-visit-worktree-file)
+  ;; Same command as M-2.
+  (keymap-set magit-status-mode-map "2" #'magit-section-show-level-2-all))
 
 (defun my-preload-magit ()
   (require 'magit)

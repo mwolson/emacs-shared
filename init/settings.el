@@ -10,8 +10,6 @@
  '(Man-notify-method 'pushy)
  '(apropos-do-all t)
  '(auto-compression-mode t nil (jka-compr))
- '(auto-save-file-name-transforms '((".*" "~/.emacs.d/backup/" t)))
- '(backup-directory-alist '((".*" . "~/.emacs.d/backup")))
  '(blink-cursor-mode nil nil (frame))
  '(blink-matching-delay 10)
  '(blink-matching-paren-on-screen t)
