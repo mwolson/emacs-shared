@@ -71,7 +71,7 @@
                magit magit-section majutsu markdown-mode maxframe
                mermaid-ts-mode minions mise modus-themes
                nerd-icons nerd-icons-completion
-               nix-ts-mode nsis-mode parseclj
+               nix-ts-mode nsis-mode orderless parseclj
                parseedn pulsar rainbow-delimiters rg
                sesman slime spinner svelte-ts-mode swift-ts-mode
                terraform-mode tmux-mode toc-org transient vcupp

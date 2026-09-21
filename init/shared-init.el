@@ -871,6 +871,9 @@ interactively.
   "Number of completion candidates to show in icomplete-vertical-mode.
 Also controls the page size for PgUp/PgDn in the minibuffer.")
 
+(defvar my-minibuffer-from-consult-line nil)
+(defvar my-consult-line-start-pos nil)
+
 (defun my-consult-recenter-for-preview ()
   "Recenter point for consult preview, preserving position when possible.
 When consult-line previews the original position (empty minibuffer),
@@ -1498,9 +1501,6 @@ and icomplete candidates; if it has enough room, leave it in place."
 (add-hook 'zig-ts-mode-hook #'eglot-ensure t)
 
 ;; Consult, Embark, icomplete, completion-preview
-(defvar my-minibuffer-from-consult-line nil)
-(defvar my-consult-line-start-pos nil)
-
 (defun my-consult-line ()
   "Start incremental search from current line."
   (interactive)
@@ -1514,6 +1514,23 @@ and icomplete candidates; if it has enough room, leave it in place."
         (my-minibuffer-from-consult-line t)
         (my-consult-line-start-pos (point)))
     (consult-line reg nil)))
+
+(defun my-consult-location-orderless-styles ()
+  "Use Orderless for `consult-line': space-separated substrings, any order.
+Emacs 31's `completion--styles' appends `completion-styles' after
+category overrides, so Fido's minibuffer-local flex would otherwise
+still run as a fallback."
+  (when (eq (completion-metadata-get
+             (completion-metadata "" minibuffer-completion-table
+                                  minibuffer-completion-predicate)
+             'category)
+            'consult-location)
+    (require 'orderless)
+    (setq-local completion-styles '(orderless))
+    ;; `minibuffer-complete-word' otherwise eats SPC (e.g. pa SPC -> c).
+    (keymap-local-set "SPC" #'self-insert-command)))
+
+(add-hook 'minibuffer-setup-hook #'my-consult-location-orderless-styles 100)
 
 (eval-when-compile
   (require 'consult nil t))
@@ -1543,6 +1560,13 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
        :main-file "consult.el"
        :compile-files '("consult-*.el"))
   :defer t)
+
+(use-package orderless
+  :vc (:url "https://github.com/oantolin/orderless"
+       :main-file "orderless.el")
+  :defer t
+  :custom
+  (orderless-matching-styles '(orderless-literal orderless-regexp)))
 
 (use-package embark
   :vc (:url "https://github.com/oantolin/embark"
@@ -1574,7 +1598,7 @@ With \\[universal-argument], also prompt for extra rg arguments and set into RG-
        (transient-command-completion-not-suffix-only-p symbol buffer)))
 
 (setq completion-category-defaults nil
-      completion-category-overrides '((consult-location (styles substring basic partial-completion flex))
+      completion-category-overrides '((consult-location (styles orderless))
                                       (file (styles basic partial-completion)))
       completion-auto-help nil
       completion-ignore-case t
@@ -1663,16 +1687,7 @@ This prevents the window from later moving back once the minibuffer is done show
 
 (my-defer-startup #'my-load-icomplete)
 
-(defun my-minibuffer-insert-last-history ()
-  "Insert the most recent minibuffer history item, replacing current input."
-  (interactive)
-  (when-let* ((hist (symbol-value minibuffer-history-variable))
-              (last (car hist)))
-    (delete-minibuffer-contents)
-    (insert last)))
-
 (dolist (map (list minibuffer-local-map read-expression-map))
-  (keymap-set map "C-c C-c" #'my-minibuffer-insert-last-history)
   (keymap-set map "C-k" #'kill-line)
   (keymap-set map "M-s" #'consult-history)
   (keymap-set map "M-r" #'consult-history))
@@ -1700,7 +1715,7 @@ This prevents the window from later moving back once the minibuffer is done show
 (keymap-global-set "M-g" my-consult-M-g-map)
 (keymap-global-set "M-y" #'consult-yank-pop)
 
-;; icomplete-vertical-mode (replaces vertico), savehist (replaces prescient),
+;; fido-vertical-mode (replaces vertico), savehist (replaces prescient),
 ;; completion-preview-mode (replaces corfu), dabbrev (replaces cape)
 (eval-when-compile
   (require 'dabbrev nil t)
@@ -1768,10 +1783,11 @@ This prevents the window from later moving back once the minibuffer is done show
     (keymap-set icvmm-map "C-c C-o" #'embark-export)
     (keymap-set icvmm-map "<prior>" #'my-icomplete-page-up)
     (keymap-set icvmm-map "<next>" #'my-icomplete-page-down))
+  (keymap-set icomplete-fido-mode-map "C-k" #'kill-line)
 
   (keymap-set occur-mode-map "r" #'occur-edit-mode)
 
-  (icomplete-vertical-mode 1)
+  (fido-vertical-mode 1)
   (nerd-icons-completion-mode 1)
 
   (setopt savehist-additional-variables
