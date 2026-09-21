@@ -527,11 +527,20 @@ cd ~/emacs-shared
 To verify that `PATH` now has the correct entries, run `emacs --version` and
 make sure it shows the version number you'd expect.
 
-## Create a ~/.emacs.d/early-init.el file
+## Create a ~/.config/emacs/early-init.el file
+
+Emacs reads `~/.config/emacs` when neither `~/.emacs` nor `~/.emacs.d` exists.
+If either of those is present, Emacs uses that older location and ignores the
+XDG directory. When `~/.emacs.d` already exists, move it aside before the first
+start:
 
 ```sh
-mkdir -p ~/.emacs.d
-cd ~/.emacs.d
+mv ~/.emacs.d ~/.emacs.d.old
+```
+
+```sh
+mkdir -p ~/.config/emacs
+cd ~/.config/emacs
 emacs -q early-init.el  # or other editing command
 ```
 
@@ -563,11 +572,11 @@ emacs -q early-init.el  # or other editing command
 (load (concat my-emacs-path "init/early-shared-init") nil nil nil t)
 ```
 
-## Create a ~/.emacs.d/init.el file
+## Create a ~/.config/emacs/init.el file
 
 ```sh
-mkdir -p ~/.emacs.d
-cd ~/.emacs.d
+mkdir -p ~/.config/emacs
+cd ~/.config/emacs
 emacs -q init.el  # or other editing command
 ```
 
@@ -577,10 +586,18 @@ emacs -q init.el  # or other editing command
 ;;; init.el --- -*- lexical-binding: t -*-
 
 ;; Authinfo location for passwords and tokens
-(setopt auth-sources '("~/.emacs.d/.authinfo"))
+(setopt auth-sources (list (expand-file-name ".authinfo" user-emacs-directory)))
 
 ;; Load shared init file
 (load (concat my-emacs-path "init/shared-init") nil nil nil t)
+
+;; shared-init still points backups and Tramp autosaves at ~/.emacs.d.
+;; Creating that directory makes the next start ignore ~/.config/emacs.
+(let ((backup (expand-file-name "backup/" user-emacs-directory)))
+  (setopt tramp-auto-save-directory (expand-file-name ".autosave.d" user-emacs-directory)
+          tramp-backup-directory-alist `(("." . ,backup))
+          auto-save-file-name-transforms `((".*" ,backup t))
+          backup-directory-alist `((".*" . ,backup))))
 ```
 
 ## Start Emacs
@@ -607,16 +624,42 @@ Open `Applications -> Emacs`.
 
 _Linux_
 
-GUI frame:
+Use the user service Emacs installs, `/usr/lib/systemd/user/emacs.service`
+(a source install may put it in `/usr/local/lib/systemd/user` instead). It runs
+`emacs --fg-daemon` and is wanted by `default.target`, so the daemon comes up
+at login. Enable it the same way the dotfiles sync does:
 
 ```sh
-emacs -n -c
+systemctl --user enable --now emacs.service
 ```
 
-Console frame:
+Open a GUI frame with `ew`. Open a terminal frame with `et`. After init
+changes, `systemctl --user restart emacs.service`.
+
+If `systemctl --user cat emacs.service` cannot find the unit, save the
+following as `~/.config/systemd/user/emacs.service`. Change `ExecStart` when
+`emacs` is not `/usr/bin/emacs`.
+
+```ini
+[Unit]
+Description=Emacs text editor
+Documentation=info:emacs man:emacs(1) https://gnu.org/software/emacs/
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/emacs --fg-daemon
+SuccessExitStatus=15
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+```
+
+Then load it and enable it:
 
 ```sh
-emacs -nw
+systemctl --user daemon-reload
+systemctl --user enable --now emacs.service
 ```
 
 # Extras
