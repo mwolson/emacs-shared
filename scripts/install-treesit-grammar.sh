@@ -138,6 +138,7 @@ function install_grammar() {
     link_grammar "libtree-sitter-${lang}.${soext}"
     cp "libtree-sitter-${lang}.${soext}" "$(get_treesit_dir)/"
     echo "Copying libtree-sitter-${lang}.${soext} to $(get_treesit_dir)"
+    rm -f parser.o scanner.o "libtree-sitter-${lang}.${soext}"
     qpopd
 
     qpopd
