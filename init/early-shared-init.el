@@ -202,13 +202,28 @@
   (setq-local ligature-composition-table nil)
   (ligature-set-ligatures major-mode my-web-mode-ligatures))
 
+(defun my-available-font-family (families)
+  "Return the first installed font family in FAMILIES, or the first family."
+  (or (and (display-graphic-p)
+           (seq-find (lambda (family)
+                       (find-font (font-spec :family family)))
+                     families))
+      (car families)))
+
 (defun my-default-font ()
   (or my-default-font
       (cond
-       ((eq system-type 'darwin) "Fira Code Retina-18")
-       ((eq system-type 'windows-nt) "Fira Code-11")
-       ((memq window-system '(pgtk x)) "Fira Code-13")
-       (t "Fira Code-17"))))
+       ((eq system-type 'darwin)
+        (format "%s-18" (my-available-font-family
+                         '("Fira Code Retina" "Fira Code"))))
+       ((eq system-type 'windows-nt)
+        (format "%s-11" (my-available-font-family '("Fira Code"))))
+       ((memq window-system '(pgtk x))
+        (format "%s-13" (my-available-font-family
+                         '("Fira Code" "FiraCode Nerd Font"))))
+       (t
+        (format "%s-17" (my-available-font-family
+                         '("Fira Code" "FiraCode Nerd Font")))))))
 
 (defun my-default-emoji-font ()
   (or my-default-emoji-font
@@ -231,9 +246,13 @@
   (let ((default-font (my-default-font))
         (emoji-font (my-default-emoji-font))
         (emoji-size (my-default-emoji-size)))
-    (set-frame-font default-font nil t)
-    (set-face-attribute 'fixed-pitch nil :font default-font)
-    (set-fontset-font t nil (font-spec :size emoji-size :name emoji-font))))
+    (condition-case err
+        (progn
+          (set-frame-font default-font nil t)
+          (set-face-attribute 'fixed-pitch nil :font default-font))
+      (error (message "my-reset-font: %s" (error-message-string err))))
+    (ignore-errors
+      (set-fontset-font t nil (font-spec :size emoji-size :name emoji-font)))))
 
 (defun my-reset-frame-size ()
   "Reset the size of the current frame according to `default-frame-alist'."
