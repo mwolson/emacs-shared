@@ -2211,6 +2211,13 @@ This prevents the window from later moving back once the minibuffer is done show
   (magit-log-section-commit-count 1)
   (magit-prefer-remote-upstream t)
   :config
+  ;; Magit status defaults to --ignore-submodules=none, which tells git to
+  ;; override submodule.<name>.ignore from .gitmodules. Drop that flag so
+  ;; git's per-submodule ignore rules apply (ignore=dirty hides worktree
+  ;; dirt; gitlink SHA changes still show).
+  (let ((args '("--no-ext-diff")))
+    (setf (get 'magit-status-mode 'magit-diff-default-arguments) args)
+    (setf (get 'magit-status-mode 'magit-diff-current-arguments) args))
   (keymap-set magit-mode-map "M-w" #'my-magit-kill-ring-save)
   (keymap-set magit-diff-section-map "RET" #'magit-diff-visit-worktree-file)
   (keymap-set magit-hunk-section-map "RET" #'magit-diff-visit-worktree-file))

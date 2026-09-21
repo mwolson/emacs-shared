@@ -128,9 +128,6 @@ echo
 git submodule init
 git submodule sync
 git submodule update --depth 1
-# Magit status uses --ignore-submodules=none unless this is set, so
-# .gitmodules ignore=dirty would otherwise still show grammar leftovers.
-git config diff.ignoreSubmodules dirty
 
 if [[ -n "$BUILD" ]]; then
     echo -e "\nInstalling aube dependencies..."
