@@ -48,7 +48,7 @@ Most of the settings are optional, except for `my-emacs-path`.
   Windows key on Linux) to be mostly a clone of <kbd>Alt</kbd>, with some
   exceptions
 - `my-settings-shared-p`: Whether to save customization settings into a personal
-  file at `~/.emacs.d/settings.el` or use the ones that come with
+  file at `~/.config/emacs/settings.el` or use the ones that come with
   `emacs-shared` - a default is chosen based on whether that personal settings
   file is found
 - `my-icomplete-prospects-height`: Number of completion candidates to show in

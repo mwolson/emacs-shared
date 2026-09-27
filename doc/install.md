@@ -374,8 +374,27 @@ the latest build of the cask to fix it:
 brew upgrade --cask emacs-plus-app
 ```
 
+When emacs-shared moves to a new Emacs release (for example 30.2 to 31.1),
+`./bootstrap.sh` stops with
+`Could not find Emacs Homebrew cask installation matching /opt/homebrew/Caskroom/emacs-plus-app/31.1-*/...`
+until the cask is upgraded. The generated `bin/emacs.defs` pins the same version
+pattern, so `emacs` and `ew` from `~/emacs-shared/bin` fail until bootstrap is
+rerun. Quit Emacs, then:
+
+```sh
+brew upgrade --cask emacs-plus-app
+cd ~/emacs-shared
+./bootstrap.sh
+```
+
+The cask is ad-hoc signed, so Homebrew warns that it couldn't verify the signer
+and macOS may prompt on the first launch. If macOS blocks it, allow Emacs under
+System Settings -> Privacy & Security.
+
 You'll also probably want to go into System Settings -> Privacy & Security ->
-Full Disk Acccess and add Emacs, so that it can open files from any location.
+Full Disk Access and add Emacs, so that it can open files from any location. The
+ad-hoc signature changes with each cask upgrade, so if Emacs loses access after
+upgrading, remove it from the list and add it again.
 
 ### Install Emacs on Arch Linux
 
@@ -717,6 +736,9 @@ git config submodule.recurse false
 git pull
 ./bootstrap.sh
 ```
+
+On macOS, if bootstrap reports that it cannot find the Homebrew cask for the
+required Emacs version, follow the upgrade steps in `Install Emacs on macOS`.
 
 # Maintenance
 

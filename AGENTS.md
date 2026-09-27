@@ -50,7 +50,7 @@ Emacs:
 
 ### Bootstrap / install packages
 
-Install all packages from a fresh or existing `~/.emacs.d/elpa`:
+Install all packages from a fresh or existing `~/.config/emacs/elpa`:
 
 - `emacs -Q --batch -l scripts/install-packages.el`
 
@@ -63,7 +63,7 @@ This script:
 - Runs `package-vc-upgrade-all` to pull latest commits for all VC packages
 - Cleans stale `.elc` files from upgraded VC packages
 
-For a completely fresh install, move `~/.emacs.d/elpa` aside first.
+For a completely fresh install, move `~/.config/emacs/elpa` aside first.
 
 ### Native compilation check
 
@@ -113,12 +113,12 @@ declarations. Not a pass/fail gate -- purely informational.
 
 ### Debugging init errors
 
-The user's `~/.emacs.d/early-init.el` loads `init/early-shared-init.el`, and
-`~/.emacs.d/init.el` loads `init/shared-init.el`.
+The user's `~/.config/emacs/early-init.el` loads `init/early-shared-init.el`,
+and `~/.config/emacs/init.el` loads `init/shared-init.el`.
 
 To run the full user init headlessly:
 
-- `emacs --batch -l ~/.emacs.d/early-init.el -l ~/.emacs.d/init.el`
+- `emacs --batch -l ~/.config/emacs/early-init.el -l ~/.config/emacs/init.el`
 
 Note: `--batch` alone does not load user init files; you must pass them
 explicitly with `-l`. Some errors only occur with a live display (e.g., color
@@ -130,7 +130,7 @@ To reproduce display-dependent early-init issues from the CLI (e.g., when
 an isolated init directory and capture stderr:
 
 - Create a minimal repro under `tmp/`, e.g. `tmp/repro/early-init.el`.
-- Symlink packages if needed: `ln -s ~/.emacs.d/elpa tmp/repro/elpa`
+- Symlink packages if needed: `ln -s ~/.config/emacs/elpa tmp/repro/elpa`
 - Launch with nohup (macOS example):
   - `EMACS_BIN="/opt/homebrew/Caskroom/emacs-plus-app/31.1-*/Emacs.app/Contents/MacOS/Emacs"`
   - `nohup $EMACS_BIN --init-directory=tmp/repro --debug-init > tmp/repro/nohup.out 2>&1 &`
@@ -166,8 +166,8 @@ full interactive Emacs session.
   sequence in a batch harness. This isolates whether the bug is in the package's
   logic, the user config, or the interaction between them. Compare
   `emacs --batch -Q` (vanilla) against
-  `emacs --batch -l ~/.emacs.d/early-init.el -l ~/.emacs.d/init.el` (user
-  config) to narrow the cause.
+  `emacs --batch -l ~/.config/emacs/early-init.el -l ~/.config/emacs/init.el`
+  (user config) to narrow the cause.
 
 ## Local checkouts of mwolson libraries
 
