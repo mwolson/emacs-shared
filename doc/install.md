@@ -90,14 +90,14 @@ Minimal install:
 yay -Sy --needed mise
 
 yay -Sy --needed aspell-en base-devel clang cmake fd gnutls make man-db \
-    man-pages ninja openssh python ripgrep ttf-firacode-nerd ty usage
+    ninja openssh python ripgrep ttf-firacode-nerd ty usage
 ```
 
 For a full install, in addition to the above also run:
 
 ```sh
 yay -Sy --needed clojure clojure-lsp-bin elixir gopls jdtls leiningen \
-    omnisharp-roslyn-bin rust-analyzer zls zprint-bin
+    man-pages omnisharp-roslyn-bin rust-analyzer zls zprint-bin
 mise use -g elixir-ls@latest
 ```
 
