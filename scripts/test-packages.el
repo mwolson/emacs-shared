@@ -76,7 +76,7 @@
                sesman slime spinner svelte-ts-mode swift-ts-mode
                terraform-mode tmux-mode toc-org transient vcupp
                vue-ts-mode web-mode websocket wgrep
-               with-editor zig-ts-mode))
+               with-editor xterm-color zig-ts-mode))
   (my-test-package-installed pkg))
 
 ;; Key features loadable

@@ -1228,6 +1228,12 @@ and icomplete candidates; if it has enough room, leave it in place."
 (add-to-list 'my-md-code-aliases '("kotlin" . kotlin-ts-mode))
 
 ;; Lisp
+;; slime's contrib/slime-xterm-color.el runs (use-package xterm-color :ensure t)
+;; when compiled, and xterm-color is only on MELPA.
+(use-package xterm-color
+  :vc (:url "https://github.com/atomontage/xterm-color"
+       :main-file "xterm-color.el")
+  :defer t)
 (use-package slime
   :vc (:url "https://github.com/slime/slime"
        :main-file "slime.el"
