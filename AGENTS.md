@@ -169,6 +169,84 @@ full interactive Emacs session.
   `emacs --batch -l ~/.config/emacs/early-init.el -l ~/.config/emacs/init.el`
   (user config) to narrow the cause.
 
+### Inspecting the running Emacs
+
+The user's Emacs runs a server (a systemd user service on Linux, the GUI app on
+macOS), so `emacsclient --eval` can read live buffers, hooks, and modes. When
+something is slow or misbehaving, start with what the user is actually running:
+
+- Check `*Messages*` for `Error during redisplay`. A fontification function that
+  signals there runs again on every redisplay.
+- Read `major-mode`, `local-minor-modes`, `post-command-hook`,
+  `after-change-functions`, and `buffer-size` in the affected buffer.
+
+For anything longer than a one-liner, write the form to `tmp/` and evaluate it
+with lexical binding. A bare `load` returns `t` rather than the result:
+
+- `emacsclient --eval '(with-temp-buffer (insert-file-contents "tmp/x.el") (eval (read (current-buffer)) t))'`
+
+Benchmark against a copy of the user's buffer, never the buffer itself:
+
+- Font-lock skips buffers whose names start with a space, so name the copy
+  `*foo*` and not ` *foo*`.
+- To time typing, display the copy with `switch-to-buffer` inside
+  `save-window-excursion`, then loop over `(insert "x")`,
+  `(run-hooks 'post-command-hook)`, and `(redisplay t)`.
+- For a magit commit buffer, copy `COMMIT_EDITMSG` into a throwaway repo under
+  `tmp/` and open it with `find-file-noselect`, which runs the full git-commit
+  setup. These buffers block killing through a buffer-local
+  `kill-buffer-query-functions`; `setq-local` it to nil before `kill-buffer`.
+
+New definitions can be loaded live by evaluating just the changed forms. The
+user still has to reopen affected buffers, or restart Emacs, to pick them up.
+
+### Tree-sitter grammars
+
+`bootstrap.sh` builds grammars from the `extra/tree-sitter-*` submodules into
+the directory cached in `build/.treesit-dir`. That cache can go stale (it
+pointed at `~/.emacs.d/tree-sitter` after the config moved), so refresh it
+before building one grammar by hand:
+
+- `bash -c '. scripts/include.sh; set_treesit_dir'`
+- `./scripts/install-treesit-grammar.sh markdown-inline markdown tree-sitter-markdown-inline/src`
+
+The library name must match the language symbol Emacs asks for
+(`markdown-inline`, not `markdown_inline`). Grammars in
+`~/.config/emacs/tree-sitter` take precedence over system ones such as
+`/usr/lib/libtree-sitter-*.so` from Arch packages.
+
+### Updating another checkout
+
+To bring a second machine's checkout up to date with pushed changes, run these
+from its checkout. Over SSH, wrap them in `bash -lc` if the remote login shell
+is zsh, such as on macOS.
+
+1. `git pull --ff-only`
+2. `git submodule update --init --depth 1 <path>` for any submodule the pull
+   moved
+3. Rebuild any grammar whose submodule or bootstrap entry changed
+4. `./scripts/native-comp-all.sh`
+5. `emacs --script scripts/test-packages.el`
+
+A headless full init (see **Debugging init errors**) installs `:vc` packages the
+pull added.
+
+The running Emacs keeps the old code until it restarts. Ask before restarting
+it. To restart, first check for unsaved buffers:
+
+- `emacsclient --eval '(seq-filter (lambda (b) (and (buffer-file-name b) (buffer-modified-p b))) (buffer-list))'`
+
+Then restart it the way that machine runs Emacs:
+
+- Linux user service (see `doc/install.md`):
+  `systemctl --user restart emacs.service`
+- macOS GUI app: quit through a short timer, so `emacsclient` gets its reply
+  before Emacs exits, then relaunch the app.
+  - `emacsclient --eval '(progn (run-at-time 0.5 nil (function kill-emacs)) t)'`
+  - `open -a Emacs`
+
+Confirm the new instance with `emacsclient --eval '(emacs-pid)'`.
+
 ## Local checkouts of mwolson libraries
 
 This config uses several mwolson-authored packages installed via
@@ -180,14 +258,32 @@ libraries have commented-out `add-to-list 'load-path` blocks in
 
 | Library                 | Local checkout                              | Used in                     | Local-dev shortcut in shared-init |
 | ----------------------- | ------------------------------------------- | --------------------------- | --------------------------------- |
-| eglot-python-preset     | `~/devel/projects/eglot-python-preset/`     | `init/shared-init.el`       | yes (line ~1324)                  |
-| eglot-typescript-preset | `~/devel/projects/eglot-typescript-preset/` | `init/shared-init.el`       | yes (line ~1119)                  |
+| eglot-python-preset     | `~/devel/projects/eglot-python-preset/`     | `init/shared-init.el`       | yes (commented `load-path`)       |
+| eglot-typescript-preset | `~/devel/projects/eglot-typescript-preset/` | `init/shared-init.el`       | yes (commented `load-path`)       |
 | vcupp                   | `~/devel/projects/vcupp/`                   | `init/early-shared-init.el` | no                                |
 
 Other mwolson projects in `~/devel/projects/` that are not currently used in
 this config: gptel-fn-complete.
 
 ## Gotchas
+
+### Markdown modes
+
+Markdown files and magit commit messages use the built-in `markdown-ts-mode`.
+The `markdown-mode` package stays installed because eglot renders hover docs
+with `gfm-view-mode`.
+
+- `markdown-ts-mode` declares `markdown-mode` as an extra parent, so
+  `(derived-mode-p 'markdown-mode)` is true in it. `markdown-mode-hook` does not
+  run there, though; put hooks on `markdown-ts-mode-hook`.
+- `my-git-commit-markdown-mode` limits the markdown parser to the message above
+  Git's first comment line. With magit's `--verbose` commit argument, the diff
+  below can be megabytes. Do not reintroduce whole-buffer markdown font-lock
+  there: markdown-mode's regexes overflowed the regexp stack on such a diff and
+  made each keystroke take about 200 ms.
+- git-commit's ChangeLog support sets `fill-paragraph-function` to
+  `log-edit-fill-entry` after the major mode runs, so a commit mode's own fill
+  function never takes effect.
 
 ### JSON serialization
 
