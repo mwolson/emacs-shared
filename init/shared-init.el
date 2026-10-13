@@ -506,7 +506,7 @@ node_modules/.bin so the nearest package wins.  `add-node-modules-path' runs
 
 (defun my-inhibit-in-git-commit-buffers (orig-fun &rest args)
   "Don't run ORIG-FUN (with ARGS) in git commit buffers."
-  (unless (derived-mode-p 'my-git-commit-gfm-mode)
+  (unless (derived-mode-p 'my-git-commit-markdown-mode)
     (apply orig-fun args)))
 
 ;; Apheleia for automatic code formatting
@@ -1256,7 +1256,8 @@ and icomplete candidates; if it has enough room, leave it in place."
 (put 'base 'safe-local-variable 'integerp)
 
 ;; Markdown support
-(add-to-list 'major-mode-remap-alist '(markdown-mode . gfm-mode))
+(add-to-list 'major-mode-remap-alist '(gfm-mode . markdown-ts-mode))
+(add-to-list 'major-mode-remap-alist '(markdown-mode . markdown-ts-mode))
 
 (eval-when-compile
   (require 'markdown-mode nil t))
@@ -1265,7 +1266,7 @@ and icomplete candidates; if it has enough room, leave it in place."
     (let ((from (replace-regexp-in-string
                  "-mode\\'" "" (symbol-name (car to-remap))))
           (to (cdr to-remap)))
-      (unless (eq to 'gfm-mode)
+      (unless (eq to 'markdown-ts-mode)
         (add-to-list 'markdown-code-lang-modes (cons from to)))))
   (dolist (alias my-md-code-aliases)
     (add-to-list 'markdown-code-lang-modes alias)))
@@ -1335,18 +1336,53 @@ and icomplete candidates; if it has enough room, leave it in place."
                       '["Yank Code Block" my-markdown-yank-chunk]
                       "Kill Element"))
 
+(eval-when-compile
+  (require 'markdown-ts-mode))
+(defun my-markdown-ts-yank-chunk ()
+  (interactive)
+  (if-let* ((block (treesit-parent-until
+                    (treesit-node-at (point) 'markdown)
+                    (lambda (node)
+                      (equal (treesit-node-type node) "fenced_code_block"))
+                    t))
+            (content (treesit-search-subtree block "code_fence_content"
+                                             nil nil 1)))
+      (let ((indentation (save-excursion
+                           (goto-char (treesit-node-start block))
+                           (current-indentation)))
+            (contents (treesit-node-text content t)))
+        (with-temp-buffer
+          (insert contents)
+          (when (> indentation 0)
+            (indent-rigidly (point-min) (point-max) (- indentation)))
+          (copy-region-as-kill (point-min) (point-max)))
+        (message "Yanked fenced code block"))
+    (user-error "Not inside a fenced code block")))
+
+(use-package markdown-ts-mode
+  :ensure nil
+  :defer t
+  :commands markdown-ts-mode
+  :hook ((markdown-ts-mode . my-add-node-modules-path)
+         (markdown-ts-mode . my-setup-web-ligatures)
+         (markdown-ts-mode . my-turn-on-arrow-input)
+         (markdown-ts-mode . my-apheleia-set-markdown-formatter))
+  :config
+  (add-to-list 'markdown-ts-code-block-modes '(ini conf-mode))
+  (keymap-set markdown-ts-mode-map "C-c C-w" #'my-markdown-ts-yank-chunk))
+
 (my-around-advice #'my-turn-on-arrow-input
                   #'my-inhibit-in-indirect-md-buffers)
 
 (add-to-list
  'eglot-server-programs
- '((gfm-mode my-mdx-mode)
+ '((markdown-ts-mode my-mdx-mode)
    . ("vscode-markdown-language-server" "--stdio"
       :initializationOptions
       (:markdownFileExtensions ["md" "mdx"]))))
 
 ;; MDX
-(define-derived-mode my-mdx-mode gfm-mode "MDX"
+(define-derived-mode my-mdx-mode markdown-ts-mode "MDX"
   "Major mode for highlighting MDX files.")
 
 (add-to-list 'auto-mode-alist '("\\.mdx\\'" . my-mdx-mode))
@@ -2116,43 +2152,41 @@ This prevents the window from later moving back once the minibuffer is done show
 
 ;; Magit settings
 (eval-when-compile
-  (require 'markdown-mode nil t))
+  (require 'markdown-ts-mode))
 
-(defun my-git-commit-gfm-fontify-headings (last)
-  (if (save-excursion
-        (beginning-of-line)
-        (looking-at-p "#[ \t]"))
-      (progn
-        (forward-line 1)
-        t)
-    (markdown-fontify-headings last)))
+;; Keep the markdown parser on the message itself.  Git's comments and the
+;; `--verbose' diff below them can be huge and are fontified by git-commit.
+(defun my-git-commit-set-markdown-range (&rest _)
+  (let ((ranges `((,(point-min)
+                   . ,(save-excursion
+                        (goto-char (point-min))
+                        (if (re-search-forward
+                             (concat "^" (regexp-quote comment-start)) nil t)
+                            (match-beginning 0)
+                          (point-max)))))))
+    (unless (equal ranges (treesit-parser-included-ranges
+                           treesit-primary-parser))
+      (treesit-parser-set-included-ranges treesit-primary-parser ranges))))
 
-(define-derived-mode my-git-commit-gfm-mode gfm-mode "Git Commit GFM"
-  "Major mode for Git commit messages with GFM formatting."
+(define-derived-mode my-git-commit-markdown-mode markdown-ts-mode
+  "Git Commit MD"
+  "Major mode for Git commit messages with Markdown formatting."
   (setq-local apheleia-inhibit t)
   (setq-local comment-start "#")
   (setq-local comment-end "")
   (setq-local comment-start-skip "#+[ \t]*")
-  (setq-local font-lock-defaults
-              (list
-               (mapcar
-                (lambda (keyword)
-                  (if (equal keyword '(markdown-fontify-headings))
-                      '(my-git-commit-gfm-fontify-headings)
-                    keyword))
-                markdown-mode-font-lock-keywords)
-               nil nil nil nil
-               '(font-lock-multiline . t)
-               '(font-lock-syntactic-face-function . markdown-syntactic-face)
-               '(font-lock-extra-managed-props
-                 . (composition display invisible rear-nonsticky
-                                keymap help-echo mouse-face)))))
+  (when treesit-primary-parser
+    (setq-local treesit-range-settings
+                (append (treesit-range-rules
+                         #'my-git-commit-set-markdown-range)
+                        treesit-range-settings))
+    (my-git-commit-set-markdown-range)))
 
 (use-package git-commit
   :ensure nil
   :defer t
   :custom
-  (git-commit-major-mode 'my-git-commit-gfm-mode)
+  (git-commit-major-mode 'my-git-commit-markdown-mode)
   (git-commit-summary-max-length 120))
 
 (defun my-magit-balance-windows-25/75 (top-window bottom-window)

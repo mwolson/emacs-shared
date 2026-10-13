@@ -190,7 +190,10 @@ update_submodule extra/emacs
 if [[ -n "$BUILD" ]]; then
     echo -e "\nBuilding tree-sitter modules..."
     "$(get_topdir)"/scripts/install-treesit-grammar.sh \
-        markdown_inline markdown "tree-sitter-markdown-inline/src"
+        markdown "" "tree-sitter-markdown/src"
+
+    "$(get_topdir)"/scripts/install-treesit-grammar.sh \
+        markdown-inline markdown "tree-sitter-markdown-inline/src"
 
     "$(get_topdir)"/scripts/install-treesit-grammar.sh \
         tsx typescript "tsx/src"
