@@ -1,0 +1,5 @@
+# bootstrap.sh copies this into the extra/tree-sitter-swift submodule. It lets
+# `pnpm install` there run tree-sitter-cli's binary download, which the
+# grammar's postinstall needs to build its Node binding.
+allowBuilds:
+  tree-sitter-cli: true

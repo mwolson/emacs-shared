@@ -1,7 +1,6 @@
 {
   "name": "emacs-shared",
   "version": "1.0.0",
-  "packageManager": "aube@latest",
   "description": "Shared Emacs settings",
   "type": "module",
   "directories": {
@@ -11,7 +10,7 @@
     "vscode-markdown-language-server": "./node_modules/vscode-markdown-languageserver/dist/node/workerMain.js"
   },
   "scripts": {
-    "init": "aube run up && aube run init:hooks",
+    "init": "pnpm run up && pnpm run init:hooks",
     "init:hooks": "lefthook install",
     "hooks:check": "lefthook run pre-commit --all-files --no-stage-fixed",
     "hooks:pre-commit": "lefthook run pre-commit",
@@ -21,7 +20,7 @@
     "fix:yaml": "prettier --write '**/*.yaml'",
     "fix:yaml:file": "prettier --write",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "up": "mise install && aube install"
+    "up": "mise install && pnpm install"
   },
   "keywords": [],
   "author": "",
@@ -46,11 +45,5 @@
   "devDependencies": {
     "lefthook": "^2.1.6",
     "tree-sitter-cli": "^0.26.8"
-  },
-  "aube": {
-    "allowBuilds": {
-      "lefthook": true,
-      "puppeteer": false
-    }
   }
 }
