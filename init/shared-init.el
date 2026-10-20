@@ -53,7 +53,7 @@ When `depth' is provided, pass it to `add-hook'."
 
 ;;; OS Setup
 
-(setq source-directory "~/emacs-shared/extra/emacs")
+(setq source-directory (concat my-emacs-path "extra/emacs"))
 (setq find-function-C-source-directory
       (expand-file-name "src" source-directory))
 
@@ -171,7 +171,7 @@ When `depth' is provided, pass it to `add-hook'."
        (setenv "MANPATH" (concat "/opt/homebrew/share/man:"
                                  (or (getenv "MANPATH") ""))))
       ((eq system-type 'windows-nt)
-       (setenv "MANPATH" (concat (expand-file-name "~/emacs-shared/share/man") ";"
+       (setenv "MANPATH" (concat (expand-file-name "share/man" my-emacs-path) ";"
                                  "C:\\msys64\\usr\\share\\man;"
                                  "C:\\msys64\\ucrt64\\share\\man;"
                                  "C:\\Program Files\\Emacs\\emacs-" emacs-version "\\share\\man"))
