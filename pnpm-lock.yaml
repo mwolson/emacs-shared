@@ -4,27 +4,19 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-time:
-  '@puppeteer/browsers@2.13.2': 2026-05-11T10:52:16.972Z
-  chromium-bidi@14.0.0: 2026-02-11T09:54:16.161Z
-  devtools-protocol@0.0.1608973: 2026-04-02T05:51:12.218Z
-  prettier@3.8.3: 2026-04-15T00:55:25.573Z
-  typed-query-selector@2.12.2: 2026-04-24T03:02:18.776Z
-  webdriver-bidi-protocol@0.4.1: 2026-02-11T14:30:15.631Z
-
 importers:
 
   .:
     dependencies:
       '@astrojs/language-server':
         specifier: ^2.16.8
-        version: 2.16.8(prettier@3.8.3)
+        version: 2.16.8(prettier@3.8.3)(typescript@6.0.3)
       '@biomejs/biome':
         specifier: ^2.4.15
         version: 2.4.15
       '@mermaid-js/mermaid-cli':
         specifier: ^11.14.0
-        version: 11.14.0(puppeteer@24.43.1)
+        version: 11.14.0(puppeteer@24.43.1(supports-color@10.2.2)(typescript@6.0.3))(yaml@2.8.3)
       '@mwolson/emacs-shared':
         specifier: 'link:'
         version: 'link:'
@@ -45,13 +37,13 @@ importers:
         version: 3.8.3
       puppeteer:
         specifier: ^24.43.1
-        version: 24.43.1(devtools-protocol@0.0.1608973)(supports-color@10.2.2)(typescript@6.0.3)
+        version: 24.43.1(supports-color@10.2.2)(typescript@6.0.3)
       stylelint:
         specifier: ^17.11.0
-        version: 17.11.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)(css-tree@3.2.1)(keyv@5.6.0)(postcss@8.5.14)(postcss-selector-parser@7.1.1)(supports-color@10.2.2)(typescript@6.0.3)
+        version: 17.11.0(supports-color@10.2.2)(typescript@6.0.3)
       svelte-language-server:
         specifier: ^0.18.0
-        version: 0.18.0(typescript@6.0.3)
+        version: 0.18.0(picomatch@4.0.4)(typescript@6.0.3)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -126,21 +118,57 @@ packages:
     engines: {node: '>=14.21.3'}
     hasBin: true
 
+  '@biomejs/cli-darwin-arm64@2.4.15':
+    resolution: {integrity: sha512-rF3PPqLq1yoST79zaQbDjVJwsuIeci/O+9bgNmC5QpgOqz6aqYuzA4abyAGx+mgyiDXn4A049xAN8gijbuR1Qg==}
+    engines: {node: '>=14.21.3'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@biomejs/cli-darwin-x64@2.4.15':
+    resolution: {integrity: sha512-/5KHXYMfSJs1fNXiX30xFtI8JcCFV6zaVVLxOa0M2sfqBKHkpQhRTv94yxQWxeTY2lzo2OuTlNvPC+hDQt2wcQ==}
+    engines: {node: '>=14.21.3'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@biomejs/cli-linux-arm64-musl@2.4.15':
+    resolution: {integrity: sha512-ZPcxznxm0pogHBLZhYntyR3sR+MrZjqJIKEr7ZqVen0Rl+P/4upVmfYXjftizi9RoqZntg33fv/1fbdhbYXpEQ==}
+    engines: {node: '>=14.21.3'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@biomejs/cli-linux-arm64@2.4.15':
+    resolution: {integrity: sha512-owaAMZD/T4LrD0ELNCk0Km3qrRHuM0X6EAyVE1FSqGY0rbLoiDLrO4Us2tllm6cAeB2Ioa9C2C08NZPdr8+0Ug==}
+    engines: {node: '>=14.21.3'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
   '@biomejs/cli-linux-x64-musl@2.4.15':
     resolution: {integrity: sha512-CNq/9W38SYSH023lfcQ4KKU8K0YX8T//FZUhcgtMMRABDojx5XsMV7jlweAvGSl389wJQB29Qo6Zb/a+jdvt+w==}
     engines: {node: '>=14.21.3'}
-    os:
-    - linux
-    cpu:
-    - x64
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
 
   '@biomejs/cli-linux-x64@2.4.15':
     resolution: {integrity: sha512-0jj7THz12GbUOLmMibktK6DZjqz2zV64KFxyBtcFTKPiiOIY0a7vns1elpO1dERvxpsZ5ik0oFfz0oGwFde1+g==}
     engines: {node: '>=14.21.3'}
-    os:
-    - linux
-    cpu:
-    - x64
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@biomejs/cli-win32-arm64@2.4.15':
+    resolution: {integrity: sha512-ouhkYdlhp/1GghEJPdWwD/Vi3gQ1nFxuSpMolWsbq3Lsq3QUR4jl6UdhhscdCugKU5vOEuMiJhvKj66O0OCq+w==}
+    engines: {node: '>=14.21.3'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@biomejs/cli-win32-x64@2.4.15':
+    resolution: {integrity: sha512-zBrGq5mx5wwpnow4+2BxUvleDM+GNd4sLbPaMapsSLQLD0NGRCquqPBTgN+7XkUteHvj7M+BstuI8tmnV7+HgQ==}
+    engines: {node: '>=14.21.3'}
+    cpu: [x64]
+    os: [win32]
 
   '@braintree/sanitize-url@7.1.2':
     resolution: {integrity: sha512-jigsZK+sMF/cuiB7sERuo9V7N9jx+dhmHHnQyDSVdpZwVutaBu7WvNYqMDLSgFgfB30n452TP3vjDAvFC973mA==}
@@ -334,21 +362,127 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
+  '@oxlint/binding-android-arm-eabi@1.64.0':
+    resolution: {integrity: sha512-2r6Nq3XXGLHEXKkSj8JtmJ6N4gDw431DPFOg0ZoJHlNjnG6HVMm/ksQ10m0HJ8WBvwgMe1L50UHPaYZutCRPCw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm]
+    os: [android]
+
+  '@oxlint/binding-android-arm64@1.64.0':
+    resolution: {integrity: sha512-ePJMpePgg7fBv+L/hVx1xXRU5/5gd5m0obLA6hPEfLXF3GjpR8idIDbY1dhQYhyz1ms2wdTccSboo6KEd2Oxtg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [android]
+
+  '@oxlint/binding-darwin-arm64@1.64.0':
+    resolution: {integrity: sha512-U4DMLQd10gJLuoSTLSGbfv3bGjTlUNsScm9Dgb8wwBqmCzidf1pE1pXV4doGNxqwH3KtVng1AGTINA0NvkGLvQ==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@oxlint/binding-darwin-x64@1.64.0':
+    resolution: {integrity: sha512-GoRIL48QWm4/TAvjN8pB1nAG+1/uqc9EdnWT9zqHeb6wsmjZtywj8VRe5aGW47Fdb64YtLOsdLqVxOvQuz98Wg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [darwin]
+
+  '@oxlint/binding-freebsd-x64@1.64.0':
+    resolution: {integrity: sha512-5dFkv4tkg7PxJJGS9/OjrJwjhuHczrd3OQOkRE0wHcLM+ncUnULtzEPWjqGOxTXxZnLWcB91bGiIznx89TVXyQ==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [freebsd]
+
+  '@oxlint/binding-linux-arm-gnueabihf@1.64.0':
+    resolution: {integrity: sha512-jsBqMLl/uOL5+Kq/+BtK9FrmiNGUbx8SiyZXv+WlUxA45KuwcLu9BfiSIL3I3DBDgWM3yZizDITnTK9BcqNBQg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm]
+    os: [linux]
+
+  '@oxlint/binding-linux-arm-musleabihf@1.64.0':
+    resolution: {integrity: sha512-1lrj8At/Uuc9GhjrVFBQo0NEjfBrTkzpmtHIGAhNnIXqn1CAyGL+qrztUsXb2GIluJrpl9Q7qRLJOb/NqydacQ==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm]
+    os: [linux]
+
+  '@oxlint/binding-linux-arm64-gnu@1.64.0':
+    resolution: {integrity: sha512-HpSQbubwh03mMhAdy2BYtad/fsY8vDFHDAb6bUwuCYg2VD3xCQgn6ArKcO0oZyLCheacKTv4PrF3Mfu5hgoE2g==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@oxlint/binding-linux-arm64-musl@1.64.0':
+    resolution: {integrity: sha512-00QQ0h0Y7u0G69BgiH3+ky2aaq/QvkDL6DYok8htIuJHxybiux5aQ8jwmg8qIk9wha6UagUP2BAwAzbemcJbpg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@oxlint/binding-linux-ppc64-gnu@1.64.0':
+    resolution: {integrity: sha512-2GaimTV6EMW+s5HS0An3oGbQme3BgHswvfVdGk3EB57Xe9+/gyT+Qd7lNVzb3rtir52vbIPzXfaYArzs5b5zcw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [ppc64]
+    os: [linux]
+    libc: [glibc]
+
+  '@oxlint/binding-linux-riscv64-gnu@1.64.0':
+    resolution: {integrity: sha512-H46AtFb9wypjoVwGdlxrm0DsD809NGmtiK9HiyPKTxkSte2YjhC4S+00rOIrwCaxcyPiGid3Y3OMXp5KMAkGZw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [riscv64]
+    os: [linux]
+    libc: [glibc]
+
+  '@oxlint/binding-linux-riscv64-musl@1.64.0':
+    resolution: {integrity: sha512-HEgsidjjvvyzdg82icYkuFCf7REDV7B9JFwbIMbVwrKLBY0MrXX+bku3POn/hduZ2yW91IyVDUMq0Bf02KwXQw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [riscv64]
+    os: [linux]
+    libc: [musl]
+
+  '@oxlint/binding-linux-s390x-gnu@1.64.0':
+    resolution: {integrity: sha512-Axvm8qryotmKN00P5w4JapaSjvP2LOSbdbBJiX+2SuHd3QzhW7TUc8skqgw+ahQZ5DmzEYeHCqauvW8f32Ns6Q==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [s390x]
+    os: [linux]
+    libc: [glibc]
+
   '@oxlint/binding-linux-x64-gnu@1.64.0':
     resolution: {integrity: sha512-cR60vSd7+m+KRZ3GQGfDxWwahW5RMXg0qlGvAluZr0fTUYvw0H9N9AXAF/M/PMqgytyqvVNmBAkJG9l7U30Y1g==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    os:
-    - linux
-    cpu:
-    - x64
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
 
   '@oxlint/binding-linux-x64-musl@1.64.0':
     resolution: {integrity: sha512-2u/aPZ9pEg7HnvZPDsHxUGNnrpr4qaHi+mCgLgpt+LYRzPrS4Px4wPfkIdRdr2GvKnaYyt+XSlto0Vm5sbStTg==}
     engines: {node: ^20.19.0 || >=22.12.0}
-    os:
-    - linux
-    cpu:
-    - x64
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@oxlint/binding-openharmony-arm64@1.64.0':
+    resolution: {integrity: sha512-kfhkGfCdoXLSxEkrhDlJrvBYajGmq+ma4EMc53dsOWTq+rIBOlI0vTBmpZNnM5oH2LY/K/w1HAK+UQEgjgpVUg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [openharmony]
+
+  '@oxlint/binding-win32-arm64-msvc@1.64.0':
+    resolution: {integrity: sha512-r/cNKBFieONoVu2bb1KkVouq9W+edDUgHumXJGphCRRj+U0xaD4nanrw8ZOqo0IsutPkEM4vCcGBpak6x5aXMg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [win32]
+
+  '@oxlint/binding-win32-ia32-msvc@1.64.0':
+    resolution: {integrity: sha512-tUw0xUUwEFVZbpJoeCblkv8SJA4Xz3CdXCJbAnBsiNLyxDrk2tLcxEAS6M73Q7hHHDg3OtwI8vZVK3t5RJt4Gw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [ia32]
+    os: [win32]
+
+  '@oxlint/binding-win32-x64-msvc@1.64.0':
+    resolution: {integrity: sha512-9CBR+LO0JVST87fNTzzNxS5I29jIUO5gxT9i9+M3SDHHALElj9sY1Prf12tad3vIRC6OD7Ehtvvh+sn13vSwHw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [win32]
 
   '@puppeteer/browsers@2.13.2':
     resolution: {integrity: sha512-5EUZSUIc37H6aIXyWO0Z4y8NlF8NnjgmqeQgOGiswAU7pY0HOo16ho4+alIWmSfdZnjqBRawMsP3I5YqLSn6kw==}
@@ -541,15 +675,30 @@ packages:
 
   '@volar/language-server@2.4.28':
     resolution: {integrity: sha512-NqcLnE5gERKuS4PUFwlhMxf6vqYo7hXtbMFbViXcbVkbZ905AIVWhnSo0ZNBC2V127H1/2zP7RvVOVnyITFfBw==}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   '@volar/language-service@2.4.28':
     resolution: {integrity: sha512-Rh/wYCZJrI5vCwMk9xyw/Z+MsWxlJY1rmMZPsxUoJKfzIRjS/NF1NmnuEcrMbEVGja00aVpCsInJfixQTMdvLw==}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   '@volar/source-map@2.4.28':
     resolution: {integrity: sha512-yX2BDBqJkRXfKw8my8VarTyjv48QwxdJtvRgUpNE5erCsgEUdI2DsLbpa+rOQVAJYshY99szEcRDmyHbF10ggQ==}
 
   '@volar/typescript@2.4.28':
     resolution: {integrity: sha512-Ja6yvWrbis2QtN4ClAKreeUZPVYMARDYZl9LMEv1iQ1QdepB6wn0jTRxA9MftYmYa4DQ4k/DaSZpFPUfxl8giw==}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   '@vscode/emmet-helper@2.11.0':
     resolution: {integrity: sha512-QLxjQR3imPZPQltfbWRnHU6JecWTF1QSWhx3GAKQpslx7y3Dp6sIIXhKjiUJ/BR9FX8PVthjr9PD6pNwOJfAzw==}
@@ -730,6 +879,7 @@ packages:
   basic-ftp@5.2.0:
     resolution: {integrity: sha512-VoMINM2rqJwJgfdHq6RiUudKt2BV+FY5ZFezP/ypmwayk68+NzzAQy4XXLlqsGD4MCzq3DrmNFD/uUmBJuGoXw==}
     engines: {node: '>=10.0.0'}
+    deprecated: Security vulnerability fixed in 5.2.1, please upgrade
 
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
@@ -1228,6 +1378,11 @@ packages:
   flatted@3.4.2:
     resolution: {integrity: sha512-PjDse7RzhcPkIJwy5t7KPWQSZ9cAbzQXcafsetQoD7sOJRQlGikNbx7yZp2OotDnJyrDcbyRq3Ttb18iYOqkxA==}
 
+  fsevents@2.3.3:
+    resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+
   function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
 
@@ -1484,12 +1639,55 @@ packages:
   layout-base@2.0.1:
     resolution: {integrity: sha512-dp3s92+uNI1hWIpPGH3jK2kxE2lMjdXdr+DH8ynZHpd6PUlH6x6cbuXnoMmiNumznqaNO31xu9e79F0uuZ0JFg==}
 
+  lefthook-darwin-arm64@2.1.6:
+    resolution: {integrity: sha512-hyB7eeiX78BS66f70byTJacDLC/xV1vgMv9n+idFUsrM7J3Udd/ag9Ag5NP3t0eN0EqQqAtrNnt35EH01lxnRQ==}
+    cpu: [arm64]
+    os: [darwin]
+
+  lefthook-darwin-x64@2.1.6:
+    resolution: {integrity: sha512-5Ka6cFxiH83krt+OMRQtmS6zqoZR5SLXSudLjTbZA1c3ZqF0+dqkeb4XcB6plx6WR0GFizabuc6Bi3iXPIe1eQ==}
+    cpu: [x64]
+    os: [darwin]
+
+  lefthook-freebsd-arm64@2.1.6:
+    resolution: {integrity: sha512-VswyOg5CVN3rMaOJ2HtnkltiMKgFHW/wouWxXsV8RxSa4tgWOKxM0EmSXi8qc2jX+LRga6B0uOY6toXS01zWxA==}
+    cpu: [arm64]
+    os: [freebsd]
+
+  lefthook-freebsd-x64@2.1.6:
+    resolution: {integrity: sha512-vXsCUFYuVwrVWwcypB7Zt2Hf+5pl1V1la7ZfvGYZaTRURu0zF/XUnMF/nOz/PebGv0f4x/iOWXWwP7E42xRWsg==}
+    cpu: [x64]
+    os: [freebsd]
+
+  lefthook-linux-arm64@2.1.6:
+    resolution: {integrity: sha512-WDJiQhJdZOvKORZd+kF/ms2l6NSsXzdA9ahflyr65V90AC4jES223W8VtEMbGPUtHuGWMEZ/v/XvwlWv0Ioz9g==}
+    cpu: [arm64]
+    os: [linux]
+
   lefthook-linux-x64@2.1.6:
     resolution: {integrity: sha512-C18nCd7nTX1AVL4TcvwMmLAO1VI1OuGluIOTjiPkBQ746Ls1HhL5rl//jMPACmT28YmxIQJ2ZcLPNmhvEVBZvw==}
-    os:
-    - linux
-    cpu:
-    - x64
+    cpu: [x64]
+    os: [linux]
+
+  lefthook-openbsd-arm64@2.1.6:
+    resolution: {integrity: sha512-mZOMxM8HiPxVFXDO3PtCUbH4GB8rkveXhsgXF27oAZTYVzQ3gO9vT6r/pxit6msqRXz3fvcwimLVJgb8eRsa8A==}
+    cpu: [arm64]
+    os: [openbsd]
+
+  lefthook-openbsd-x64@2.1.6:
+    resolution: {integrity: sha512-sG9ALLZSnnMOfXu+B7SmxFhJhuoAh4bqi5En5aaHJET48TqrLOcWWZuH+7ArFM6gr/U5KfSUvdmHFmY8WqCcIg==}
+    cpu: [x64]
+    os: [openbsd]
+
+  lefthook-windows-arm64@2.1.6:
+    resolution: {integrity: sha512-lD8yFWY4Csuljd0Rqs7EQaySC0VvDf7V3rN1FhRMUISTRDHutebIom1Loc8ckQPvKYGC6mftT9k0GvipsS+Brw==}
+    cpu: [arm64]
+    os: [win32]
+
+  lefthook-windows-x64@2.1.6:
+    resolution: {integrity: sha512-q4z2n3xucLscoWiyMwFViEj3N8MDSkPulMwcJYuCYFHoPhP1h+icqNu7QRLGYj6AnVrCQweiUJY3Tb2X+GbD/A==}
+    cpu: [x64]
+    os: [win32]
 
   lefthook@2.1.6:
     resolution: {integrity: sha512-w9sBoR0mdN+kJc3SB85VzpiAAl451/rxdCRcZlwW71QLjkeH3EBQFgc4VMj5apePychYDHAlqEWTB8J8JK/j1Q==}
@@ -1756,10 +1954,6 @@ packages:
     resolution: {integrity: sha512-SoSL4+OSEtR99LHFZQiJLkT59C5B1amGO1NzTwj7TT1qCUgUO6hxOvzkOYxD+vMrXBM3XJIKzokoERdqQq/Zmg==}
     engines: {node: ^10 || ^12 || >=14}
 
-  postcss@8.5.8:
-    resolution: {integrity: sha512-OW/rX8O/jXnm82Ey1k44pObPtdblfiuWnrd8X7GJ7emImCOstunGbXUpp7HdBrFQX6rJzn3sPT397Wp5aCwCHg==}
-    engines: {node: ^10 || ^12 || >=14}
-
   prettier-plugin-svelte@3.5.1:
     resolution: {integrity: sha512-65+fr5+cgIKWKiqM1Doum4uX6bY8iFCdztvvp2RcF+AJoieaw9kJOFMNcJo/bkmKYsxFaM9OsVZK/gWauG/5mg==}
     peerDependencies:
@@ -1768,11 +1962,6 @@ packages:
 
   prettier@3.3.3:
     resolution: {integrity: sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==}
-    engines: {node: '>=14'}
-    hasBin: true
-
-  prettier@3.8.1:
-    resolution: {integrity: sha512-UOnG6LftzbdaHZcKoPFtOcCKztrQ57WkHDeRD9t/PTQtmT0NHSeWWepj6pS0z/N7+08BHFDQVUrfmfMRcZwbMg==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -2065,10 +2254,6 @@ packages:
     resolution: {integrity: sha512-u9r3uZC0bdpGOXtlxUIdwf9pkmvhqJdrVCH9fapQtgy/OeTTMZ1nqH7agtvEfmGui6e1XxjcdrlxvxJvc3sMqw==}
     engines: {node: '>=18'}
 
-  tinyglobby@0.2.15:
-    resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
-    engines: {node: '>=12.0.0'}
-
   tinyglobby@0.2.16:
     resolution: {integrity: sha512-pn99VhoACYR8nFHhxqix+uvsbXineAasWm5ojXoN8xEwK5Kd3/TrhNn1wByuD52UxWRLy8pu+kRMniEi6Eq9Zg==}
     engines: {node: '>=12.0.0'}
@@ -2194,16 +2379,22 @@ packages:
     resolution: {integrity: sha512-IdD13Z9N2Bu8EM6CM0fDV1E69olEYGHDU25X51YXmq8Y0CmJ2LNj6gOiBJgpS5JGUqFzECVhMNBW7R0sPdRTMQ==}
     peerDependencies:
       '@volar/language-service': ~2.4.0
+      typescript: '*'
     peerDependenciesMeta:
       '@volar/language-service':
+        optional: true
+      typescript:
         optional: true
 
   volar-service-typescript@0.0.70:
     resolution: {integrity: sha512-l46Bx4cokkUedTd74ojO5H/zqHZJ8SUuyZ0IB8JN4jfRqUM3bQFBHoOwlZCyZmOeO0A3RQNkMnFclxO4c++gsg==}
     peerDependencies:
       '@volar/language-service': ~2.4.0
+      typescript: '*'
     peerDependenciesMeta:
       '@volar/language-service':
+        optional: true
+      typescript:
         optional: true
 
   volar-service-yaml@0.0.70:
@@ -2230,6 +2421,10 @@ packages:
   vscode-json-languageservice@5.7.2:
     resolution: {integrity: sha512-WtKRDtJfFEmLrgtu+ODexOHm/6/krRF0k6t+uvkKIKW1Jh9ZIyxZQwJJwB3qhrEgvAxa37zbUg+vn+UyUK/U2w==}
 
+  vscode-jsonrpc@5.0.1:
+    resolution: {integrity: sha512-JvONPptw3GAQGXlVV2utDcHx0BiY34FupW/kI6mZ5x06ER5DdPG/tXWMVHjTNULF5uKPOUUD0SaXg5QaubJL0A==}
+    engines: {node: '>=8.0.0 || >=10.0.0'}
+
   vscode-jsonrpc@8.2.0:
     resolution: {integrity: sha512-C+r0eKJUIfiDIfwJhria30+TYWPtuHJXHtI7J0YlOmKAo7ogxP20T0zxB7HZQIFhIyvoBPwWskjxrvAtfjyZfA==}
     engines: {node: '>=14.0.0'}
@@ -2249,7 +2444,6 @@ packages:
 
   vscode-markdown-languageserver@0.5.0-alpha.15:
     resolution: {integrity: sha512-gXaVQKRJeOZ7uKkeWc3zS4fjtOUAZjQpPECWyN6dhVUJ4VWdSZ7iGip6mXfAT4ZUD9KpgQOFMSvvTmQzWDuMbg==}
-    engines: {node: '*'}
 
   vscode-markdown-languageservice@0.5.0-alpha.13:
     resolution: {integrity: sha512-uxEdsSXdh5Bi/q1kymcqv0JziAN4gi02YPOXhqlEahsgiVGd/5cWGSJIL6hIaRtql3wBgRDNqI7CrOsODh0Yqg==}
@@ -2350,27 +2544,30 @@ snapshots:
 
   '@astrojs/compiler@2.13.1': {}
 
-  '@astrojs/language-server@2.16.8(prettier@3.8.3)':
+  '@astrojs/language-server@2.16.8(prettier@3.8.3)(typescript@6.0.3)':
     dependencies:
       '@astrojs/compiler': 2.13.1
       '@astrojs/yaml2ts': 0.2.3
       '@jridgewell/sourcemap-codec': 1.5.5
       '@volar/kit': 2.4.28(typescript@6.0.3)
       '@volar/language-core': 2.4.28
-      '@volar/language-server': 2.4.28
-      '@volar/language-service': 2.4.28
+      '@volar/language-server': 2.4.28(typescript@6.0.3)
+      '@volar/language-service': 2.4.28(typescript@6.0.3)
       muggle-string: 0.4.1
-      prettier: 3.8.3
-      tinyglobby: 0.2.16(picomatch@4.0.4)
-      volar-service-css: 0.0.70(@volar/language-service@2.4.28)
-      volar-service-emmet: 0.0.70(@volar/language-service@2.4.28)
-      volar-service-html: 0.0.70(@volar/language-service@2.4.28)
-      volar-service-prettier: 0.0.70(@volar/language-service@2.4.28)(prettier@3.8.3)
-      volar-service-typescript: 0.0.70(@volar/language-service@2.4.28)
-      volar-service-typescript-twoslash-queries: 0.0.70(@volar/language-service@2.4.28)
-      volar-service-yaml: 0.0.70(@volar/language-service@2.4.28)
+      tinyglobby: 0.2.16
+      volar-service-css: 0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))
+      volar-service-emmet: 0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))
+      volar-service-html: 0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))
+      volar-service-prettier: 0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))(prettier@3.8.3)
+      volar-service-typescript: 0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))(typescript@6.0.3)
+      volar-service-typescript-twoslash-queries: 0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))(typescript@6.0.3)
+      volar-service-yaml: 0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))
       vscode-html-languageservice: 5.6.2
       vscode-uri: 3.1.0
+    optionalDependencies:
+      prettier: 3.8.3
+    transitivePeerDependencies:
+      - typescript
 
   '@astrojs/yaml2ts@0.2.3':
     dependencies:
@@ -2397,16 +2594,42 @@ snapshots:
 
   '@biomejs/biome@2.4.15':
     optionalDependencies:
+      '@biomejs/cli-darwin-arm64': 2.4.15
+      '@biomejs/cli-darwin-x64': 2.4.15
+      '@biomejs/cli-linux-arm64': 2.4.15
+      '@biomejs/cli-linux-arm64-musl': 2.4.15
       '@biomejs/cli-linux-x64': 2.4.15
       '@biomejs/cli-linux-x64-musl': 2.4.15
+      '@biomejs/cli-win32-arm64': 2.4.15
+      '@biomejs/cli-win32-x64': 2.4.15
 
-  '@biomejs/cli-linux-x64-musl@2.4.15': {}
+  '@biomejs/cli-darwin-arm64@2.4.15':
+    optional: true
 
-  '@biomejs/cli-linux-x64@2.4.15': {}
+  '@biomejs/cli-darwin-x64@2.4.15':
+    optional: true
+
+  '@biomejs/cli-linux-arm64-musl@2.4.15':
+    optional: true
+
+  '@biomejs/cli-linux-arm64@2.4.15':
+    optional: true
+
+  '@biomejs/cli-linux-x64-musl@2.4.15':
+    optional: true
+
+  '@biomejs/cli-linux-x64@2.4.15':
+    optional: true
+
+  '@biomejs/cli-win32-arm64@2.4.15':
+    optional: true
+
+  '@biomejs/cli-win32-x64@2.4.15':
+    optional: true
 
   '@braintree/sanitize-url@7.1.2': {}
 
-  '@cacheable/memory@2.0.8(keyv@5.6.0)':
+  '@cacheable/memory@2.0.8':
     dependencies:
       '@cacheable/utils': 2.4.1
       '@keyv/bigmap': 1.3.1(keyv@5.6.0)
@@ -2445,13 +2668,13 @@ snapshots:
       '@csstools/css-tokenizer': 4.0.0
 
   '@csstools/css-syntax-patches-for-csstree@1.1.3(css-tree@3.2.1)':
-    dependencies:
+    optionalDependencies:
       css-tree: 3.2.1
 
   '@csstools/css-tokenizer@4.0.0': {}
-  ? '@csstools/media-query-list-parser@5.0.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)'
 
-  : dependencies:
+  '@csstools/media-query-list-parser@5.0.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)':
+    dependencies:
       '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
       '@csstools/css-tokenizer': 4.0.0
 
@@ -2495,23 +2718,23 @@ snapshots:
       '@floating-ui/core': 1.7.5
       '@floating-ui/utils': 0.2.11
 
-  '@floating-ui/react-dom@2.1.8(react@19.2.4)(react-dom@19.2.4(react@19.2.4))':
+  '@floating-ui/react-dom@2.1.8(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       '@floating-ui/dom': 1.7.6
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
 
-  '@floating-ui/react@0.26.28(react@19.2.4)(react-dom@19.2.4(react@19.2.4))':
+  '@floating-ui/react@0.26.28(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
-      '@floating-ui/react-dom': 2.1.8(react@19.2.4)(react-dom@19.2.4(react@19.2.4))
+      '@floating-ui/react-dom': 2.1.8(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@floating-ui/utils': 0.2.11
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
       tabbable: 6.4.0
 
-  '@floating-ui/react@0.27.19(react@19.2.4)(react-dom@19.2.4(react@19.2.4))':
+  '@floating-ui/react@0.27.19(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
-      '@floating-ui/react-dom': 2.1.8(react@19.2.4)(react-dom@19.2.4(react@19.2.4))
+      '@floating-ui/react-dom': 2.1.8(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@floating-ui/utils': 0.2.11
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
@@ -2519,19 +2742,19 @@ snapshots:
 
   '@floating-ui/utils@0.2.11': {}
 
-  '@headlessui/react@2.2.9(react@19.2.4)(react-dom@19.2.4(react@19.2.4))':
+  '@headlessui/react@2.2.9(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
-      '@floating-ui/react': 0.26.28(react@19.2.4)(react-dom@19.2.4(react@19.2.4))
-      '@react-aria/focus': 3.21.5(react@19.2.4)(react-dom@19.2.4(react@19.2.4))
-      '@react-aria/interactions': 3.27.1(react@19.2.4)(react-dom@19.2.4(react@19.2.4))
-      '@tanstack/react-virtual': 3.13.23(react@19.2.4)(react-dom@19.2.4(react@19.2.4))
+      '@floating-ui/react': 0.26.28(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@react-aria/focus': 3.21.5(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@react-aria/interactions': 3.27.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@tanstack/react-virtual': 3.13.23(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
       use-sync-external-store: 1.6.0(react@19.2.4)
 
-  '@headlessui/tailwindcss@0.2.2(tailwindcss@3.4.19)':
+  '@headlessui/tailwindcss@0.2.2(tailwindcss@3.4.19(yaml@2.8.3))':
     dependencies:
-      tailwindcss: 3.4.19(jiti@1.21.7)(picomatch@4.0.4)(postcss@8.5.8)(yaml@2.8.3)
+      tailwindcss: 3.4.19(yaml@2.8.3)
 
   '@iconify/types@2.0.0': {}
 
@@ -2567,34 +2790,40 @@ snapshots:
 
   '@mermaid-js/layout-elk@0.2.1(mermaid@11.14.0)':
     dependencies:
-      d3: 7.9.0(d3-selection@3.0.0)
+      d3: 7.9.0
       elkjs: 0.9.3
-      mermaid: 11.14.0(chevrotain@11.1.2)(cytoscape@3.33.1)(d3-selection@3.0.0)
+      mermaid: 11.14.0
 
-  '@mermaid-js/mermaid-cli@11.14.0(puppeteer@24.43.1)':
+  '@mermaid-js/mermaid-cli@11.14.0(puppeteer@24.43.1(supports-color@10.2.2)(typescript@6.0.3))(yaml@2.8.3)':
     dependencies:
       '@mermaid-js/layout-elk': 0.2.1(mermaid@11.14.0)
-      '@mermaid-js/mermaid-zenuml': 0.2.2(mermaid@11.14.0)
+      '@mermaid-js/mermaid-zenuml': 0.2.2(mermaid@11.14.0)(yaml@2.8.3)
       chalk: 5.6.2
       commander: 13.1.0
       import-meta-resolve: 4.2.0
-      mermaid: 11.14.0(chevrotain@11.1.2)(cytoscape@3.33.1)(d3-selection@3.0.0)
-      puppeteer: 24.43.1(devtools-protocol@0.0.1608973)(supports-color@10.2.2)(typescript@6.0.3)
-
-  '@mermaid-js/mermaid-zenuml@0.2.2(mermaid@11.14.0)':
-    dependencies:
-      '@zenuml/core': 3.47.2(jiti@1.21.7)(picomatch@4.0.4)(postcss@8.5.8)(react@19.2.4)(react-dom@19.2.4(react@19.2.4))(tailwindcss@3.4.19)(yaml@2.8.3)
-      mermaid: 11.14.0(chevrotain@11.1.2)(cytoscape@3.33.1)(d3-selection@3.0.0)
+      mermaid: 11.14.0
+      puppeteer: 24.43.1(supports-color@10.2.2)(typescript@6.0.3)
     transitivePeerDependencies:
-    - '@babel/core'
-    - '@babel/template'
-    - '@types/react'
-    - tsx
-    - yaml
+      - '@babel/core'
+      - '@babel/template'
+      - '@types/react'
+      - tsx
+      - yaml
 
-  '@mermaid-js/parser@1.1.0(chevrotain@11.1.2)':
+  '@mermaid-js/mermaid-zenuml@0.2.2(mermaid@11.14.0)(yaml@2.8.3)':
     dependencies:
-      langium: 4.2.1(chevrotain@11.1.2)
+      '@zenuml/core': 3.47.2(yaml@2.8.3)
+      mermaid: 11.14.0
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@babel/template'
+      - '@types/react'
+      - tsx
+      - yaml
+
+  '@mermaid-js/parser@1.1.0':
+    dependencies:
+      langium: 4.2.1
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -2608,9 +2837,62 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.20.1
 
-  '@oxlint/binding-linux-x64-gnu@1.64.0': {}
+  '@oxlint/binding-android-arm-eabi@1.64.0':
+    optional: true
 
-  '@oxlint/binding-linux-x64-musl@1.64.0': {}
+  '@oxlint/binding-android-arm64@1.64.0':
+    optional: true
+
+  '@oxlint/binding-darwin-arm64@1.64.0':
+    optional: true
+
+  '@oxlint/binding-darwin-x64@1.64.0':
+    optional: true
+
+  '@oxlint/binding-freebsd-x64@1.64.0':
+    optional: true
+
+  '@oxlint/binding-linux-arm-gnueabihf@1.64.0':
+    optional: true
+
+  '@oxlint/binding-linux-arm-musleabihf@1.64.0':
+    optional: true
+
+  '@oxlint/binding-linux-arm64-gnu@1.64.0':
+    optional: true
+
+  '@oxlint/binding-linux-arm64-musl@1.64.0':
+    optional: true
+
+  '@oxlint/binding-linux-ppc64-gnu@1.64.0':
+    optional: true
+
+  '@oxlint/binding-linux-riscv64-gnu@1.64.0':
+    optional: true
+
+  '@oxlint/binding-linux-riscv64-musl@1.64.0':
+    optional: true
+
+  '@oxlint/binding-linux-s390x-gnu@1.64.0':
+    optional: true
+
+  '@oxlint/binding-linux-x64-gnu@1.64.0':
+    optional: true
+
+  '@oxlint/binding-linux-x64-musl@1.64.0':
+    optional: true
+
+  '@oxlint/binding-openharmony-arm64@1.64.0':
+    optional: true
+
+  '@oxlint/binding-win32-arm64-msvc@1.64.0':
+    optional: true
+
+  '@oxlint/binding-win32-ia32-msvc@1.64.0':
+    optional: true
+
+  '@oxlint/binding-win32-x64-msvc@1.64.0':
+    optional: true
 
   '@puppeteer/browsers@2.13.2(supports-color@10.2.2)':
     dependencies:
@@ -2621,21 +2903,26 @@ snapshots:
       semver: 7.7.4
       tar-fs: 3.1.2
       yargs: 17.7.2
+    transitivePeerDependencies:
+      - bare-abort-controller
+      - bare-buffer
+      - react-native-b4a
+      - supports-color
 
-  '@react-aria/focus@3.21.5(react@19.2.4)(react-dom@19.2.4(react@19.2.4))':
+  '@react-aria/focus@3.21.5(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
-      '@react-aria/interactions': 3.27.1(react@19.2.4)(react-dom@19.2.4(react@19.2.4))
-      '@react-aria/utils': 3.33.1(react@19.2.4)(react-dom@19.2.4(react@19.2.4))
+      '@react-aria/interactions': 3.27.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@react-aria/utils': 3.33.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@react-types/shared': 3.33.1(react@19.2.4)
       '@swc/helpers': 0.5.21
       clsx: 2.1.1
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
 
-  '@react-aria/interactions@3.27.1(react@19.2.4)(react-dom@19.2.4(react@19.2.4))':
+  '@react-aria/interactions@3.27.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       '@react-aria/ssr': 3.9.10(react@19.2.4)
-      '@react-aria/utils': 3.33.1(react@19.2.4)(react-dom@19.2.4(react@19.2.4))
+      '@react-aria/utils': 3.33.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@react-stately/flags': 3.1.2
       '@react-types/shared': 3.33.1(react@19.2.4)
       '@swc/helpers': 0.5.21
@@ -2647,7 +2934,7 @@ snapshots:
       '@swc/helpers': 0.5.21
       react: 19.2.4
 
-  '@react-aria/utils@3.33.1(react@19.2.4)(react-dom@19.2.4(react@19.2.4))':
+  '@react-aria/utils@3.33.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       '@react-aria/ssr': 3.9.10(react@19.2.4)
       '@react-stately/flags': 3.1.2
@@ -2683,7 +2970,7 @@ snapshots:
 
   '@tailwindcss/language-server@0.14.29': {}
 
-  '@tanstack/react-virtual@3.13.23(react@19.2.4)(react-dom@19.2.4(react@19.2.4))':
+  '@tanstack/react-virtual@3.13.23(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       '@tanstack/virtual-core': 3.13.23
       react: 19.2.4
@@ -2827,15 +3114,15 @@ snapshots:
       '@types/node': 25.5.2
     optional: true
 
-  '@upsetjs/venn.js@2.0.0(d3-selection@3.0.0)':
+  '@upsetjs/venn.js@2.0.0':
     optionalDependencies:
       d3-selection: 3.0.0
       d3-transition: 3.0.1(d3-selection@3.0.0)
 
   '@volar/kit@2.4.28(typescript@6.0.3)':
     dependencies:
-      '@volar/language-service': 2.4.28
-      '@volar/typescript': 2.4.28
+      '@volar/language-service': 2.4.28(typescript@6.0.3)
+      '@volar/typescript': 2.4.28(typescript@6.0.3)
       typesafe-path: 0.2.2
       typescript: 6.0.3
       vscode-languageserver-textdocument: 1.0.12
@@ -2845,32 +3132,38 @@ snapshots:
     dependencies:
       '@volar/source-map': 2.4.28
 
-  '@volar/language-server@2.4.28':
+  '@volar/language-server@2.4.28(typescript@6.0.3)':
     dependencies:
       '@volar/language-core': 2.4.28
-      '@volar/language-service': 2.4.28
-      '@volar/typescript': 2.4.28
+      '@volar/language-service': 2.4.28(typescript@6.0.3)
+      '@volar/typescript': 2.4.28(typescript@6.0.3)
       path-browserify: 1.0.1
       request-light: 0.7.0
       vscode-languageserver: 9.0.1
       vscode-languageserver-protocol: 3.17.5
       vscode-languageserver-textdocument: 1.0.12
       vscode-uri: 3.1.0
+    optionalDependencies:
+      typescript: 6.0.3
 
-  '@volar/language-service@2.4.28':
+  '@volar/language-service@2.4.28(typescript@6.0.3)':
     dependencies:
       '@volar/language-core': 2.4.28
       vscode-languageserver-protocol: 3.17.5
       vscode-languageserver-textdocument: 1.0.12
       vscode-uri: 3.1.0
+    optionalDependencies:
+      typescript: 6.0.3
 
   '@volar/source-map@2.4.28': {}
 
-  '@volar/typescript@2.4.28':
+  '@volar/typescript@2.4.28(typescript@6.0.3)':
     dependencies:
       '@volar/language-core': 2.4.28
       path-browserify: 1.0.1
       vscode-uri: 3.1.0
+    optionalDependencies:
+      typescript: 6.0.3
 
   '@vscode/emmet-helper@2.11.0':
     dependencies:
@@ -2926,44 +3219,48 @@ snapshots:
 
   '@vue/language-server@3.2.8(typescript@6.0.3)':
     dependencies:
-      '@volar/language-server': 2.4.28
+      '@volar/language-server': 2.4.28(typescript@6.0.3)
       '@vue/language-core': 3.2.8
-      '@vue/language-service': 3.2.8(@volar/language-service@2.4.28)
+      '@vue/language-service': 3.2.8(typescript@6.0.3)
       '@vue/typescript-plugin': 3.2.8(typescript@6.0.3)
       typescript: 6.0.3
       vscode-uri: 3.1.0
 
-  '@vue/language-service@3.2.8(@volar/language-service@2.4.28)':
+  '@vue/language-service@3.2.8(typescript@6.0.3)':
     dependencies:
-      '@volar/language-service': 2.4.28
+      '@volar/language-service': 2.4.28(typescript@6.0.3)
       '@vue/language-core': 3.2.8
       '@vue/shared': 3.5.32
       path-browserify: 1.0.1
-      volar-service-css: 0.0.70(@volar/language-service@2.4.28)
-      volar-service-emmet: 0.0.70(@volar/language-service@2.4.28)
-      volar-service-html: 0.0.70(@volar/language-service@2.4.28)
-      volar-service-json: 0.0.70(@volar/language-service@2.4.28)
-      volar-service-pug: 0.0.70(@volar/language-service@2.4.28)
-      volar-service-pug-beautify: 0.0.70(@volar/language-service@2.4.28)
-      volar-service-typescript: 0.0.70(@volar/language-service@2.4.28)
+      volar-service-css: 0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))
+      volar-service-emmet: 0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))
+      volar-service-html: 0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))
+      volar-service-json: 0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))
+      volar-service-pug: 0.0.70(typescript@6.0.3)
+      volar-service-pug-beautify: 0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))
+      volar-service-typescript: 0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))(typescript@6.0.3)
       vscode-html-languageservice: 5.6.2
       vscode-uri: 3.1.0
+    transitivePeerDependencies:
+      - typescript
 
   '@vue/shared@3.5.32': {}
 
   '@vue/typescript-plugin@3.2.8(typescript@6.0.3)':
     dependencies:
-      '@volar/typescript': 2.4.28
+      '@volar/typescript': 2.4.28(typescript@6.0.3)
       '@vue/language-core': 3.2.8
       '@vue/shared': 3.5.32
       path-browserify: 1.0.1
       vue-component-meta: 3.2.8(typescript@6.0.3)
-  ? '@zenuml/core@3.47.2(jiti@1.21.7)(picomatch@4.0.4)(postcss@8.5.8)(react@19.2.4)(react-dom@19.2.4(react@19.2.4))(tailwindcss@3.4.19)(yaml@2.8.3)'
+    transitivePeerDependencies:
+      - typescript
 
-  : dependencies:
-      '@floating-ui/react': 0.27.19(react@19.2.4)(react-dom@19.2.4(react@19.2.4))
-      '@headlessui/react': 2.2.9(react@19.2.4)(react-dom@19.2.4(react@19.2.4))
-      '@headlessui/tailwindcss': 0.2.2(tailwindcss@3.4.19)
+  '@zenuml/core@3.47.2(yaml@2.8.3)':
+    dependencies:
+      '@floating-ui/react': 0.27.19(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@headlessui/react': 2.2.9(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@headlessui/tailwindcss': 0.2.2(tailwindcss@3.4.19(yaml@2.8.3))
       antlr4: 4.11.0
       class-variance-authority: 0.7.1
       clsx: 2.1.1
@@ -2980,13 +3277,13 @@ snapshots:
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
       tailwind-merge: 3.5.0
-      tailwindcss: 3.4.19(jiti@1.21.7)(picomatch@4.0.4)(postcss@8.5.8)(yaml@2.8.3)
+      tailwindcss: 3.4.19(yaml@2.8.3)
     transitivePeerDependencies:
-    - '@babel/core'
-    - '@babel/template'
-    - '@types/react'
-    - tsx
-    - yaml
+      - '@babel/core'
+      - '@babel/template'
+      - '@types/react'
+      - tsx
+      - yaml
 
   abort-controller@3.0.0:
     dependencies:
@@ -3056,8 +3353,8 @@ snapshots:
       bare-url: 2.4.0
       fast-fifo: 1.3.2
     transitivePeerDependencies:
-    - bare-abort-controller
-    - react-native-b4a
+      - bare-abort-controller
+      - react-native-b4a
 
   bare-os@3.8.7: {}
 
@@ -3072,7 +3369,7 @@ snapshots:
     optionalDependencies:
       bare-events: 2.8.2
     transitivePeerDependencies:
-    - react-native-b4a
+      - react-native-b4a
 
   bare-url@2.4.0:
     dependencies:
@@ -3097,9 +3394,9 @@ snapshots:
       base64-js: 1.5.1
       ieee754: 1.2.1
 
-  cacheable@2.3.4(keyv@5.6.0):
+  cacheable@2.3.4:
     dependencies:
-      '@cacheable/memory': 2.0.8(keyv@5.6.0)
+      '@cacheable/memory': 2.0.8
       '@cacheable/utils': 2.4.1
       hookified: 1.15.1
       keyv: 5.6.0
@@ -3148,6 +3445,8 @@ snapshots:
       is-glob: 4.0.3
       normalize-path: 3.0.0
       readdirp: 3.6.0
+    optionalDependencies:
+      fsevents: 2.3.3
 
   chokidar@4.0.3:
     dependencies:
@@ -3266,7 +3565,7 @@ snapshots:
 
   d3-axis@3.0.0: {}
 
-  d3-brush@3.0.0(d3-selection@3.0.0):
+  d3-brush@3.0.0:
     dependencies:
       d3-dispatch: 3.0.1
       d3-drag: 3.0.0
@@ -3382,7 +3681,7 @@ snapshots:
       d3-selection: 3.0.0
       d3-timer: 3.0.1
 
-  d3-zoom@3.0.0(d3-selection@3.0.0):
+  d3-zoom@3.0.0:
     dependencies:
       d3-dispatch: 3.0.1
       d3-drag: 3.0.0
@@ -3390,11 +3689,11 @@ snapshots:
       d3-selection: 3.0.0
       d3-transition: 3.0.1(d3-selection@3.0.0)
 
-  d3@7.9.0(d3-selection@3.0.0):
+  d3@7.9.0:
     dependencies:
       d3-array: 3.2.4
       d3-axis: 3.0.0
-      d3-brush: 3.0.0(d3-selection@3.0.0)
+      d3-brush: 3.0.0
       d3-chord: 3.0.1
       d3-color: 3.1.0
       d3-contour: 4.0.2
@@ -3421,11 +3720,11 @@ snapshots:
       d3-time-format: 4.1.0
       d3-timer: 3.0.1
       d3-transition: 3.0.1(d3-selection@3.0.0)
-      d3-zoom: 3.0.0(d3-selection@3.0.0)
+      d3-zoom: 3.0.0
 
-  dagre-d3-es@7.0.14(d3-selection@3.0.0):
+  dagre-d3-es@7.0.14:
     dependencies:
-      d3: 7.9.0(d3-selection@3.0.0)
+      d3: 7.9.0
       lodash-es: 4.18.1
 
   data-uri-to-buffer@6.0.2: {}
@@ -3435,6 +3734,7 @@ snapshots:
   debug@4.4.3(supports-color@10.2.2):
     dependencies:
       ms: 2.1.3
+    optionalDependencies:
       supports-color: 10.2.2
 
   dedent-js@1.0.1: {}
@@ -3542,7 +3842,7 @@ snapshots:
     dependencies:
       bare-events: 2.8.2
     transitivePeerDependencies:
-    - bare-abort-controller
+      - bare-abort-controller
 
   events@3.3.0: {}
 
@@ -3554,7 +3854,7 @@ snapshots:
     optionalDependencies:
       '@types/yauzl': 2.10.3
     transitivePeerDependencies:
-    - supports-color
+      - supports-color
 
   fast-deep-equal@3.1.3: {}
 
@@ -3586,21 +3886,24 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.4
 
-  file-entry-cache@11.1.2(keyv@5.6.0):
+  file-entry-cache@11.1.2:
     dependencies:
-      flat-cache: 6.1.22(keyv@5.6.0)
+      flat-cache: 6.1.22
 
   fill-range@7.1.1:
     dependencies:
       to-regex-range: 5.0.1
 
-  flat-cache@6.1.22(keyv@5.6.0):
+  flat-cache@6.1.22:
     dependencies:
-      cacheable: 2.3.4(keyv@5.6.0)
+      cacheable: 2.3.4
       flatted: 3.4.2
       hookified: 1.15.1
 
   flatted@3.4.2: {}
+
+  fsevents@2.3.3:
+    optional: true
 
   function-bind@1.1.2: {}
 
@@ -3636,7 +3939,7 @@ snapshots:
       data-uri-to-buffer: 6.0.2
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
-    - supports-color
+      - supports-color
 
   glob-parent@5.1.2:
     dependencies:
@@ -3706,14 +4009,14 @@ snapshots:
       agent-base: 7.1.4
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
-    - supports-color
+      - supports-color
 
   https-proxy-agent@7.0.6(supports-color@10.2.2):
     dependencies:
       agent-base: 7.1.4
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
-    - supports-color
+      - supports-color
 
   iconv-lite@0.6.3:
     dependencies:
@@ -3814,7 +4117,7 @@ snapshots:
 
   kind-of@6.0.3: {}
 
-  langium@4.2.1(chevrotain@11.1.2):
+  langium@4.2.1:
     dependencies:
       chevrotain: 11.1.2
       chevrotain-allstar: 0.3.1(chevrotain@11.1.2)
@@ -3826,11 +4129,48 @@ snapshots:
 
   layout-base@2.0.1: {}
 
-  lefthook-linux-x64@2.1.6: {}
+  lefthook-darwin-arm64@2.1.6:
+    optional: true
+
+  lefthook-darwin-x64@2.1.6:
+    optional: true
+
+  lefthook-freebsd-arm64@2.1.6:
+    optional: true
+
+  lefthook-freebsd-x64@2.1.6:
+    optional: true
+
+  lefthook-linux-arm64@2.1.6:
+    optional: true
+
+  lefthook-linux-x64@2.1.6:
+    optional: true
+
+  lefthook-openbsd-arm64@2.1.6:
+    optional: true
+
+  lefthook-openbsd-x64@2.1.6:
+    optional: true
+
+  lefthook-windows-arm64@2.1.6:
+    optional: true
+
+  lefthook-windows-x64@2.1.6:
+    optional: true
 
   lefthook@2.1.6:
     optionalDependencies:
+      lefthook-darwin-arm64: 2.1.6
+      lefthook-darwin-x64: 2.1.6
+      lefthook-freebsd-arm64: 2.1.6
+      lefthook-freebsd-x64: 2.1.6
+      lefthook-linux-arm64: 2.1.6
       lefthook-linux-x64: 2.1.6
+      lefthook-openbsd-arm64: 2.1.6
+      lefthook-openbsd-x64: 2.1.6
+      lefthook-windows-arm64: 2.1.6
+      lefthook-windows-x64: 2.1.6
 
   lilconfig@3.1.3: {}
 
@@ -3868,19 +4208,19 @@ snapshots:
 
   merge2@1.4.1: {}
 
-  mermaid@11.14.0(chevrotain@11.1.2)(cytoscape@3.33.1)(d3-selection@3.0.0):
+  mermaid@11.14.0:
     dependencies:
       '@braintree/sanitize-url': 7.1.2
       '@iconify/utils': 3.1.0
-      '@mermaid-js/parser': 1.1.0(chevrotain@11.1.2)
+      '@mermaid-js/parser': 1.1.0
       '@types/d3': 7.4.3
-      '@upsetjs/venn.js': 2.0.0(d3-selection@3.0.0)
+      '@upsetjs/venn.js': 2.0.0
       cytoscape: 3.33.1
       cytoscape-cose-bilkent: 4.1.0(cytoscape@3.33.1)
       cytoscape-fcose: 2.2.0(cytoscape@3.33.1)
-      d3: 7.9.0(d3-selection@3.0.0)
+      d3: 7.9.0
       d3-sankey: 0.12.3
-      dagre-d3-es: 7.0.14(d3-selection@3.0.0)
+      dagre-d3-es: 7.0.14
       dayjs: 1.11.20
       dompurify: 3.3.3
       katex: 0.16.44
@@ -3943,8 +4283,25 @@ snapshots:
 
   oxlint@1.64.0:
     optionalDependencies:
+      '@oxlint/binding-android-arm-eabi': 1.64.0
+      '@oxlint/binding-android-arm64': 1.64.0
+      '@oxlint/binding-darwin-arm64': 1.64.0
+      '@oxlint/binding-darwin-x64': 1.64.0
+      '@oxlint/binding-freebsd-x64': 1.64.0
+      '@oxlint/binding-linux-arm-gnueabihf': 1.64.0
+      '@oxlint/binding-linux-arm-musleabihf': 1.64.0
+      '@oxlint/binding-linux-arm64-gnu': 1.64.0
+      '@oxlint/binding-linux-arm64-musl': 1.64.0
+      '@oxlint/binding-linux-ppc64-gnu': 1.64.0
+      '@oxlint/binding-linux-riscv64-gnu': 1.64.0
+      '@oxlint/binding-linux-riscv64-musl': 1.64.0
+      '@oxlint/binding-linux-s390x-gnu': 1.64.0
       '@oxlint/binding-linux-x64-gnu': 1.64.0
       '@oxlint/binding-linux-x64-musl': 1.64.0
+      '@oxlint/binding-openharmony-arm64': 1.64.0
+      '@oxlint/binding-win32-arm64-msvc': 1.64.0
+      '@oxlint/binding-win32-ia32-msvc': 1.64.0
+      '@oxlint/binding-win32-x64-msvc': 1.64.0
 
   pac-proxy-agent@7.2.0(supports-color@10.2.2):
     dependencies:
@@ -3957,7 +4314,7 @@ snapshots:
       pac-resolver: 7.0.1
       socks-proxy-agent: 8.0.5(supports-color@10.2.2)
     transitivePeerDependencies:
-    - supports-color
+      - supports-color
 
   pac-resolver@7.0.1:
     dependencies:
@@ -4039,29 +4396,29 @@ snapshots:
       path-data-parser: 0.1.0
       points-on-curve: 0.2.0
 
-  postcss-import@15.1.0(postcss@8.5.8):
+  postcss-import@15.1.0(postcss@8.5.14):
     dependencies:
-      postcss: 8.5.8
+      postcss: 8.5.14
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.11
 
-  postcss-js@4.1.0(postcss@8.5.8):
+  postcss-js@4.1.0(postcss@8.5.14):
     dependencies:
       camelcase-css: 2.0.1
-      postcss: 8.5.8
+      postcss: 8.5.14
 
-  postcss-load-config@6.0.1(jiti@1.21.7)(postcss@8.5.8)(yaml@2.8.3):
+  postcss-load-config@6.0.1(jiti@1.21.7)(postcss@8.5.14)(yaml@2.8.3):
     dependencies:
       lilconfig: 3.1.3
     optionalDependencies:
       jiti: 1.21.7
-      postcss: 8.5.8
+      postcss: 8.5.14
       yaml: 2.8.3
 
-  postcss-nested@6.2.0(postcss@8.5.8):
+  postcss-nested@6.2.0(postcss@8.5.14):
     dependencies:
-      postcss: 8.5.8
+      postcss: 8.5.14
       postcss-selector-parser: 6.1.2
 
   postcss-safe-parser@7.0.1(postcss@8.5.14):
@@ -4086,20 +4443,12 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  postcss@8.5.8:
-    dependencies:
-      nanoid: 3.3.11
-      picocolors: 1.1.1
-      source-map-js: 1.2.1
-
   prettier-plugin-svelte@3.5.1(prettier@3.3.3)(svelte@4.2.20):
     dependencies:
       prettier: 3.3.3
       svelte: 4.2.20
 
   prettier@3.3.3: {}
-
-  prettier@3.8.1: {}
 
   prettier@3.8.3: {}
 
@@ -4120,7 +4469,7 @@ snapshots:
       proxy-from-env: 1.1.0
       socks-proxy-agent: 8.0.5(supports-color@10.2.2)
     transitivePeerDependencies:
-    - supports-color
+      - supports-color
 
   proxy-from-env@1.1.0: {}
 
@@ -4142,7 +4491,7 @@ snapshots:
       end-of-stream: 1.4.5
       once: 1.4.0
 
-  puppeteer-core@24.43.1(devtools-protocol@0.0.1608973)(supports-color@10.2.2):
+  puppeteer-core@24.43.1(supports-color@10.2.2):
     dependencies:
       '@puppeteer/browsers': 2.13.2(supports-color@10.2.2)
       chromium-bidi: 14.0.0(devtools-protocol@0.0.1608973)
@@ -4151,15 +4500,30 @@ snapshots:
       typed-query-selector: 2.12.2
       webdriver-bidi-protocol: 0.4.1
       ws: 8.20.0
+    transitivePeerDependencies:
+      - bare-abort-controller
+      - bare-buffer
+      - bufferutil
+      - react-native-b4a
+      - supports-color
+      - utf-8-validate
 
-  puppeteer@24.43.1(devtools-protocol@0.0.1608973)(supports-color@10.2.2)(typescript@6.0.3):
+  puppeteer@24.43.1(supports-color@10.2.2)(typescript@6.0.3):
     dependencies:
       '@puppeteer/browsers': 2.13.2(supports-color@10.2.2)
       chromium-bidi: 14.0.0(devtools-protocol@0.0.1608973)
       cosmiconfig: 9.0.1(typescript@6.0.3)
       devtools-protocol: 0.0.1608973
-      puppeteer-core: 24.43.1(devtools-protocol@0.0.1608973)(supports-color@10.2.2)
+      puppeteer-core: 24.43.1(supports-color@10.2.2)
       typed-query-selector: 2.12.2
+    transitivePeerDependencies:
+      - bare-abort-controller
+      - bare-buffer
+      - bufferutil
+      - react-native-b4a
+      - supports-color
+      - typescript
+      - utf-8-validate
 
   qified@0.9.1:
     dependencies:
@@ -4259,7 +4623,7 @@ snapshots:
       debug: 4.4.3(supports-color@10.2.2)
       socks: 2.8.7
     transitivePeerDependencies:
-    - supports-color
+      - supports-color
 
   socks@2.8.7:
     dependencies:
@@ -4283,8 +4647,8 @@ snapshots:
       fast-fifo: 1.3.2
       text-decoder: 1.2.7
     transitivePeerDependencies:
-    - bare-abort-controller
-    - react-native-b4a
+      - bare-abort-controller
+      - react-native-b4a
 
   string-width@4.2.3:
     dependencies:
@@ -4308,9 +4672,9 @@ snapshots:
   strip-ansi@7.2.0:
     dependencies:
       ansi-regex: 6.2.2
-  ? stylelint@17.11.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)(css-tree@3.2.1)(keyv@5.6.0)(postcss@8.5.14)(postcss-selector-parser@7.1.1)(supports-color@10.2.2)(typescript@6.0.3)
 
-  : dependencies:
+  stylelint@17.11.0(supports-color@10.2.2)(typescript@6.0.3):
+    dependencies:
       '@csstools/css-calc': 3.2.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)
       '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
       '@csstools/css-syntax-patches-for-csstree': 1.1.3(css-tree@3.2.1)
@@ -4325,7 +4689,7 @@ snapshots:
       debug: 4.4.3(supports-color@10.2.2)
       fast-glob: 3.3.3
       fastest-levenshtein: 1.0.16
-      file-entry-cache: 11.1.2(keyv@5.6.0)
+      file-entry-cache: 11.1.2
       global-modules: 2.0.0
       globby: 16.2.0
       globjoin: 0.1.4
@@ -4347,17 +4711,20 @@ snapshots:
       svg-tags: 1.0.0
       table: 6.9.0
       write-file-atomic: 7.0.1
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
 
   stylis@4.3.6: {}
 
-  sucrase@3.35.1(picomatch@4.0.4):
+  sucrase@3.35.1:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.13
       commander: 4.1.1
       lines-and-columns: 1.2.4
       mz: 2.7.0
       pirates: 4.0.7
-      tinyglobby: 0.2.15(picomatch@4.0.4)
+      tinyglobby: 0.2.16
       ts-interface-checker: 0.1.13
 
   supports-color@10.2.2: {}
@@ -4369,7 +4736,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svelte-language-server@0.18.0(typescript@6.0.3):
+  svelte-language-server@0.18.0(picomatch@4.0.4)(typescript@6.0.3):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       '@vscode/emmet-helper': 2.8.4
@@ -4390,6 +4757,8 @@ snapshots:
       vscode-languageserver-protocol: 3.17.5
       vscode-languageserver-types: 3.17.5
       vscode-uri: 3.1.0
+    transitivePeerDependencies:
+      - picomatch
 
   svelte2tsx@0.7.55(svelte@4.2.20)(typescript@6.0.3):
     dependencies:
@@ -4429,7 +4798,7 @@ snapshots:
 
   tailwind-merge@3.5.0: {}
 
-  tailwindcss@3.4.19(jiti@1.21.7)(picomatch@4.0.4)(postcss@8.5.8)(yaml@2.8.3):
+  tailwindcss@3.4.19(yaml@2.8.3):
     dependencies:
       '@alloc/quick-lru': 5.2.0
       arg: 5.0.2
@@ -4445,17 +4814,17 @@ snapshots:
       normalize-path: 3.0.0
       object-hash: 3.0.0
       picocolors: 1.1.1
-      postcss: 8.5.8
-      postcss-import: 15.1.0(postcss@8.5.8)
-      postcss-js: 4.1.0(postcss@8.5.8)
-      postcss-load-config: 6.0.1(jiti@1.21.7)(postcss@8.5.8)(yaml@2.8.3)
-      postcss-nested: 6.2.0(postcss@8.5.8)
+      postcss: 8.5.14
+      postcss-import: 15.1.0(postcss@8.5.14)
+      postcss-js: 4.1.0(postcss@8.5.14)
+      postcss-load-config: 6.0.1(jiti@1.21.7)(postcss@8.5.14)(yaml@2.8.3)
+      postcss-nested: 6.2.0(postcss@8.5.14)
       postcss-selector-parser: 6.1.2
       resolve: 1.22.11
-      sucrase: 3.35.1(picomatch@4.0.4)
+      sucrase: 3.35.1
     transitivePeerDependencies:
-    - tsx
-    - yaml
+      - tsx
+      - yaml
 
   tar-fs@3.1.2:
     dependencies:
@@ -4465,9 +4834,9 @@ snapshots:
       bare-fs: 4.6.0
       bare-path: 3.0.0
     transitivePeerDependencies:
-    - bare-abort-controller
-    - bare-buffer
-    - react-native-b4a
+      - bare-abort-controller
+      - bare-buffer
+      - react-native-b4a
 
   tar-stream@3.1.8:
     dependencies:
@@ -4476,22 +4845,22 @@ snapshots:
       fast-fifo: 1.3.2
       streamx: 2.25.0
     transitivePeerDependencies:
-    - bare-abort-controller
-    - bare-buffer
-    - react-native-b4a
+      - bare-abort-controller
+      - bare-buffer
+      - react-native-b4a
 
   teex@1.0.1:
     dependencies:
       streamx: 2.25.0
     transitivePeerDependencies:
-    - bare-abort-controller
-    - react-native-b4a
+      - bare-abort-controller
+      - react-native-b4a
 
   text-decoder@1.2.7:
     dependencies:
       b4a: 1.8.0
     transitivePeerDependencies:
-    - react-native-b4a
+      - react-native-b4a
 
   thenify-all@1.6.0:
     dependencies:
@@ -4507,12 +4876,7 @@ snapshots:
 
   tinyexec@1.0.4: {}
 
-  tinyglobby@0.2.15(picomatch@4.0.4):
-    dependencies:
-      fdir: 6.5.0(picomatch@4.0.4)
-      picomatch: 4.0.4
-
-  tinyglobby@0.2.16(picomatch@4.0.4):
+  tinyglobby@0.2.16:
     dependencies:
       fdir: 6.5.0(picomatch@4.0.4)
       picomatch: 4.0.4
@@ -4539,7 +4903,10 @@ snapshots:
     dependencies:
       semver: 7.7.4
 
-  typescript-language-server@5.2.0: {}
+  typescript-language-server@5.2.0:
+    dependencies:
+      vscode-jsonrpc: 5.0.1
+      vscode-languageserver-protocol: 3.17.5
 
   typescript@6.0.3: {}
 
@@ -4558,66 +4925,69 @@ snapshots:
 
   uuid@11.1.0: {}
 
-  volar-service-css@0.0.70(@volar/language-service@2.4.28):
+  volar-service-css@0.0.70(@volar/language-service@2.4.28(typescript@6.0.3)):
     dependencies:
       vscode-css-languageservice: 6.3.10
       vscode-languageserver-textdocument: 1.0.12
       vscode-uri: 3.1.0
     optionalDependencies:
-      '@volar/language-service': 2.4.28
+      '@volar/language-service': 2.4.28(typescript@6.0.3)
 
-  volar-service-emmet@0.0.70(@volar/language-service@2.4.28):
+  volar-service-emmet@0.0.70(@volar/language-service@2.4.28(typescript@6.0.3)):
     dependencies:
       '@emmetio/css-parser': 0.4.1
       '@emmetio/html-matcher': 1.3.0
       '@vscode/emmet-helper': 2.11.0
       vscode-uri: 3.1.0
     optionalDependencies:
-      '@volar/language-service': 2.4.28
+      '@volar/language-service': 2.4.28(typescript@6.0.3)
 
-  volar-service-html@0.0.70(@volar/language-service@2.4.28):
+  volar-service-html@0.0.70(@volar/language-service@2.4.28(typescript@6.0.3)):
     dependencies:
       vscode-html-languageservice: 5.6.2
       vscode-languageserver-textdocument: 1.0.12
       vscode-uri: 3.1.0
     optionalDependencies:
-      '@volar/language-service': 2.4.28
+      '@volar/language-service': 2.4.28(typescript@6.0.3)
 
-  volar-service-json@0.0.70(@volar/language-service@2.4.28):
+  volar-service-json@0.0.70(@volar/language-service@2.4.28(typescript@6.0.3)):
     dependencies:
       vscode-json-languageservice: 5.7.2
       vscode-uri: 3.1.0
     optionalDependencies:
-      '@volar/language-service': 2.4.28
+      '@volar/language-service': 2.4.28(typescript@6.0.3)
 
-  volar-service-prettier@0.0.70(@volar/language-service@2.4.28)(prettier@3.8.3):
+  volar-service-prettier@0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))(prettier@3.8.3):
     dependencies:
       vscode-uri: 3.1.0
     optionalDependencies:
-      '@volar/language-service': 2.4.28
+      '@volar/language-service': 2.4.28(typescript@6.0.3)
       prettier: 3.8.3
 
-  volar-service-pug-beautify@0.0.70(@volar/language-service@2.4.28):
+  volar-service-pug-beautify@0.0.70(@volar/language-service@2.4.28(typescript@6.0.3)):
     dependencies:
       '@johnsoncodehk/pug-beautify': 0.2.2
     optionalDependencies:
-      '@volar/language-service': 2.4.28
+      '@volar/language-service': 2.4.28(typescript@6.0.3)
 
-  volar-service-pug@0.0.70(@volar/language-service@2.4.28):
+  volar-service-pug@0.0.70(typescript@6.0.3):
     dependencies:
-      '@volar/language-service': 2.4.28
+      '@volar/language-service': 2.4.28(typescript@6.0.3)
       '@vue/language-plugin-pug': 3.2.6
-      volar-service-html: 0.0.70(@volar/language-service@2.4.28)
+      volar-service-html: 0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))
       vscode-html-languageservice: 5.6.2
       vscode-languageserver-textdocument: 1.0.12
+    transitivePeerDependencies:
+      - typescript
 
-  volar-service-typescript-twoslash-queries@0.0.70(@volar/language-service@2.4.28):
+  volar-service-typescript-twoslash-queries@0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))(typescript@6.0.3):
     dependencies:
       vscode-uri: 3.1.0
     optionalDependencies:
-      '@volar/language-service': 2.4.28
+      '@volar/language-service': 2.4.28(typescript@6.0.3)
+      typescript: 6.0.3
 
-  volar-service-typescript@0.0.70(@volar/language-service@2.4.28):
+  volar-service-typescript@0.0.70(@volar/language-service@2.4.28(typescript@6.0.3))(typescript@6.0.3):
     dependencies:
       path-browserify: 1.0.1
       semver: 7.7.4
@@ -4626,14 +4996,15 @@ snapshots:
       vscode-nls: 5.2.0
       vscode-uri: 3.1.0
     optionalDependencies:
-      '@volar/language-service': 2.4.28
+      '@volar/language-service': 2.4.28(typescript@6.0.3)
+      typescript: 6.0.3
 
-  volar-service-yaml@0.0.70(@volar/language-service@2.4.28):
+  volar-service-yaml@0.0.70(@volar/language-service@2.4.28(typescript@6.0.3)):
     dependencies:
       vscode-uri: 3.1.0
-      yaml-language-server: 1.20.0(ajv@8.18.0)
+      yaml-language-server: 1.20.0
     optionalDependencies:
-      '@volar/language-service': 2.4.28
+      '@volar/language-service': 2.4.28(typescript@6.0.3)
 
   vscode-css-languageservice@6.3.10:
     dependencies:
@@ -4671,6 +5042,8 @@ snapshots:
       vscode-languageserver-textdocument: 1.0.12
       vscode-languageserver-types: 3.17.5
       vscode-uri: 3.1.0
+
+  vscode-jsonrpc@5.0.1: {}
 
   vscode-jsonrpc@8.2.0: {}
 
@@ -4713,9 +5086,10 @@ snapshots:
 
   vue-component-meta@3.2.8(typescript@6.0.3):
     dependencies:
-      '@volar/typescript': 2.4.28
+      '@volar/typescript': 2.4.28(typescript@6.0.3)
       '@vue/language-core': 3.2.8
       path-browserify: 1.0.1
+    optionalDependencies:
       typescript: 6.0.3
 
   webdriver-bidi-protocol@0.4.1: {}
@@ -4740,12 +5114,12 @@ snapshots:
 
   y18n@5.0.8: {}
 
-  yaml-language-server@1.20.0(ajv@8.18.0):
+  yaml-language-server@1.20.0:
     dependencies:
       '@vscode/l10n': 0.0.18
       ajv: 8.18.0
       ajv-draft-04: 1.0.0(ajv@8.18.0)
-      prettier: 3.8.1
+      prettier: 3.8.3
       request-light: 0.5.8
       vscode-json-languageservice: 4.1.8
       vscode-languageserver: 9.0.1
@@ -4776,3 +5150,6 @@ snapshots:
       fd-slicer: 1.1.0
 
   zod@3.25.76: {}
+
+time:
+  prettier@3.8.3: '2026-04-15T00:55:25.573Z'

@@ -3,5 +3,11 @@ allowBuilds:
   puppeteer: false
   tree-sitter-cli: true
 sharedWorkspaceLockfile: false
+# Keep every host's optional native packages (lefthook, tree-sitter) in the
+# lockfile; without this, a lockfile written on Linux leaves macOS without
+# lefthook's binary.
+supportedArchitectures:
+  cpu: [arm64, x64]
+  os: [darwin, linux, win32]
 trustPolicyExclude:
   - svelte
